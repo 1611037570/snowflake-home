@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "嵌入式",
         name: "苏明远",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>嵌入式开发：</strong>熟练使用 C/C++ 完成 MCU 与 Linux 平台开发，掌握 STM32、GD32、ESP32 等芯片的驱动移植，熟悉 FreeRTOS、RT-Thread 以及 Linux 内核裁剪、设备树配置与 Yocto 构建。</p><p><strong>通信与调试：</strong>熟悉 5G NR/LTE、NB-IoT、Cat.1 与 LoRa 等无线通信协议，掌握 TCP/IP、MQTT、Modbus、CAN 及 UART/SPI/I2C 总线调试，能使用示波器、频谱仪、CMW500 综测仪与 J-Link 定位问题。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "公司年度技术攻关奖" } },
         { ui: {}, data: { name: "物联网终端创新实践奖" } },

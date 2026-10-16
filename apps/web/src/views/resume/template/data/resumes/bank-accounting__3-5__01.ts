@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "财务",
         name: "唐婉清",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -104,14 +104,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>财务专业：</strong>熟悉全盘账务处理、合并报表、全面预算、成本管控与税务申报，并熟悉银行计划财务与账务核算流程，掌握总账处理、财务报表编制、监管统计报送与内控合规要求。</p><p><strong>工具与技术：</strong>熟练使用 SAP FICO、用友 NC 与金蝶 EAS 财务模块，以及 Excel 数据透视与 Power Query；能使用 SQL、Python 完成财务数据清洗与自动化取数，并用 Tableau 搭建经营分析看板。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度优秀员工" } },
         { ui: {}, data: { name: "预算管理专项奖" } },

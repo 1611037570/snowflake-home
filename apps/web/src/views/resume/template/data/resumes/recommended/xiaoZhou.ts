@@ -6,7 +6,6 @@ const defaultData: any = {
   data: {
     user: {
       ui: {
-        archived: false,
         title: "个人信息",
         collapsed: [],
         hidden: false,
@@ -63,7 +62,6 @@ const defaultData: any = {
     account: {
       ui: {
         collapsed: [],
-        archived: false,
         title: "社交账号",
         hidden: false,
       },
@@ -118,7 +116,6 @@ const defaultData: any = {
     skill: {
       ui: {
         collapsed: [],
-        archived: false,
         title: "专业技能",
         hidden: false,
       },
@@ -129,7 +126,6 @@ const defaultData: any = {
     education: {
       ui: {
         collapsed: [],
-        archived: false,
         title: "教育经历",
         hidden: false,
       },
@@ -157,7 +153,6 @@ const defaultData: any = {
     project: {
       ui: {
         collapsed: ["1"],
-        archived: false,
         title: "项目经历",
         hidden: false,
       },

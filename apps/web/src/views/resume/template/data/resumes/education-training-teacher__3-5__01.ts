@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "教师",
         name: "罗静怡",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>教学能力：</strong>熟悉初中数学课程体系与中考命题趋势，能够独立完成学情诊断、分层教学设计、教案与讲义编写、课堂讲授及课后跟踪，掌握启发式提问、变式训练与错题归因等方法。</p><p><strong>工具与技术栈：</strong>熟练使用 PowerPoint 与 Excel 完成课件制作、成绩统计与学情看板，使用几何画板、GeoGebra 演示动态几何与函数图像，借助在线白板与直播授课工具开展双师课堂和线上答疑，并能用测评系统完成课前诊断与课后分层作业推送。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度优秀教师奖" } },
         { ui: {}, data: { name: "教师教学技能大赛一等奖" } },

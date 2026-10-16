@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "测试",
         name: "蒋维",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>测试工具：</strong>熟练使用 CANoe、CANalyzer、Vehicle Spy 与诊断工具链，掌握 CAPL、Python 脚本开发，熟悉 DBC/LDF 数据库解析与 ARXML 文件配置。</p><p><strong>技术栈：</strong>熟悉 CAN/CANFD、LIN、以太网 SOME/IP 等车载总线协议，掌握 UDS 诊断、网络管理与 OTA 刷写流程，了解 ISO 26262 功能安全与 ASPICE 测试流程，能搭建 HIL 台架并接入 Jenkins 持续集成。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "公司年度测试质量标兵" } },
         { ui: {}, data: { name: "智能网联汽车测试技术优秀实践奖" } },

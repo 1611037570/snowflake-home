@@ -5,9 +5,7 @@ import { xiaozhou } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: {
-        archived: false,
-      },
+      ui: {},
       data: {
         position: "平面模特",
         name: "林妍",
@@ -25,7 +23,6 @@ const resumeData: any = {
     skill: {
       ui: {
         collapsed: ["1"],
-        archived: false,
       },
       data: {
         content:
@@ -35,7 +32,6 @@ const resumeData: any = {
     education: {
       ui: {
         collapsed: ["1"],
-        archived: false,
       },
       list: [
         {
@@ -55,7 +51,6 @@ const resumeData: any = {
     work: {
       ui: {
         collapsed: ["1"],
-        archived: false,
       },
       list: [
         {
@@ -74,7 +69,6 @@ const resumeData: any = {
     project: {
       ui: {
         collapsed: ["1"],
-        archived: false,
       },
       list: [
         {

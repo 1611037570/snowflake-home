@@ -4,9 +4,9 @@ import { xiaoyang } from "../avatar";
 // 医疗/健康行业大数据岗位简历示例数据。
 const resumeData: any = {
   data: {
-    user: { ui: { archived: false }, data: { position: "大数据", name: "韩雨桐", birthday: "1996.05", phone: "15888888888", email: "16****70@qq.com", workTime: "2019.07", sex: "男", city: "上海", avatar: xiaoyang } },
+    user: { ui: {}, data: { position: "大数据", name: "韩雨桐", birthday: "1996.05", phone: "15888888888", email: "16****70@qq.com", workTime: "2019.07", sex: "男", city: "上海", avatar: xiaoyang } },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -39,7 +39,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -72,7 +72,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -92,14 +92,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>大数据开发：</strong>熟练使用 Hadoop、Hive、Spark、Flink、Kafka、HBase 与 ClickHouse，能够独立完成离线数仓分层建模与实时流式链路开发，掌握调度编排工具与任务性能调优。</p><p><strong>医疗数据与工具：</strong>熟悉 HL7、FHIR、DICOM 等医疗数据交换规范以及 ICD-10 疾病编码、LOINC 检验项目编码等标准字典，能够使用 SQL、Python、Pandas 与 Airflow 完成数据加工、质量校验与指标开发。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度数据治理优秀项目奖" } },
         { ui: {}, data: { name: "健康数据创新应用优秀个人" } },

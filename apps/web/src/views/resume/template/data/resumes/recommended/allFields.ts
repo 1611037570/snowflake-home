@@ -5,7 +5,7 @@ import { xiaoyang } from "../../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         name: "PM 羊",
         position: "高级产品经理",
@@ -38,14 +38,14 @@ const resumeData: any = {
       },
     },
     account: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "个人作品集", url: "https://portfolio.example.com/li-ran" } },
         { ui: {}, data: { name: "知乎", url: "https://www.zhihu.com/people/li-ran" } },
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content: "<p><strong>产品能力：</strong>熟悉用户研究、需求分析、原型设计、数据分析与项目管理，能够独立推进 0-1 产品落地。</p><p><strong>工具：</strong>熟练使用 Figma、Axure、SQL、Excel 与数据看板工具。</p>",
       },
@@ -54,13 +54,13 @@ const resumeData: any = {
       ],
     },
     advantage: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content: "<p>具备跨团队协作与复杂项目拆解能力，能够在业务目标、用户体验与研发成本之间完成平衡。</p><p>擅长通过数据分析定位增长机会，并推动策略从验证到规模化落地。</p>",
       },
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -93,7 +93,7 @@ const resumeData: any = {
       ],
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -125,7 +125,7 @@ const resumeData: any = {
       ],
     },
     internship: { // 实习经历范本模块。
-      ui: { collapsed: ["1"] /* 模块展开状态 */, archived: false /* 模块归档状态 */ }, // 模块界面状态。
+      ui: { collapsed: ["1"] /* 模块展开状态 */}, // 模块界面状态。
       list: [ // 实习记录列表。
         {
           ui: {}, // 记录界面状态。
@@ -144,7 +144,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -176,7 +176,7 @@ const resumeData: any = {
       ],
     },
     publication: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -206,7 +206,7 @@ const resumeData: any = {
       ],
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: {
           name: "年度优秀产品奖" /* 荣誉名称 */,
@@ -240,7 +240,7 @@ const resumeData: any = {
     },
     // portfolio：作品集，链接和图片可分别填写。
     portfolio: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -279,7 +279,7 @@ const resumeData: any = {
       ],
     },
     custom_product_research: {
-      ui: { title: "行业研究", collapsed: ["1"], archived: false },
+      ui: { title: "行业研究", collapsed: ["1"]},
       list: [
         {
           ui: {},

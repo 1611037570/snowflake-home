@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "行政",
         name: "贺文清",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>办公软件：</strong>熟练使用 Word 长文档排版与目录生成、Excel 数据透视表与函数统计、PowerPoint 汇报制作，能独立完成公文拟稿与文件比对。</p><p><strong>业务工具：</strong>熟悉 OA 协同办公系统、电子签章与合同管理系统、PDF 编辑与文档比对工具，掌握用印审批、合同归档、案卷借阅等行政台账的规范化管理。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度优秀员工" } },
         { ui: {}, data: { name: "档案规范化管理专项表彰" } },

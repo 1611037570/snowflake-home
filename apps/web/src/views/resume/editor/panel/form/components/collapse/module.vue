@@ -136,12 +136,6 @@ function handlePreviewJump() {
   jumpPreview(currentForm.value.key);
 }
 
-function archiveModule() {
-  proxy.$confirm($t("archiveMessage"), $t("archiveConfirm")).then(() => {
-    resumeStore.setModuleArchived(currentForm.value.key, true);
-  });
-}
-
 // 新增记录追加到列表末尾，同步定位编辑区与预览区
 function locateAddedItem(index) {
   if (index == null) return;
@@ -390,9 +384,6 @@ function handleAdd() {
           <div class="flex items-center">
             <SfTooltip :content="$t('locatePreview')" v-if="!hidden">
               <Icon @click.stop="handlePreviewJump" icon="mdi:map-search-outline" />
-            </SfTooltip>
-            <SfTooltip :content="$t('archive')">
-              <Icon @click.stop="archiveModule" icon="lucide:archive" size="4" />
             </SfTooltip>
             <SfTooltip :content="hidden ? $t('show') : $t('hide')">
               <Icon @click.stop="toggleHidden" :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'" />

@@ -4,9 +4,9 @@ import { xiaoyang } from "../avatar";
 // 医药/制药行业Python岗位简历示例数据。
 const resumeData: any = {
   data: {
-    user: { ui: { archived: false }, data: { position: "Python", name: "沈知远", birthday: "1996.05", phone: "15888888888", email: "16****70@qq.com", workTime: "2020.07", sex: "男", city: "上海", avatar: xiaoyang } },
+    user: { ui: {}, data: { position: "Python", name: "沈知远", birthday: "1996.05", phone: "15888888888", email: "16****70@qq.com", workTime: "2020.07", sex: "男", city: "上海", avatar: xiaoyang } },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -39,7 +39,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -72,7 +72,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -92,14 +92,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>开发与数据栈：</strong>熟练使用 Python 开发后端服务与数据处理程序，掌握 FastAPI、Django、Celery、pandas、NumPy、SQLAlchemy、PySpark，熟悉 MySQL、PostgreSQL、MongoDB、Redis，能够使用 Airflow 编排调度任务，并用 pytest 与 GitLab CI 保障交付质量。</p><p><strong>行业工具与规范：</strong>熟悉医药数据场景，掌握 EDC、CTMS、PV 系统与 MedDRA、WHODrug 字典的数据结构，了解 CDISC SDTM 与 ADaM 标准，熟悉 GCP、药品生产质量管理规范相关要求，能够完成数据抽取、逻辑核查、编码映射与合规审计留痕。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "医药数据平台建设优秀项目奖" } },
         { ui: {}, data: { name: "临床数据自动化专项贡献奖" } },

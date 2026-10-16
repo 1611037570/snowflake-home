@@ -1,5 +1,5 @@
 <script setup>
-import { computed, nextTick } from "vue";
+import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
 import { useModuleNav } from "../../../../hooks/useModuleNav";
@@ -13,17 +13,8 @@ const { runtimeConfig } = storeToRefs(resumeStore);
 const { keyword, searchResults, jumpAll, jumpToHit, jumpPreview } = useModuleNav();
 const moduleFields = computed(() => runtimeConfig.value?.fields || []);
 
-// 查找模块时先恢复归档状态，再同步定位编辑区与预览区
-const handleFind = async (module) => {
-  if (module.archived) resumeStore.setModuleArchived(module.key, false);
-  await nextTick();
-  jumpAll(module.key);
-};
-
-// 查找内容命中项：恢复归档后定位到命中的记录或字段行，并同步预览区模块
-const handleFindHit = async (module, hit) => {
-  if (module.archived) resumeStore.setModuleArchived(module.key, false);
-  await nextTick();
+// 内容命中项：定位到命中的记录或字段行，并同步预览区模块
+const locateHit = (module, hit) => {
   jumpToHit(module.key, hit);
   jumpPreview(module.key);
 };
@@ -55,12 +46,11 @@ const hitTitle = (hit) => {
           <div class="flex flex-col gap-3">
             <div
               class="group flex h-10 items-center gap-3 rounded-3xl bg-sf-bg px-3"
-              :class="module.hidden || module.archived ? 'opacity-60' : ''"
+              :class="module.hidden ? 'opacity-60' : ''"
             >
               <div class="flex min-w-0 flex-1 items-center gap-3">
                 <span class="truncate text-sm text-sf-text">{{ module.name }}</span>
                 <span v-if="module.hidden" class="text-xs text-sf-text-2">{{ $t("hidden") }}</span>
-                <span v-if="module.archived" class="text-xs text-sf-text-2">{{ $t("archived") }}</span>
               </div>
               <!-- 搜索结果仅保留定位操作，模块管理操作由编辑区提供。 -->
               <div class="flex shrink-0 items-center gap-3 text-sf-text-2">
@@ -69,7 +59,7 @@ const hitTitle = (hit) => {
                     icon="mdi:map-search-outline"
                     size="4"
                     class="cursor-pointer hover:text-sf-theme"
-                    @click.stop="handleFind(module)"
+                    @click.stop="jumpAll(module.key)"
                   />
                 </SfTooltip>
               </div>
@@ -83,7 +73,7 @@ const hitTitle = (hit) => {
                 v-for="(hit, index) in module.hits"
                 :key="`${hit.itemIndex ?? 'field'}-${hit.fieldKey}-${index}`"
                 class="flex cursor-pointer flex-col rounded-xl bg-sf-bg px-3 py-1 hover:text-sf-theme"
-                @click.stop="handleFindHit(module, hit)"
+                @click.stop="locateHit(module, hit)"
               >
                 <span class="truncate text-xs text-sf-text-2">{{ hitTitle(hit) }}</span>
                 <span class="truncate text-xs text-sf-text-3">{{ hit.text }}</span>

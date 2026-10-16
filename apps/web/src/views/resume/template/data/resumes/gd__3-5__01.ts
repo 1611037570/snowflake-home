@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "平面设计/美工",
         name: "沈知微",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>设计软件：</strong>精通 Photoshop、Illustrator 与 InDesign，熟练使用 Figma 输出线上物料，掌握基础动效与轻视频剪辑，能独立完成从创意到完稿出片的全流程。</p><p><strong>专业能力：</strong>熟悉品牌视觉规范、包装结构、印刷工艺与材质选择，具备手绘草图与图形原创能力，能与策划、文案及供应商顺畅对接落地细节。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度最佳视觉创意奖" } },
         { ui: {}, data: { name: "客户满意度之星" } },

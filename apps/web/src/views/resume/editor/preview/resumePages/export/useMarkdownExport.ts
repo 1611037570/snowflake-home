@@ -49,7 +49,7 @@ const collectFieldDefinitions = (fields: any[], definitions: FieldDefinition[]) 
     // 字段包裹组按被包裹字段定位数据，名称取包裹组声明
     const path = getFieldDataPath(field);
     const key = path?.length ? String(path[path.length - 1]) : "";
-    if (!key || ["collapsed", "hidden", "archived", "icon"].includes(key)) return;
+    if (!key || ["collapsed", "hidden", "icon"].includes(key)) return;
     if (definitions.some((item) => item.key === key)) return;
     definitions.push({
       key,
@@ -145,7 +145,7 @@ export const exportMarkdown = (onSuccess?: () => void) => {
     if (!source) continue;
     const module = { ...source, data: { ...source.data } };
     titleData[key] = module;
-    if (module.ui?.hidden || module.ui?.archived) { delete titleData[key]; continue; }
+    if (module.ui?.hidden) { delete titleData[key]; continue; }
     if (module.data) Object.keys(module.data).forEach((field) => {
       if (module.ui?.[field]?.hidden) delete module.data[field];
     });
@@ -155,7 +155,7 @@ export const exportMarkdown = (onSuccess?: () => void) => {
 
   moduleKeys.forEach((moduleKey) => {
     const moduleData = data[moduleKey];
-    if (!moduleData || moduleData.ui?.hidden || moduleData.ui?.archived) return;
+    if (!moduleData || moduleData.ui?.hidden) return;
     const schema = getSchema(moduleKey, runtimeConfig.value);
     const definitions: FieldDefinition[] = [];
     collectFieldDefinitions(getSchemaFields(schema), definitions);

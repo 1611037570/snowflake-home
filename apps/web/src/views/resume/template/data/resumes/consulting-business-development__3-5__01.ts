@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "商务拓展",
         name: "陈嘉禾",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>商务能力：</strong>熟悉大客户销售全流程，能够独立完成客户开发、需求诊断、方案报价、商务谈判与合同签署，熟练运用 SPIN 提问、解决方案销售与价值主张设计等方法论。</p><p><strong>工具与技术栈：</strong>熟练使用 Salesforce、销售易 CRM 管理商机漏斗与销售预测，使用 Power BI、Excel 高级函数与 SQL 完成市场与客户数据分析，使用 PowerPoint、Visio 输出咨询方案与投标文件，熟悉公开招投标与政府采购平台的操作流程。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度商务拓展冠军" } },
         { ui: {}, data: { name: "优秀投标方案奖" } },

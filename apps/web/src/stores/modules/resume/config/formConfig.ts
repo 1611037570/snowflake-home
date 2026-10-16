@@ -1,6 +1,5 @@
 import type {
   DynamicFormRule,
-  FieldChecks,
   FormConfig,
   FormField,
   GroupFormField,
@@ -59,11 +58,6 @@ const createModuleState = (title: string): ModelBinding[] => [
     defaultValue: false,
   },
 ];
-
-// 模块级归档判断：所有模块共用同一数据路径（隐藏状态改由业务直接读写 ui.hidden）
-const MODULE_CHECKS = {
-  removed: { path: ["ui", "archived"] },
-} satisfies FieldChecks;
 
 // 个人信息固定字段包裹组：标签与状态绑定结构一致，仅内层字段不同
 const createUserField = (
@@ -190,7 +184,6 @@ export const DEFAULT_USER_FORM = [
       drag: false,
     },
     model: createModuleState("个人信息"),
-    checks: MODULE_CHECKS,
     slot: "default",
     fields: [
       // 头像
@@ -685,7 +678,6 @@ export const DEFAULT_ACCOUNT_FORM = {
   context: ["account"],
   span: 24,
   model: createModuleState("社交账号"),
-  checks: MODULE_CHECKS,
   component: "collapseModule",
   props: {
     add: true,
@@ -735,7 +727,6 @@ export const DEFAULT_EDUCATION_FORM = {
     add: true,
   },
   model: createModuleState("教育经历"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1030,7 +1021,6 @@ export const DEFAULT_SKILL_FORM = {
     addWhenLayout: "proficiency", // 仅切换到技能列表布局时显示新增入口。
   },
   model: createModuleState("专业技能"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1099,7 +1089,6 @@ export const DEFAULT_ADVANTAGE_FORM = {
     add: false,
   },
   model: createModuleState("个人优势"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1126,7 +1115,6 @@ export const DEFAULT_SLOGAN_FORM = {
     add: false,
   },
   model: createModuleState("顶部标语"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     // 标语字段直接声明数据绑定：字段 key 不能与模块状态 key（ui.title / ui.hidden）重名，
@@ -1177,7 +1165,6 @@ export const DEFAULT_WORK_FORM = {
     add: true,
   },
   model: createModuleState("工作经历"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1398,7 +1385,6 @@ export const DEFAULT_INTERNSHIP_FORM = {
     add: true,
   },
   model: createModuleState("实习经历"), // 实习模块标题与状态绑定。
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     // 实习记录列表独立声明字段与操作。
@@ -1625,7 +1611,6 @@ export const DEFAULT_PROJECT_FORM = {
     add: true,
   },
   model: createModuleState("项目经历"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1843,7 +1828,6 @@ export const DEFAULT_PORTFOLIO_FORM = {
     add: true,
   },
   model: createModuleState("作品集"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -1930,7 +1914,6 @@ export const DEFAULT_HONOR_FORM = {
     add: true,
   },
   model: createModuleState("荣誉证书"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -2026,7 +2009,6 @@ export const DEFAULT_CLUB_FORM = {
   component: "collapseModule",
   props: { add: true },
   model: createModuleState("社团经历"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -2210,7 +2192,6 @@ export const DEFAULT_VOLUNTEER_FORM = {
     add: true,
   },
   model: createModuleState("志愿者经历"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -2397,7 +2378,6 @@ export const DEFAULT_PUBLICATION_FORM = {
     add: true,
   },
   model: createModuleState("论文发表"),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {
@@ -2585,7 +2565,6 @@ export const DEFAULT_CUSTOM_FORM = {
     add: true,
   },
   model: createModuleState(""),
-  checks: MODULE_CHECKS,
   slot: "default",
   fields: [
     {

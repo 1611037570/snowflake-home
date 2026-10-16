@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: ".NET工程师",
         name: "曹立恒",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>后端开发：</strong>熟练使用 C# 与 .NET Framework/.NET 6，掌握 ASP.NET Core Web API、EF Core、Dapper、SignalR 与异步多线程编程，能独立完成制造业务服务的接口设计与性能调优。</p><p><strong>数据与工业协议：</strong>熟悉 SQL Server、Redis、RabbitMQ、MQTT、OPC UA 与 Modbus TCP，掌握 Docker、Git、Jenkins 部署流程，了解 InfluxDB 时序存储以及 Vue 3 与 Element Plus 前端开发。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "公司年度优秀技术员工" } },
         { ui: {}, data: { name: "智能制造系统建设专项奖" } },

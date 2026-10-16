@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "会展策划",
         name: "白露",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>策划与执行：</strong>熟悉会展全案流程，能够独立完成主题创意、展区动线规划、议程排期、招商招展方案与现场执行手册，掌握展会预算编制与供应商管理。</p><p><strong>工具与技术栈：</strong>熟练使用 AutoCAD 绘制展位与动线平面图，使用 SketchUp、3ds Max 与 Photoshop 完成展陈效果图与视觉物料，使用 Excel 数据透视表与 CRM 会展管理系统完成招商数据复盘与客户跟进。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度最佳会展策划奖" } },
         { ui: {}, data: { name: "优秀招商招展团队奖" } },

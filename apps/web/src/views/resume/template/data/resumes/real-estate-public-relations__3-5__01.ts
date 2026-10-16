@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "品牌公关",
         name: "沈岚",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -104,14 +104,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>传播策划：</strong>熟悉地产项目从土地获取、品牌亮相、开盘到交付的全周期传播节奏，能独立完成传播策略、新闻稿与落地活动方案撰写。</p><p><strong>工具与技术栈：</strong>熟练使用微信公众平台、视频号、抖音企业号、剪映、Photoshop、Premiere Pro、飞书与 Excel，能借助行业数据平台与舆情监测系统完成传播效果复盘和竞品监测。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "集团年度品牌传播金奖" } },
         { ui: {}, data: { name: "年度优秀员工" } },

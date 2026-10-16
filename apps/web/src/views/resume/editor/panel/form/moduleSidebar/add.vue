@@ -78,7 +78,6 @@ const handleConfirm = () => {
         title: customModuleName,
         collapsed: ["1"],
         hidden: false,
-        archived: false,
       },
       list: [],
     };

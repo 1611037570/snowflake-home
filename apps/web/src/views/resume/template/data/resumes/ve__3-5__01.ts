@@ -5,7 +5,7 @@ import { xiaozhou } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "视频剪辑师",
         name: "周予",
@@ -18,14 +18,14 @@ const resumeData: any = {
       },
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>1、</strong>熟练使用 Premiere Pro、After Effects 与 DaVinci Resolve，能独立完成素材整理、叙事剪辑、调色与包装交付，熟悉 4K 横屏及 9:16 竖屏等多规格成片输出。</p><p><strong>2、</strong>熟悉品牌 TVC、产品广告、人物访谈与社交媒体短视频的制作节奏，具备镜头语言和音乐节奏把控能力，单条成片交付周期可控制在 3 个工作日内。</p>",
       },
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -42,7 +42,7 @@ const resumeData: any = {
       ],
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -58,7 +58,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},

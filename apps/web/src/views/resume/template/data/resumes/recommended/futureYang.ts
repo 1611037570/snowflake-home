@@ -4,7 +4,7 @@ import { xiaoyang } from "../../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         name: "未来羊",
         position: "资深前端工程师",
@@ -24,21 +24,21 @@ const resumeData: any = {
       },
     },
     account: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "技术博客", url: "https://portfolio.example.com/future-yang/blog" } },
         { ui: {}, data: { name: "开源主页", url: "https://www.example.com/future-yang/open-source" } },
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>工程体系：</strong>十年以上前端研发经验，主导中后台体系、微前端架构、跨端研发框架与组件库基建落地，熟悉 Monorepo、CI/CD 与前端监控治理。</p><p><strong>技术栈：</strong>精通 JavaScript、TypeScript、Vue3、React 与 Node.js，熟练使用 Vite、Webpack、Turborepo 与 pnpm 构建工具链。</p><p><strong>性能治理：</strong>擅长首屏加载、包体积与运行时性能优化，具备大规模线上性能问题定位与治理经验。</p><p><strong>团队建设：</strong>具备技术方案评审、代码规范建设与前端团队带教经验，能够推动跨团队技术协同。</p>",
       },
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -58,7 +58,7 @@ const resumeData: any = {
       ],
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -92,7 +92,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -142,7 +142,7 @@ const resumeData: any = {
       ],
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "公司年度技术贡献奖" } },
         { ui: {}, data: { name: "前端技术委员会核心成员" } },

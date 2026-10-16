@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "新媒体",
         name: "沈禾",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>内容制作：</strong>熟练使用剪映专业版、Premiere Pro、Photoshop 与 Canva，能够独立完成农产品短视频的脚本撰写、拍摄分镜、剪辑包装与封面设计。</p><p><strong>平台与数据：</strong>熟悉抖音、小红书、视频号与淘宝直播的运营规则，掌握巨量千川、新抖、蝉妈妈与蒲公英平台的数据分析、达人筛选和投放复盘方法。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度优秀内容运营奖" } },
         { ui: {}, data: { name: "农产品品牌传播创新奖" } },

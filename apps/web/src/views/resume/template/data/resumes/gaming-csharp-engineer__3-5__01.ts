@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "C#工程师",
         name: "沈亦",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>引擎与语言：</strong>熟练使用 C#、.NET 与 Unity3D，掌握 UGUI、DOTween、Addressables、HybridCLR 与 XLua，能够独立完成客户端模块设计与落地。</p><p><strong>游戏开发与工具链：</strong>熟悉状态同步与帧同步战斗流程、Protobuf 协议、行为树与技能配置表；可使用 Unity Profiler 定位 GC Alloc、DrawCall 与内存问题，并通过 Git、Jenkins 完成多平台打包与持续集成。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度优秀技术贡献奖" } },
         { ui: {}, data: { name: "版本攻坚专项奖" } },

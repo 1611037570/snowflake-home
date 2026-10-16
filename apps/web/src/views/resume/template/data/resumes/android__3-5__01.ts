@@ -5,7 +5,7 @@ import { xiaoyang } from "../avatar";
 const resumeData: any = {
   data: {
     user: {
-      ui: { archived: false },
+      ui: {},
       data: {
         position: "Android",
         name: "范一鸣",
@@ -19,7 +19,7 @@ const resumeData: any = {
       },
     },
     work: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -52,7 +52,7 @@ const resumeData: any = {
       ],
     },
     project: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -85,7 +85,7 @@ const resumeData: any = {
       ],
     },
     education: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         {
           ui: {},
@@ -105,14 +105,14 @@ const resumeData: any = {
       ],
     },
     skill: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       data: {
         content:
           "<p><strong>客户端开发：</strong>精通 Kotlin 与 Java，熟悉 Jetpack Compose、Coroutines、Flow 与 MVVM 架构，掌握组件化路由、插件化与热修复方案，熟悉 NDK 与 JNI 基础开发。</p><p><strong>性能与工程：</strong>熟练使用 Systrace、Perfetto 与 LeakCanary 定位卡顿与内存泄漏，掌握 Gradle 构建优化、APK 瘦身与混淆配置，具备崩溃治理与灰度发布落地经验。</p>",
       },
     },
     honor: {
-      ui: { collapsed: ["1"], archived: false },
+      ui: { collapsed: ["1"]},
       list: [
         { ui: {}, data: { name: "年度客户端质量贡献奖" } },
         { ui: {}, data: { name: "配网体验优化专项表彰" } },
