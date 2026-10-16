@@ -1,6 +1,11 @@
 /** 全站统一的站点图标，避免每条路由重复声明。 */
 const FAVICON = "/favicon.ico";
 
+export interface CatalogCounts {
+  exampleCount: number; // 已登记的简历范本数量。
+  templateCount: number; // 已登记的排版模板数量。
+}
+
 /** 单个语言的页面信息。 */
 interface LocaleMetadata {
   /** 浏览器标签标题。 */
@@ -58,18 +63,18 @@ export const SITE_CONFIGS: SiteConfig[] = [
     priority: 1.0,
     locales: {
       zh: {
-        title: "轻舟简历 - 免费在线简历制作，免注册导出PDF模板",
+        title: "轻舟简历 - 免费在线简历制作与导出、免注册、多款简历范本与模板",
         description:
-          "轻舟简历是一款免费的在线简历制作工具，内置多套专业模板，支持在线编辑、AI 智能优化、Markdown 与 PDF 一键导出，无需注册登录，浏览器打开即用。",
+          "轻舟简历提供 {exampleCount} 份简历范本与 {templateCount} 种排版模板，支持在线编辑、AI 优化和 PDF 导出；可选择适合 ATS 投递的简洁排版，无需注册。",
         keywords:
-          "轻舟简历,Skiff Resume,免费简历,免费简历模板,在线简历制作,简历生成器,AI简历,简历编辑器,简历模板下载,导出PDF简历",
+          "轻舟简历,Skiff Resume,简历范本,简历模板,ATS简历模板,在线简历制作,免费简历,AI简历,导出PDF简历",
       },
       en: {
-        title: "Skiff Resume - Free Online Resume Builder and Templates",
+        title: "Skiff Resume - Free Online Resume Builder, Examples and Templates",
         description:
-          "Skiff Resume is a free online resume builder with ready-made templates. Edit online, improve with AI, and export to Markdown or PDF without signing up.",
+          "Skiff Resume offers {exampleCount} resume examples and {templateCount} layout templates. Edit online, improve with AI, export to PDF, and choose clear layouts for ATS applications without signing up.",
         keywords:
-          "Skiff Resume,轻舟简历,free resume builder,free resume templates,online resume maker,resume generator,AI resume,resume editor,export resume PDF",
+          "Skiff Resume,轻舟简历,resume examples,resume templates,ATS resume templates,free resume builder,AI resume,export resume PDF",
       },
     },
   },
@@ -79,17 +84,17 @@ export const SITE_CONFIGS: SiteConfig[] = [
     priority: 0.9,
     locales: {
       zh: {
-        title: "免费简历模板 - 在线套用范本并导出 PDF | 轻舟简历",
+        title: "简历范本与模板 - ATS 投递排版、在线制作 | 轻舟简历",
         description:
-          "轻舟简历提供多套免费简历模板，覆盖互联网、金融、教育等行业以及校招、实习、留学等场景，选中即可在线编辑并导出 PDF，无需注册。",
-        keywords: "简历模板,免费简历模板,简历模板下载,个人简历模板,校招简历模板,实习简历模板,留学简历模板",
+          "浏览 {exampleCount} 份简历范本和 {templateCount} 种排版模板，按岗位与场景挑选内容范本，或选择适合 ATS 投递的简洁单栏样式；在线编辑并导出 PDF。",
+        keywords: "简历范本,简历模板,ATS简历模板,免费简历模板,简历模板下载,校招简历范本,实习简历范本",
       },
       en: {
-        title: "Free Resume Templates - Customize Online and Export PDF | Skiff Resume",
+        title: "Resume Examples and Templates - ATS-Friendly Layouts | Skiff Resume",
         description:
-          "Browse free resume templates for tech, finance and education roles, covering campus, internship and study-abroad cases. Pick one, edit online and export to PDF without signing up.",
+          "Browse {exampleCount} resume examples and {templateCount} layout templates. Pick a role-based example or a clear single-column layout for ATS applications, edit online and export to PDF.",
         keywords:
-          "resume templates,free resume templates,resume template download,campus resume template,internship resume template",
+          "resume examples,resume templates,ATS resume templates,free resume templates,campus resume examples,internship resume examples",
       },
     },
   },
@@ -197,10 +202,18 @@ export const resolveSiteMetadata = (
   language: string,
   /** 初始入口路由，由调用方从环境变量传入 */
   entryRoute: string,
+  counts: CatalogCounts, // 构建或运行时从实际清单取得的范本与模板数量。
 ): SiteMetadata => {
   const site = pickSite(path) || pickSite(entryRoute) || SITE_CONFIGS[0]!;
+  const localized = site.locales[language.startsWith("en") ? "en" : "zh"];
+  const fillCounts = (value: string) =>
+    value
+      .replaceAll("{exampleCount}", String(counts.exampleCount))
+      .replaceAll("{templateCount}", String(counts.templateCount));
   return {
-    ...site.locales[language.startsWith("en") ? "en" : "zh"],
+    ...localized,
+    title: fillCounts(localized.title),
+    description: fillCounts(localized.description),
     favicon: FAVICON,
     noindex: site.noindex ?? false,
   };

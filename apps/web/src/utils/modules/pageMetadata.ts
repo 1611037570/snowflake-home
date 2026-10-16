@@ -1,6 +1,8 @@
 import { config } from "@/configs";
 import { ALL_PAGE } from "@/configs/modules/page";
 import { resolveSiteMetadata, SITE_CONFIGS } from "../../../site.config";
+import { resumeTemplateList } from "@/views/resume/template/data/list";
+import { themeTemplateList } from "@/domain/resume/theme/styles";
 
 /** 当前已完成导航的路由信息。 */
 interface MetadataRoute {
@@ -34,7 +36,11 @@ const setProperty = (property: string, content: string) => {
 
 // 路由与语言共同驱动页面信息，统一覆盖旧页面的描述、关键词、收录指令与主链接。
 export const updatePageMetadata = (route: MetadataRoute, language: string) => {
-  const metadata = resolveSiteMetadata(route.path, language, config.app.defaultRoute);
+  // 浏览器与构建期均从实际范本和主题清单取得 SEO 数量。
+  const metadata = resolveSiteMetadata(route.path, language, config.app.defaultRoute, {
+    exampleCount: resumeTemplateList.length, // 简历范本的真实条目数。
+    templateCount: themeTemplateList.length, // 排版模板的真实条目数。
+  });
   const pageName = typeof route.meta.pageName === "string"
     ? route.meta.pageName
     : route.path.split("/").filter(Boolean).join("-");

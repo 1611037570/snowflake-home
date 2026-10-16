@@ -37,6 +37,7 @@ import { TinyVueSingleResolver } from "@opentiny/unplugin-tiny-vue";
 import { resolveSiteMetadata } from "./site.config";
 // 站点地图与 robots 的构建期生成插件
 import { seoFilesPlugin } from "./scripts/seoFiles";
+import { getCatalogCounts } from "./scripts/catalogCounts";
 
 /**
  * 版本注入插件
@@ -122,6 +123,8 @@ export default ({ mode }: { mode: string }) => {
   const isProd = mode === "production";
   // 从环境变量中提取配置项
   const settings = readEnvironment(env);
+  // 每次启动构建都从范本与主题注册清单重新统计 SEO 数量。
+  const catalogCounts = getCatalogCounts();
   return defineConfig({
     // 将 .awebp（动画 webp）视为静态资源
     assetsInclude: ["**/*.awebp"],
@@ -163,7 +166,15 @@ export default ({ mode }: { mode: string }) => {
               settings.defaultRoute,
               settings.defaultLanguage,
               settings.defaultRoute,
+              catalogCounts,
             ),
+            // 同一份 index.html 在应用加载前按公开路由设置构建期页面信息。
+            resumeSeoMetadata: JSON.stringify(Object.fromEntries(
+              ["/resume", "/resume/template"].map((route) => [
+                route,
+                resolveSiteMetadata(route, settings.defaultLanguage, settings.defaultRoute, catalogCounts),
+              ]),
+            )).replaceAll("<", "\\u003c"),
           },
         },
       }),
