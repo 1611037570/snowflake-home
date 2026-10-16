@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "浅色海报", // 主题显示名称
   id: "lightPoster" as const, // 主题与页眉外观的匹配编号
-  design: ["single-column", "polished"], // 单栏与精致分类
+  design: ["single-column", "polished", "recommended"], // 保留单栏与精美归属，同时进入推荐。
   description: "暖粉浅底页眉、醒目姓名与右侧头像，正文沿用细线标题。", // 主题说明
   decisions: { // 固定页面版式与页眉范围
     layoutType: "topUserSingleColumn", // 个人信息置顶，正文单栏

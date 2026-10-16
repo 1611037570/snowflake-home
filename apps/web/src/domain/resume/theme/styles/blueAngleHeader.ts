@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "蓝色折角", // 主题显示名称
   id: "blueAngleHeader" as const, // 主题编号
-  design: ["single-column", "minimal"], // 单栏与简约分类
+  design: ["single-column", "minimal", "recommended"], // 保留单栏与简约归属，同时进入推荐。
   description: "顶部折角蓝线、横向个人信息和斜角标签标题。", // 主题说明
   decisions: { // 主题固定版式
     layoutType: "topUserSingleColumn", // 个人信息置顶、正文单栏

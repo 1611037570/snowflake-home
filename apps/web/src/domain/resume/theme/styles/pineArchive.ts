@@ -3,7 +3,7 @@ import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThe
 export default {
   name: "松墨档案", // 主题显示名称
   id: "pineArchive" as const, // 主题编号
-  design: ["single-column", "polished"], // 单栏与精美分类
+  design: ["single-column", "polished", "recommended"], // 保留单栏与精美归属，同时进入推荐。
   description: "松绿色几何页眉、浅色个人信息底板与色块引线标题。", // 主题说明
   decisions: { // 主题固定版式与装饰能力
     layoutType: "topUserSingleColumn", // 个人信息通栏置顶，正文单栏
