@@ -383,6 +383,8 @@ const sample = await data.loadResumeTemplateData("allFields.ts");
 - 移除归档状态写入方法 `setModuleArchived` 与归档相关图标、中英文文案（`archive`、`archiveConfirm`、`archiveMessage`、`archiveCount`、`archived`、`restoreArchive`、`restoreArchivedBeforeEdit`、`restore`），首页编辑器卖点文案由「模块增删、隐藏与归档」改为「模块增删与隐藏」。
 - 按范本同步约定，删除全部范本文件中的 `ui.archived` 字段；动态表单的通用 `checks.removed` 协议保留（引擎能力，本次不再有简历字段使用）。
 - 验证：国际化语言包检查通过；受影响的六个组件脚本与模板编译通过，静态检查无新增告警；动态表单、简历状态仓库与助手字段注册相关用例 18 个文件 87 项中 86 项通过，字段顺序用例在改动前即为失败；未进行真实浏览器视觉核验。
+- 使用方排查：全仓库检索 `archived`、`setModuleArchived`、`isFieldRemoved`、`checks` 与「归档」后确认简历侧已无读取或写入方；空目录 `panel/form/components/module` 随组件删除一并清理（目录空置，不产生提交差异）。
+- 有意保留项：动态表单引擎的 `checks.removed` 能力按通用契约保留，未改动引擎代码与用例；`configs/modules/icon.ts` 是全项目在线图标登记表（未登记的名称会触发图标失败事件），已保存数据与自定义模块图标可能按名称引用这两个图标，故不随本次删除；历史快照 `.workbuddy/memory/` 与 `knowledges/动态表单出口收敛设计.md` 记录的是当时状态，不随本次改动调整。
 
 ### 简历模块表单扩展
 
