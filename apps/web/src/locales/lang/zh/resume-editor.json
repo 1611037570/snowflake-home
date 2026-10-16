@@ -360,7 +360,6 @@
   "exportResume": "导出简历",
   "exportFormat": "导出格式",
   "exportFormatDescription": "选择适合你的简历格式，用于投递、分享或备份",
-  "exportFormatTip": "正式投递建议使用 PDF；分享可选择长图，备份恢复请选择 JSON。",
   "exportCloudPrivacyTip": "云端导出会临时上传简历数据，仅用于生成文件。轻舟简历不会在服务器保存简历内容或导出文件。",
   "exportMobileTip": "手机或平板推荐选择 PDF 云端导出，减少不同移动浏览器打印造成的分页和排版差异。",
   "resumeConfig": "简历配置",

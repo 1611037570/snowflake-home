@@ -153,9 +153,8 @@ const a = {
           class="flex items-start gap-3 rounded-2xl border border-sf-b bg-sf-bg p-3 text-sm leading-6 text-sf-text-2"
         >
           <SfIcon icon="mdi:file-document-outline" size="5" class="shrink-0 text-sf-theme" />
-          <!-- 导出建议分段说明格式选择、云端数据处理和移动端排版差异。 -->
+          <!-- 导出建议仅说明云端数据处理和移动端排版差异。 -->
           <div class="min-w-0 space-y-3">
-            <p>{{ $t("exportFormatTip") }}</p>
             <p>{{ $t("exportCloudPrivacyTip") }}</p>
             <p>{{ $t("exportMobileTip") }}</p>
           </div>
