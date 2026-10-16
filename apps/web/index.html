@@ -63,6 +63,47 @@
         ]
       }
     </script>
+    <script>
+      // 打包时写入公开路由的信息，应用脚本加载前按地址更新同一个 index.html。
+      (() => {
+        const pages = <%- resumeSeoMetadata %>;
+        const route = window.location.pathname.replace(/\/+$/, "") || "/";
+        const page = pages[route];
+        if (!page) return;
+        const origin = <%- JSON.stringify(siteUrl) %> || window.location.origin;
+        const url = `${origin.replace(/\/+$/, "")}${route}`;
+        const updateTag = (selector, value) => {
+          const tag = document.querySelector(selector);
+          if (tag) tag.setAttribute("content", value);
+        };
+        document.title = page.title;
+        updateTag('meta[name="description"]', page.description);
+        updateTag('meta[name="keywords"]', page.keywords);
+        updateTag('meta[property="og:title"]', page.title);
+        updateTag('meta[property="og:description"]', page.description);
+        updateTag('meta[property="og:url"]', url);
+        updateTag('meta[name="twitter:title"]', page.title);
+        updateTag('meta[name="twitter:description"]', page.description);
+        let canonical = document.querySelector('link[rel="canonical"]');
+        if (!canonical) {
+          canonical = document.createElement("link");
+          canonical.rel = "canonical";
+          document.head.appendChild(canonical);
+        }
+        canonical.href = url;
+        // 模板页描述的是范本与排版样式集合，不沿用首页的产品结构化数据。
+        if (route === "/resume/template") {
+          const schema = document.querySelector('script[type="application/ld+json"]');
+          if (schema) schema.textContent = JSON.stringify({
+            "@context": "https://schema.org", // 结构化数据词汇表。
+            "@type": "CollectionPage", // 模板集合页面类型。
+            name: page.title, // 页面标题。
+            description: page.description, // 页面描述。
+            url, // 当前页面地址。
+          });
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

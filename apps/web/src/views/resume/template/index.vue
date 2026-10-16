@@ -269,6 +269,13 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
       :load-more="loadNextTemplates"
       :reset-key="templateGridKey"
     >
+      <!-- 页面主题与真实条目数在可见内容中说明，和 SEO 文案使用同一份清单。 -->
+      <header class="mb-3">
+        <h1 class="text-lg font-bold text-sf-text">{{ $t("resumeTemplateTitle") }}</h1>
+        <p class="mt-3 text-sm text-sf-text-2">
+          {{ $t("resumeTemplateSeoIntro", { examples: resumeTemplateList.length, templates: resumeStyleTemplateList.length }) }}
+        </p>
+      </header>
       <TemplateCategory
         @change="setTemplateFilters"
         @category-change="setCurrentTopCategory"
