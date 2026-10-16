@@ -21,6 +21,7 @@ const props = defineProps({
 
 const scrollbarRef = ref(null);
 const contentRef = ref(null);
+const loadingRef = ref(null);
 const loadingMore = ref(false);
 const paused = ref(false);
 
@@ -57,6 +58,20 @@ watch(
     if (!loading) nextTick(checkBottom);
   },
 );
+// 触底加载时将提示滚入可视区底部，新增卡片后保留原滚动位置。
+watch(
+  () => loadingMore.value || (props.loading && props.count > 0),
+  async (loading) => {
+    if (!loading) return;
+    const wrap = scrollbarRef.value?.wrapRef;
+    if (!wrap || wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight > 200) return;
+    await nextTick();
+    const indicator = loadingRef.value;
+    if (!indicator) return;
+    const distance = indicator.getBoundingClientRect().bottom - wrap.getBoundingClientRect().bottom;
+    if (distance > 0) scrollbarRef.value?.setScrollTop(wrap.scrollTop + distance);
+  },
+);
 useResizeObserver(contentRef, checkBottom);
 </script>
 
@@ -67,6 +82,7 @@ useResizeObserver(contentRef, checkBottom);
       <!-- 各列表共用加载中与结束状态，避免不同入口出现不同提示。 -->
       <div
         v-if="loadingMore || (loading && count > 0)"
+        ref="loadingRef"
         class="flex items-center justify-center gap-3 py-3 text-sm text-sf-text-2"
         role="status"
         aria-busy="true"
