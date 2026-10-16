@@ -85,10 +85,17 @@ export const useLayoutMeasurements = ({
   let frameHandle = 0;
   let stopped = false; // 作用域结束后不再读取宿主或回写测量
   let frameUsesTimeout = false; // 记录调度方式，使用对应取消入口
+  let fullMeasurePending = true; // 宿主或排版配置变化时重新读取全部节点
+  const dirtyNodeIds = new Set<string>(); // 内容和尺寸变化时只读取受影响节点
+  let lastRootWidth = 0; // 宿主宽度变化会改变所有文字换行
 
-  const measure = async () => {
+  const measure = async (forceFull = true) => {
     if (stopped || measuring) return;
     const measuringAt = dirtyAt;
+    const measureAll = forceFull || fullMeasurePending;
+    const nodeIds = new Set(dirtyNodeIds);
+    fullMeasurePending = false;
+    dirtyNodeIds.clear();
     measuring = true;
     await nextTick();
     if (stopped) { measuring = false; return; }
@@ -98,6 +105,7 @@ export const useLayoutMeasurements = ({
       measurements.value = new Map();
       measureDone.value = false;
       decorationHeight.value = 0;
+      fullMeasurePending = true;
       measuring = false;
       return;
     }
@@ -109,19 +117,27 @@ export const useLayoutMeasurements = ({
     ) resizeTargets.value = nextTargets;
     let nextMeasurements: Map<string, MeasuredNode>;
     try {
-      nextMeasurements = measureLayoutNodes(root, nodes.value);
+      // 节点内容复用已有实测值；只读改动节点并剔除已删除节点。
+      const measured = measureLayoutNodes(root, nodes.value, measureAll ? undefined : nodeIds);
+      const activeIds = new Set(nodes.value.map((node) => node.id));
+      nextMeasurements = measureAll ? measured : new Map(
+        [...measurements.value].filter(([id]) => activeIds.has(id)),
+      );
+      if (!measureAll) measured.forEach((value, id) => nextMeasurements.set(id, value));
       measurementError.value = "";
     } catch (error) {
       // 失败计划不能沿用旧测量；释放调度锁，修正配置后仍可重新测量。
       measurementError.value = error instanceof Error ? error.message : String(error);
       measurements.value = new Map();
       measureDone.value = false;
+      fullMeasurePending = true;
       measuredAt = measuringAt;
       measuring = false;
       if (dirtyAt !== measuringAt) scheduleMeasure();
       return;
     }
     measurements.value = nextMeasurements;
+    lastRootWidth = root.getBoundingClientRect().width;
     decorationHeight.value = root.querySelector<HTMLElement>("[data-layout-decoration]")?.getBoundingClientRect().height ?? 0;
     measuredAt = measuringAt;
     measureDone.value = nodes.value.every((node) => nextMeasurements.has(node.id));
@@ -135,7 +151,7 @@ export const useLayoutMeasurements = ({
     const run = () => {
       frameHandle = 0;
       if (measuredAt === dirtyAt) return;
-      void measure();
+      void measure(false);
     };
     // 优先合并到下一帧，缺少 requestAnimationFrame 时退回宏任务
     frameUsesTimeout = typeof requestAnimationFrame !== "function";
@@ -143,8 +159,10 @@ export const useLayoutMeasurements = ({
   };
 
   /** 标记测量结果过期：同步作废，实际测量合并到下一帧 */
-  const requestMeasure = () => {
+  const requestMeasure = (nodeIds?: Iterable<string>) => {
     if (stopped) return;
+    if (nodeIds) for (const id of nodeIds) dirtyNodeIds.add(id);
+    else fullMeasurePending = true;
     dirtyAt += 1; // 单调版本避免同一时刻的变更被误判为已测量
     measureDone.value = false;
     measurementError.value = "";
@@ -153,12 +171,40 @@ export const useLayoutMeasurements = ({
 
   const stopWatch = watch(
     [measureRef, nodes, () => resolveWatchSignature(watchSource.value)],
-    () => requestMeasure(),
+    ([root, nextNodes, signature], [previousRoot, previousNodes, previousSignature]) => {
+      if (root !== previousRoot || signature !== previousSignature || !previousNodes) {
+        requestMeasure();
+        return;
+      }
+      // 节点构建器会复用未改变的对象引用，按编号找出真正需要重测的节点。
+      const previousById = new Map(previousNodes.map((node) => [node.id, node]));
+      const changed = nextNodes.filter((node) => previousById.get(node.id) !== node).map((node) => node.id);
+      requestMeasure(changed);
+    },
     { immediate: true, flush: "sync" },
   );
 
-  // 尺寸变化由浏览器报告，与图谱变更一并合并到同一帧测量
-  const { stop: stopResize } = useResizeObserver(resizeTargets, () => requestMeasure());
+  // 尺寸变化只重测对应模块；宿主宽度或未知元素变化仍全量测量。
+  const { stop: stopResize } = useResizeObserver(resizeTargets, (entries) => {
+    if (!entries?.length) { requestMeasure(); return; }
+    const root = unrefElement(measureRef);
+    const changed = new Set<string>();
+    const hasChildEntry = entries.some((entry) => entry.target !== root);
+    for (const entry of entries) {
+      const target = entry.target as HTMLElement;
+      if (target === root) {
+        if (target.getBoundingClientRect().width !== lastRootWidth || !hasChildEntry) { requestMeasure(); return; }
+        continue;
+      }
+      if (target.matches("[data-layout-decoration]")) continue;
+      const module = target.matches("[data-layout-module]") ? target : target.closest<HTMLElement>("[data-layout-module]");
+      if (module) {
+        module.querySelectorAll<HTMLElement>("[data-layout-node-id]").forEach((node) => changed.add(node.dataset.layoutNodeId || ""));
+      } else if (target.dataset.layoutNodeId) changed.add(target.dataset.layoutNodeId);
+      else { requestMeasure(); return; }
+    }
+    requestMeasure(changed);
+  });
 
   // 清理由管线绑定作用域，调用方无需手动配对。
   const stop = () => {

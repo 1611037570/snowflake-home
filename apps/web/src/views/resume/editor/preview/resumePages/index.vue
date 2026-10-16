@@ -12,7 +12,6 @@ import ColumnBox from "./render/columnBox.vue";
 import RegionContainer from "@/views/resume/theme/components/regionContainer/index.vue";
 import PageDecoration from "@/views/resume/theme/components/pageDecoration/index.vue";
 import { useResumeLayout } from "./engine/useResumeLayout";
-import { resolveRegionGap } from "./engine/layout/regionFlows";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { resolveThemePageAppearance, resolveResumeUi, resolveThemeDecisions } from "@/views/resume/theme";
 import { provideResumePreviewContext } from "../shared/previewContext";
@@ -250,20 +249,6 @@ const columnConfigMap = computed(
 const getColumnGap = (columnId) => columnConfigMap.value.get(columnId)?.gap || 0;
 // 首页顶端通栏占位由公共布局读取主题能力后结算。
 const pageTopRegionId = (page) => page.pageIndex === 0 ? fullBleedTopRegionId.value : null;
-const getRegionTopGap = (page, regionId) => {
-  const visibleRegions = page.regions.filter((region) =>
-    region.columns.some((column) => column.fragments.length > 0),
-  );
-  const index = visibleRegions.findIndex((region) => region.regionId === regionId);
-  if (index <= 0) return 0;
-  const previousId = visibleRegions[index - 1].regionId;
-  const previousRegion = layout.value.regions.find((region) => region.id === previousId);
-  const currentRegion = layout.value.regions.find((region) => region.id === regionId);
-  return resolveRegionGap(previousRegion, currentRegion);
-};
-// 区域留白以引擎结算结果为准：布局注入的页面上边距等必须一起渲染，否则视觉与分页口径会分叉
-const getRegionPadding = (regionId) =>
-  layout.value.regions.find((region) => region.id === regionId)?.padding;
 // 预览就绪：空简历直接展示提示页，其余以新引擎完成测量为准。
 const previewMeasured = computed(() => isEmpty.value || measureDone.value);
 const visiblePages = computed(() => (isThumb.value ? pages.value.slice(0, 1) : pages.value));
@@ -387,15 +372,15 @@ defineExpose({
               <template v-for="region in page.regions" :key="region.regionId">
                 <!-- 模块间距渲染成两个区域之间的独立间隙：两侧区域都不含这段高度 -->
                 <div
-                  v-if="getRegionTopGap(page, region.regionId) > 0"
+                  v-if="region.gapBefore > 0"
                   class="shrink-0"
                   :class="{ 'resume-debug-gap': showLayoutDebug }"
-                  :style="{ height: `${getRegionTopGap(page, region.regionId)}px` }"
+                  :style="{ height: `${region.gapBefore}px` }"
                 />
                 <RegionContainer
                   v-if="region.columns.some((column) => column.fragments.length > 0)"
                   :region-id="region.regionId"
-                  :region-padding="getRegionPadding(region.regionId)"
+                  :region-padding="regionConfigMap.get(region.regionId)?.padding"
                   :column-gap="regionConfigMap.get(region.regionId)?.columnGap"
                   :full-bleed="region.regionId === pageTopRegionId(page)"
                   class="flex w-full min-w-0"
