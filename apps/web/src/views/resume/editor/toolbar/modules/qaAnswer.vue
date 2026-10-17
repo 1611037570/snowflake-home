@@ -1,24 +1,61 @@
 <script setup>
-import { computed, ref } from "vue";
-import { isChrome } from "@/utils";
+import { computed, reactive, ref } from "vue";
+import { isChrome, isSafari } from "@/utils";
+import eventBus from "@/utils/modules/eventBus";
 import { DOWNLOAD_URL, RECOMMEND_BROWSER } from "@/components/business/browserTip";
 import { $t } from "@/locales";
 
 // QA 解答弹窗可见性
 const visible = ref(false);
-// 非推荐浏览器：QA 图标切换为感叹号，弹窗内展示浏览器建议
-const notChrome = computed(() => !isChrome());
+// 非推荐浏览器：谷歌与苹果 Safari 之外才提示更换浏览器
+const notSupportedBrowser = computed(() => !isChrome() && !isSafari());
+
+// 问答条目：默认收起，逐条展开
+const openedMap = reactive({});
+const toggleItem = (id) => {
+  openedMap[id] = !openedMap[id];
+};
+
+// 条目清单：浏览器推荐、预览样式疑问与导出失败排查
+const qaItems = computed(() => [
+  {
+    id: "browser",
+    icon: notSupportedBrowser.value ? "mdi:alert-circle" : "mdi:google-chrome",
+    title: $t("qaBrowserTitle"),
+  },
+  {
+    id: "style",
+    icon: "mingcute:question-line",
+    title: $t("qaStyleTitle"),
+  },
+  {
+    id: "export",
+    icon: "mdi:file-pdf-box",
+    title: $t("qaExportTitle"),
+  },
+]);
+
+// 切换到标准 A4 查看真实排版，并关闭弹窗
+const showStandardA4 = () => {
+  visible.value = false;
+  eventBus.emit("resume-standard-a4");
+};
+
+// 样式确实与预览不符时，引导到 GitHub Issues 反馈
+const reportIssue = () => {
+  window.open("https://github.com/1611037570/snowflake-home/issues", "_blank", "noopener,noreferrer");
+};
 </script>
 
 <template>
   <!-- 右侧工具栏区域的 QA 解答入口 -->
   <SfTooltip :content="$t('qaAnswer')" placement="left">
     <SfIcon
-      :icon="notChrome ? 'mdi:alert-circle' : 'mdi:chat-question-outline'"
+      :icon="notSupportedBrowser ? 'mdi:alert-circle' : 'mdi:chat-question-outline'"
       size="5"
       boxSize="10"
       :class="
-        notChrome
+        notSupportedBrowser
           ? 'relative cursor-pointer rounded-full bg-sf-warning-2 text-sf-warning'
           : 'relative cursor-pointer rounded-full bg-gradient-to-br from-sf-theme to-sf-theme-2 text-sf-theme-text'
       "
@@ -26,24 +63,56 @@ const notChrome = computed(() => !isChrome());
     />
   </SfTooltip>
 
-  <!-- QA 解答弹窗：内容待补充 -->
   <SfModal v-model="visible" :title="$t('qaAnswer')">
-    <div class="flex w-[400px] flex-col gap-5 p-4">
-      <!-- 浏览器建议：非推荐浏览器时展示推荐与下载入口 -->
+    <div class="flex w-[360px] flex-col gap-3">
       <div
-        class="flex flex-col items-start gap-2 rounded-xl bg-sf-warning-2 p-3 text-sm text-sf-warning"
+        v-for="item in qaItems"
+        :key="item.id"
+        class="overflow-hidden rounded-xl border border-sf-b bg-sf-bg"
       >
-        <span
-          >{{ $t("qaBrowserMessage").replace("谷歌浏览器", RECOMMEND_BROWSER) }}</span
+        <button
+          type="button"
+          class="flex w-full cursor-pointer items-center justify-between gap-3 p-3 text-left text-sm font-semibold text-sf-text"
+          :aria-expanded="Boolean(openedMap[item.id])"
+          @click="toggleItem(item.id)"
         >
-        <a
-          :href="DOWNLOAD_URL"
-          target="_blank"
-          class="rounded-full bg-sf-warning px-3 py-1 text-sf-theme-text"
-          >{{ $t("downloadRecommendedBrowser").replace("谷歌浏览器", RECOMMEND_BROWSER) }}</a
-        >
+          <span class="flex items-center gap-3">
+            <SfIcon :icon="item.icon" size="4" class="shrink-0 text-sf-text-2" />
+            {{ item.title }}
+          </span>
+          <SfIcon
+            icon="mingcute:down-line"
+            size="4"
+            class="shrink-0 text-sf-text-3 transition-transform duration-300"
+            :class="{ '-rotate-90': !openedMap[item.id] }"
+          />
+        </button>
+        <div v-show="openedMap[item.id]" class="border-t border-sf-b p-3 text-sm">
+          <template v-if="item.id === 'browser'">
+            <p class="leading-6 text-sf-text-2">
+              {{ $t("qaBrowserMessage").replace("谷歌浏览器", RECOMMEND_BROWSER) }}
+            </p>
+            <a
+              :href="DOWNLOAD_URL"
+              target="_blank"
+              class="mt-3 inline-block text-sf-theme underline"
+              >{{ $t("downloadRecommendedBrowser").replace("谷歌浏览器", RECOMMEND_BROWSER) }}</a
+            >
+          </template>
+          <template v-else-if="item.id === 'style'">
+            <p class="leading-6 text-sf-text-2">{{ $t("qaStyleMessage") }}</p>
+            <div class="mt-3 flex gap-3">
+              <SfButton class="flex-1" @click="showStandardA4">{{ $t("standardA4") }}</SfButton>
+              <SfButton class="flex-1" border @click="reportIssue">
+                {{ $t("qaStyleFeedback") }}
+              </SfButton>
+            </div>
+          </template>
+          <template v-else>
+            <p class="leading-6 text-sf-text-2">{{ $t("qaExportReference") }}</p>
+          </template>
+        </div>
       </div>
-      <!-- 内容区：待补充 -->
     </div>
   </SfModal>
 </template>

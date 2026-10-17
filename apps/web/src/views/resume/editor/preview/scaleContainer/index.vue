@@ -1,8 +1,9 @@
 <script setup>
 import { TransitionPresets, useDebounceFn, useResizeObserver, useTransition } from "@vueuse/core";
-import { computed, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import i18n, { $t } from "@/locales";
+import eventBus from "@/utils/modules/eventBus";
 import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
 import Font from "./toolbar/font.vue";
@@ -10,7 +11,6 @@ import Settings from "./toolbar/settings.vue";
 import MoreSettings from "./toolbar/moreSettings.vue";
 import TemplateSettings from "./toolbar/templateSettings.vue";
 import PrintMode from "./toolbar/printMode.vue";
-import StyleHint from "./toolbar/styleHint.vue";
 import Language from "./toolbar/language.vue";
 import OnePage from "./toolbar/onePage.vue";
 import More from "./toolbar/more.vue";
@@ -184,6 +184,10 @@ useResizeObserver(contentRef, ([entry]) => {
     height: entry.contentRect.height,
   };
 });
+
+// QA 弹窗里的样式疑问入口通过事件切换标准 A4，避免跨组件逐层传递
+onMounted(() => eventBus.on("resume-standard-a4", setStandardA4));
+onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
 </script>
 
 <template>
@@ -227,10 +231,9 @@ useResizeObserver(contentRef, ([entry]) => {
             @click="$emit('fullscreen')"
           />
         </SfTooltip>
-        <StyleHint @standard-a4="setStandardA4" />
       </div>
       <div class="flex items-center md:hidden">
-        <More @fullscreen="$emit('fullscreen')" @standard-a4="setStandardA4" />
+        <More @fullscreen="$emit('fullscreen')" />
       </div>
 
       <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
