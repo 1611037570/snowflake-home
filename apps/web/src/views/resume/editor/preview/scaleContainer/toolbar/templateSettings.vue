@@ -73,7 +73,14 @@ const pageBackground = computed({
   set: (value) => {
     if (getSettingRestriction("page.background")) return;
     const previous = currentUI.value?.page?.background || defaultPageBackground;
-    currentUI.value.page.background = value;
+    // 替换页面配置对象，确保分页预览、全屏预览与导出同时收到背景色变化。
+    currentUI.value = {
+      ...currentUI.value,
+      page: {
+        ...currentUI.value.page,
+        background: value,
+      },
+    };
     // 跨明暗切换背景时同步字体颜色，同明暗内换色不动字体
     if (isDarkBackground(value) !== isDarkBackground(previous)) syncFontColorWithBackground(value);
   },
@@ -88,12 +95,8 @@ const activeFontColorOptions = computed(() =>
 const themePageBackground = computed(
   () => themePresetUi.value.page.background || defaultPageBackground,
 );
-// 下方背景预设排除标题右侧已展示的主题背景，避免重复色块。
-const pageBackgroundOptions = computed(() =>
-  pageBackgroundColors.filter(
-    (option) => normalizeHexColor(option.value) !== normalizeHexColor(themePageBackground.value),
-  ),
-);
+// 固定背景预设始终完整展示，默认白色不因与主题背景重复而隐藏。
+const pageBackgroundOptions = computed(() => pageBackgroundColors);
 
 // 当前正文色不在阶梯内时按首档显示选中，主题自带的自定义色也能有一档选中态。
 const activeFontColor = computed(() => {
@@ -173,7 +176,6 @@ const resetPageBackground = () => {
                 'border-2 border-sf-theme': isPageBackgroundActive(themePageBackground),
                 'cursor-not-allowed! opacity-60': Boolean(getSettingRestriction('page.background')),
               }"
-              :style="{ backgroundColor: themePageBackground }"
               :aria-label="$t('themeDefaultOption')"
               :aria-pressed="isPageBackgroundActive(themePageBackground)"
               :disabled="Boolean(getSettingRestriction('page.background'))"
