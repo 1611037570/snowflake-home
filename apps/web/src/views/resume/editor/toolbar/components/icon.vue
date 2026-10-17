@@ -11,6 +11,10 @@ defineProps({
   size: {
     default: 6,
   },
+  active: {
+    type: Boolean, // 是否显示工具入口激活状态。
+    default: false, // 默认保持普通状态。
+  },
 });
 
 const emit = defineEmits(["onClick"]);
@@ -18,12 +22,13 @@ const emit = defineEmits(["onClick"]);
 
 <template>
   <SfTooltip :content="content" placement="left">
-    <div class="flex flex-col items-center gap-1">
+    <div class="flex items-center">
       <SfIcon
         :icon="icon"
         :size="size"
-        boxSize="8"
-        class="rounded-full bg-sf-bg-2 text-sf-base transition-all duration-400 hover:scale-115 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+        boxSize="9"
+        class="rounded-xl border bg-transparent transition-all duration-300 hover:scale-105 hover:border-sf-theme hover:text-sf-theme active:scale-95"
+        :class="active ? 'border-sf-theme text-sf-theme' : 'border-transparent text-sf-text-2'"
         @click="emit('onClick')"
       />
     </div>

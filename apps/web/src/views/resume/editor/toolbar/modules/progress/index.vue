@@ -81,7 +81,8 @@ const getProgressColor = (progress) => {
   <SfTooltip :content="tooltipText" placement="left">
     <button
       type="button"
-      class="flex h-9 w-12 shrink-0 cursor-pointer items-center justify-center text-sf-text-2 transition-colors hover:text-sf-theme"
+      class="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-xl border transition-all duration-300 hover:scale-105 hover:border-sf-theme hover:text-sf-theme active:scale-95"
+      :class="visible ? 'border-sf-theme text-sf-theme' : 'border-transparent text-sf-text-2'"
       @click="visible = true"
     >
       <div class="relative h-9 w-9">

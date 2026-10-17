@@ -60,8 +60,9 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
       <!-- <SfFooter /> -->
     </div>
   </main>
-  <IssueFeedback v-if="resumeReady && route.name !== 'resume-print'" />
-  <Share v-if="resumeReady && route.name !== 'resume-print'" />
+  <!-- 编辑器由右侧工具轨承接分享与反馈入口，避免重复显示悬浮操作。 -->
+  <IssueFeedback v-if="resumeReady && route.name !== 'resume-print' && route.name !== 'editor'" />
+  <Share v-if="resumeReady && route.name !== 'resume-print' && route.name !== 'editor'" />
 </template>
 
 <style lang="scss" scoped></style>

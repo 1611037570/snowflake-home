@@ -23,6 +23,7 @@ function resetSettings() {
   <Icon
     icon="iconamoon:settings-fill"
     :content="$t('systemSettings')"
+    :active="drawerVisible"
     @click="drawerVisible = true"
   />
 

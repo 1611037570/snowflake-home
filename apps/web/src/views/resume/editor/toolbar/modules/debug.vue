@@ -5,6 +5,7 @@
     icon="mdi:console-line"
     size="5"
     content="调试控制台"
+    :active="drawerVisible"
     @click="drawerVisible = !drawerVisible"
   />
 

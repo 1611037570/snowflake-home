@@ -53,11 +53,14 @@ const reportIssue = () => {
     <SfIcon
       :icon="notSupportedBrowser ? 'mdi:alert-circle' : 'mdi:chat-question-outline'"
       size="5"
-      boxSize="10"
+      boxSize="9"
+      class="transition-all duration-300 hover:scale-105 active:scale-95"
       :class="
         notSupportedBrowser
-          ? 'relative cursor-pointer rounded-full bg-sf-warning-2 text-sf-warning'
-          : 'relative cursor-pointer rounded-full bg-gradient-to-br from-sf-theme to-sf-theme-2 text-sf-theme-text'
+          ? 'relative cursor-pointer rounded-xl border border-sf-warning text-sf-warning'
+          : visible
+            ? 'relative cursor-pointer rounded-xl border border-sf-theme text-sf-theme'
+            : 'relative cursor-pointer rounded-xl border border-transparent text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme'
       "
       @click="visible = true"
     />

@@ -8,6 +8,9 @@ import Ai from "./modules/ai/index.vue";
 import System from "./modules/system/index.vue";
 import CopyResume from "./modules/copyResume.vue";
 import Progress from "./modules/progress/index.vue";
+import Donation from "./modules/donation.vue";
+import Share from "./modules/share.vue";
+import Feedback from "./modules/feedback.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
 import LiuyaoWenxin from "./modules/liuyaoWenxin.vue";
 import { $t } from "@/locales";
@@ -78,8 +81,14 @@ const toolbarItems = computed(() => [
 
   { key: "ai", component: Ai },
   { key: "system", component: System },
-  // ATS 参考入口固定在工具项末尾，显示于工具栏底部。
+  // ATS 参考入口固定在主要工具组末尾。
   { key: "progress", component: Progress },
+  { key: "separator-support", type: "separator" },
+  { key: "share", component: Share },
+  { key: "feedback", component: Feedback },
+  { key: "donation", component: Donation },
+  { key: "qa-answer", component: QaAnswer },
+  { key: "liuyao-wenxin", component: LiuyaoWenxin },
 ]);
 </script>
 
@@ -111,28 +120,26 @@ const toolbarItems = computed(() => [
     </button>
 
     <div
-      class="flex flex-col items-center justify-center gap-3"
+      class="flex flex-col items-center justify-center"
       :class="isMobile && 'mobile-toolbar-panel h-svh  border-l border-sf-b bg-sf-primary p-3'"
     >
       <div
-        class="relative flex w-[50px] flex-col items-center gap-2 rounded-3xl border border-sf-b bg-sf-transparent py-2 text-sf-text-3"
+        class="relative flex w-12 flex-col items-center gap-0 overflow-visible rounded-3xl border border-sf-b bg-sf-primary py-3 text-sf-text-3 shadow-sm transition-all duration-300 hover:border-sf-theme/40 hover:shadow-md"
         :class="{ 'shrink-0': isMobile }"
       >
         <!-- 简历 ID 固定显示在工具栏顶部。 -->
         <span
-          class="w-full border-b border-sf-b pb-2 text-center text-[9px] leading-3 text-sf-text-3"
+          class="flex w-full flex-col items-center gap-0 border-b border-sf-b pb-3 text-center text-[9px] leading-3 tracking-wider text-sf-text-3"
           :title="`ID ${currentItem?.id || ''}`"
         >
-          ID<br />{{ currentItem?.id }}
+          <span>ID</span>
+          <span class="max-w-9 truncate">{{ currentItem?.id }}</span>
         </span>
         <template v-for="item in toolbarItems" :key="item.key">
-          <div v-if="item.type === 'separator'" class="h-[0.5px] w-full bg-sf-bg-2"></div>
+          <div v-if="item.type === 'separator'" class="h-px w-6 bg-sf-b opacity-60"></div>
           <component v-else :is="item.component" v-bind="item.attrs" />
         </template>
       </div>
-      <!-- QA 解答与六爻入口按正常纵向布局排列 -->
-      <QaAnswer />
-      <LiuyaoWenxin />
     </div>
   </div>
 

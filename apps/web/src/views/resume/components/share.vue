@@ -6,6 +6,11 @@ import { SITE_URL } from "./config";
 const visible = ref(false);
 const shareCardRef = ref();
 
+// 统一打开分享弹窗，供默认悬浮入口和编辑器工具轨复用。
+const openShare = () => {
+  visible.value = true;
+};
+
 // 分享地址使用简历页面，并携带当前简历标识，不暴露编辑器路径
 const resumeUrl = computed(() => {
   return SITE_URL;
@@ -46,14 +51,16 @@ const goBuy = () => {
 </script>
 
 <template>
-  <!-- 分享入口位于问题反馈上方，并保留 12px 间距 -->
-  <div
-    class="flex-c fixed -right-30 bottom-20 z-50 cursor-pointer rounded-l-3xl bg-sf-theme p-3 text-sf-theme-text transition-all duration-300 hover:-translate-x-28"
-    @click="visible = true"
-  >
-    <SfIcon icon="ph:paper-plane-right-fill" size="5" />
-    <span class="pr-6 pl-3 text-sm whitespace-nowrap">分享{{ $t("core.router.resume") }}</span>
-  </div>
+  <slot name="trigger" :open="openShare" :visible="visible">
+    <!-- 分享入口位于问题反馈上方，并保留 12px 间距 -->
+    <div
+      class="flex-c fixed -right-30 bottom-20 z-50 cursor-pointer rounded-l-3xl bg-sf-theme p-3 text-sf-theme-text transition-all duration-300 hover:-translate-x-28"
+      @click="openShare"
+    >
+      <SfIcon icon="ph:paper-plane-right-fill" size="5" />
+      <span class="pr-6 pl-3 text-sm whitespace-nowrap">分享{{ $t("core.router.resume") }}</span>
+    </div>
+  </slot>
 
   <SfModal v-model="visible" title="分享轻舟简历">
     <div class="flex w-[360px] flex-col items-center gap-3">

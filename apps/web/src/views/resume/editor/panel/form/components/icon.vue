@@ -23,14 +23,17 @@ function handleClick(e) {
 </script>
 
 <template>
-  <!-- 编辑区删除图标仅在悬停时显示危险色，默认保留原有颜色。 -->
+  <!-- 编辑区操作图标悬停仅改变文字色，不增加背景底板。 -->
   <SfIcon
     :icon="icon"
-    :class="{ 'hover:text-sf-error': icon === 'ic:round-delete' }"
+    :class="{
+      'hover:text-sf-error': icon === 'ic:round-delete',
+      'hover:text-sf-theme': icon !== 'ic:round-delete',
+    }"
     size="4"
     boxSize="6"
     @click="handleClick"
-    class="cursor-pointer rounded-xl transition-all duration-300 hover:scale-110 hover:bg-sf-bg-3 active:scale-90"
+    class="cursor-pointer rounded-xl transition-all duration-300 hover:scale-110 active:scale-90"
   ></SfIcon>
 </template>
 

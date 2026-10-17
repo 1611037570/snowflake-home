@@ -34,7 +34,6 @@ import OnlineWriters from "../../../components/onlineWriters.vue";
       <div class="hidden h-5 w-px bg-sf-b md:block"></div>
       <!-- 快捷图标 -->
       <div class=""><SfTheme /></div>
-      <div class=""><SfDonation /></div>
       <div class=""><SfLocale /></div>
     </div>
   </header>

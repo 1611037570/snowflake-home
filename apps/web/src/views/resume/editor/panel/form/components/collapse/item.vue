@@ -50,7 +50,9 @@ function copyItem(event) {
   <SfCollapse v-model="collapsed" :border="false">
     <SfCollapseItem name="1" lazy class="resume-record-box">
       <template #title>
-        <div class="group flex h-full w-full items-center justify-between text-sf-text">
+        <div
+          class="group flex h-full w-full items-center justify-between text-sf-text transition-colors hover:text-sf-theme"
+        >
           <!-- 子记录标题适度加重，操作图标保留清晰度并区分层级。 -->
           <div class="flex min-w-0 flex-1 items-center text-[15px] font-semibold">
             <Icon
@@ -86,12 +88,12 @@ function copyItem(event) {
 <style lang="scss" scoped>
 @reference "@/styles/tailwind.css";
 
-/* 标题底色覆盖整条记录，展开时明确正文的所属范围。 */
+/* 记录标题保持轻量，仅用分隔线明确展开内容范围。 */
 .resume-record-box > :deep(.el-collapse-item__header) {
   @apply -mx-3 px-3;
 }
 .resume-record-box > :deep(.el-collapse-item__header.is-active) {
-  @apply bg-sf-bg;
+  @apply border-b! border-sf-b!;
 }
 /* 折叠箭头与操作图标保持同级颜色，取消正文默认底部留白。 */
 .resume-record-box > :deep(.el-collapse-item__header .el-collapse-item__arrow) {

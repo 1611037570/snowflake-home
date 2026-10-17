@@ -140,8 +140,8 @@ onUnmounted(() => {
     <button
       type="button"
       aria-label="打开六爻问心"
-      class="relative z-10 flex h-10 w-10 cursor-pointer flex-col items-center justify-evenly rounded-full border border-sf-theme/50 bg-sf-bg shadow-md shadow-sf-theme/20 transition-all duration-300"
-      :class="entryExpanded ? 'scale-110 border-sf-theme bg-sf-theme' : 'scale-100'"
+      class="relative z-10 flex h-10 w-10 cursor-pointer flex-col items-center justify-evenly rounded-xl border bg-transparent transition-all duration-300 hover:scale-105 hover:border-sf-theme active:scale-95"
+      :class="visible || entryExpanded ? 'border-sf-theme' : 'border-transparent'"
       @mouseenter="openEntry"
       @mouseleave="closeEntry"
       @click="visible = true"
