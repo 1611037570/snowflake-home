@@ -25,9 +25,6 @@ const { applications, followUps, isLanded } = storeToRefs(statisticsStore);
 
           <TrendChart v-if="applications.length || followUps.length" />
         </template>
-        <div class="flex flex-1 flex-col items-center justify-end">
-          <SfFooter />
-        </div>
       </div>
     </SfScrollbar>
   </div>

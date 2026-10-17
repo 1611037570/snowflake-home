@@ -315,9 +315,6 @@ const handleClearTrash = () => {
           <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
           <span class="text-base">回收站为空</span>
         </div>
-        <div class="flex flex-1 flex-col items-center justify-end">
-          <SfFooter />
-        </div>
       </div>
     </SfScrollbar>
     <!-- 草稿专用全屏预览：复用模板页预览布局。 -->

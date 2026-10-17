@@ -167,7 +167,6 @@
           </div>
         </div>
       </section>
-      <SfFooter />
     </main>
   </SfScrollbar>
 </template>

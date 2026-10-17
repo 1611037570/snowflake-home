@@ -367,11 +367,6 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
           </div>
         </template>
       </RevealGrid>
-      <template #footer>
-        <div class="flex flex-1 flex-col items-center justify-end">
-          <SfFooter />
-        </div>
-      </template>
     </ListScroll>
     <!-- 模板页专用全屏预览：左侧展示简历，右侧展示模板文字信息 -->
     <TemplatePreview
