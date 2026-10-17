@@ -9,7 +9,7 @@ const props = defineProps({
   moduleKey: { type: String, default: "" }, // 模块编号，用于查询英文标题
 });
 const {
-  theme: { themeColor, themeColorContrast },
+  theme: { themeColor, themeColorContrast, themeColorSoft },
 } = useResumePreviewContext();
 // 双语标题始终优先展示中文，自定义中文标题保持用户原文。
 const chineseTitle = computed(() =>
@@ -27,7 +27,7 @@ const englishTitle = computed(() =>
 
 <template>
   <!-- 中文标题落在蓝色方块，英文标题并排显示于浅蓝横带。 -->
-  <div class="flex min-w-0 items-stretch bg-[#CBD9F8]">
+  <div class="flex min-w-0 items-stretch" :style="{ backgroundColor: themeColorSoft }">
     <h2
       class="flex min-h-[40px] max-w-[55%] shrink-0 items-center px-3 font-bold"
       :style="{ backgroundColor: themeColor, color: themeColorContrast }"

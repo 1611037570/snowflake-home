@@ -1,6 +1,15 @@
+<script setup>
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
+
+const { theme: { themeColor } } = useResumePreviewContext();
+</script>
+
 <template>
   <!-- 浅色几何页眉承载公共个人信息，不增加示例文字与自定义字段。 -->
-  <div class="light-poster-user relative flex w-full min-w-0 overflow-hidden">
+  <div
+    class="light-poster-user relative flex w-full min-w-0 overflow-hidden"
+    :style="{ '--light-poster-accent': themeColor }"
+  >
     <slot />
   </div>
 </template>
@@ -39,7 +48,7 @@
   bottom: 0;
   left: 0;
   height: 3px;
-  background: #A74D45;
+  background: var(--light-poster-accent);
   pointer-events: none;
 }
 </style>

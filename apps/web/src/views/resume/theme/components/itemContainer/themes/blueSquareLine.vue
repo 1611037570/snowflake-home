@@ -1,5 +1,6 @@
 <script setup>
 import { useItemBox } from "../useItemBox";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const props = defineProps({
   blockRange: { type: Object, default: () => ({ start: 0 /* 起始块 */, end: Number.MAX_SAFE_INTEGER /* 结束块 */ }) }, // 分片块范围
@@ -13,10 +14,15 @@ const { fragmentStyle, boxStyle } = useItemBox(props, {
   padding: "0", // 条目不增加内边距
   backgroundColor: "transparent", // 沿用纸张白底
 });
+const { theme: { themeColor } } = useResumePreviewContext();
 </script>
 
 <template>
-  <div class="blue-square-line-item resume-item relative box-border" :class="{ 'resume-item--timeline': timeline }" :style="[boxStyle, fragmentStyle]">
+  <div
+    class="blue-square-line-item resume-item relative box-border"
+    :class="{ 'resume-item--timeline': timeline }"
+    :style="[boxStyle, fragmentStyle, { '--blue-square-line-color': themeColor }]"
+  >
     <slot />
   </div>
 </template>
@@ -28,7 +34,7 @@ const { fragmentStyle, boxStyle } = useItemBox(props, {
 .blue-square-line-item.resume-item--timeline::before { display: none; }
 .blue-square-line-item :deep(.resume-timeline-date) {
   width: 130px;
-  color: #078bcb;
+  color: var(--blue-square-line-color);
   opacity: 1;
   font-weight: 600;
 }

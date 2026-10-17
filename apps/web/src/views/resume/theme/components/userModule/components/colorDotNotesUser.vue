@@ -2,11 +2,17 @@
 import UserName from "./userName.vue";
 import UserContact from "./userContact.vue";
 import UserAvatar from "./userAvatar.vue";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
+
+const { theme: { themeColor } } = useResumePreviewContext();
 </script>
 
 <template>
   <!-- 个人信息整块排在顶部：左侧姓名便签，右侧联系资料，几何装饰与头像同处右端装饰带。 -->
-  <div class="color-dot-notes-user relative flex w-full min-w-0 items-center justify-between gap-9">
+  <div
+    class="color-dot-notes-user relative flex w-full min-w-0 items-center justify-between gap-9"
+    :style="{ '--color-dot-notes-accent': themeColor }"
+  >
     <div
       class="color-dot-notes-user__name relative max-w-[52%] min-w-0 rotate-[-2deg] bg-[#FFDD62] px-6 py-3 font-black text-[#171717]"
     >
@@ -53,6 +59,6 @@ import UserAvatar from "./userAvatar.vue";
   --resume-user-avatar-width: 96px;
   --resume-user-avatar-height: 96px;
   --resume-user-avatar-radius: 9999px;
-  --resume-user-avatar-shadow: 0 0 0 4px #ffffff, 0 0 0 7px #78b8f7;
+  --resume-user-avatar-shadow: 0 0 0 4px #ffffff, 0 0 0 7px var(--color-dot-notes-accent);
 }
 </style>

@@ -5,7 +5,7 @@ import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/pr
 defineProps({
   title: { type: String, default: "" }, // 当前模块标题
 });
-const { theme: { themeColor } } = useResumePreviewContext();
+const { theme: { themeColor, themeColorSoft } } = useResumePreviewContext();
 // 标题在卡片内读取留白变量，独立使用时不额外缩进。
 const insetStyle = {
   paddingTop: "var(--mint-title-top, 0px)", // 标题顶部留白
@@ -20,7 +20,11 @@ const insetStyle = {
     class="flex min-w-0 items-center gap-3 pb-3"
     :style="insetStyle"
   >
-    <span aria-hidden="true" class="flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-full bg-[#C8F3E8]"><span class="h-[7px] w-[7px] rounded-full bg-[#20C2AC]" /></span>
+    <span
+      aria-hidden="true"
+      class="flex h-[15px] w-[15px] shrink-0 items-center justify-center rounded-full"
+      :style="{ backgroundColor: themeColorSoft }"
+    ><span class="h-[7px] w-[7px] rounded-full" :style="{ backgroundColor: themeColor }" /></span>
     <h2 class="min-w-0 font-semibold tracking-[0.08em] break-words" :style="{ color: themeColor }"><TitleText :title="title" /></h2>
   </div>
 </template>

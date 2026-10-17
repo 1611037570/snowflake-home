@@ -2,6 +2,7 @@
 import { computed, inject } from "vue";
 import { useItemBox } from "../useItemBox";
 import { resumeModuleKey } from "@/views/resume/editor/preview/shared/moduleContext";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 const props = defineProps({
   blockRange: { // 当前分片块区间
@@ -24,6 +25,7 @@ const props = defineProps({
 const moduleKey = inject(resumeModuleKey, computed(() => ""));
 const isExperience = computed(() => ["work", "project", "education"].includes(moduleKey.value));
 const isSkill = computed(() => moduleKey.value === "skill");
+const { theme: { themeColor, themeColorLine } } = useResumePreviewContext();
 const { fragmentStyle, boxStyle } = useItemBox(props, {
   radius: "0", // 条目保持直角
   paddingLeft: isExperience.value ? "18px" : "0px", // 经历内容与青色引线错开
@@ -33,10 +35,20 @@ const { fragmentStyle, boxStyle } = useItemBox(props, {
 <template>
   <!-- 经历条目的线和方块仅作装饰，分片盒模型仍由公共方法计算。 -->
   <div class="resume-item relative box-border min-w-0" :class="{ 'resume-item--timeline': timeline }" :style="[boxStyle, fragmentStyle]">
-    <span v-if="isExperience" aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-0 w-px bg-[#57E8E8]/65" />
-    <span v-if="isExperience && ['full', 'top'].includes(decoration)" aria-hidden="true" class="pointer-events-none absolute top-[3px] -left-[4px] size-[8px] bg-[#72FFF7] shadow-[0_0_8px_#72FFF7]" />
+    <span v-if="isExperience" aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-0 w-px" :style="{ backgroundColor: themeColorLine }" />
+    <span
+      v-if="isExperience && ['full', 'top'].includes(decoration)"
+      aria-hidden="true"
+      class="pointer-events-none absolute top-[3px] -left-[4px] size-[8px]"
+      :style="{ backgroundColor: themeColor, boxShadow: `0 0 8px ${themeColor}` }"
+    />
     <slot />
-    <span v-if="isSkill" aria-hidden="true" class="pointer-events-none absolute right-0 bottom-0 left-0 h-px bg-[#6BF8F5] shadow-[0_0_6px_#6BF8F5]" />
+    <span
+      v-if="isSkill"
+      aria-hidden="true"
+      class="pointer-events-none absolute right-0 bottom-0 left-0 h-px"
+      :style="{ backgroundColor: themeColor, boxShadow: `0 0 6px ${themeColor}` }"
+    />
   </div>
 </template>
 

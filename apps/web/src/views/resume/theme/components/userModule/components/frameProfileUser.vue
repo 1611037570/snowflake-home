@@ -2,15 +2,22 @@
 import UserName from "./userName.vue";
 import UserContact from "./userContact.vue";
 import UserAvatar from "./userAvatar.vue";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
+
+const { theme: { themeColor } } = useResumePreviewContext();
 </script>
 
 <template>
   <!-- 黑框资料：直角框围住资料区，框顶线中段被白底盖住、只在左右两角各露一小段；头像跨越框顶线、姓名放大排在框顶线上方，联系方式带图标排在框内；资料区垫纯白底。 -->
-  <div class="frame-profile-user relative box-border w-full min-w-0 bg-white px-6 pt-6 pb-6">
+  <div
+    class="frame-profile-user relative box-border w-full min-w-0 bg-white px-6 pt-6 pb-6"
+    :style="{ '--frame-profile-accent': themeColor }"
+  >
     <!-- 黑色直角框只画线，不参与区域高度结算；顶线中段由白底层压掉，两端各留一小段露在角上 -->
     <span
       aria-hidden="true"
-      class="pointer-events-none absolute inset-x-0 top-[92px] bottom-0 border-2 border-[#111111]"
+      class="pointer-events-none absolute inset-x-0 top-[92px] bottom-0 border-2"
+      :style="{ borderColor: 'var(--frame-profile-accent)' }"
     />
     <!-- 纯白背景层：左右与底边都比黑框内缩，露出黑框左、右、下三边，并把顶线中段盖住、只留两端 -->
     <span

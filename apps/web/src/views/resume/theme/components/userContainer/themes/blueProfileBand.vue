@@ -6,7 +6,7 @@ defineProps({
   moduleKey: { type: String, default: "user" }, // 个人信息模块编号
   moduleClass: { type: String, default: "" }, // 编辑器模块状态类名
 });
-const { theme: { fontValue, lineHeightValue } } = useResumePreviewContext();
+const { theme: { fontValue, lineHeightValue, themeColor } } = useResumePreviewContext();
 </script>
 
 <template>
@@ -16,7 +16,7 @@ const { theme: { fontValue, lineHeightValue } } = useResumePreviewContext();
     :class="moduleClass"
     :data-module="moduleKey"
     :data-theme="themeId"
-    :style="[fontValue(), lineHeightValue(), { '--resume-user-name-size': '40px', '--resume-user-name-color': '#2563EB', '--resume-user-avatar-width': '132px', '--resume-user-avatar-height': '132px', '--resume-user-avatar-radius': '0' }]"
+    :style="[fontValue(), lineHeightValue(), { '--resume-user-name-size': '40px', '--resume-user-name-color': themeColor, '--resume-user-avatar-width': '132px', '--resume-user-avatar-height': '132px', '--resume-user-avatar-radius': '0' }]"
   >
     <slot name="actions" />
     <slot />

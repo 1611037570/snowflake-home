@@ -1,12 +1,18 @@
 <script setup>
 import HairlineRail from "./hairlineRail.vue";
+import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 
 // 复用现有时间轴条目盒模型，日期栏与无日期正文保持同一缩进。
 defineOptions({ inheritAttrs: false });
+const { theme: { themeColor, themeColorContrast } } = useResumePreviewContext();
 </script>
 
 <template>
-  <HairlineRail class="compact-timeline-item" v-bind="$attrs">
+  <HairlineRail
+    class="compact-timeline-item"
+    :style="{ '--compact-date-color': themeColor, '--compact-date-contrast': themeColorContrast }"
+    v-bind="$attrs"
+  >
     <slot />
   </HairlineRail>
 </template>
@@ -26,8 +32,8 @@ defineOptions({ inheritAttrs: false });
   margin: 0 6px;
   padding: 3px 6px;
   border-radius: 3px;
-  background: #596a55;
-  color: #fff;
+  background: var(--compact-date-color);
+  color: var(--compact-date-contrast);
   text-overflow: ellipsis;
   white-space: nowrap;
 }
