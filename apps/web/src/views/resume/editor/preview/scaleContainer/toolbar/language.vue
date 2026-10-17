@@ -42,14 +42,12 @@ const handleLangSelect = (item) => {
 
 <template>
   <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
-    <SfTooltip :content="$t('switchResumeLanguage')">
-      <SfIcon
-        icon="mdi:translate"
-        size="5"
-        boxSize="7"
-        class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-      />
-    </SfTooltip>
+    <span
+      class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg"
+    >
+      <SfIcon icon="mdi:translate" size="4" />
+      <span class="text-[11px] leading-none">{{ $t("resumeLanguage") }}</span>
+    </span>
     <template #dropdown>
       <SfList class="w-[140px]" :list="langOptions" :border="false" @onClick="handleLangSelect" />
     </template>

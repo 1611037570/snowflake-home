@@ -134,11 +134,11 @@ const resetPageBackground = () => {
     @visible-change="dropdownVisible = $event"
   >
     <span
-      class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-xs text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text md:text-sm"
+      class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg"
       :class="{ 'text-sf-theme!': dropdownVisible }"
     >
-      <SfIcon icon="lucide:swatch-book" size="5" />
-      <span>{{ $t("design") }}</span>
+      <SfIcon icon="lucide:swatch-book" size="4" />
+      <span class="text-[11px] leading-none">{{ $t("design") }}</span>
     </span>
     <template #dropdown>
       <div class="flex w-80 flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3">

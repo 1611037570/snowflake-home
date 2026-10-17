@@ -76,12 +76,15 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
     position="right"
     class="mobile-resume-builder relative flex h-full flex-col border-r border-sf-b"
   >
-    <SfTab
-      :list="menuList"
-      v-model:index="activeIndex"
-      v-model:disabled="isGenerating"
-      boxClass="border-b border-sf-b bg-sf-primary rounded-none "
-    />
+    <!-- 栏头：与预览区视图条同高，标签控件保持自身尺寸居中，不做拉伸 -->
+    <div class="flex h-14 shrink-0 items-center border-b border-sf-b bg-sf-primary px-3">
+      <SfTab
+        :list="menuList"
+        v-model:index="activeIndex"
+        v-model:disabled="isGenerating"
+        class="w-full"
+      />
+    </div>
     <div class="relative flex min-h-0 w-full flex-1 flex-col text-sf-base">
       <div class="flex min-h-0 w-full flex-1 flex-col">
         <Transition :name="`tab-slide-${direction}`" mode="out-in">

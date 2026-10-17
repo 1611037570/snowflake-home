@@ -6,14 +6,14 @@ import i18n, { $t } from "@/locales";
 import eventBus from "@/utils/modules/eventBus";
 import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
+import Language from "./toolbar/language.vue";
+import TemplateSettings from "./toolbar/templateSettings.vue";
 import Font from "./toolbar/font.vue";
 import Settings from "./toolbar/settings.vue";
 import MoreSettings from "./toolbar/moreSettings.vue";
-import TemplateSettings from "./toolbar/templateSettings.vue";
-import PrintMode from "./toolbar/printMode.vue";
-import Language from "./toolbar/language.vue";
+import MoreMenu from "./toolbar/moreMenu.vue";
 import OnePage from "./toolbar/onePage.vue";
-import More from "./toolbar/more.vue";
+import PrintMode from "./toolbar/printMode.vue";
 
 defineOptions({ name: "ScaleContainer" });
 
@@ -26,8 +26,7 @@ defineEmits(["fullscreen"]);
 
 const containerRef = ref(null);
 const resumeStore = useResumeStore();
-const { selectedModule } = storeToRefs(resumeStore);
-const { system } = storeToRefs(resumeStore);
+const { system, selectedModule } = storeToRefs(resumeStore);
 // 清空选中模块：直接调用 store 操作
 const { clearSelectedModules } = resumeStore;
 const contentRef = ref(null);
@@ -177,23 +176,37 @@ const updateScale = useDebounceFn(([entry]) => {
 
 useResizeObserver(() => containerRef.value?.wrapRef, updateScale);
 
+// 纸张数量：从预览节点统计，避免依赖分页引擎的内部状态
+const pageCount = ref(1);
+const syncPageCount = () => {
+  const count = contentRef.value?.querySelectorAll?.(".resume-page-item")?.length ?? 0;
+  pageCount.value = Math.max(1, count);
+};
+
 // 测量未缩放内容的实际宽高，用于补偿 transform: scale() 不改变布局尺寸的问题
 useResizeObserver(contentRef, ([entry]) => {
   contentSize.value = {
     width: entry.contentRect.width,
     height: entry.contentRect.height,
   };
+  // 页面数量随内容高度变化一并更新
+  syncPageCount();
 });
 
 // QA 弹窗里的样式疑问入口通过事件切换标准 A4，避免跨组件逐层传递
-onMounted(() => eventBus.on("resume-standard-a4", setStandardA4));
+onMounted(() => {
+  eventBus.on("resume-standard-a4", setStandardA4);
+  // 首帧渲染完成后先统计一次纸张数量
+  syncPageCount();
+});
 onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
 </script>
 
 <template>
   <div class="group relative flex h-full flex-col self-stretch overflow-hidden">
+    <!-- 视图条：图标在上、文字在下的两行入口，高度与左侧栏头一致 -->
     <div
-      class="flex shrink-0 items-center gap-1 self-stretch border-b border-sf-b bg-sf-primary p-1.5 select-none"
+      class="flex h-14 shrink-0 items-center gap-1 self-stretch border-b border-sf-b bg-sf-primary px-3 select-none"
       v-show="showToolbar"
     >
       <TemplateSettings />
@@ -201,12 +214,14 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
       <Settings />
       <MoreSettings />
       <Language />
+      <span class="mx-1.5 h-6 w-px bg-sf-b"></span>
       <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
-        <div
-          class="flex h-7 w-14 cursor-default items-center justify-center rounded-full text-xs font-medium text-sf-theme"
+        <span
+          class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg"
         >
-          {{ scaleLabel }}
-        </div>
+          <SfIcon icon="lucide:expand" size="4" />
+          <span class="text-[11px] leading-none">{{ scaleLabel }}</span>
+        </span>
         <template #dropdown>
           <SfList
             :list="SCALE_LIST"
@@ -218,36 +233,41 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
           </SfList>
         </template>
       </SfDropdown>
-      <!-- 四个图标入口默认排在缩放比例之后：桌面直接显示，移动端收进「更多」下拉；md 断点 768px 与移动端判定同值 -->
-      <div class="hidden items-center gap-1 md:flex">
-        <OnePage />
-        <PrintMode />
-        <SfTooltip :content="$t('fullscreen')">
-          <SfIcon
-            icon="lucide:maximize"
-            size="5"
-            boxSize="7"
-            class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-            @click="$emit('fullscreen')"
-          />
-        </SfTooltip>
+      <span class="mx-1.5 h-6 w-px bg-sf-b"></span>
+      <!-- 桌面直接展开视图操作；窄屏宽度不足时才收进「更多」 -->
+      <div class="flex items-center gap-1">
+        <div class="hidden items-center gap-1 md:flex">
+          <OnePage />
+          <PrintMode />
+          <SfTooltip :content="$t('fullscreen')">
+            <SfIcon
+              icon="lucide:maximize"
+              size="4"
+              boxSize="8"
+              class="rounded-full text-sf-text-2 transition-colors hover:bg-sf-bg"
+              @click="$emit('fullscreen')"
+            />
+          </SfTooltip>
+          <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
+            <SfIcon
+              icon="lucide:circle-slash"
+              size="4"
+              boxSize="8"
+              class="rounded-full text-sf-text-2 transition-colors hover:bg-sf-bg"
+              @click="clearSelectedModules"
+            />
+          </SfTooltip>
+        </div>
+        <span class="mx-1.5 text-[11px] text-sf-text-3">{{
+          $t("paperPageCount", { count: pageCount })
+        }}</span>
+        <div class="flex items-center md:hidden">
+          <MoreMenu @fullscreen="$emit('fullscreen')" />
+        </div>
       </div>
-      <div class="flex items-center md:hidden">
-        <More @fullscreen="$emit('fullscreen')" />
-      </div>
-
-      <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
-        <SfIcon
-          icon="lucide:circle-slash"
-          size="5"
-          boxSize="7"
-          class="rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
-          @click="clearSelectedModules"
-        />
-      </SfTooltip>
     </div>
-    <!-- 预览滚动区外层：为滚动条约束可用高度。 -->
-    <div class="relative min-h-0 flex-1">
+    <!-- 预览滚动区外层：画布比面板低一档，纸张靠阴影浮起 -->
+    <div class="preview-canvas relative min-h-0 flex-1 bg-sf-bg">
       <!-- 滚动区紧贴顶部工具栏，顶部留白放入滚动内容，避免固定空隙截断预览。 -->
       <SfScrollbar
         ref="containerRef"
@@ -306,5 +326,22 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
 <style scoped>
 :global(.scale-dropdown-popper) {
   z-index: 9999 !important;
+}
+
+/* 纸张投影：与画布分层；导出与打印使用各自样式，不受这里影响 */
+.preview-canvas {
+  --preview-paper-shadow:
+    0 1px 2px color-mix(in srgb, var(--sf-base) 6%, transparent),
+    0 16px 40px color-mix(in srgb, var(--sf-base) 8%, transparent);
+}
+
+:global(.dark) .preview-canvas {
+  --preview-paper-shadow:
+    0 1px 2px color-mix(in srgb, var(--sf-base) 3%, transparent),
+    0 16px 40px color-mix(in srgb, var(--sf-base) 4%, transparent);
+}
+
+.preview-canvas :deep(.resume-page-item) {
+  box-shadow: var(--preview-paper-shadow);
 }
 </style>

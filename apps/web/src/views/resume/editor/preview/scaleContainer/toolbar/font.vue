@@ -108,30 +108,32 @@ const resetTextAlign = () => {
 <template>
   <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false" @visible-change="dropdownVisible = $event">
     <span
-      class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-xs text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text md:text-sm"
+      class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg"
       :class="{ 'text-sf-theme!': dropdownVisible }"
     >
-      <SfIcon icon="lucide:type" size="5" />
-      <span>{{ $t("textStyle") }}</span>
-      <SfIcon
-        v-if="fontLoadStatus === 'loading'"
-        icon="line-md:loading-twotone-loop"
-        size="4"
-        :aria-label="$t('fontLoading')"
-      />
-      <SfIcon
-        v-else-if="fontLoadStatus === 'success'"
-        icon="lucide:check"
-        size="4"
-        :aria-label="$t('fontLoadSuccess')"
-      />
-      <SfIcon
-        v-else-if="fontLoadStatus === 'error'"
-        icon="lucide:circle-alert"
-        size="4"
-        class="text-red-500"
-        :aria-label="$t('fontLoadFailed')"
-      />
+      <SfIcon icon="lucide:type" size="4" />
+      <span class="flex items-center gap-1 text-[11px] leading-none">
+        {{ $t("textStyle") }}
+        <SfIcon
+          v-if="fontLoadStatus === 'loading'"
+          icon="line-md:loading-twotone-loop"
+          size="3"
+          :aria-label="$t('fontLoading')"
+        />
+        <SfIcon
+          v-else-if="fontLoadStatus === 'success'"
+          icon="lucide:check"
+          size="3"
+          :aria-label="$t('fontLoadSuccess')"
+        />
+        <SfIcon
+          v-else-if="fontLoadStatus === 'error'"
+          icon="lucide:circle-alert"
+          size="3"
+          class="text-red-500"
+          :aria-label="$t('fontLoadFailed')"
+        />
+      </span>
     </span>
     <template #dropdown>
       <div
