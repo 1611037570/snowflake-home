@@ -15,7 +15,7 @@ import { useResumeLayout } from "./engine/useResumeLayout";
 import { useResumeTheme } from "@/views/resume/theme/useResumeTheme";
 import { resolveThemePageAppearance, resolveResumeUi, resolveThemeDecisions } from "@/views/resume/theme";
 import { provideResumePreviewContext } from "../shared/previewContext";
-import { isEmptyResume } from "../../toolbar/modules/progress/useResumeStats";
+import { isEmptyResume } from "../../hooks/useResumeStats";
 import { getResumeFooterText } from "../shared/footerTemplates";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
 import { $t } from "@/locales";

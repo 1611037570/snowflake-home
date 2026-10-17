@@ -1060,6 +1060,7 @@ export const DEFAULT_SKILL_FORM = {
             source: ["data", "desc"], // 技能描述。
             defaultValue: "", // 新增技能默认没有描述。
             prop: "desc", // 将描述传给技能编辑组件。
+            optional: true, // 技能描述为选填，不参与完成度统计。
           },
           {
             source: ["data", "level"],

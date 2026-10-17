@@ -9,7 +9,7 @@ import {
   unwrapField,
   walkFormFields,
 } from "@/components/business/dynamicForm/api";
-import { stripHtml } from "../toolbar/modules/progress/useResumeStats";
+import { stripHtml } from "./useResumeStats";
 import { useScrollEditorTo } from "./useScrollEditorTo";
 
 // 搜索命中项：携带定位所需的层级信息

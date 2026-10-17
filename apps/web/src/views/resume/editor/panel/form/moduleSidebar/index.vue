@@ -10,6 +10,7 @@ import {
 } from "@/stores/modules/resume/config/defaultConfig";
 import { jumpEditor, jumpPreview } from "../../../hooks/useModuleNav";
 import AddModule from "./add.vue";
+import ModuleProgress from "./progress/index.vue";
 import MoreActions from "./moreActions.vue";
 
 defineOptions({ name: "ModuleSidebar" });
@@ -102,6 +103,8 @@ onUnmounted(() => {
 
 <template>
   <aside class="module-tree flex h-full min-h-0 min-w-0 flex-col bg-sf-primary p-1.5">
+    <!-- 完成度：固定在模块列表上方，随简历内容实时更新 -->
+    <ModuleProgress />
     <SfScrollbar class="module-list-scroll min-h-0 min-w-0 flex-1">
       <!-- 模块行固定高度，名称最多显示六个字 -->
       <div ref="listRef" class="flex min-h-full shrink-0 flex-col gap-1.5">

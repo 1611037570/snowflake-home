@@ -142,17 +142,56 @@ const getFieldMeta = (field: any) => {
   return { src, prop };
 };
 
+// 内部状态字段：折叠与隐藏只影响展示，不作为填写项统计
+const INTERNAL_FIELD_KEYS = new Set(["collapsed", "hidden"]);
+
+// 是否属于内部状态字段：绑定了 ui 节点，或字段标识是折叠与隐藏
+const isInternalField = (field: any) => {
+  const { src, prop } = getFieldMeta(field);
+  return src.includes("ui") || INTERNAL_FIELD_KEYS.has(prop);
+};
+
+// 字段必须带有中文标签才展示给用户，未配置标签的内部字段直接跳过
+const hasFieldLabel = (field: any, inheritedLabel?: string) => {
+  const target = unwrapField(field) ?? field;
+  return Boolean(getFieldLabel(field) || getFieldLabel(target) || inheritedLabel);
+};
+
+// 记录项模型字段没有配置标签，按编辑组件映射到对应的中文文案
+const ITEM_FIELD_LABELS: Record<string, Record<string, string>> = {
+  // 社交账号：平台与链接
+  rowAccount: { name: "platform", url: "link" },
+  // 技能列表：技能名称、描述与熟练度
+  rowSkill: { name: "skillName", desc: "skillDescription", level: "proficiencyLevel" },
+};
+
+// 双形态模块：按当前布局只统计生效的形态，避免另一种形态被误判为缺失
+const DUAL_FORM_MODULES: Record<string, { listLayout: string; defaultLayout: string }> = {
+  // 专业技能同时提供富文本与技能列表两种布局
+  skill: { listLayout: "proficiency", defaultLayout: "proficiency" },
+};
+
 // ==================== 分析单个模块 ====================
 
-function analyzeModule(moduleConfig: any, rootData: any) {
+function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
   if (!moduleConfig?.fields?.length) {
     return { missing: [], issues: [], score: 0 };
   }
 
+  // 双形态模块：判断当前生效的是列表形态还是正文形态
+  const dualForm = DUAL_FORM_MODULES[moduleConfig?.key];
+  const activeLayout = dualForm ? (ui?.[moduleConfig.key]?.layout ?? dualForm.defaultLayout) : "";
+
   const missing: string[] = [];
+  // 建议补充：非必填字段未填写时只提示，不计入完成度
+  const optional: string[] = [];
   const issues: Array<{ label: string; message: string; severity?: "error" | "warning" }> = [];
   let done = 0;
   let total = 0;
+  // 记录一条建议补充，避免同一文案重复
+  const pushOptional = (label: string) => {
+    if (label && !optional.includes(label)) optional.push(label);
+  };
   // 模块字段统一从分组上下文解析相对路径
   const moduleContext = moduleConfig.context?.length
     ? createDataPathContext(moduleConfig.context)
@@ -179,9 +218,20 @@ function analyzeModule(moduleConfig: any, rootData: any) {
   collectModuleFields(moduleConfig.fields);
 
   for (const { field, inheritedRules, inheritedLabel } of moduleFields) {
+    // 双形态模块只统计当前布局对应的形态
+    if (dualForm && (field.type === "array") !== (activeLayout === dualForm.listLayout)) continue;
     if (field.type === "array" && field.itemSchema) {
       const itemSchema = field.itemSchema;
-      const parentRequired =
+      // 记录项模型字段没有配置标签时，按编辑组件映射到中文文案
+      const itemLabelKeys = ITEM_FIELD_LABELS[itemSchema?.component] || {};
+      const getItemLabel = (def: any) => {
+        const own = getFieldLabel(def.field);
+        if (own) return own;
+        const key = itemLabelKeys[getFieldMeta(def.target).prop];
+        return key ? $t(key) : "";
+      };
+      // 记录容器级别的必填只表示「至少填一条记录」，不再下沉到每个子字段
+      const itemSchemaRequired =
         inheritedRules.some((rule) => rule?.required === true) ||
         isRequiredField(itemSchema) ||
         isRequiredField(field);
@@ -202,7 +252,8 @@ function analyzeModule(moduleConfig: any, rootData: any) {
         }
       };
       if (itemSchema.fields?.length) {
-        collectItemFields(itemSchema.fields, parentRequired);
+        // 子字段只遵循自身的必填规则，避免把可选字段一并计入
+        collectItemFields(itemSchema.fields, false);
       } else {
         const bindings = Array.isArray(itemSchema.model)
           ? itemSchema.model
@@ -210,10 +261,17 @@ function analyzeModule(moduleConfig: any, rootData: any) {
             ? [itemSchema.model]
             : [];
         for (const binding of bindings) {
+          // 绑定自身声明了规则时以规则为准；标记 optional 的绑定按选填处理
+          const bindingHasRules = Array.isArray(binding?.rules) && binding.rules.length > 0;
           itemDefs.push({
             field: binding,
             target: binding,
-            required: parentRequired || isRequiredField(binding),
+            required:
+              binding?.optional === true
+                ? false
+                : bindingHasRules
+                  ? isRequiredField(binding)
+                  : itemSchemaRequired,
           });
         }
       }
@@ -225,16 +283,22 @@ function analyzeModule(moduleConfig: any, rootData: any) {
       if (!Array.isArray(list) || list.length === 0) {
         let hasRequired = false;
         for (const def of itemDefs) {
-          if (!def.required) continue;
+          // 内部状态字段与无法解析中文文案的字段不参与完成度统计
+          const label = getItemLabel(def);
+          if (isInternalField(def.target) || !label) continue;
+          if (!def.required) {
+            // 非必填项未填写时进入建议补充
+            pushOptional(label);
+            continue;
+          }
           hasRequired = true;
           total += 1;
-          const { prop } = getFieldMeta(def.target);
-          const label = getLabel(def.field, prop);
           if (!missing.includes(label)) missing.push(label);
         }
         if (hasRequired) {
-          const groupLabel = getFieldLabel(itemSchema) || $t("content");
-          if (!missing.includes(groupLabel)) missing.push(groupLabel);
+          // 记录项本身配置了标签时一并提示，未配置标签时不再用通用文案占位
+          const groupLabel = getFieldLabel(itemSchema);
+          if (groupLabel && !missing.includes(groupLabel)) missing.push(groupLabel);
         }
         continue;
       }
@@ -248,8 +312,11 @@ function analyzeModule(moduleConfig: any, rootData: any) {
           ),
         );
         for (const def of itemDefs) {
-          const { src, prop } = getFieldMeta(def.target);
+          const { src } = getFieldMeta(def.target);
           if (!src.length) continue;
+          // 内部状态字段与无法解析中文文案的字段不参与完成度统计
+          const itemLabel = getItemLabel(def);
+          if (isInternalField(def.target) || !itemLabel) continue;
 
           // 数组子项字段基于当前记录上下文解析为完整数据路径
           const path = resolveDataPath(src, { basePath: listPath, index: idx });
@@ -263,10 +330,16 @@ function analyzeModule(moduleConfig: any, rootData: any) {
             ...getRuleIssues(
               rules,
               value,
-              `${getLabel(def.field, prop)} · ${$t("recordIndex", { index: idx + 1 })}`,
+              `${itemLabel} · ${$t("recordIndex", { index: idx + 1 })}`,
             ),
           );
-          if (!def.required) continue;
+          if (!def.required) {
+            // 修改：使用 src 最后一个元素判断是否为 content
+            const optionalFilled =
+              src[src.length - 1] === "content" ? !isContentEmpty(value) : !isEmpty(value);
+            if (!optionalFilled) pushOptional(itemLabel);
+            continue;
+          }
 
           // 修改：使用 src 最后一个元素判断是否为 content
           const filled =
@@ -275,9 +348,8 @@ function analyzeModule(moduleConfig: any, rootData: any) {
           total += 1;
           if (filled) {
             done += 1;
-          } else {
-            const label = getLabel(def.field, prop);
-            if (!missing.includes(label)) missing.push(label);
+          } else if (!missing.includes(itemLabel)) {
+            missing.push(itemLabel);
           }
         }
       });
@@ -288,6 +360,8 @@ function analyzeModule(moduleConfig: any, rootData: any) {
     const target = unwrapField(field) ?? field;
     const { src, prop } = getFieldMeta(target);
     if (!src.length) continue;
+    // 内部状态字段不参与完成度统计
+    if (isInternalField(target)) continue;
 
     const resolvedPath = resolveDataPath(src, moduleContext);
     if ((field.addable || target.addable) && !hasDataPath(rootData, resolvedPath)) continue;
@@ -297,33 +371,48 @@ function analyzeModule(moduleConfig: any, rootData: any) {
       ...(field.rules ?? []),
       ...(target === field ? [] : (target.rules ?? [])),
     ];
-    const fieldLabel = getFieldLabel(field) || inheritedLabel || prop || $t("field");
-    issues.push(...getRuleIssues(rules, value, fieldLabel));
+    // 正文控件没有独立标签时用统一文案，其余字段必须配置中文标签才展示
+    const isContentField = ["wangEditor", "resumeContentEditor"].includes(target.component);
+    const fieldLabel = getFieldLabel(field) || inheritedLabel || "";
+    if (!fieldLabel && !isContentField) continue;
+    issues.push(...getRuleIssues(rules, value, fieldLabel || $t("content")));
     const required =
       inheritedRules.some((rule) => rule?.required === true) ||
       isRequiredField(target) ||
       isRequiredField(field);
-    if (!required) continue;
 
     // 修改：使用 src 最后一个元素判断是否为 content
     const filled = src[src.length - 1] === "content" ? !isContentEmpty(value) : !isEmpty(value);
+
+    if (!required) {
+      // 非必填项未填写时只进入建议补充，不影响完成度
+      if (!filled) pushOptional(isContentField ? $t("content") : fieldLabel);
+      continue;
+    }
 
     total += 1;
     if (filled) {
       done += 1;
     } else {
-      const label = ["wangEditor", "resumeContentEditor"].includes(target.component)
-        ? "内容"
-        : fieldLabel;
+      const label = isContentField ? $t("content") : fieldLabel;
       if (!missing.includes(label)) missing.push(label);
     }
   }
 
-  const score = total ? Math.round((done / total) * 10) : 0;
+  // 模块没有必填项时视为已填完，避免出现「0% 但无可填项」
+  const score = total ? Math.round((done / total) * 10) : 10;
   const uniqueIssues = [
     ...new Map(issues.map((issue) => [`${issue.label}:${issue.message}`, issue])).values(),
   ];
-  return { missing, issues: uniqueIssues, score };
+  return {
+    missing,
+    optional,
+    issues: uniqueIssues,
+    score,
+    done,
+    total,
+    hasError: uniqueIssues.some((issue) => issue.severity === "error"),
+  };
 }
 
 // ==================== 时间线一致性检查 ====================
@@ -445,9 +534,12 @@ function checkTimeline(modules: Array<{ key: string; config: any }>, rootData: a
 export function useProgress(
   fields: MaybeRefOrGetter<any[]>,
   data: MaybeRefOrGetter<Record<string, any>>,
+  ui?: MaybeRefOrGetter<Record<string, any>>,
 ) {
   const fieldsList = toValue(fields) || [];
   const rootData = toValue(data) || {};
+  // 界面配置用于判断双形态模块当前生效的布局
+  const uiConfig = (ui ? toValue(ui) : null) || {};
 
   const moduleMap = new Map<string, any>();
   for (const f of fieldsList) {
@@ -458,40 +550,50 @@ export function useProgress(
     key: string;
     name: string;
     progress: number;
-    allProgress: 100;
     missing: string[];
-    issues: Array<{ label: string; message: string }>;
+    optional: string[];
+    issues: Array<{ label: string; message: string; severity?: "error" | "warning" }>;
+    hasError: boolean;
   }> = [];
-  let totalScore = 0;
+  // 必填项累计：总完成度按必填项数量加权，而不是模块等权
+  let requiredDone = 0;
+  let requiredTotal = 0;
   const timelineModules: Array<{ key: string; config: any }> = [];
 
   for (const [key, config] of moduleMap) {
-    const { missing, issues, score } = analyzeModule(config, rootData);
-    const progress = score * 10;
+    const { missing, optional, issues, score, done, total, hasError } = analyzeModule(
+      config,
+      rootData,
+      uiConfig,
+    );
     progressItems.push({
       key,
       name: getModuleTitle(config, rootData, key),
-      progress,
-      allProgress: 100,
+      progress: score * 10,
       missing,
+      optional,
       issues,
+      hasError,
     });
-    totalScore += progress;
+    requiredDone += done;
+    requiredTotal += total;
 
     if (config.fields?.some((f: any) => f.type === "array" && f.itemSchema)) {
       timelineModules.push({ key, config });
     }
   }
 
-  const totalFull = progressItems.length * 100;
-  const totalProgress = totalFull ? Math.round((totalScore / totalFull) * 100) : 0;
+  // 总完成度 = 已填必填项 ÷ 必填项总数
+  const totalProgress = requiredTotal ? Math.round((requiredDone / requiredTotal) * 100) : 0;
   const timeline = checkTimeline(timelineModules, rootData);
 
   return {
     list: progressItems,
-    totalScore,
-    totalFull,
+    requiredDone,
+    requiredTotal,
     progress: totalProgress,
+    // 存在格式错误时供入口切换警示状态
+    hasError: progressItems.some((item) => item.hasError),
     timeline,
   };
 }

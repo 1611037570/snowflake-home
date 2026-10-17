@@ -7,7 +7,6 @@ import Icon from "./components/icon.vue";
 import Ai from "./modules/ai/index.vue";
 import System from "./modules/system/index.vue";
 import CopyResume from "./modules/copyResume.vue";
-import Progress from "./modules/progress/index.vue";
 import Donation from "./modules/donation.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
 import LiuyaoWenxin from "./modules/liuyaoWenxin.vue";
@@ -79,8 +78,6 @@ const toolbarItems = computed(() => [
 
   { key: "ai", component: Ai },
   { key: "system", component: System },
-  // ATS 参考入口固定在主要工具组末尾。
-  { key: "progress", component: Progress },
   { key: "separator-support", type: "separator" },
   { key: "donation", component: Donation },
   { key: "qa-answer", component: QaAnswer },
