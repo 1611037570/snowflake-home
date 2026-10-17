@@ -48,6 +48,8 @@
   "resumeCompletion": "Completion",
   "resumeMissingCount": "{count} missing",
   "resumeOptionalSuggest": "Optional",
+  "resumeFormatIssueCount": "{count} format issues",
+  "resumeComplete": "Complete",
   "resumeHomeClosingTitle": "Start writing the next chapter of your story.",
   "resumeHomeClosingDescription": "Give your next resume a clean, confident start.",
   "resumeHomeStartFree": "Start for Free",

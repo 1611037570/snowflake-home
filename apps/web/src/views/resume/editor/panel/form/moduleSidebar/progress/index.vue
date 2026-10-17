@@ -44,6 +44,11 @@ const missingCount = computed(() =>
   progressData.value.list.reduce((total, item) => total + (item.missing?.length || 0), 0),
 );
 
+// 格式问题总数：用于入口摘要文案
+const formatIssueCount = computed(() =>
+  progressData.value.list.reduce((total, item) => total + (item.issues?.length || 0), 0),
+);
+
 // 环形进度颜色：存在格式错误时优先警示，其余按阈值取色
 const ringColorClass = computed(() => {
   if (progressData.value.hasError) return "text-sf-warning";
@@ -113,8 +118,8 @@ const getTodoList = (item) => [
       @click="visible = true"
     >
       <!-- 环形进度：窄屏只保留这一圈 -->
-      <span class="relative h-7 w-7 shrink-0">
-        <svg class="h-7 w-7 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
+      <span class="relative h-8 w-8 shrink-0">
+        <svg class="h-8 w-8 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
           <circle
             cx="24"
             cy="24"
@@ -138,18 +143,27 @@ const getTodoList = (item) => [
           />
         </svg>
         <span
-          class="absolute inset-0 grid place-content-center text-[9px] font-bold text-sf-text"
+          class="absolute inset-0 grid place-content-center text-[10px] font-bold text-sf-text"
         >
           {{ Math.round(animatedProgress) }}
         </span>
       </span>
-      <!-- 桌面显示标题与缺失项数量，窄屏隐藏 -->
+      <!-- 桌面显示标题与摘要，窄屏隐藏 -->
       <span class="flex min-w-0 flex-col gap-1 max-md:hidden">
         <span class="truncate text-[11px] leading-none font-semibold text-sf-text">
           {{ $t("resumeCompletion") }}
         </span>
         <span v-if="missingCount > 0" class="truncate text-[10px] leading-none text-sf-text-3">
           {{ $t("resumeMissingCount", { count: missingCount }) }}
+        </span>
+        <span v-if="formatIssueCount > 0" class="truncate text-[10px] leading-none text-sf-warning">
+          {{ $t("resumeFormatIssueCount", { count: formatIssueCount }) }}
+        </span>
+        <span
+          v-if="!missingCount && !formatIssueCount"
+          class="truncate text-[10px] leading-none text-sf-text-3"
+        >
+          {{ $t("resumeComplete") }}
         </span>
       </span>
       <!-- 有格式错误时提示：进度不受影响，但需要用户回头修 -->

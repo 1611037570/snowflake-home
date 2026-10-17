@@ -88,12 +88,14 @@ const buildSystemPrompt = (
   action: ContentAiAction,
   kindKey: string,
   moduleKey: string,
+  moduleTitle: string,
   language: string,
 ) =>
   [
     "你只负责写简历中的「正文」这一栏。",
     "",
     "【输入说明】",
+    "- moduleTitle：当前模块标题（如工作经历、教育经历、技能、荣誉证书），决定写作口径。",
     "- position：求职方向，决定写法与侧重点。",
     "- record：表单的其他栏位（单位、职位、学校、专业、时间等），只用于理解这段经历，不是正文素材。",
     `- record 字段含义：${buildFieldHint(moduleKey) || "按字段名理解"}。`,
@@ -101,6 +103,7 @@ const buildSystemPrompt = (
     "- 正文只补充 record 之外的信息：职责、行动、成果、课程、荣誉。",
     "",
     "【写作要求】",
+    "- 按 moduleTitle 判断当前模块的类型，使用对应写法，不要套用其他模块的口径。",
     "- 只使用输入中的事实，不编造单位、职位、技术、时间、数字与成果；缺失时用【待补充：缺失内容】占位。",
     "- 简洁书面语，动词开头，不使用第一人称，不写称呼、自我介绍与总结句。",
     "- 不使用「系统学习」「在校期间」「相关知识」这类没有信息量的套话。",
@@ -117,7 +120,7 @@ const buildSystemPrompt = (
     "- 禁止使用 <h1>~<h6>、<div>、<table>、<img>、<a>、<html>、<body> 与 style 属性。",
     "",
     "【示例】",
-    '输入：{"position":"前端工程师","module":"work","record":{"company":"字节跳动","title":"前端工程师","startTime":"2021.03"},"currentText":"负责官网改版，加载时间从 3.2s 降到 1.1s"}',
+    '输入：{"moduleTitle":"工作经历","position":"前端工程师","module":"work","record":{"company":"字节跳动","title":"前端工程师","startTime":"2021.03"},"currentText":"负责官网改版，加载时间从 3.2s 降到 1.1s"}',
     "输出：<p>主导官网改版：基于 React 重构首屏加载链路，将首屏加载时间从 3.2s 降至 1.1s。</p>",
   ].join("\n");
 
@@ -206,6 +209,11 @@ export const useResumeContentAi = (
     }
     const { item, record, moduleKey } = target;
     if (!item || !record) return;
+    // 模块标题帮助模型判断当前写的是哪类内容
+    const moduleTitle =
+      String(item.data?.[moduleKey]?.ui?.title ?? "").trim() ||
+      findResumeModuleSchema(moduleKey)?.title ||
+      moduleKey;
     const currentText = stripFence(String(content.value ?? ""));
     if (action !== "generate" && !currentText) {
       ElMessage.warning("请先填写要处理的内容");
@@ -227,6 +235,8 @@ export const useResumeContentAi = (
     aborts = [];
     // 结构化数据一次给全，多个候选共享同一份输入
     const payload = {
+      // 当前模块标题，决定写作口径
+      moduleTitle,
       // 求职方向
       position,
       // 输出语言
@@ -242,7 +252,7 @@ export const useResumeContentAi = (
       {
         // 提示词全部放在系统消息
         role: "system",
-        content: buildSystemPrompt(action, kind(), moduleKey, language),
+        content: buildSystemPrompt(action, kind(), moduleKey, moduleTitle, language),
       },
       {
         // 数据作为用户消息
