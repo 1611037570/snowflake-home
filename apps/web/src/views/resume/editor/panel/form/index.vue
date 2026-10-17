@@ -73,7 +73,12 @@ const markEditingModule = (event) => {
   while (node && event.currentTarget.contains(node)) {
     const key = node.dataset.moduleKey;
     if (runtimeConfig.value?.fields?.some((field) => field.key === key)) {
-      resumeStore.editingModuleKey = key;
+      // 值未变化时直接退出，避免重复触发预览重渲染
+      if (resumeStore.editingModuleKey === key) return;
+      // 延后一轮事件循环写入：移动端手指按下当帧触发预览重渲染会抢走输入框焦点
+      window.setTimeout(() => {
+        resumeStore.editingModuleKey = key;
+      }, 0);
       return;
     }
     node = node.parentElement?.closest("[data-module-key]");
