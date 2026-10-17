@@ -123,7 +123,7 @@ const clearField = () => {
 </script>
 
 <template>
-  <div v-if="renderable" class="flex w-full flex-col gap-3">
+  <div v-if="renderable" class="flex w-full flex-col gap-1">
     <div class="flex w-full items-center gap-1">
       <div v-if="label" class="flex shrink-0 items-center" @click.stop.prevent="">
         <Icon v-if="draggable" icon="icon-park-outline:drag" class="item-drag cursor-move!" />
@@ -136,7 +136,7 @@ const clearField = () => {
           :size="4"
           class="mr-1"
         />
-        <span class="truncate pr-1 text-[15px] text-sf-text">
+        <span class="truncate pr-1 text-sm text-sf-text">
           {{ label }}
         </span>
         <sf-tooltip :content="tip" v-if="tip" class="text-sf-text" />
