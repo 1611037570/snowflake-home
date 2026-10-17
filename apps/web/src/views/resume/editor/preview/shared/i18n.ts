@@ -28,7 +28,7 @@ export const PREVIEW_TITLES: Record<PreviewLang, Record<string, string>> = {
     honor: "荣誉证书",
     portfolio: "作品集",
     club: "社团经历",
-    volunteer: "志愿者经历",
+    volunteer: "志愿服务经历",
   },
   en: {
     contact: "Contact", // 青线双栏个人信息区的分组标题

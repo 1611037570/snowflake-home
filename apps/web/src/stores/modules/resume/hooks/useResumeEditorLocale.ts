@@ -376,7 +376,7 @@ const TEXT_KEYS_SOURCE = `
   北大核心: "publicationIndexPkuCore",
   代表作: "publicationIndexRepresentative",
   社团经历: "clubExperience",
-  志愿者经历: "volunteerExperience",
+  志愿服务经历: "volunteerExperience",
   组织名称: "organizationName",
   "组织/活动": "clubOrganizationActivity",
   担任职务: "clubPost",

@@ -249,7 +249,7 @@ export const ICON_LIST: Record<string, IconItem> = {
   "mdi:cake-variant": { icon: "mdi:cake-variant", name: "生日蛋糕" },
   "mdi:heart-outline": { icon: "mdi:heart-outline", name: "婚姻状况" },
   "mdi:account-group-outline": { icon: "mdi:account-group-outline", name: "民族" },
-  "mdi:hand-heart-outline": { icon: "mdi:hand-heart-outline", name: "志愿者经历" },
+  "mdi:hand-heart-outline": { icon: "mdi:hand-heart-outline", name: "志愿服务经历" },
   "lucide:tag": { icon: "lucide:tag", name: "标签" },
   "lucide:heading-2": { icon: "lucide:heading-2", name: "副标题" },
   // 用于首页「免注册登录」卖点标识

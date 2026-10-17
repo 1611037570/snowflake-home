@@ -2191,7 +2191,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
   props: {
     add: true,
   },
-  model: createModuleState("志愿者经历"),
+  model: createModuleState("志愿服务经历"),
   slot: "default",
   fields: [
     {
