@@ -2,60 +2,29 @@
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
+import { normalizeDesensitizeFields } from "@/stores/modules/resume/config/desensitizeConfig";
+import DesensitizeConfigModal from "@/views/resume/editor/components/desensitizeConfigModal.vue";
 
 const resumeStore = useResumeStore();
 const { desensitizeMode } = storeToRefs(resumeStore);
-const dropdownRef = ref();
-const desensitizeOptions = [
-  { key: "disabled", name: "不脱敏", description: "完整发送简历内容" },
-  { key: "normal", name: "普通脱敏", description: "隐藏个人敏感信息" },
-  { key: "strict", name: "严格脱敏", description: "额外隐藏公司和学校名称" },
-];
-const activeKey = computed(() =>
-  desensitizeMode.value.disabled ? "disabled" : desensitizeMode.value.level,
+const visible = ref(false);
+const selectedFields = computed(() => normalizeDesensitizeFields(desensitizeMode.value));
+const activeName = computed(() =>
+  selectedFields.value.length ? `已脱敏 ${selectedFields.value.length} 项` : "未脱敏",
 );
-const activeName = computed(
-  () => desensitizeOptions.find((item) => item.key === activeKey.value)?.name,
-);
-
-// 选择脱敏等级并关闭下拉菜单
-const handleSelect = (item) => {
-  resumeStore.desensitizeMode = {
-    disabled: item.key === "disabled",
-    level: item.key === "strict" ? "strict" : "normal",
-  };
-  dropdownRef.value?.handleClose?.();
-};
 </script>
 
 <template>
-  <!-- 脱敏等级选择 -->
-  <SfDropdown ref="dropdownRef" trigger="click" placement="top-start" :show-arrow="false">
-    <!-- 脱敏选择使用统一的小号按钮，开启时显示主题色。 -->
-    <SfButton
-      :type="desensitizeMode.disabled ? 'bg' : 'theme'"
-      :plain="!desensitizeMode.disabled"
-      size="small"
-      class="gap-1 whitespace-nowrap"
-    >
-      {{ activeName }}
-      <SfIcon icon="mingcute:down-line" size="4" />
-    </SfButton>
-    <template #dropdown>
-      <SfList
-        class="w-60"
-        :list="desensitizeOptions"
-        activeKey="key"
-        :activeValue="activeKey"
-        @onClick="handleSelect"
-      >
-        <template #default="{ item }">
-          <div class="flex min-w-0 flex-1 items-center justify-between gap-3">
-            <span class="shrink-0">{{ item.name }}</span>
-            <span class="truncate text-[12px] text-sf-text-3">{{ item.description }}</span>
-          </div>
-        </template>
-      </SfList>
-    </template>
-  </SfDropdown>
+  <!-- 脱敏入口只展示当前保护状态，完整选择放入弹窗。 -->
+  <SfButton
+    :type="selectedFields.length ? 'theme' : 'bg'"
+    :plain="Boolean(selectedFields.length)"
+    size="small"
+    class="gap-3 whitespace-nowrap"
+    @click="visible = true"
+  >
+    <SfIcon :icon="selectedFields.length ? 'bi:shield-check' : 'bi:shield-exclamation'" size="4" />
+    {{ activeName }}
+  </SfButton>
+  <DesensitizeConfigModal v-model="visible" />
 </template>

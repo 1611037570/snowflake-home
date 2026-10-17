@@ -31,12 +31,15 @@ const readServerErrorMessage = async (error: any): Promise<string> => {
 
 export const printServerPDF = async (
   onSuccess?: () => void,
+  itemOverride?: any,
 ) => {
   const resumeStore = useResumeStore();
   const { getExportFileName, resumeTitle } = useResumeName();
   const { selectedModule, currentItem, system } = storeToRefs(resumeStore);
   const signal = resumeStore.beginPrinting();
   if (!signal || !currentItem.value) return;
+  // 脱敏导出传入独立副本，普通导出继续读取当前简历。
+  const exportItem = itemOverride ?? currentItem.value;
   // 记录导出所属简历，避免旧服务端任务写入新简历状态
   const resumeId = currentItem.value.id;
   const isCurrentResume = () => currentItem.value?.id === resumeId;
@@ -46,7 +49,7 @@ export const printServerPDF = async (
 
   try {
     const blob = await createResumePdf(
-      cloneJson(currentItem.value),
+      cloneJson(exportItem),
       cloneJson(system.value),
       signal,
     );

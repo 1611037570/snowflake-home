@@ -1,7 +1,7 @@
 <script setup>
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { computed, inject, onMounted, onUnmounted, provide, ref, watch } from "vue";
+import { computed, inject, nextTick, onMounted, onUnmounted, provide, ref, watch } from "vue";
 import { useDebounceFn } from "@vueuse/core";
 import ResumePages from "../resumePages/index.vue";
 import ExportSuccessModal from "../resumePages/export/exportSuccessModal.vue";
@@ -17,12 +17,21 @@ import {
 import eventBus from "@/utils/modules/eventBus";
 import { layoutUsesColumns, resolveLayoutColumns } from "@/domain/resume/theme/layouts";
 import { resolveThemeDecisions } from "@/views/resume/theme";
+import { createDesensitizedResumeItem } from "@/stores/modules/resume/config/desensitizeConfig";
 
 defineOptions({ name: "ResumePage" });
 
 const resumeStore = useResumeStore();
-const { currentData, currentConfig, currentUI, runtimeConfig, runtimeFields, selectedModule, system } =
-  storeToRefs(resumeStore);
+const {
+  currentData,
+  currentConfig,
+  currentItem,
+  currentUI,
+  runtimeConfig,
+  runtimeFields,
+  selectedModule,
+  system,
+} = storeToRefs(resumeStore);
 const { editingModuleKey, isPrinting } = storeToRefs(resumeStore);
 // 标签状态由工作区提供，交互显示规则统一交给模块交互计算维护。
 const activeEditorTab = inject("resumeEditorTab", ref("edit"));
@@ -56,6 +65,45 @@ const previewModuleKeys = computed(() => pagesRef.value?.moduleKeys ?? []);
 const previewMeasured = computed(() => pagesRef.value?.previewMeasured ?? false);
 const measureDone = computed(() => pagesRef.value?.measureDone ?? false);
 const moduleKeys = computed(() => previewModuleKeys.value);
+
+// 脱敏导出使用独立预览，不临时改写当前简历或可见编辑画面。
+const exportResumeItem = ref(null);
+const exportPagesRef = ref(null);
+const exportRootRef = computed(() =>
+  exportResumeItem.value ? exportPagesRef.value?.rootEl ?? null : previewRootRef.value,
+);
+const exportMeasureRef = computed(() =>
+  exportResumeItem.value ? exportPagesRef.value?.measureEl ?? null : previewMeasureRef.value,
+);
+const exportPagePlan = computed(() =>
+  exportResumeItem.value ? exportPagesRef.value?.pagePlan ?? { pages: [] } : previewPagePlan.value,
+);
+const exportPreviewReady = computed(() =>
+  exportResumeItem.value ? exportPagesRef.value?.previewMeasured ?? false : previewMeasured.value,
+);
+const prepareExport = async (fields) => {
+  if (!fields.length || !currentItem.value) return undefined;
+  exportResumeItem.value = createDesensitizedResumeItem(currentItem.value, fields);
+  await nextTick();
+  if (!exportPreviewReady.value) {
+    await new Promise((resolve) => {
+      const timer = window.setTimeout(() => {
+        stop();
+        resolve(false);
+      }, 10000);
+      const stop = watch(exportPreviewReady, (ready) => {
+        if (!ready) return;
+        window.clearTimeout(timer);
+        stop();
+        resolve(true);
+      });
+    });
+  }
+  return exportResumeItem.value;
+};
+const finishExport = () => {
+  exportResumeItem.value = null;
+};
 const {
   moduleClassMap,
   showEditorInteractions,
@@ -198,10 +246,12 @@ const handleModuleMove = ({ moduleKey, direction, columnId }) => {
 };
 useResumeExport({
   isEdit,
-  rootRef: previewRootRef,
-  measureRef: previewMeasureRef,
-  pagePlan: previewPagePlan,
-  previewReady,
+  rootRef: exportRootRef,
+  measureRef: exportMeasureRef,
+  pagePlan: exportPagePlan,
+  previewReady: exportPreviewReady,
+  prepareExport,
+  finishExport,
   onExportSuccess,
 });
 useSmartOnePage({
@@ -231,6 +281,22 @@ useSmartOnePage({
     @module-move="handleModuleMove"
     @module-select="handleModuleSelect"
   />
+  <Teleport to="body">
+    <div
+      v-if="exportResumeItem"
+      style="position: fixed; top: 0; left: -100000px; pointer-events: none"
+      aria-hidden="true"
+    >
+      <ResumePages
+        ref="exportPagesRef"
+        :item="exportResumeItem"
+        :expanded-fields="runtimeFields"
+        mode="preview"
+        :show-page-number="system.showPageNumber"
+        :show-editor-interactions="false"
+      />
+    </div>
+  </Teleport>
   <!-- 导出成功弹窗（含投递简历入口）由该组件统一管理 -->
   <ExportSuccessModal ref="exportSuccessModalRef" />
 </template>

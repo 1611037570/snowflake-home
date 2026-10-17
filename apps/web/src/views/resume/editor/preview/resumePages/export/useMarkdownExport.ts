@@ -127,11 +127,12 @@ const appendRecord = (
 };
 
 // 按当前模块顺序生成可读的 Markdown 简历
-export const exportMarkdown = (onSuccess?: () => void) => {
+export const exportMarkdown = (onSuccess?: () => void, itemOverride?: any) => {
   // 调用时取得当前仓库，避免模块导入阶段依赖已激活的状态容器
   const { currentItem, runtimeConfig } = storeToRefs(useResumeStore());
   const { getExportFileName, getResumeTitle, resumeTitle } = useResumeName();
-  const item = currentItem.value;
+  // 脱敏导出传入独立副本，普通导出继续读取当前简历。
+  const item = itemOverride ?? currentItem.value;
   const data = item?.data || {};
   // 字段配置统一以模块 key 标识
   const configuredKeys = (runtimeConfig.value?.fields || item?.config?.modules || [])

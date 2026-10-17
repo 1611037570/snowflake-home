@@ -17,11 +17,7 @@ import type { ResumeListItem } from "./resumeCatalog";
 import { createResumeListItem } from "./resumeCatalog";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { compactResumeUi, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
-export type DesensitizeLevel = "normal" | "strict";
-export type DesensitizeConfig = {
-  disabled: boolean;
-  level: DesensitizeLevel;
-};
+import type { DesensitizeConfig } from "./config/desensitizeConfig";
 
 export const useResumeStore = defineStore(
   "resume",
@@ -60,10 +56,9 @@ export const useResumeStore = defineStore(
     const currentIndex = ref(-1);
     // 编辑器区域宽度
     const editorWidth = ref(DEFAULT_EDITOR.editorWidth);
-    // AI 请求脱敏配置：禁用时不脱敏，否则按等级过滤敏感字段
+    // AI 请求脱敏配置：按用户勾选字段过滤发送给模型的简历数据
     const desensitizeMode = ref<DesensitizeConfig>({
-      disabled: true,
-      level: "normal",
+      selectedFields: [],
     });
     // 系统配置
     const system = ref(structuredClone(DEFAULT_SYSTEM));

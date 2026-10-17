@@ -7,17 +7,22 @@ import { storeToRefs } from "pinia";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import ExportItem from "./exportItem.vue";
 import { $t } from "@/locales";
+import { normalizeDesensitizeFields } from "@/stores/modules/resume/config/desensitizeConfig";
+import DesensitizeConfigModal from "@/views/resume/editor/components/desensitizeConfigModal.vue";
 
 const visible = ref(false);
+const desensitizeVisible = ref(false);
+const exportDesensitized = ref(false);
 // 所有支持清晰度的导出统一使用 2 倍，减少用户选择成本。
 const exportScale = 2;
 const resumeStore = useResumeStore();
 const systemStore = useSystemStore();
-const { currentItem, isPrinting } = storeToRefs(resumeStore);
+const { currentItem, desensitizeMode, isPrinting } = storeToRefs(resumeStore);
 const { isConnected } = storeToRefs(systemStore);
 const { getExportFileName, resumeTitle } = useResumeName();
 const pdfExportType = ref("local");
 const longImageExportType = ref("png");
+const selectedFields = computed(() => normalizeDesensitizeFields(desensitizeMode.value));
 
 const pdfExportOptions = computed(() => [
   { name: $t("local"), value: "local" },
@@ -51,7 +56,22 @@ const exportConfig = () => {
 const emitExport = (eventName) => {
   if (isPrinting.value) return;
   visible.value = false;
-  eventBus.emit(eventName, exportScale);
+  eventBus.emit(eventName, {
+    scale: exportScale, // 导出清晰度。
+    desensitizeFields: exportDesensitized.value ? [...selectedFields.value] : [], // 本次导出采用的脱敏字段。
+  });
+};
+
+// 未配置字段时先打开统一弹窗，确认后再启用脱敏导出。
+const selectExportMode = (desensitized) => {
+  if (desensitized && !selectedFields.value.length) {
+    desensitizeVisible.value = true;
+    return;
+  }
+  exportDesensitized.value = desensitized;
+};
+const handleDesensitizeConfirm = (fields) => {
+  exportDesensitized.value = fields.length > 0;
 };
 
 // 响应导出成功弹窗的继续导出操作，重新打开导出菜单。
@@ -145,6 +165,42 @@ const a = {
         <div class="border-b border-sf-b pb-3 text-sm text-sf-text-3">
           {{ $t("exportFormatDescription") }}
         </div>
+        <section class="flex flex-col gap-3 border-b border-sf-b py-3">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-medium text-sf-text">导出内容</p>
+              <p class="mt-3 text-xs text-sf-text-3">脱敏版沿用当前已保存的脱敏字段</p>
+            </div>
+            <SfButton type="bg" size="small" border @click="desensitizeVisible = true">修改字段</SfButton>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <SfButton
+              :type="exportDesensitized ? 'bg' : 'theme'"
+              size="small"
+              border
+              class="h-auto! justify-start! p-3!"
+              @click="selectExportMode(false)"
+            >
+              <span class="flex flex-col items-start gap-3">
+                <span class="font-medium">原始简历</span>
+                <span class="text-xs opacity-75">保留完整内容</span>
+              </span>
+            </SfButton>
+            <SfButton
+              :type="exportDesensitized ? 'theme' : 'bg'"
+              size="small"
+              border
+              class="h-auto! justify-start! p-3!"
+              @click="selectExportMode(true)"
+            >
+              <span class="flex flex-col items-start gap-3">
+                <span class="font-medium">脱敏简历</span>
+                <span class="text-xs opacity-75">已配置 {{ selectedFields.length }} 项</span>
+              </span>
+            </SfButton>
+          </div>
+          <p class="text-xs text-sf-text-3">完整备份始终保留原始数据，不应用脱敏。</p>
+        </section>
         <div class="grid grid-cols-1 gap-3 py-3 sm:grid-cols-2">
           <ExportItem v-for="item in list" :key="item.name" :item="item" @click="item.fn" />
           <ExportItem :item="a" class="sm:col-span-2" @click="a.fn" />
@@ -162,6 +218,7 @@ const a = {
       </div>
     </SfScrollbar>
   </SfModal>
+  <DesensitizeConfigModal v-model="desensitizeVisible" @confirm="handleDesensitizeConfirm" />
 </template>
 
 <style lang="scss" scoped>
