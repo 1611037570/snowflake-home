@@ -140,7 +140,7 @@ const selectExample = (example) => {
   >
     <button
       type="button"
-      class="mr-3 flex shrink-0 cursor-pointer items-center gap-3 rounded-2xl border border-sf-b bg-sf-bg-2 px-3 py-1.5 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+      class="mr-3 flex shrink-0 cursor-pointer items-center gap-3 rounded-2xl border border-sf-b bg-sf-bg-2 p-1 text-xs text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
       @click="openExamples"
     >
       {{ $t("resumeExampleOpen") }}

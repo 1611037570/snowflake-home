@@ -208,6 +208,8 @@ const confirmLink = async () => {
 // ——————工具栏样式开始——————
 :deep(.w-e-bar svg) {
   fill: var(--color-sf-base);
+  width: 12px; // 图标宽度，同步缩小工具栏按钮
+  height: 12px; // 图标高度，同步缩小工具栏按钮
 }
 /* 修改工具栏样式 */
 :deep(.w-e-bar) {
@@ -216,12 +218,19 @@ const confirmLink = async () => {
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
   padding: 0 !important;
+  font-size: 12px; // 工具栏文字尺寸
 }
 :deep(.w-e-hover-bar) {
   background: var(--color-sf-page) !important;
 }
+:deep(.w-e-bar-item) {
+  height: 28px; // 单个工具项高度，决定工具栏整体高度
+  padding: 2px; // 工具项四周留白
+}
 :deep(.w-e-bar-item button) {
   border-radius: 10px !important;
+  height: 24px; // 按钮高度
+  padding: 0 4px; // 按钮左右留白，控制按钮宽度
 }
 :deep(.w-e-bar-item .active) {
   background-color: var(--color-sf-theme-2) !important;
@@ -239,6 +248,7 @@ const confirmLink = async () => {
     color: var(--color-sf-base);
     background: var(--color-sf-page);
     border: var(--color-sf-border) 1px solid;
+    top: 28px; // 提示气泡与缩小后的工具项高度对齐
   }
   &:after {
     border: none !important;
