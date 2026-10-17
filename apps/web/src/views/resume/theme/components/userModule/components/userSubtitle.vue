@@ -24,6 +24,7 @@ const joinInfo = (items) => {
   return items.filter(Boolean).join(mark ? ` ${mark} ` : " ");
 };
 const heightWeightText = (value) => {
+  if (typeof value === "string") return value;
   const height = value?.height;
   const weight = value?.weight;
   const hasHeight = height != null && height !== "";
@@ -33,14 +34,16 @@ const heightWeightText = (value) => {
 };
 // 模特三围按胸围、腰围、臀围顺序展示，允许只填写部分数据
 const measurementsText = (value) => {
+  if (typeof value === "string") return value;
   const measurements = [value?.bust, value?.waist, value?.hip].filter(
     (item) => item != null && item !== "",
   );
   return measurements.length ? joinInfo(measurements.map((item) => `${item}cm`)) : "";
 };
 // 尺码按上装、下装、鞋码顺序展示，允许只填写部分数据
-const sizesText = (value) =>
-  joinInfo(
+const sizesText = (value) => {
+  if (typeof value === "string") return value;
+  return joinInfo(
     [
       { key: "top", value: value?.top },
       { key: "bottom", value: value?.bottom },
@@ -49,6 +52,7 @@ const sizesText = (value) =>
       .filter((item) => item.value != null && item.value !== "")
       .map((item) => (item.key === "shoes" ? `${item.value}码` : item.value)),
   );
+};
 // 出生日期按所选展示形态转换为日期或年龄
 const birthdayText = (value) => {
   if (birthdayDisplay.value === "date") return String(value);

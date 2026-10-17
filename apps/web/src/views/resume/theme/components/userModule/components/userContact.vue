@@ -164,6 +164,7 @@ const metaItems = computed(() => {
 const heightWeightText = computed(() => {
   if (isUserFieldHidden("heightWeight")) return "";
   const value = user.value?.heightWeight;
+  if (typeof value === "string") return value;
   const height = value?.height;
   const weight = value?.weight;
   const hasHeight = height != null && height !== "";
@@ -175,6 +176,7 @@ const heightWeightText = computed(() => {
 const measurementsText = computed(() => {
   if (isUserFieldHidden("measurements")) return "";
   const value = user.value?.measurements;
+  if (typeof value === "string") return value;
   const measurements = [value?.bust, value?.waist, value?.hip].filter(
     (item) => item != null && item !== "",
   );
@@ -185,6 +187,7 @@ const measurementsText = computed(() => {
 const sizesText = computed(() => {
   if (isUserFieldHidden("sizes")) return "";
   const value = user.value?.sizes;
+  if (typeof value === "string") return value;
   const sizes = [
     { key: "top", value: value?.top },
     { key: "bottom", value: value?.bottom },

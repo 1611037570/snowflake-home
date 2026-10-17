@@ -120,10 +120,6 @@ const sanitizeTree = (
 };
 
 const maskFieldValue = (value: unknown): unknown => {
-  if (Array.isArray(value)) return value.map(maskFieldValue);
-  if (value && typeof value === "object") {
-    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, maskFieldValue(item)]));
-  }
   return value === null || value === undefined || value === "" ? value : DESENSITIZED_TEXT;
 };
 
@@ -157,8 +153,10 @@ export const createDesensitizedResumeItem = (
   PERSONAL_DESENSITIZE_FIELDS.forEach((field) => {
     if (!selectedFields.has(field) || !user?.data || user.data[field] == null || user.data[field] === "") return;
     user.data[field] = maskFieldValue(user.data[field]);
-    user.ui = user.ui || {};
-    user.ui[field] = { ...user.ui[field], hidden: true };
+    if (field === "birthday") {
+      user.ui = user.ui || {};
+      user.ui.birthday = { ...user.ui.birthday, display: "date" };
+    }
   });
   return clone;
 };
