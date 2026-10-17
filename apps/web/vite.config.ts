@@ -261,13 +261,18 @@ export default ({ mode }: { mode: string }) => {
         // },
         experimentalLogSideEffects: false, // 实验性日志副作用
         plugins: [
-          // 包大小可视化
-          visualizer({
-            filename: "../../dist/web/stats.html", // 打包分析报告路径
-            open: false, // 自动打开报告
-            gzipSize: true, // 显示gzip压缩后的大小
-            brotliSize: true, // 显示brotli压缩后的大小
-          }) as any,
+          // 包大小可视化：默认关闭，只有需要分析产物体积时用 ANALYZE=1 开启
+          // 它对每个产物同时计算 gzip 与 brotli 体积，常规构建会多花十几分钟
+          ...(process.env.ANALYZE === "1"
+            ? [
+                visualizer({
+                  filename: "../../dist/web/stats.html", // 打包分析报告路径
+                  open: false, // 自动打开报告
+                  gzipSize: true, // 显示gzip压缩后的大小
+                  brotliSize: true, // 显示brotli压缩后的大小
+                }) as any,
+              ]
+            : []),
         ],
         output: {
           manualChunks: (id) => {
