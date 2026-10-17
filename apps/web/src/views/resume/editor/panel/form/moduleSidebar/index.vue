@@ -143,7 +143,7 @@ onUnmounted(() => {
           </span>
           <span class="module-name max-w-21 truncate text-[12px]">{{ shortName(item.name) }}</span>
           <!-- 右侧显示记录数量：圆形底色徽标；隐藏模块同时保留一个圆点提示 -->
-          <span class="ml-auto flex shrink-0 items-center gap-1">
+          <span class="rail-meta ml-auto flex shrink-0 items-center gap-1">
             <span v-if="item.hidden" class="h-1.5 w-1.5 rounded-full bg-sf-text-3"></span>
             <span
               v-if="item.count !== null"
@@ -235,18 +235,22 @@ onUnmounted(() => {
   box-shadow: 0 14px 30px rgba(17, 24, 39, 0.18);
 }
 
-/* 移动端编辑区宽度有限，收回到只显示图标 */
+/* 移动端编辑区宽度有限，收回到只显示图标：名称、数量与内边距一并收起 */
 @media (max-width: 767px) {
   .module-tree {
     width: 48px;
+    padding: 6px;
   }
 
   .rail-row {
     justify-content: center;
+    gap: 0;
+    overflow: hidden;
     padding: 0;
   }
 
-  .rail-row .module-name {
+  .rail-row .module-name,
+  .rail-row .rail-meta {
     display: none;
   }
 
