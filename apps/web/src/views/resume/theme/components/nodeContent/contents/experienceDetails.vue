@@ -49,6 +49,8 @@ const titleInfoItems = computed(() => {
 });
 const secondaryItems = computed(() => {
   if (isEducation.value) return [item.value.post, item.value.score];
+  // 志愿服务经历展示服务时长，其余经历展示岗位与部门
+  if (props.node.sourceModuleKey === "volunteer") return [item.value.duration];
   return [item.value.post, item.value.department];
 });
 // 首行显示名称、教育信息与日期。

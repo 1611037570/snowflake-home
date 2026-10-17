@@ -37,7 +37,8 @@ export const createExperienceModuleAdapter = (moduleKey: string): LayoutAdapter 
       payload: {
         part: "item",
         item,
-        inlineInfo: [item.post, item.department], // 职务与部门作为并列信息
+        // 志愿服务展示服务时长，其余经历展示职务与部门
+        inlineInfo: moduleKey === "volunteer" ? [item.duration] : [item.post, item.department],
         content: parsed,
       },
       // 正文起点也作为断点：放不下正文时允许“标题 + 条目头”留在当前页，正文顺延到下一页

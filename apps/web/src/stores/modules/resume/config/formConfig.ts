@@ -2223,7 +2223,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
           },
         ],
         fields: [
-          // 组织名称与担任职务按教育经历首行布局并排编辑。
+          // 组织名称与服务时长按教育经历首行布局并排编辑。
           {
             type: "object",
             label: "组织名称",
@@ -2241,22 +2241,16 @@ export const DEFAULT_VOLUNTEER_FORM = {
           },
           {
             type: "object",
-            label: "担任职务",
-            component: "positionPicker",
+            label: "服务时长",
+            component: "input",
             span: 12,
-            model: [
-              {
-                source: ["data", "post"],
-                prop: "modelValue",
-              },
-              {
-                source: ["__options", "position"],
-                prop: "list",
-                raw: true,
-              },
-            ],
+            model: {
+              source: ["data", "duration"],
+              prop: "modelValue",
+            },
             props: {
-              placeholder: "请选择或输入职务",
+              placeholder: "如 120 小时",
+              clearable: true,
             },
           },
           // 起止时间保持同一行。

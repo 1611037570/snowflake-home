@@ -230,7 +230,7 @@ const resumeData: any = {
     volunteer: {
       list: [{ data: {
         name: "社区公益项目" /* 组织名称 */,
-        post: "志愿者" /* 担任职务 */,
+        duration: "120 小时" /* 服务时长 */,
         startTime: "2018.03" /* 开始时间 */,
         endTime: "2018.06" /* 结束时间 */,
         city: "上海" /* 所在城市 */,
