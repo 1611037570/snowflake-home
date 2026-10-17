@@ -18,14 +18,19 @@ function openModal() {
 </script>
 
 <template>
+  <!-- 标题常显、字号加大；悬停区域沿用原来的 p-3 与 3xl 圆角，铅笔只在悬停时出现 -->
   <div
-    class="flex h-9 max-w-full min-w-0 cursor-pointer items-center gap-1 rounded-3xl p-3 hover:bg-sf-bg-2 hover:text-sf-theme md:max-w-[300px]"
+    class="group flex h-9 max-w-full min-w-0 cursor-pointer items-center gap-1.5 rounded-3xl p-3 text-sf-text transition-colors hover:bg-sf-bg-2 hover:text-sf-theme md:max-w-[320px]"
     @click="openModal"
   >
-    <SfIcon icon="solar:pen-linear" class="shrink-0 hover:text-sf-theme-2" size="4" />
-    <div class="text-auto hidden min-w-0 truncate text-sm md:flex">
+    <div class="min-w-0 truncate text-[15px] font-medium">
       {{ title }}
     </div>
+    <SfIcon
+      icon="solar:pen-linear"
+      size="3"
+      class="shrink-0 text-sf-text-3 opacity-0 transition-opacity group-hover:opacity-100"
+    />
   </div>
   <RenameResumeModal v-model="editTitleVisible" :item="currentItem" />
 </template>

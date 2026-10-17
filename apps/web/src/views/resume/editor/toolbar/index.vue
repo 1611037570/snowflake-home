@@ -9,10 +9,9 @@ import System from "./modules/system/index.vue";
 import CopyResume from "./modules/copyResume.vue";
 import Progress from "./modules/progress/index.vue";
 import Donation from "./modules/donation.vue";
-import Share from "./modules/share.vue";
-import Feedback from "./modules/feedback.vue";
 import QaAnswer from "./modules/qaAnswer.vue";
 import LiuyaoWenxin from "./modules/liuyaoWenxin.vue";
+import OnlineWriters from "../../components/onlineWriters.vue";
 import { $t } from "@/locales";
 
 // 调试面板默认关闭，保持异步按需加载
@@ -22,7 +21,6 @@ defineOptions({ name: "ResumeToolbar" });
 
 const router = useRouter();
 const resumeStore = useResumeStore();
-const { currentItem } = storeToRefs(resumeStore);
 const systemStore = useSystemStore();
 const { isMobile } = storeToRefs(systemStore);
 
@@ -84,8 +82,6 @@ const toolbarItems = computed(() => [
   // ATS 参考入口固定在主要工具组末尾。
   { key: "progress", component: Progress },
   { key: "separator-support", type: "separator" },
-  { key: "share", component: Share },
-  { key: "feedback", component: Feedback },
   { key: "donation", component: Donation },
   { key: "qa-answer", component: QaAnswer },
   { key: "liuyao-wenxin", component: LiuyaoWenxin },
@@ -124,17 +120,11 @@ const toolbarItems = computed(() => [
       :class="isMobile && 'mobile-toolbar-panel h-svh  border-l border-sf-b bg-sf-primary p-3'"
     >
       <div
-        class="relative flex w-12 flex-col items-center gap-0 overflow-visible rounded-3xl border border-sf-b bg-sf-primary py-3 text-sf-text-3 shadow-sm transition-all duration-300 hover:border-sf-theme/40 hover:shadow-md"
+        class="relative flex max-h-full w-12 flex-col items-center gap-0 overflow-y-auto overflow-x-visible rounded-3xl border border-sf-b bg-sf-primary py-3 text-sf-text-3 shadow-sm transition-all duration-300 hover:border-sf-theme/40 hover:shadow-md"
         :class="{ 'shrink-0': isMobile }"
       >
-        <!-- 简历 ID 固定显示在工具栏顶部。 -->
-        <span
-          class="flex w-full flex-col items-center gap-0 border-b border-sf-b pb-3 text-center text-[9px] leading-3 tracking-wider text-sf-text-3"
-          :title="`ID ${currentItem?.id || ''}`"
-        >
-          <span>ID</span>
-          <span class="max-w-9 truncate">{{ currentItem?.id }}</span>
-        </span>
+        <!-- 在线写作人数：由文件栏移入工具轨，放在最顶部避免被内容挤出可视区 -->
+        <OnlineWriters compact class="shrink-0 border-b border-sf-b pb-3" />
         <template v-for="item in toolbarItems" :key="item.key">
           <div v-if="item.type === 'separator'" class="h-px w-6 bg-sf-b opacity-60"></div>
           <component v-else :is="item.component" v-bind="item.attrs" />

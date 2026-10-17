@@ -341,7 +341,10 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
     0 16px 40px color-mix(in srgb, var(--sf-base) 4%, transparent);
 }
 
+/* 预览纸张：套用工具轨一样的描边与圆角，仅作用于编辑器预览；导出与打印在独立文档里使用各自样式，不受影响 */
 .preview-canvas :deep(.resume-page-item) {
+  border-radius: 24px;
+  overflow: hidden;
   box-shadow: var(--preview-paper-shadow);
 }
 </style>

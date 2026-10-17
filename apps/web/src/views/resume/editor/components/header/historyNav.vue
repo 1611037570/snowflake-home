@@ -21,10 +21,10 @@ const handleRedo = () => {
       <SfIcon
         icon="lucide:undo-2"
         size="4"
-        boxSize="7"
+        boxSize="8"
         :class="[
-          'rounded-full',
-          canUndo ? 'cursor-pointer hover:bg-sf-theme-2' : 'cursor-not-allowed! opacity-40',
+          'rounded-full text-sf-text-2 transition-colors',
+          canUndo ? 'cursor-pointer hover:bg-sf-bg hover:text-sf-theme' : 'cursor-not-allowed! opacity-40',
         ]"
         @click="canUndo && handleUndo()"
       />
@@ -33,10 +33,10 @@ const handleRedo = () => {
       <SfIcon
         icon="lucide:redo-2"
         size="4"
-        boxSize="7"
+        boxSize="8"
         :class="[
-          'rounded-full',
-          canRedo ? 'cursor-pointer hover:bg-sf-theme-2' : 'cursor-not-allowed! opacity-40',
+          'rounded-full text-sf-text-2 transition-colors',
+          canRedo ? 'cursor-pointer hover:bg-sf-bg hover:text-sf-theme' : 'cursor-not-allowed! opacity-40',
         ]"
         @click="canRedo && handleRedo()"
       />

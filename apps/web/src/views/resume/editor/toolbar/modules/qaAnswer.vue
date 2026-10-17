@@ -33,6 +33,11 @@ const qaItems = computed(() => [
     icon: "mdi:file-pdf-box",
     title: $t("qaExportTitle"),
   },
+  {
+    id: "help",
+    icon: "ph:chat-teardrop-dots-fill",
+    title: $t("qaHelpTitle"),
+  },
 ]);
 
 // 切换到标准 A4 查看真实排版，并关闭弹窗
@@ -111,8 +116,12 @@ const reportIssue = () => {
               </SfButton>
             </div>
           </template>
-          <template v-else>
+          <template v-else-if="item.id === 'export'">
             <p class="leading-6 text-sf-text-2">{{ $t("qaExportReference") }}</p>
+          </template>
+          <template v-else>
+            <p class="leading-6 text-sf-text-2">{{ $t("qaHelpMessage") }}</p>
+            <SfButton class="mt-3 w-full" @click="reportIssue">{{ $t("qaHelpAction") }}</SfButton>
           </template>
         </div>
       </div>
