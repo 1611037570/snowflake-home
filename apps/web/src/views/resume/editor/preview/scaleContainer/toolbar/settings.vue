@@ -1,13 +1,16 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import {
   avatarPositionList,
+  defaultAvatarPosition,
+  defaultDatePosition,
   datePositionList,
   defaultFooter,
   defaultFooterTemplate,
+  defaultInfoPosition,
   defaultLeftColumnWidth,
   defaultLineHeight,
   defaultModuleSpacing,
@@ -18,8 +21,10 @@ import {
   footerTemplateList,
   infoPositionList,
   uiParamRanges,
+  defaultUserInfoLayout,
   userInfoLayoutList,
 } from "@/domain/resume/theme/uiConfig";
+import { DEFAULT_SYSTEM } from "@/stores/modules/resume/config/defaultConfig";
 import { layoutUsesColumns } from "@/domain/resume/theme/layouts";
 import {
   getResumeThemeTemplate,
@@ -27,9 +32,12 @@ import {
   resolveThemeSettingRestrictions,
 } from "@/views/resume/theme";
 import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
+import SettingSection from "./settingSection.vue";
+import SettingNumberField from "./settingNumberField.vue";
 
 const resumeStore = useResumeStore();
 const { system, currentUI } = storeToRefs(resumeStore);
+const dropdownVisible = ref(false); // 布局面板打开时保持工具栏入口选中态
 
 // 页尾显示设置与布局参数集中在同一面板。
 const showPageNumber = computed({
@@ -109,6 +117,13 @@ const layoutOptionParams = computed(() => {
   ].map((item) => ({ ...item, list: localizeResumeEditorOptionList(item.list) }));
 });
 
+const layoutOptionDefaults = {
+  "user.infoLayout": defaultUserInfoLayout, // 个人信息布局默认值
+  "user.avatarPosition": defaultAvatarPosition, // 头像位置默认值
+  "user.infoPosition": defaultInfoPosition, // 个人信息对齐默认值
+  "content.datePosition": defaultDatePosition, // 经历日期位置默认值
+};
+
 // 主题固定的选项保持可见，由限制说明给出原因并阻止写入
 const settingRestrictions = computed(() =>
   resolveThemeSettingRestrictions(currentUI.value?.theme?.template),
@@ -128,7 +143,7 @@ const setPathValue = (source, path, value) => {
 const getParamDefault = (key) => {
   const presetValue = getPathValue(themePresetUi.value, key);
   if (presetValue !== undefined && presetValue !== null) return presetValue;
-  return layoutParams.find((item) => item.key === key)?.defaultValue;
+  return layoutParams.find((item) => item.key === key)?.defaultValue ?? layoutOptionDefaults[key];
 };
 
 // 读取数值型参数：统一转为数值，避免字符串参与滑块内部计算；字段缺失时回退该参数的默认值
@@ -151,12 +166,31 @@ const setParam = (key, value) => {
 const setNumberParam = (key, value) => {
   if (Number.isFinite(value)) setParam(key, value);
 };
+
+// 页面布局分组仅恢复当前可见的数值参数。
+const resetPageLayout = () => {
+  visibleLayoutParams.value.forEach((item) => setParam(item.key, getParamDefault(item.key)));
+};
+
+// 内容布局分组恢复排版选项与副标题位置。
+const resetContentLayout = () => {
+  layoutOptionParams.value.forEach((item) => setParam(item.key, getParamDefault(item.key)));
+  subtitleCenter.value = defaultSubtitleCenter;
+};
+
+// 页尾分组恢复显示状态、页码模板与默认空文案。
+const resetFooterSettings = () => {
+  showPageNumber.value = DEFAULT_SYSTEM.showPageNumber;
+  footerTemplate.value = defaultFooterTemplate;
+  footer.value = defaultFooter;
+};
 </script>
 
 <template>
-  <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
+  <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false" @visible-change="dropdownVisible = $event">
     <span
       class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-xs text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text md:text-sm"
+      :class="{ 'text-sf-theme!': dropdownVisible }"
     >
       <SfIcon icon="lucide:layout-template" size="5" />
     <span>{{ $t("layout") }}</span>
@@ -167,100 +201,81 @@ const setNumberParam = (key, value) => {
         class="w-80 rounded-3xl border border-sf-b bg-sf-primary p-3"
       >
         <div class="flex flex-col gap-3 pb-3">
-          <div class="text-xs font-bold text-sf-text">{{ $t("pageLayout") }}</div>
-          <div v-for="item in visibleLayoutParams" :key="item.key" class="flex flex-col gap-1">
-            <div class="flex items-center text-sm text-sf-text-2">
-              <span class="flex items-center gap-1">
-                <span>{{ $t(item.labelKey) }}</span>
+          <SettingSection :title="$t('pageLayout')" :reset-label="$t('reset')" @reset="resetPageLayout">
+            <SettingNumberField
+              v-for="item in visibleLayoutParams"
+              :key="item.key"
+              :label="$t(item.labelKey)"
+              :model-value="getNumberValue(item.key)"
+              :min="uiParamRanges[item.key].min"
+              :max="uiParamRanges[item.key].max"
+              :step="uiParamRanges[item.key].step"
+              :unit="item.unit === 'lineHeightUnit' ? $t(item.unit) : item.unit"
+              @update:model-value="(value) => setNumberParam(item.key, value)"
+              @reset="setParam(item.key, getParamDefault(item.key))"
+            />
+          </SettingSection>
+          <!-- 个人信息与经历日期的排版选项：与页面数值参数共用同一入口 -->
+          <SettingSection :title="$t('contentLayout')" :reset-label="$t('reset')" @reset="resetContentLayout">
+            <div v-for="item in layoutOptionParams" :key="item.key" class="flex flex-col gap-1">
+              <p v-if="getSettingRestriction(item.key)" class="text-xs text-sf-text-2">
+                {{ getSettingRestriction(item.key) }}
+              </p>
+              <div class="flex items-center gap-1 text-sm text-sf-text-2">
+                <span>{{ item.label }}</span>
                 <SfIcon
                   icon="material-symbols:restart-alt"
                   size="4"
                   class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                  :aria-disabled="Boolean(getSettingRestriction(item.key))"
+                  :class="{ 'cursor-not-allowed! text-sf-text-disabled!': getSettingRestriction(item.key) }"
                   @click="setParam(item.key, getParamDefault(item.key))"
                 />
-              </span>
-            </div>
-            <!-- 滑块与数字输入共用参数，单位显示在最右侧。 -->
-            <div class="flex items-center gap-3">
-              <SfSlider
-                :model-value="getNumberValue(item.key)"
-                @update:model-value="(value) => setParam(item.key, value)"
-                :min="uiParamRanges[item.key].min"
-                :max="uiParamRanges[item.key].max"
-                :step="uiParamRanges[item.key].step"
-                size="small"
-              />
-              <div class="w-27 shrink-0">
-                <SfInputNumber
-                  :model-value="getNumberValue(item.key)"
-                  @update:model-value="(value) => setNumberParam(item.key, value)"
-                  :min="uiParamRanges[item.key].min"
-                  :max="uiParamRanges[item.key].max"
-                  :step="uiParamRanges[item.key].step"
-                  :aria-label="$t(item.labelKey)"
-                  size="small"
-                />
               </div>
-              <span class="shrink-0 text-sm text-sf-text-2">{{ item.unit === "lineHeightUnit" ? $t(item.unit) : item.unit }}</span>
+              <div class="flex gap-1">
+                <SfButton
+                  v-for="option in item.list"
+                  :key="option.value"
+                  class="flex-1"
+                  size="small"
+                  border
+                  :disabled="Boolean(getSettingRestriction(item.key))"
+                  :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
+                  @click="setParam(item.key, option.value)"
+                  >{{ option.name }}</SfButton
+                >
+              </div>
             </div>
-          </div>
-          <!-- 个人信息与经历日期的排版选项：与页面数值参数共用同一入口 -->
-          <div v-for="item in layoutOptionParams" :key="item.key" class="flex flex-col gap-1">
-            <p v-if="getSettingRestriction(item.key)" class="text-xs text-sf-text-2">
-              {{ getSettingRestriction(item.key) }}
-            </p>
-            <div class="flex items-center gap-1 text-sm text-sf-text-2">
-              <span>{{ item.label }}</span>
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                :aria-disabled="Boolean(getSettingRestriction(item.key))"
-                :class="{ 'cursor-not-allowed! text-sf-text-disabled!': getSettingRestriction(item.key) }"
-                @click="setParam(item.key, getParamDefault(item.key))"
-              />
+            <div class="flex items-center justify-between text-sm text-sf-text-2">
+              <span>{{ $t("subtitleCenter") }}</span>
+              <ElSwitch v-model="subtitleCenter" />
             </div>
-            <div class="flex gap-3">
-              <SfButton
-                v-for="option in item.list"
-                :key="option.value"
-                class="flex-1"
-                size="small"
-                border
-                :disabled="Boolean(getSettingRestriction(item.key))"
-                :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
-                @click="setParam(item.key, option.value)"
-                >{{ option.name }}</SfButton
-              >
+          </SettingSection>
+          <SettingSection :title="$t('footerSettings')" :reset-label="$t('reset')" @reset="resetFooterSettings">
+            <div class="flex items-center justify-between text-sm text-sf-text-2">
+              <span>{{ $t("showPageNumber") }}</span>
+              <ElSwitch v-model="showPageNumber" />
             </div>
-          </div>
-          <div class="flex items-center justify-between text-sm text-sf-text-2">
-            <span>{{ $t("subtitleCenter") }}</span>
-            <ElSwitch v-model="subtitleCenter" />
-          </div>
-          <div class="flex items-center justify-between text-sm text-sf-text-2">
-            <span>{{ $t("showPageNumber") }}</span>
-            <ElSwitch v-model="showPageNumber" />
-          </div>
-          <div v-if="showPageNumber" class="flex flex-col gap-3">
-            <span class="text-sm text-sf-text-2">{{ $t("footerTemplate") }}</span>
-            <div class="grid grid-cols-2 gap-3">
-              <SfButton v-for="option in footerTemplateList" :key="option.value" class="w-full" :class="{ 'col-span-2': option.value === 'total' }" size="small" border :type="footerTemplate === option.value ? 'theme' : 'bg'" @click="footerTemplate = option.value">{{ $t(option.labelKey) }}</SfButton>
+            <div v-if="showPageNumber" class="flex flex-col gap-1">
+              <span class="text-sm text-sf-text-2">{{ $t("footerTemplate") }}</span>
+              <div class="grid grid-cols-2 gap-1">
+                <SfButton v-for="option in footerTemplateList" :key="option.value" class="w-full" :class="{ 'col-span-2': option.value === 'total' }" size="small" border :type="footerTemplate === option.value ? 'theme' : 'bg'" @click="footerTemplate = option.value">{{ $t(option.labelKey) }}</SfButton>
+              </div>
             </div>
-          </div>
-          <div v-if="showPageNumber" class="flex flex-col gap-1">
-            <div class="flex items-center gap-1 text-sm text-sf-text-2">
-              <span>{{ $t("customFooter") }}</span>
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="footer = defaultFooter"
-              />
-              <SfTooltip :content="$t('customFooterTip')" />
+            <div v-if="showPageNumber" class="flex flex-col gap-1">
+              <div class="flex items-center gap-1 text-sm text-sf-text-2">
+                <span>{{ $t("customFooter") }}</span>
+                <SfIcon
+                  icon="material-symbols:restart-alt"
+                  size="4"
+                  class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                  @click="footer = defaultFooter"
+                />
+                <SfTooltip :content="$t('customFooterTip')" />
+              </div>
+              <SfInput v-model="footer" :placeholder="$t('customFooterPlaceholder')" clearable />
             </div>
-            <SfInput v-model="footer" :placeholder="$t('customFooterPlaceholder')" clearable />
-          </div>
+          </SettingSection>
         </div>
       </SfScrollbar>
     </template>

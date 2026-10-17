@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
@@ -10,11 +10,18 @@ import {
   fontColorOptionsOnDark,
   pageBackgroundColors,
 } from "@/domain/resume/theme/uiConfig";
-import { resolveThemeSettingRestrictions } from "@/views/resume/theme";
+import { getResumeThemeTemplate, resolveThemeSettingRestrictions } from "@/views/resume/theme";
+import CustomColorPicker from "@/components/business/themeColorPicker/customColorPicker.vue";
 import ThemeColorPicker from "@/components/business/themeColorPicker/themeColorPicker.vue";
+import SettingSection from "./settingSection.vue";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
+const dropdownVisible = ref(false); // 设计面板打开时保持工具栏入口选中态
+// 设计分组重置时恢复当前主题声明的初始外观。
+const themePresetUi = computed(
+  () => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui,
+);
 // 不支持的设置保持可见，由外观声明给出原因并阻止写入。
 const settingRestrictions = computed(() => resolveThemeSettingRestrictions(currentUI.value?.theme?.template));
 const getSettingRestriction = (key) => settingRestrictions.value[key] ? $t(settingRestrictions.value[key]) : "";
@@ -77,6 +84,17 @@ const activeFontColorOptions = computed(() =>
   isDarkBackground(pageBackground.value) ? fontColorOptionsOnDark : fontColorOptions,
 );
 
+// 当前主题声明的页面背景独立展示在分组标题右侧。
+const themePageBackground = computed(
+  () => themePresetUi.value.page.background || defaultPageBackground,
+);
+// 下方背景预设排除标题右侧已展示的主题背景，避免重复色块。
+const pageBackgroundOptions = computed(() =>
+  pageBackgroundColors.filter(
+    (option) => normalizeHexColor(option.value) !== normalizeHexColor(themePageBackground.value),
+  ),
+);
+
 // 当前正文色不在阶梯内时按首档显示选中，主题自带的自定义色也能有一档选中态。
 const activeFontColor = computed(() => {
   const options = activeFontColorOptions.value;
@@ -84,6 +102,23 @@ const activeFontColor = computed(() => {
   return (matched ?? options[0]).value;
 });
 const isFontColorActive = (value) => activeFontColor.value === value;
+const isPageBackgroundActive = (value) =>
+  normalizeHexColor(pageBackground.value) === normalizeHexColor(value);
+
+// 主题色分组仅恢复当前主题的初始主题色。
+const resetThemeColor = () => {
+  themeColor.value = themePresetUi.value.theme.color;
+};
+
+// 正文字色分组仅恢复当前主题的初始文字颜色。
+const resetFontColor = () => {
+  fontColor.value = themePresetUi.value.font.color;
+};
+
+// 页面背景分组通过现有写入入口恢复，继续处理明暗背景的文字对比度。
+const resetPageBackground = () => {
+  pageBackground.value = themePresetUi.value.page.background || defaultPageBackground;
+};
 </script>
 
 <template>
@@ -93,57 +128,86 @@ const isFontColorActive = (value) => activeFontColor.value === value;
     placement="bottom-start"
     :show-arrow="false"
     popper-class="sf-theme-color-popper"
+    @visible-change="dropdownVisible = $event"
   >
     <span
       class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-xs text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text md:text-sm"
+      :class="{ 'text-sf-theme!': dropdownVisible }"
     >
       <SfIcon icon="lucide:swatch-book" size="5" />
       <span>{{ $t("design") }}</span>
     </span>
     <template #dropdown>
       <div class="flex w-80 flex-col gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
-        <div class="text-xs font-bold text-sf-text">{{ $t("themeColors") }}</div>
-        <ThemeColorPicker v-model="themeColor" :teleported="false" />
+        <SettingSection :title="$t('themeColors')" :reset-label="$t('reset')" @reset="resetThemeColor">
+          <template #right>
+            <CustomColorPicker v-model="themeColor" :label="$t('customColor')" />
+          </template>
+          <ThemeColorPicker v-model="themeColor" />
+        </SettingSection>
 
-        <div class="text-xs font-bold text-sf-text">{{ $t("fontColor") }}</div>
-        <!-- 字体灰度色块沿用主题配色的尺寸、选中边框与悬停效果。 -->
-        <div class="flex flex-wrap items-center gap-3">
-          <button
-            v-for="option in activeFontColorOptions"
-            :key="option.value"
-            type="button"
-            class="h-6 w-6 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
-            :class="{ 'border-2 border-sf-base': isFontColorActive(option.value) }"
-            :style="{ backgroundColor: option.value }"
-            :title="$t(option.name)"
-            :aria-label="$t(option.name)"
-            :aria-pressed="isFontColorActive(option.value)"
-            @click="fontColor = option.value"
-          />
-        </div>
-
-        <div class="text-xs font-bold text-sf-text">{{ $t("resumeBackground") }}</div>
-        <p v-if="getSettingRestriction('page.background')" class="text-xs text-sf-text-2">
-          {{ getSettingRestriction("page.background") }}
-        </p>
-        <div class="grid grid-cols-3 gap-3">
-          <SfButton
-            v-for="option in pageBackgroundColors"
-            :key="option.value"
-            class="flex flex-col items-center gap-3"
-            size="small"
-            border
-            :disabled="Boolean(getSettingRestriction('page.background'))"
-            @click="pageBackground = option.value"
-            :type="pageBackground === option.value ? 'theme' : 'bg'"
-          >
-            <span
-              class="h-6 w-6 rounded-full border border-sf-b"
+        <SettingSection :title="$t('fontColor')" :reset-label="$t('reset')" @reset="resetFontColor">
+          <!-- 字体灰度仅保留圆形色块，选中项使用主题色边框。 -->
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              v-for="option in activeFontColorOptions"
+              :key="option.value"
+              type="button"
+              class="h-6 w-6 cursor-pointer rounded-full border border-sf-b transition-all duration-200 hover:scale-110"
+              :class="{ 'border-2 border-sf-theme': isFontColorActive(option.value) }"
               :style="{ backgroundColor: option.value }"
+              :aria-label="$t(option.name)"
+              :aria-pressed="isFontColorActive(option.value)"
+              @click="fontColor = option.value"
             />
-            <span>{{ $t(option.name) }}</span>
-          </SfButton>
-        </div>
+          </div>
+        </SettingSection>
+
+        <SettingSection :title="$t('resumeBackground')" :reset-label="$t('reset')" @reset="resetPageBackground">
+          <template #right>
+            <!-- 主题声明的页面背景独立放在标题右侧。 -->
+            <button
+              type="button"
+              class="flex cursor-pointer items-center gap-1 rounded-full border border-sf-b p-1 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+              :class="{
+                'border-2 border-sf-theme': isPageBackgroundActive(themePageBackground),
+                'cursor-not-allowed! opacity-60': Boolean(getSettingRestriction('page.background')),
+              }"
+              :style="{ backgroundColor: themePageBackground }"
+              :aria-label="$t('themeDefaultOption')"
+              :aria-pressed="isPageBackgroundActive(themePageBackground)"
+              :disabled="Boolean(getSettingRestriction('page.background'))"
+              @click="pageBackground = themePageBackground"
+            >
+              <span>{{ $t("themeDefaultOption") }}</span>
+              <span
+                class="h-4 w-4 shrink-0 rounded-full border border-sf-b"
+                :style="{ backgroundColor: themePageBackground }"
+              />
+            </button>
+          </template>
+          <p v-if="getSettingRestriction('page.background')" class="text-xs text-sf-text-2">
+            {{ getSettingRestriction("page.background") }}
+          </p>
+          <!-- 简历背景仅保留圆形色块，选中项使用主题色边框。 -->
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              v-for="option in pageBackgroundOptions"
+              :key="option.value"
+              type="button"
+              class="h-6 w-6 cursor-pointer rounded-full border border-sf-b transition-all duration-200 hover:scale-110"
+              :class="{
+                'border-2 border-sf-theme': isPageBackgroundActive(option.value),
+                'cursor-not-allowed! opacity-60': Boolean(getSettingRestriction('page.background')),
+              }"
+              :style="{ backgroundColor: option.value }"
+              :aria-label="$t(option.name)"
+              :aria-pressed="isPageBackgroundActive(option.value)"
+              :disabled="Boolean(getSettingRestriction('page.background'))"
+              @click="pageBackground = option.value"
+            />
+          </div>
+        </SettingSection>
       </div>
     </template>
   </SfDropdown>

@@ -4,7 +4,9 @@ import { storeToRefs } from "pinia";
 import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import {
+  defaultFontFamily,
   defaultFontSize,
+  defaultTextAlign,
   defaultTitleFontSize,
   fontFamilyList,
   textAlignList,
@@ -13,9 +15,12 @@ import {
 import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import { loadFont } from "@/utils";
 import { getResumeThemeTemplate } from "@/views/resume/theme";
+import SettingSection from "./settingSection.vue";
+import SettingNumberField from "./settingNumberField.vue";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
+const dropdownVisible = ref(false); // 文字面板打开时保持工具栏入口选中态
 // 重置参数使用当前主题预设，保存时自动移除对应覆盖项。
 const themePresetUi = computed(
   () => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui,
@@ -85,12 +90,26 @@ const setParam = (key, value) => {
   const [group, field] = key.split(".");
   currentUI.value[group][field] = Number(value);
 };
+
+// 字体分组恢复字体类型与两项字号。
+const resetFontSettings = () => {
+  fontFamily.value = themePresetUi.value.font.family ?? defaultFontFamily;
+  fontParams.value.forEach((item) => {
+    setParam(item.key, getThemeDefault(item.key) ?? item.defaultValue);
+  });
+};
+
+// 文本对齐分组恢复当前主题预设，缺失时回退系统默认值。
+const resetTextAlign = () => {
+  textAlign.value = themePresetUi.value.content.textAlign ?? defaultTextAlign;
+};
 </script>
 
 <template>
-  <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
+  <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false" @visible-change="dropdownVisible = $event">
     <span
       class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-xs text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text md:text-sm"
+      :class="{ 'text-sf-theme!': dropdownVisible }"
     >
       <SfIcon icon="lucide:type" size="5" />
       <span>{{ $t("textStyle") }}</span>
@@ -116,17 +135,17 @@ const setParam = (key, value) => {
     </span>
     <template #dropdown>
       <div
-        class="flex w-[240px] flex-col gap-1 overflow-hidden rounded-3xl border border-sf-b bg-sf-primary p-3"
+        class="flex w-80 flex-col gap-3 overflow-hidden rounded-3xl border border-sf-b bg-sf-primary p-3"
       >
-        <!-- 字体类型选择 -->
-        <div class="flex flex-col gap-1">
+        <SettingSection :title="$t('fontSettings')" :reset-label="$t('reset')" @reset="resetFontSettings">
+          <!-- 字体类型选择 -->
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
             <span>{{ $t("fontTypes") }}</span>
             <SfIcon
               icon="material-symbols:restart-alt"
               size="4"
               class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-              @click="fontFamily = themePresetUi.font.family"
+              @click="fontFamily = themePresetUi.font.family ?? defaultFontFamily"
             />
           </div>
           <SfSelect v-model="fontFamily" :list="localizedFontFamilyList" />
@@ -157,56 +176,32 @@ const setParam = (key, value) => {
               )
             }}</span>
           </div>
-        </div>
 
-        <div v-for="item in fontParams" :key="item.key" class="flex flex-col gap-1">
-          <div class="flex items-center justify-between text-sm text-sf-text-2">
-            <span class="flex items-center gap-1">
-              <span>{{ item.label }}</span>
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="setParam(item.key, getThemeDefault(item.key))"
-              />
-            </span>
-            <span>{{ getNumberValue(item.key, item.defaultValue) }}px</span>
-          </div>
-          <!-- 滑块与右侧数字输入共用同一字号参数。 -->
-          <div class="flex items-center gap-3">
-            <SfSlider
-              :model-value="getNumberValue(item.key, item.defaultValue)"
-              @update:model-value="(value) => setParam(item.key, value)"
-              :min="uiParamRanges[item.key].min"
-              :max="uiParamRanges[item.key].max"
-              :step="uiParamRanges[item.key].step"
-              size="small"
-            />
-            <div class="w-27 shrink-0">
-              <SfInputNumber
-                :model-value="getNumberValue(item.key, item.defaultValue)"
-                @update:model-value="(value) => setParam(item.key, value)"
-                :min="uiParamRanges[item.key].min"
-                :max="uiParamRanges[item.key].max"
-                :step="uiParamRanges[item.key].step"
-                :aria-label="item.label"
-                size="small"
-              />
-            </div>
-          </div>
-        </div>
+          <SettingNumberField
+            v-for="item in fontParams"
+            :key="item.key"
+            :label="item.label"
+            :model-value="getNumberValue(item.key, item.defaultValue)"
+            :min="uiParamRanges[item.key].min"
+            :max="uiParamRanges[item.key].max"
+            :step="uiParamRanges[item.key].step"
+            unit="px"
+            @update:model-value="(value) => setParam(item.key, value)"
+            @reset="setParam(item.key, getThemeDefault(item.key) ?? item.defaultValue)"
+          />
+        </SettingSection>
 
-        <div class="flex flex-col gap-1">
+        <SettingSection :title="$t('textSettings')" :reset-label="$t('reset')" @reset="resetTextAlign">
           <div class="flex items-center gap-1 text-sm text-sf-text-2">
             <span>{{ $t("textAlign") }}</span>
             <SfIcon
               icon="material-symbols:restart-alt"
               size="4"
               class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-              @click="textAlign = themePresetUi.content.textAlign"
+              @click="resetTextAlign"
             />
           </div>
-          <div class="flex gap-3">
+          <div class="flex gap-1">
             <SfButton
               v-for="option in localizedTextAlignList"
               :key="option.value"
@@ -218,7 +213,7 @@ const setParam = (key, value) => {
               >{{ option.name }}</SfButton
             >
           </div>
-        </div>
+        </SettingSection>
       </div>
     </template>
   </SfDropdown>

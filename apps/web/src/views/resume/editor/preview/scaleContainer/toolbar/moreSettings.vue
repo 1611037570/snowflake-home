@@ -1,12 +1,14 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import i18n, { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import {
   dateStyleList,
+  defaultDateStyle,
   defaultInfoSeparator,
   defaultLinkUnderline,
+  defaultTitleIconMode,
   defaultUserInfoMode,
   infoSeparatorList,
   titleIconModeList,
@@ -14,9 +16,11 @@ import {
 } from "@/domain/resume/theme/uiConfig";
 import { getResumeThemeTemplate, resolveThemeSettingRestrictions } from "@/views/resume/theme";
 import { localizeResumeEditorOptionList } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
+import SettingSection from "./settingSection.vue";
 
 const resumeStore = useResumeStore();
 const { currentUI } = storeToRefs(resumeStore);
+const dropdownVisible = ref(false); // 细节面板打开时保持工具栏入口选中态
 // 视觉参数重置统一回到当前主题预设。
 const themePresetUi = computed(
   () => getResumeThemeTemplate(currentUI.value?.theme?.template).item.ui,
@@ -98,12 +102,32 @@ const setParam = (key, value) => {
   const [group, field] = key.split(".");
   currentUI.value[group][field] = value;
 };
+
+// 细节分组恢复标题图标与链接下划线。
+const resetDetailAdjustments = () => {
+  titleIconMode.value = themePresetUi.value.theme.titleIconMode ?? defaultTitleIconMode;
+  linkUnderline.value = themePresetUi.value.content.linkUnderline ?? defaultLinkUnderline;
+};
+
+// 个人信息分组恢复当前主题的资料展示方式。
+const resetPersonalInfo = () => {
+  userInfoParams.value.forEach((item) => {
+    setParam(item.key, getThemeDefault(item.key) ?? item.defaultValue);
+  });
+};
+
+// 经历排版分组恢复时间格式和信息分隔符。
+const resetExperienceLayout = () => {
+  dateStyle.value = themePresetUi.value.content.dateStyle ?? defaultDateStyle;
+  infoSeparator.value = themePresetUi.value.content.infoSeparator ?? defaultInfoSeparator;
+};
 </script>
 
 <template>
-  <SfDropdown v-if="currentUI" trigger="click" placement="bottom-start" :show-arrow="false">
+  <SfDropdown v-if="currentUI" trigger="click" placement="bottom-start" :show-arrow="false" @visible-change="dropdownVisible = $event">
     <span
       class="flex cursor-pointer items-center gap-1 rounded-full px-1.5 py-1 text-xs text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text md:text-sm"
+      :class="{ 'text-sf-theme!': dropdownVisible }"
     >
       <SfIcon icon="lucide:sliders-horizontal" size="5" />
       <span>{{ $t("designMore") }}</span>
@@ -114,94 +138,97 @@ const setParam = (key, value) => {
         class="w-80 rounded-3xl border border-sf-b bg-sf-primary p-3"
       >
         <div class="flex flex-col gap-3 pb-3">
-          <div class="text-xs font-bold text-sf-text">{{ $t("detailAdjustments") }}</div>
-          <!-- 模块标题图标模式 -->
-          <div class="flex flex-col gap-1">
-            <div class="flex items-center gap-1 text-sm text-sf-text-2">
-              <span>{{ $t("titleIconMode") }}</span>
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="titleIconMode = themePresetUi.theme.titleIconMode"
-              />
+          <SettingSection :title="$t('detailAdjustments')" :reset-label="$t('reset')" @reset="resetDetailAdjustments">
+            <!-- 模块标题图标模式 -->
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-1 text-sm text-sf-text-2">
+                <span>{{ $t("titleIconMode") }}</span>
+                <SfIcon
+                  icon="material-symbols:restart-alt"
+                  size="4"
+                  class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                  @click="titleIconMode = themePresetUi.theme.titleIconMode ?? defaultTitleIconMode"
+                />
+              </div>
+              <SfSelect v-model="titleIconMode" :list="localizedTitleIconModeList" />
             </div>
-            <SfSelect v-model="titleIconMode" :list="localizedTitleIconModeList" />
-          </div>
-          <!-- 链接下划线开关：统一控制预览中的可点击链接样式 -->
-          <div class="flex items-center justify-between text-sm text-sf-text-2">
-            <span>{{ $t("linkUnderline") }}</span>
-            <ElSwitch v-model="linkUnderline" />
-          </div>
-          <div class="text-xs font-bold text-sf-text">{{ $t("personalInfo") }}</div>
-          <div v-for="item in userInfoParams" :key="item.key" class="flex flex-col gap-1">
-            <p v-if="getSettingRestriction(item.key)" class="text-xs text-sf-text-2">
-              {{ getSettingRestriction(item.key) }}
-            </p>
-            <div class="flex items-center gap-1 text-sm text-sf-text-2">
-              <span>{{ item.label }}</span>
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                :aria-disabled="Boolean(getSettingRestriction(item.key))"
-                :class="{
-                  'text-sf-text-disabled! cursor-not-allowed!': getSettingRestriction(item.key),
-                }"
-                @click="setParam(item.key, getThemeDefault(item.key))"
-              />
+            <!-- 链接下划线开关：统一控制预览中的可点击链接样式 -->
+            <div class="flex items-center justify-between text-sm text-sf-text-2">
+              <span>{{ $t("linkUnderline") }}</span>
+              <ElSwitch v-model="linkUnderline" />
             </div>
-            <div class="flex gap-3">
-              <SfButton
-                v-for="option in item.list"
-                :key="option.value"
-                class="flex-1"
-                size="small"
-                border
-                :disabled="Boolean(getSettingRestriction(item.key))"
-                @click="setParam(item.key, option.value)"
-                :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
-                >{{ option.name }}</SfButton
-              >
+          </SettingSection>
+          <SettingSection :title="$t('personalInfo')" :reset-label="$t('reset')" @reset="resetPersonalInfo">
+            <div v-for="item in userInfoParams" :key="item.key" class="flex flex-col gap-1">
+              <p v-if="getSettingRestriction(item.key)" class="text-xs text-sf-text-2">
+                {{ getSettingRestriction(item.key) }}
+              </p>
+              <div class="flex items-center gap-1 text-sm text-sf-text-2">
+                <span>{{ item.label }}</span>
+                <SfIcon
+                  icon="material-symbols:restart-alt"
+                  size="4"
+                  class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                  :aria-disabled="Boolean(getSettingRestriction(item.key))"
+                  :class="{
+                    'text-sf-text-disabled! cursor-not-allowed!': getSettingRestriction(item.key),
+                  }"
+                  @click="setParam(item.key, getThemeDefault(item.key) ?? item.defaultValue)"
+                />
+              </div>
+              <div class="flex gap-1">
+                <SfButton
+                  v-for="option in item.list"
+                  :key="option.value"
+                  class="flex-1"
+                  size="small"
+                  border
+                  :disabled="Boolean(getSettingRestriction(item.key))"
+                  @click="setParam(item.key, option.value)"
+                  :type="getValue(item.key) === option.value ? 'theme' : 'bg'"
+                  >{{ option.name }}</SfButton
+                >
+              </div>
             </div>
-          </div>
+          </SettingSection>
 
-          <div class="text-xs font-bold text-sf-text">{{ $t("experienceLayout") }}</div>
-          <div class="flex flex-col gap-1">
-            <div class="flex items-center gap-1 text-sm text-sf-text-2">
-              <span>{{ $t("timeFormat") }}</span>
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="dateStyle = themePresetUi.content.dateStyle"
-              />
+          <SettingSection :title="$t('experienceLayout')" :reset-label="$t('reset')" @reset="resetExperienceLayout">
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-1 text-sm text-sf-text-2">
+                <span>{{ $t("timeFormat") }}</span>
+                <SfIcon
+                  icon="material-symbols:restart-alt"
+                  size="4"
+                  class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                  @click="dateStyle = themePresetUi.content.dateStyle ?? defaultDateStyle"
+                />
+              </div>
+              <SfSelect v-model="dateStyle" :list="localizedDateStyleList" />
             </div>
-            <SfSelect v-model="dateStyle" :list="localizedDateStyleList" />
-          </div>
 
-          <div class="flex flex-col gap-1">
-            <div class="flex items-center gap-1 text-sm text-sf-text-2">
-              <span>{{ $t("infoSeparator") }}</span>
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="infoSeparator = themePresetUi.content.infoSeparator"
-              />
+            <div class="flex flex-col gap-1">
+              <div class="flex items-center gap-1 text-sm text-sf-text-2">
+                <span>{{ $t("infoSeparator") }}</span>
+                <SfIcon
+                  icon="material-symbols:restart-alt"
+                  size="4"
+                  class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+                  @click="infoSeparator = themePresetUi.content.infoSeparator ?? defaultInfoSeparator"
+                />
+              </div>
+              <div class="grid grid-cols-3 gap-1">
+                <SfButton
+                  v-for="option in localizedInfoSeparatorList"
+                  :key="option.value"
+                  size="small"
+                  border
+                  @click="infoSeparator = option.value"
+                  :type="infoSeparator === option.value ? 'theme' : 'bg'"
+                  >{{ option.name }}</SfButton
+                >
+              </div>
             </div>
-            <div class="grid grid-cols-3 gap-3">
-              <SfButton
-                v-for="option in localizedInfoSeparatorList"
-                :key="option.value"
-                size="small"
-                border
-                @click="infoSeparator = option.value"
-                :type="infoSeparator === option.value ? 'theme' : 'bg'"
-                >{{ option.name }}</SfButton
-              >
-            </div>
-          </div>
+          </SettingSection>
         </div>
       </SfScrollbar>
     </template>

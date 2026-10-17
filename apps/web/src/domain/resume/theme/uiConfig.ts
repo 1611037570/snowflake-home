@@ -230,7 +230,7 @@ export const honorTemplateList = [
 // ===========默认值=====================
 export const defaultThemeColor = "#50A2FF";
 // 新简历默认显示的页尾品牌名，用户清空后保持空值。
-export const defaultFooter = "轻舟简历";
+export const defaultFooter = "";
 // 页尾模板选项由编号选择，后续样式在清单中扩展。
 export const footerTemplateList = [
   { labelKey: "footerTemplateTotal" /* 总页数模板名称 */, value: "total" /* 当前页与总页数模板编号 */ },

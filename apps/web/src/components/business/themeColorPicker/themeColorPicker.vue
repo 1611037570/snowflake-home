@@ -1,42 +1,28 @@
 <script setup>
 import { themeColors } from "@/domain/resume/theme/uiConfig";
 
-// 取色器面板是否挂载到 body；弹层内使用时改为内联渲染，避免面板交互被判定为弹层外部点击
-const props = defineProps({
-  teleported: {
-    type: Boolean,
-    default: true,
-  },
-});
-
 const modelValue = defineModel("modelValue", {
   type: String,
   default: "",
 });
 
-// 主题色预设色板，供取色器快捷选择
-const predefineColors = themeColors.map((item) => item.value);
+const normalizeColor = (value) => String(value || "").toLowerCase();
 </script>
 
 <template>
-  <div class="flex flex-wrap items-center gap-4">
-    <div
+  <div class="flex flex-wrap items-center gap-3">
+    <button
       v-for="colorItem in themeColors"
       :key="colorItem.value"
-      class="h-6 w-6 cursor-pointer rounded-full transition-all duration-200 hover:scale-110"
+      type="button"
+      class="h-6 w-6 cursor-pointer rounded-full border border-sf-b transition-all duration-200 hover:scale-110"
       :class="{
-        'border-2 border-sf-base': modelValue === colorItem.value,
+        'border-2 border-sf-theme': normalizeColor(modelValue) === normalizeColor(colorItem.value),
       }"
       :style="{
         backgroundColor: colorItem.value,
       }"
       @click="modelValue = colorItem.value"
-    ></div>
-    <el-color-picker
-      v-model="modelValue"
-      size="large"
-      :predefine="predefineColors"
-      :teleported="props.teleported"
     />
   </div>
 </template>
