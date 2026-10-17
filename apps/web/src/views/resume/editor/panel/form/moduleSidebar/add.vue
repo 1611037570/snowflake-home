@@ -104,10 +104,10 @@ const handleConfirm = () => {
 
 <template>
   <!-- 入口高度随内容撑开，间距统一由侧栏容器控制。 -->
-  <div class="flex-c w-full">
+  <div class="w-full">
     <SfDropdown
       ref="dropdownRef"
-      class="w-fit"
+      class="w-full"
       trigger="click"
       placement="top-start"
       :show-arrow="false"
@@ -115,10 +115,10 @@ const handleConfirm = () => {
     >
       <button
         type="button"
-        class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+        class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
       >
         <SfIcon icon="ic:round-add" size="4" />
-        <span class="w-9 text-center leading-4 break-all">{{ $t("addModule") }}</span>
+        <span class="max-md:hidden">{{ $t("addModule") }}</span>
       </button>
       <template #dropdown>
         <div

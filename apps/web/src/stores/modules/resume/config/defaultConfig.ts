@@ -80,6 +80,6 @@ export const DEFAULT_SYSTEM = {
 };
 // 默认编辑器配置
 export const DEFAULT_EDITOR = {
-  // 编辑器区域宽度(px)
-  editorWidth: 500,
+  // 编辑器区域宽度(px)：模块树改为加宽列表后需要更多横向空间
+  editorWidth: 620,
 };

@@ -37,17 +37,17 @@ function showAll() {
 </script>
 
 <template>
-  <!-- 展开列表与折叠后的下拉菜单共用相同操作。 -->
-  <div class="flex flex-col items-center gap-[6px]">
+  <!-- 展开列表与折叠后的下拉菜单共用相同操作，行规格与模块树一致。 -->
+  <div class="flex flex-col gap-1.5">
     <ImportResume jump-after-import>
       <template #trigger="{ open }">
         <button
           type="button"
-          class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+          class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
           @click="open"
         >
           <SfIcon icon="fa6-solid:file-import" size="4" />
-          <span class="w-9 text-center leading-4 break-all">导入简历</span>
+          <span class="max-md:hidden">导入简历</span>
         </button>
       </template>
     </ImportResume>
@@ -55,21 +55,21 @@ function showAll() {
     <SortByTime />
     <button
       type="button"
-      class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+      class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
       :disabled="!currentData || !runtimeConfig"
       @click="showAll"
     >
       <SfIcon icon="lucide:eye" size="4" />
-      <span class="w-9 text-center leading-4 break-all">{{ $t("showAllContent") }}</span>
+      <span class="max-md:hidden">{{ $t("showAllContent") }}</span>
     </button>
     <button
       type="button"
-      class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+      class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
       :disabled="!currentData || !runtimeConfig"
       @click="collapseAll"
     >
       <SfIcon icon="fa-solid:caret-up" size="4" />
-      <span class="w-9 text-center leading-4 break-all">{{ $t("collapseAllModules") }}</span>
+      <span class="max-md:hidden">{{ $t("collapseAllModules") }}</span>
     </button>
   </div>
 </template>

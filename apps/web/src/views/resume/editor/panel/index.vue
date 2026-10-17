@@ -13,6 +13,7 @@ import {
 import { storeToRefs } from "pinia";
 import eventBus from "@/utils/modules/eventBus";
 import { $t } from "@/locales";
+import { DEFAULT_EDITOR } from "@/stores/modules/resume/config/defaultConfig";
 import BuilderEditorComponent from "./form/index.vue";
 // 编辑标签页外壳同步加载，动态表单在首帧后异步挂载
 const BuilderEditor = markRaw(BuilderEditorComponent);
@@ -42,6 +43,8 @@ onBeforeUnmount(() => {
 
 const resumeStore = useResumeStore();
 const { editorWidth, isGenerating } = storeToRefs(resumeStore);
+// 模块树改为加宽列表后需要最小横向空间，旧配置过窄时提升到默认宽度
+if (editorWidth.value < 560) editorWidth.value = DEFAULT_EDITOR.editorWidth;
 
 // 菜单配置
 const menuList = computed(() => [
@@ -68,7 +71,7 @@ const activeMenu = computed(() => menuList.value[activeIndex.value] || menuList.
 <template>
   <SfResizable
     v-model:size="editorWidth"
-    :min="460"
+    :min="560"
     :max="800"
     position="right"
     class="mobile-resume-builder relative flex h-full flex-col border-r border-sf-b"

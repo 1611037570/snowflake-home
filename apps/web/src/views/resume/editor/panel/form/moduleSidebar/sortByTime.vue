@@ -70,15 +70,15 @@ const sortByTime = () => {
 
 <template>
   <!-- 智能排序入口移至模块侧栏，外观与折叠及添加入口保持一致。 -->
-  <SfTooltip :content="$t('smartSortByTime')">
+  <SfTooltip :content="$t('smartSortByTime')" class="w-full">
     <button
       type="button"
       @click="sortByTime"
       :disabled="!currentData"
-      class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+      class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
     >
       <SfIcon icon="lucide:arrow-down-wide-narrow" size="4" />
-      <span class="w-9 text-center leading-4 break-all">{{ $t("smartSort") }}</span>
+      <span class="max-md:hidden">{{ $t("smartSort") }}</span>
     </button>
   </SfTooltip>
 </template>

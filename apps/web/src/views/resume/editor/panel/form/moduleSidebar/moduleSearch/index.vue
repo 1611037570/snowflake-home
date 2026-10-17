@@ -4,13 +4,13 @@ import ModuleSearchContent from "./content.vue";
 
 <template>
   <!-- 搜索入口位于左侧底部，面板向右展开并与入口底部对齐。 -->
-  <SfDropdown trigger="click" placement="right-end" :show-arrow="false" class="w-fit">
+  <SfDropdown trigger="click" placement="right-end" :show-arrow="false" class="w-full">
     <button
       type="button"
-      class="flex-c w-fit min-w-0 cursor-pointer flex-col gap-1 rounded-xl border border-sf-b bg-sf-primary p-1 text-[9px] text-sf-text transition-colors select-none hover:border-sf-theme hover:text-sf-theme"
+      class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
     >
       <SfIcon icon="lucide:search" size="4" />
-      <span class="w-9 text-center leading-4 break-all">{{ $t("moduleManager") }}</span>
+      <span class="max-md:hidden">{{ $t("moduleManager") }}</span>
     </button>
     <template #dropdown>
       <ModuleSearchContent />
