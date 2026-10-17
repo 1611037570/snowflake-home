@@ -39,6 +39,10 @@ const title = defineModel("title", {
 });
 const { currentForm, addItem } = useFormContext();
 const resumeStore = useResumeStore();
+// 当前编辑模块仅通过主题色边框强调，避免增加背景层级。
+const isEditing = computed(
+  () => resumeStore.editingModuleKey === currentForm.value?.key,
+);
 // 仅在配置指定的布局下显示列表新增入口，正文布局保持原有编辑区。
 const showAdd = computed(() => {
   if (!props.add) return false;
@@ -103,11 +107,18 @@ function handleAdd() {
 </script>
 
 <template>
-  <SfCollapse v-model="collapsed" :border="false" class="rounded-xl! bg-sf-primary!">
-    <SfCollapseItem name="1" lazy class="resume-module-box">
+  <SfCollapse v-model="collapsed" :border="false" class="rounded-3xl! bg-sf-primary!">
+    <SfCollapseItem
+      name="1"
+      lazy
+      class="resume-module-box"
+      :class="{ 'resume-module-editing': isEditing }"
+    >
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
-          <div class="flex flex-1 items-center truncate text-lg font-bold">
+          <div
+            class="flex flex-1 items-center truncate text-base font-bold text-sf-text transition-colors group-hover:text-sf-theme"
+          >
             <Icon
               v-if="currentForm.key !== 'user'"
               icon="icon-park-outline:drag"
@@ -165,7 +176,7 @@ function handleAdd() {
           <div class="px-3 py-3" v-if="showAdd">
             <button
               type="button"
-              class="flex-c w-full cursor-pointer gap-3 rounded-3xl border border-dashed border-sf-b py-2 text-xs text-sf-text transition-colors hover:border-sf-theme hover:bg-sf-theme-3 hover:text-sf-theme"
+              class="flex-c w-full cursor-pointer gap-3 rounded-3xl border border-dashed border-sf-b py-2 text-xs text-sf-text transition-colors hover:border-sf-theme hover:text-sf-theme"
               @click="handleAdd"
             >
               <SfIcon icon="ic:round-add" size="4" />
@@ -183,19 +194,28 @@ function handleAdd() {
 
 /* 模块外框包裹头部与内容，统一圆角边界 */
 .resume-module-box {
-  @apply overflow-hidden rounded-xl border border-sf-b;
+  @apply overflow-hidden rounded-3xl border border-sf-b transition-colors;
+}
+/* 悬停与当前编辑状态只强化边框，不增加背景色。 */
+.resume-module-box:hover,
+.resume-module-box.resume-module-editing {
+  border-color: var(--color-sf-theme);
 }
 /* 折叠项经过组件转发，直接命中模块内容节点以清除默认下内边距。 */
 :global(.resume-module-box .el-collapse-item__content) {
   padding-bottom: 0 !important;
 }
+/* 模块内部字段保持紧凑，顶层模块之间仍由表单容器保留 gap-3。 */
+.resume-module-box :deep(.el-collapse-item__content .el-row) {
+  row-gap: 0.25rem;
+}
 /* 模块头部背景跟随明暗主题，并覆盖全局透明背景 */
 .resume-module-box > :deep(.el-collapse-item__header) {
-  @apply rounded-xl  px-3;
+  @apply rounded-3xl  px-3;
 }
 
 /* 展开时去掉头部下圆角，并在底边添加分隔线 */
 .resume-module-box > :deep(.el-collapse-item__header.is-active) {
-  @apply rounded-b-xl border-b!  border-sf-b!;
+  @apply rounded-b-none border-b!  border-sf-b!;
 }
 </style>

@@ -41,12 +41,12 @@ const actionName = computed(() => $t(ACTION_LABELS[props.action] || "resumeConte
 
     <p
       v-if="props.errorText"
-      class="rounded-2xl bg-sf-error-2 p-3 text-sm leading-relaxed text-sf-error"
+      class="rounded-3xl bg-sf-error-2 p-3 text-sm leading-relaxed text-sf-error"
     >
       {{ props.errorText }}
     </p>
     <!-- 流式正文实时渲染，内容已由调用方清洗；超出高度由统一滚动条承载 -->
-    <SfScrollbar v-else max-height="168px" class="overflow-hidden rounded-2xl bg-sf-primary">
+    <SfScrollbar v-else max-height="168px" class="overflow-hidden rounded-3xl bg-sf-primary">
       <div
         class="resume-ai-preview py-3 text-sm leading-relaxed text-sf-text select-text"
         v-html="props.previewHtml"

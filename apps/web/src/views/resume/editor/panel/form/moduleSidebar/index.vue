@@ -164,7 +164,7 @@ onUnmounted(() => {
       <button
         v-if="system.moreOperationsExpanded"
         type="button"
-        class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
+        class="rail-action flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
         aria-expanded="true"
         @click="system.moreOperationsExpanded = false"
       >
@@ -174,7 +174,7 @@ onUnmounted(() => {
       <button
         v-else
         type="button"
-        class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
+        class="rail-action flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
         aria-expanded="false"
         @click="system.moreOperationsExpanded = true"
       >
@@ -193,7 +193,7 @@ onUnmounted(() => {
       >
         <button
           type="button"
-          class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
+          class="rail-action flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
           aria-haspopup="menu"
         >
           <SfIcon icon="mdi:dots-horizontal" size="4" />

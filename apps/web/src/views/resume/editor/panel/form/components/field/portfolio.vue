@@ -59,7 +59,7 @@ const { openPicker, loading } = useImageUpload({
     <div class="flex items-center gap-3">
       <!-- 图片预览或上传入口：固定宽度 -->
       <div
-        class="group border-sf-border relative flex w-32 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        class="group border-sf-border relative flex w-32 shrink-0 cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
         :title="img ? $t('reuploadImage') : $t('uploadImage')"
         @click="openPicker"
       >

@@ -43,7 +43,7 @@ function showAll() {
       <template #trigger="{ open }">
         <button
           type="button"
-          class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
+          class="rail-action flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
           @click="open"
         >
           <SfIcon icon="fa6-solid:file-import" size="4" />
@@ -55,7 +55,7 @@ function showAll() {
     <SortByTime />
     <button
       type="button"
-      class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
+      class="rail-action flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
       :disabled="!currentData || !runtimeConfig"
       @click="showAll"
     >
@@ -64,7 +64,7 @@ function showAll() {
     </button>
     <button
       type="button"
-      class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
+      class="rail-action flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
       :disabled="!currentData || !runtimeConfig"
       @click="collapseAll"
     >

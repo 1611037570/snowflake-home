@@ -16,7 +16,7 @@ import SfSkeleton from "@/components/el/skeleton";
     <SfSkeleton
       v-for="index in 3"
       :key="index"
-      class="rounded-xl border border-sf-b bg-sf-primary"
+      class="rounded-3xl border border-sf-b bg-sf-primary"
     />
   </div>
 </template>

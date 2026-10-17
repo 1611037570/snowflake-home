@@ -84,13 +84,13 @@ const shortName = (name) =>
 
         <div class="mt-auto flex flex-col gap-1.5 pt-3">
           <div
-            class="flex h-8 items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 hover:bg-sf-bg"
+            class="flex h-8 items-center justify-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 hover:bg-sf-bg"
           >
             <SfIcon icon="ic:round-add" size="4" />
             添加模块
           </div>
           <div
-            class="flex h-8 items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 hover:bg-sf-bg"
+            class="flex h-8 items-center justify-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 hover:bg-sf-bg"
           >
             <SfIcon icon="mdi:dots-horizontal" size="4" />
             更多操作

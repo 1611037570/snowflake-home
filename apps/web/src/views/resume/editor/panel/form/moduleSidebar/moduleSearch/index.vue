@@ -7,7 +7,7 @@ import ModuleSearchContent from "./content.vue";
   <SfDropdown trigger="click" placement="right-end" :show-arrow="false" class="w-full">
     <button
       type="button"
-      class="rail-action flex h-8 w-full cursor-pointer items-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
+      class="rail-action flex h-8 w-full cursor-pointer items-center justify-center gap-1.5 rounded-3xl p-1 text-[12px] text-sf-text-2 transition-colors select-none hover:bg-sf-bg"
     >
       <SfIcon icon="lucide:search" size="4" />
       <span class="max-md:hidden">{{ $t("moduleManager") }}</span>

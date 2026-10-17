@@ -158,7 +158,7 @@ const removeImage = () => {
     <div class="flex gap-1">
       <!-- 始终保留上传入口：未上传展示占位，已上传时点击图片进入上传弹窗 -->
       <div
-        class="border-sf-border group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-lg border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        class="border-sf-border group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
         :style="{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }"
         :title="image ? $t('changeAvatar') : $t('uploadAvatar')"
         @click="uploadVisible = true"
@@ -217,7 +217,7 @@ const removeImage = () => {
     <SfModal v-model="uploadVisible" :title="$t('uploadAvatar')" width="400px">
       <div
         ref="dropZoneRef"
-        class="border-sf-border flex cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-dashed bg-sf-primary px-6 py-9 text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
+        class="border-sf-border flex cursor-pointer flex-col items-center justify-center gap-3 rounded-3xl border border-dashed bg-sf-primary px-6 py-9 text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
         :class="{ 'border-sf-theme text-sf-theme': isOverDropZone }"
         @click="pickFromModal"
       >
@@ -226,7 +226,7 @@ const removeImage = () => {
         <span class="text-xs text-sf-text-3">{{ $t("imageFormatSupport") }}</span>
       </div>
       <!-- 上传建议默认收起，避免干扰用户选择图片 -->
-      <SfCollapse :border="true" class="mt-3 rounded-xl bg-sf-bg px-3">
+      <SfCollapse :border="true" class="mt-3 rounded-3xl bg-sf-bg px-3">
         <SfCollapseItem name="avatar-need">
           <template #title>
             <div class="flex items-center gap-3 text-sm text-sf-text-2">
@@ -273,7 +273,7 @@ const removeImage = () => {
     <SfModal v-model="cropVisible" :title="$t('cropImage')" width="720px">
       <!-- 裁剪区域：最大化利用空间 -->
       <div
-        class="cropper-box flex w-full items-center justify-center overflow-hidden rounded-xl bg-sf-bg"
+        class="cropper-box flex w-full items-center justify-center overflow-hidden rounded-3xl bg-sf-bg"
       >
         <img
           v-if="cropSrc"
