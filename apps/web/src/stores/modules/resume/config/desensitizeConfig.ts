@@ -76,6 +76,16 @@ export const DESENSITIZE_PRESET_OPTIONS = [
   },
 ] as const;
 
+// 优先展示命中的预设名称，其余组合明确标记为自定义。
+export const getDesensitizeSelectionName = (fields: DesensitizeField[]) => {
+  if (!fields.length) return "未脱敏";
+  const selectedFields = new Set(fields);
+  const preset = DESENSITIZE_PRESET_OPTIONS.find(
+    (item) => item.fields.length === fields.length && item.fields.every((field) => selectedFields.has(field)),
+  );
+  return preset?.name ?? `自定义脱敏 ${fields.length} 项`;
+};
+
 export const DESENSITIZED_TEXT = "[数据已脱敏]";
 const PHONE_PATTERN = /1[3-9]\d{9}/g;
 const EMAIL_PATTERN = /[\w.%+-]+@[\w.-]+\.[A-Za-z]{2,}/g;

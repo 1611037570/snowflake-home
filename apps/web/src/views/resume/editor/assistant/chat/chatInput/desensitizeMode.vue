@@ -2,16 +2,17 @@
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useResumeStore } from "@/stores";
-import { normalizeDesensitizeFields } from "@/stores/modules/resume/config/desensitizeConfig";
+import {
+  getDesensitizeSelectionName,
+  normalizeDesensitizeFields,
+} from "@/stores/modules/resume/config/desensitizeConfig";
 import DesensitizeConfigModal from "@/views/resume/editor/components/desensitizeConfigModal.vue";
 
 const resumeStore = useResumeStore();
 const { desensitizeMode } = storeToRefs(resumeStore);
 const visible = ref(false);
 const selectedFields = computed(() => normalizeDesensitizeFields(desensitizeMode.value));
-const activeName = computed(() =>
-  selectedFields.value.length ? `已脱敏 ${selectedFields.value.length} 项` : "未脱敏",
-);
+const activeName = computed(() => getDesensitizeSelectionName(selectedFields.value));
 </script>
 
 <template>

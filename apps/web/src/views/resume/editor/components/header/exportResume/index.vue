@@ -7,7 +7,10 @@ import { storeToRefs } from "pinia";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import ExportItem from "./exportItem.vue";
 import { $t } from "@/locales";
-import { normalizeDesensitizeFields } from "@/stores/modules/resume/config/desensitizeConfig";
+import {
+  getDesensitizeSelectionName,
+  normalizeDesensitizeFields,
+} from "@/stores/modules/resume/config/desensitizeConfig";
 import DesensitizeConfigModal from "@/views/resume/editor/components/desensitizeConfigModal.vue";
 
 const visible = ref(false);
@@ -23,6 +26,7 @@ const { getExportFileName, resumeTitle } = useResumeName();
 const pdfExportType = ref("local");
 const longImageExportType = ref("png");
 const selectedFields = computed(() => normalizeDesensitizeFields(desensitizeMode.value));
+const desensitizeName = computed(() => getDesensitizeSelectionName(selectedFields.value));
 
 const pdfExportOptions = computed(() => [
   { name: $t("local"), value: "local" },
@@ -165,41 +169,32 @@ const a = {
         <div class="border-b border-sf-b pb-3 text-sm text-sf-text-3">
           {{ $t("exportFormatDescription") }}
         </div>
-        <section class="flex flex-col gap-3 border-b border-sf-b py-3">
-          <div class="flex items-center justify-between gap-3">
-            <div>
-              <p class="text-sm font-medium text-sf-text">导出内容</p>
-              <p class="mt-3 text-xs text-sf-text-3">脱敏版沿用当前已保存的脱敏字段</p>
+        <section class="border-b border-sf-b py-3">
+          <div class="flex flex-wrap items-center gap-3">
+            <p class="shrink-0 text-sm font-medium text-sf-text">导出内容</p>
+            <div class="grid w-full grid-cols-2 gap-3 sm:w-60">
+              <SfButton
+                :type="exportDesensitized ? 'bg' : 'theme'"
+                size="small"
+                border
+                @click="selectExportMode(false)"
+              >
+                原始简历
+              </SfButton>
+              <SfButton
+                :type="exportDesensitized ? 'theme' : 'bg'"
+                size="small"
+                border
+                @click="selectExportMode(true)"
+              >
+                脱敏简历
+              </SfButton>
             </div>
+            <p class="min-w-0 flex-1 text-xs text-sf-text-3">
+              脱敏配置：{{ desensitizeName }}；完整备份不应用脱敏
+            </p>
             <SfButton type="bg" size="small" border @click="desensitizeVisible = true">修改字段</SfButton>
           </div>
-          <div class="grid grid-cols-2 gap-3">
-            <SfButton
-              :type="exportDesensitized ? 'bg' : 'theme'"
-              size="small"
-              border
-              class="h-auto! justify-start! p-3!"
-              @click="selectExportMode(false)"
-            >
-              <span class="flex flex-col items-start gap-3">
-                <span class="font-medium">原始简历</span>
-                <span class="text-xs opacity-75">保留完整内容</span>
-              </span>
-            </SfButton>
-            <SfButton
-              :type="exportDesensitized ? 'theme' : 'bg'"
-              size="small"
-              border
-              class="h-auto! justify-start! p-3!"
-              @click="selectExportMode(true)"
-            >
-              <span class="flex flex-col items-start gap-3">
-                <span class="font-medium">脱敏简历</span>
-                <span class="text-xs opacity-75">已配置 {{ selectedFields.length }} 项</span>
-              </span>
-            </SfButton>
-          </div>
-          <p class="text-xs text-sf-text-3">完整备份始终保留原始数据，不应用脱敏。</p>
         </section>
         <div class="grid grid-cols-1 gap-3 py-3 sm:grid-cols-2">
           <ExportItem v-for="item in list" :key="item.name" :item="item" @click="item.fn" />

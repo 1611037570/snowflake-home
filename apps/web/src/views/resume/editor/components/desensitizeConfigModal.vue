@@ -24,6 +24,8 @@ const visible = computed({
   set: (value) => emit("update:modelValue", value),
 });
 const groupedFields = (group) => DESENSITIZE_FIELD_OPTIONS.filter((item) => item.group === group);
+const selectedGroupCount = (group) =>
+  groupedFields(group).filter((item) => draftFields.value.includes(item.key)).length;
 
 watch(
   () => props.modelValue,
@@ -54,25 +56,20 @@ const handleConfirm = () => {
     <div class="flex max-h-[72vh] min-h-0 flex-col">
       <!-- 仅预设和字段区域滚动，底部操作始终固定。 -->
       <SfScrollbar class="min-h-0 flex-1!" max-height="60vh" view-class="flex flex-col gap-3 pr-3" flush>
-        <section class="flex flex-col gap-3 rounded-xl border border-sf-border bg-sf-bg p-3">
-          <div>
-            <p class="font-medium">快捷预设</p>
-            <p class="mt-3 text-xs text-sf-text-3">应用预设后仍可调整具体字段</p>
-          </div>
-          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+        <section class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <p class="shrink-0 text-sm font-medium">快捷预设</p>
+          <div class="grid flex-1 grid-cols-3 gap-3">
             <SfButton
               v-for="item in DESENSITIZE_PRESET_OPTIONS"
               :key="item.key"
               :type="isPresetActive(item.fields) ? 'theme' : 'bg'"
+              :title="item.description"
               size="small"
               border
-              class="h-auto! w-full! justify-start! p-3! text-left"
+              class="w-full! whitespace-nowrap"
               @click="applyPreset(item)"
             >
-              <span class="flex min-w-0 flex-col gap-3">
-                <span class="font-medium">{{ item.name }}</span>
-                <span class="whitespace-normal text-xs opacity-75">{{ item.description }}</span>
-              </span>
+              {{ item.name }}
             </SfButton>
           </div>
         </section>
@@ -84,17 +81,19 @@ const handleConfirm = () => {
         >
           <header class="mb-3 flex items-center justify-between gap-3">
             <p class="font-medium">{{ group.name }}</p>
-            <p class="text-xs text-sf-text-3">{{ group.description }}</p>
+            <p class="text-xs text-sf-text-3">
+              已选 {{ selectedGroupCount(group.key) }}/{{ groupedFields(group.key).length }}
+            </p>
           </header>
           <!-- 字段只保留名称，减少大量说明造成的纵向占用。 -->
-          <div class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
             <el-checkbox
               v-for="item in groupedFields(group.key)"
               :key="item.key"
               v-model="draftFields"
               :value="item.key"
               :title="item.description"
-              class="m-0! h-6! min-w-0!"
+              class="m-0! h-9! min-w-0! rounded-xl border border-sf-border bg-sf-bg px-3!"
             >
               <span class="truncate text-sm text-sf-text">{{ item.name }}</span>
             </el-checkbox>
@@ -103,7 +102,9 @@ const handleConfirm = () => {
       </SfScrollbar>
 
       <footer class="mt-3 flex flex-none items-center justify-between gap-3 border-t border-sf-border pt-3">
-        <span class="text-xs text-sf-text-3">已选择 {{ draftFields.length }} 项</span>
+        <span class="text-xs text-sf-text-3">
+          已选择 {{ draftFields.length }}/{{ DESENSITIZE_FIELD_OPTIONS.length }} 项
+        </span>
         <div class="flex gap-3">
           <SfButton type="bg" size="small" @click="clearAll">清空选择</SfButton>
           <SfButton type="bg" size="small" @click="visible = false">取消</SfButton>
