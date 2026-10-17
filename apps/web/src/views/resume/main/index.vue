@@ -84,7 +84,7 @@
       <section
         id="journey"
         :ref="registerRevealSection"
-        class="resume-home__reveal relative mx-auto flex max-w-[1440px] flex-col justify-center px-6 py-18 lg:px-12"
+        class="resume-home__reveal relative mx-auto flex max-w-[1440px] flex-col justify-center px-6 py-6 lg:px-12"
       >
         <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div class="max-w-2xl">
@@ -116,9 +116,7 @@
                 class="rounded-[21px] border border-sf-b bg-sf-primary p-3 transition-transform duration-300 hover:-translate-y-1"
               >
                 <div class="flex items-center gap-3">
-                  <span
-                    class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-theme-2 text-sf-theme"
-                  >
+                  <span class="flex h-9 w-9 items-center justify-center rounded-xl text-sf-theme">
                     <SfIcon :icon="group.icon" size="5" />
                   </span>
                   <h3 class="text-xl font-black tracking-[-0.02em]">{{ group.eyebrow }}</h3>
@@ -144,9 +142,12 @@
         </div>
       </section>
 
+      <!-- 常见问题：置于收尾区块之前，独立入场，便于检索站内高频疑问 -->
+      <ResumeHomeFaq :ref="registerRevealSection" class="resume-home__reveal" />
+
       <section
         :ref="registerRevealSection"
-        class="resume-home__reveal relative mx-auto flex max-w-[1440px] items-center px-6 py-18 lg:px-12"
+        class="resume-home__reveal relative mx-auto flex max-w-[1440px] items-center px-6 py-6 lg:px-12"
       >
         <div class="relative w-full overflow-hidden rounded-[30px] px-6 py-12 text-center sm:px-12">
           <div class="relative mx-auto max-w-2xl">
@@ -180,6 +181,7 @@ import { $t } from "@/locales";
 import { getStatsOverview } from "@/apis";
 import { resumeTemplateList } from "../template/data/list";
 import HeroSwitcher from "./heroSwitcher.vue";
+import ResumeHomeFaq from "./faq.vue";
 import OnlineWriters from "../components/onlineWriters.vue";
 import { computed, onMounted, ref } from "vue";
 
