@@ -25,12 +25,13 @@ const { getFieldDataKey } = useFormContext();
 // 使用表单公开路径定位当前字段，重复正文不会影响记录定位
 const {
   loading: aiLoading,
-  previewHtml: aiPreviewHtml,
-  errorText: aiError,
+  candidates: aiCandidates,
+  activeIndex: aiActiveIndex,
   activeAction: aiAction,
   runAiContent,
   applyResult: applyAiResult,
   discardResult: discardAiResult,
+  setActiveIndex: setAiActiveIndex,
 } = useResumeContentAi(
   content,
   () =>
@@ -50,8 +51,12 @@ const {
   // 字段类型：决定正文写法与篇幅
   () => props.kind,
 );
-// 生成中、已有预览或出现错误时展示结果卡片
-const aiVisible = computed(() => aiLoading.value || !!aiPreviewHtml.value || !!aiError.value);
+// 生成中或已有候选时展示结果卡片
+const aiVisible = computed(() => aiLoading.value || aiCandidates.value.length > 0);
+// 本次生成的候选数量，一次请求多份供挑选
+const aiCount = ref(1);
+// 数量选项
+const aiCountOptions = [1, 2, 3];
 
 const resumeStore = useResumeStore();
 const { currentData } = storeToRefs(resumeStore);
@@ -111,11 +116,8 @@ const appendExample = (example) => {
         />
       </template>
       <template #bottom>
-        <div
-          class="flex flex-wrap items-center gap-3 border-t border-sf-b bg-sf-module-header px-3 py-1 text-sf-text"
-          :class="aiVisible ? '' : 'rounded-b-3xl'"
-        >
-          <span class="shrink-0 font-semibold">✦AI+</span>
+        <div class="flex flex-wrap items-center gap-3 border-t border-sf-b bg-sf-module-header px-3 py-1 text-sf-text">
+          <span class="shrink-0 text-xs font-semibold">✦AI+</span>
           <div class="flex flex-wrap items-center gap-3">
             <button
               v-for="(action, index) in [
@@ -125,11 +127,30 @@ const appendExample = (example) => {
               ]"
               :key="action"
               type="button"
-              class="cursor-pointer rounded-3xl bg-sf-primary px-3 py-1 text-sm font-medium text-sf-text transition-colors hover:bg-sf-page"
+              class="inline-flex h-6 cursor-pointer items-center rounded-3xl bg-sf-primary px-3 text-xs font-medium text-sf-text transition-colors hover:bg-sf-page"
               :disabled="aiLoading"
-              @click="runAiContent(['generate', 'polish', 'simplify'][index])"
+              @click="runAiContent(['generate', 'polish', 'simplify'][index], aiCount)"
             >
               {{ action }}
+            </button>
+          </div>
+        </div>
+        <!-- 数量单独一行：一次请求产出多份候选供挑选 -->
+        <div
+          class="flex items-center gap-3 bg-sf-module-header px-3 py-1"
+          :class="aiVisible ? '' : 'rounded-b-3xl'"
+        >
+          <span class="text-xs text-sf-text-3">数量</span>
+          <div class="inline-flex items-center rounded-full border border-sf-b bg-sf-primary p-[2px]">
+            <button
+              v-for="option in aiCountOptions"
+              :key="option"
+              type="button"
+              class="inline-flex h-5 w-8 cursor-pointer items-center justify-center rounded-full text-xs transition-colors"
+              :class="option === aiCount ? 'bg-sf-base text-sf-primary' : 'text-sf-text-2 hover:text-sf-text'"
+              @click="aiCount = option"
+            >
+              {{ option }}
             </button>
           </div>
         </div>
@@ -139,11 +160,12 @@ const appendExample = (example) => {
           class="rounded-b-2xl"
           :action="aiAction"
           :loading="aiLoading"
-          :preview-html="aiPreviewHtml"
-          :error-text="aiError"
+          :candidates="aiCandidates"
+          :active-index="aiActiveIndex"
           @apply="applyAiResult"
-          @regenerate="runAiContent(aiAction)"
+          @regenerate="runAiContent(aiAction, aiCount)"
           @discard="discardAiResult"
+          @select="setAiActiveIndex"
         />
       </template>
     </WangEditor>
