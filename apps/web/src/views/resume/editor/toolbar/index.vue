@@ -90,7 +90,7 @@ const toolbarItems = computed(() => [
     :class="
       isMobile
         ? 'fixed inset-y-0 right-0 z-50 transition-transform duration-300 ease-out'
-        : 'relative flex-col items-center gap-3 p-3'
+        : 'relative flex-col items-center gap-3 py-3 pr-3'
     "
     :style="
       isMobile && {
