@@ -149,3 +149,20 @@ export const isChrome = () => {
   const ua = navigator.userAgent.toLowerCase();
   return ua.includes("chrome") && !ua.includes("edg") && !ua.includes("opr") && !ua.includes("opera");
 };
+
+/**
+ * 判断是否为苹果 Safari 浏览器，排除 iOS 上同样带有 safari 标识的内核浏览器
+ */
+export const isSafari = () => {
+  const ua = navigator.userAgent.toLowerCase();
+  return (
+    ua.includes("safari") &&
+    !ua.includes("chrome") &&
+    !ua.includes("chromium") &&
+    !ua.includes("crios") &&
+    !ua.includes("fxios") &&
+    !ua.includes("edg") &&
+    !ua.includes("opr") &&
+    !ua.includes("android")
+  );
+};

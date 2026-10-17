@@ -1,27 +1,18 @@
 <script setup>
-// 移动端预览工具栏「更多」：彩色、全屏、疑问与智能一页纸统一收进一个下拉入口
+// 移动端预览工具栏「更多」：彩色、全屏与智能一页纸统一收进一个下拉入口
 import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
 import { useResumeStore } from "@/stores";
 import eventBus from "@/utils/modules/eventBus";
 
-const emit = defineEmits(["fullscreen", "standardA4"]);
-const { proxy } = getCurrentInstance();
+const emit = defineEmits(["fullscreen"]);
 const resumeStore = useResumeStore();
 const { system } = storeToRefs(resumeStore);
 
 // 彩色/灰度切换：与桌面入口共用预览的打印模式状态
 const togglePrintMode = () => {
   system.value.printMode = !system.value.printMode;
-};
-// 疑问：确认后切到标准 A4 查看真实排版
-const openStyleHint = () => {
-  proxy
-    .$confirm($t("styleHintContent"), $t("styleHintHover"))
-    .then(() => emit("standardA4"))
-    // 取消：保持当前缩放模式
-    .catch(() => undefined);
 };
 // 智能一页纸：通知编辑器预览实例执行压缩
 const fitOnePage = () => eventBus.emit("resume-smart-one-page");
@@ -40,11 +31,6 @@ const moreList = computed(() => [
     name: $t("fullscreen"), // 全屏预览
     icon: "lucide:maximize",
     fn: () => emit("fullscreen"),
-  },
-  {
-    name: $t("styleHintHover"), // 样式疑问
-    icon: "mingcute:question-line",
-    fn: openStyleHint,
   },
   {
     name: $t("smartOnePage"), // 智能一页纸
