@@ -37,7 +37,6 @@ const customColorStyle = computed(() => ({
         type="button"
         class="flex cursor-pointer items-center gap-1 rounded-full border border-sf-b p-1 text-sm text-sf-text-2 transition-colors hover:border-sf-theme hover:text-sf-theme"
         :class="{ 'border-2 border-sf-theme': isCustomColor }"
-        :title="props.label"
         :aria-label="props.label"
         :aria-pressed="isCustomColor"
       >

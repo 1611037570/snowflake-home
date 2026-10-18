@@ -44,7 +44,6 @@
           class="relative h-2 w-2 cursor-pointer rounded-full transition-colors duration-300 before:absolute before:-inset-2 before:content-['']"
           :class="index === activeIndex ? 'bg-sf-theme' : 'bg-sf-bg-3 hover:bg-sf-text-3'"
           :aria-label="item.name"
-          :title="item.name"
           :aria-current="index === activeIndex"
           @click="goTo(index)"
         ></button>

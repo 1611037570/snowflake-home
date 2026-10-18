@@ -99,7 +99,6 @@ provide("bg", "bg-sf-primary");
                 v-if="!modelList.length"
                 type="button"
                 class="cursor-pointer text-xs text-sf-warning hover:underline"
-                title="先添加模型"
                 @click="jumpToAdd"
               >
                 未绑定

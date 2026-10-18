@@ -62,13 +62,11 @@ function copyClass(cls: string) {
             >
               <span
                 class="truncate text-sm font-semibold text-sf-text transition-colors group-hover:text-sf-theme"
-                :title="data.name"
               >
                 {{ data.name }}
               </span>
               <span
                 class="truncate font-mono text-[11px] text-sf-text-3 transition-colors group-hover:text-sf-text-2"
-                :title="data.class"
               >
                 {{ data.class }}
               </span>

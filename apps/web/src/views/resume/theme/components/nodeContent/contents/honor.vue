@@ -56,7 +56,6 @@ const blocks = computed(() => createContentBlocks([
       <a
         v-if="honorLink?.url"
         :href="honorLink.url"
-        :title="honorLink.text"
         target="_blank"
         rel="noopener noreferrer"
         class="inline-flex max-w-full min-w-0 items-baseline gap-1 break-all text-sf-theme hover:underline"

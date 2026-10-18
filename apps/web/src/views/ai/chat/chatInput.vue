@@ -144,7 +144,6 @@ onMounted(() => {
           <button
             class="flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-500 ease-out"
             :class="actionButtonConfig.class"
-            :title="actionButtonConfig.title"
             :disabled="actionButtonConfig.disabled"
             @click="actionButtonConfig.handler"
           >

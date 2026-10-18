@@ -267,7 +267,6 @@ const removeImage = () => {
           height: `${displayHeight}px`,
           borderRadius: displayRadius,
         }"
-        :title="image ? $t('changeAvatar') : $t('uploadAvatar')"
         @click="uploadVisible = true"
       >
         <img v-if="image" :src="image" :alt="$t('uploadAvatarImage')" class="h-full w-full shrink-0 object-cover" />
@@ -288,7 +287,6 @@ const removeImage = () => {
       <div v-if="image" class="flex h-full flex-col gap-1">
         <div
           class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-error"
-          :title="$t('deleteImage')"
           @click="removeImage"
         >
           <!-- 头像删除入口仅在悬停时显示危险色。 -->
@@ -297,7 +295,6 @@ const removeImage = () => {
         </div>
         <div
           class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-theme"
-          :title="$t('reuploadImage')"
           @click="openPicker"
         >
           <SfIcon icon="ic:round-file-upload" size="5" />

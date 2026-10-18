@@ -228,13 +228,6 @@ onBeforeUnmount(() => {
                 ? 'bg-sf-error-2 text-sf-error'
                 : 'bg-sf-bg-3 text-sf-text hover:bg-sf-bg-2'
             "
-            :title="
-              isVoiceSupported
-                ? isListening
-                  ? '停止语音输入'
-                  : '开始语音输入'
-                : '当前浏览器不支持语音输入'
-            "
             type="button"
             @click="toggleVoiceInput"
           >
@@ -247,7 +240,6 @@ onBeforeUnmount(() => {
           <button
             class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500 ease-out"
             :class="actionButtonConfig.class"
-            :title="actionButtonConfig.title"
             :disabled="actionButtonConfig.disabled"
             @click="actionButtonConfig.handler"
           >

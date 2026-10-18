@@ -297,7 +297,6 @@ const handleSuggest = (payload) => {
       <div v-if="showScrollBottom" class="absolute bottom-42 left-1/2 z-9990 -translate-x-1/2">
         <button
           class="hover:text-primary flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-gray-100 bg-white text-gray-500 shadow-xl transition-all hover:bg-gray-50 active:scale-95"
-          title="回到底部"
           @click="scrollToBottom"
         >
           <SfIcon icon="mingcute:arrow-down-line" class="text-xl" />

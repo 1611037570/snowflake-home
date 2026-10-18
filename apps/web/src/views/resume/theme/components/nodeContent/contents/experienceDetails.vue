@@ -158,7 +158,6 @@ const bodyStyle = computed(() => ({
           <a
             v-if="row.link && safeItemLinkUrl"
             :href="safeItemLinkUrl"
-            :title="itemLink.name"
             target="_blank"
             rel="noopener noreferrer"
             class="inline-flex max-w-full min-w-0 items-baseline gap-1 break-all hover:underline"

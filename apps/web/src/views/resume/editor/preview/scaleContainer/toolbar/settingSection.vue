@@ -22,7 +22,6 @@ const slots = useSlots();
           type="button"
           class="flex cursor-pointer items-center text-xs text-sf-text-2 transition-colors hover:text-sf-theme"
           :aria-label="resetLabel"
-          :title="resetLabel"
           @click="$emit('reset')"
         >
           <SfIcon icon="material-symbols:restart-alt" size="4" />

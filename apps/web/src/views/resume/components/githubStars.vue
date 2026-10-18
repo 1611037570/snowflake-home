@@ -36,7 +36,6 @@ onMounted(refresh);
     target="_blank"
     rel="noopener noreferrer"
     class="group hover:bg-sf-bg-hover relative inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sf-text transition-colors hover:text-sf-theme focus-visible:outline-2 focus-visible:outline-sf-theme"
-    :title="stars === null ? statusText : `${statusText} (${formattedStars} Star)`"
     :aria-label="stars === null ? statusText : `${statusText} (${formattedStars})`"
     :aria-busy="loading"
   >

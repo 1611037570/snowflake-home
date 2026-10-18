@@ -104,7 +104,6 @@ function removeModel(item: any) {
           查询余额
         </div>
         <span
-          title="删除该模型"
           class="shrink-0 cursor-pointer text-sf-text-3 hover:text-red-500"
           @mousedown.stop
           @click.stop="removeModel(item)"

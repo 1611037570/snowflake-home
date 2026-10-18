@@ -101,10 +101,6 @@ const selectAutomatic = () => {
         "
         :aria-pressed="isSelected(name)"
         :aria-label="$t('publicationSelectAuthor', { name })"
-        :title="[
-          isPublicationCorrespondingAuthor(name) ? $t('publicationOrderCorresponding') : '',
-          isPublicationCoFirstAuthor(name) ? $t('publicationOrderCoFirst') : '',
-        ].filter(Boolean).join('、') || undefined"
         @click="selectAuthor(name)"
       >
         <span

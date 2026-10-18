@@ -55,7 +55,6 @@
             <div class="mb-3 rounded-lg bg-sf-page/50 p-3 text-center">
               <div
                 class="mb-2 max-w-full truncate text-sm font-medium text-sf-base"
-                :title="selectedFile.name"
               >
                 {{ selectedFile.name }}
               </div>
