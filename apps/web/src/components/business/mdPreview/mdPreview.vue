@@ -14,3 +14,9 @@ const MdPreview = defineAsyncComponent(() =>
   ),
 );
 </script>
+
+<style lang="scss" scoped>
+.md-editor-preview h1 {
+  margin: 0.8rem 0 !important;
+}
+</style>
