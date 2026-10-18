@@ -95,7 +95,6 @@ const applyTemplate = (template) => {
     currentUI.value.content.language,
     currentUI.value.theme.skillTemplate,
     currentUI.value.honor.layout,
-    currentUI.value.user.avatar,
   );
 };
 </script>

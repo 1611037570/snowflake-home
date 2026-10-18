@@ -2,19 +2,19 @@ export interface ResumeAvatarAppearance {
   ratio: "theme" | "1:1" | "4:3" | "3:4" | "16:9" | "5:7" | "custom"; // 头像宽高比，theme 表示跟随主题，5:7 用于一寸照预设
   customRatioWidth: number; // 自定义宽高比的宽度份数
   customRatioHeight: number; // 自定义宽高比的高度份数
-  shape: "theme" | "square" | "rounded" | "circle"; // 头像形状，theme 表示跟随主题
+  shape: "theme" | "square" | "rounded" | "circle" | "custom"; // 头像圆角预设，theme 表示跟随主题，custom 表示使用自定义圆角
   width: number | null; // 用户设置的头像宽度，空值表示跟随主题默认尺寸
   borderRadius: number | null; // 用户设置的头像圆角百分比，空值表示跟随形状或主题
 }
 
 export const DEFAULT_PORTRAIT_AVATAR_SIZE = {
-  width: 120, // 默认竖版头像宽度，单位像素
-  height: 168, // 默认竖版头像高度，单位像素
+  width: 100, // 默认竖版头像宽度，单位像素
+  height: 140, // 默认竖版头像高度，单位像素
 };
 
 export const DEFAULT_SQUARE_AVATAR_SIZE = {
-  width: 120, // 默认正方形头像宽度，单位像素
-  height: 120, // 默认正方形头像高度，单位像素
+  width: 100, // 默认正方形头像宽度，单位像素
+  height: 100, // 默认正方形头像高度，单位像素
 };
 
 export const AVATAR_WIDTH_LIMITS = {

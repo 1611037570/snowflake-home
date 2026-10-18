@@ -17,14 +17,21 @@ const avatar = computed(() => ({
   ...DEFAULT_AVATAR_APPEARANCE,
   ...(resumeStore.currentUI?.user?.avatar || {}),
 }));
+const avatarRadius = computed(() => {
+  if (avatar.value.borderRadius !== null) return avatar.value.borderRadius;
+  if (avatar.value.shape === "circle") return AVATAR_RADIUS_LIMITS.max;
+  if (avatar.value.shape === "rounded") return 10;
+  return AVATAR_RADIUS_LIMITS.min;
+});
 const setAvatarValue = (key, value) => {
   resumeStore.currentUI.user.avatar = { ...avatar.value, [key]: value };
 };
+// 自定义圆角保留当前展示值，其他预设由圆角类型本身决定。
 const setAvatarShape = (value) => {
   resumeStore.currentUI.user.avatar = {
     ...avatar.value,
     shape: value,
-    borderRadius: null,
+    borderRadius: value === "custom" ? avatarRadius.value : null,
     ...(value === "circle" ? { ratio: "1:1" } : {}),
   };
 };
@@ -46,14 +53,7 @@ const themeAvatarSize = computed(() =>
   resolveThemeDecisions(resumeStore.currentUI?.theme?.template).avatarSize,
 );
 const avatarWidth = computed(() => avatar.value.width ?? themeAvatarSize.value.width);
-const avatarRadius = computed(() => {
-  if (avatar.value.borderRadius !== null) return avatar.value.borderRadius;
-  if (avatar.value.shape === "circle") return AVATAR_RADIUS_LIMITS.max;
-  if (avatar.value.shape === "rounded") return 10;
-  return AVATAR_RADIUS_LIMITS.min;
-});
 const ratioOptions = computed(() => [
-  { name: $t("followTheme"), value: "theme" },
   { name: "1:1", value: "1:1" },
   { name: "4:3", value: "4:3" },
   { name: "3:4", value: "3:4" },
@@ -61,10 +61,10 @@ const ratioOptions = computed(() => [
   { name: $t("customRatio"), value: "custom" },
 ]);
 const shapeOptions = computed(() => [
-  { name: $t("followTheme"), value: "theme" },
   { name: $t("squareAvatar"), value: "square" },
   { name: $t("roundedAvatar"), value: "rounded" },
   { name: $t("circleAvatar"), value: "circle" },
+  { name: $t("customRatio"), value: "custom" },
 ]);
 </script>
 
@@ -103,8 +103,16 @@ const shapeOptions = computed(() => [
             <SfButton size="small" border @click="applyOneInchAvatar">{{ $t("oneInchPhoto") }}</SfButton>
           </div>
           <div class="flex flex-col gap-3 border-t border-sf-b pt-3">
-            <span class="text-xs text-sf-text-2">{{ $t("avatarRatio") }}</span>
-            <div class="grid grid-cols-3 gap-3">
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-xs text-sf-text-2">{{ $t("avatarRatio") }}</span>
+              <button
+                type="button"
+                class="cursor-pointer text-xs text-sf-text-2 transition-colors hover:text-sf-theme"
+                :class="{ 'text-sf-theme!': avatar.ratio === 'theme' }"
+                @click="setAvatarValue('ratio', 'theme')"
+              >{{ $t("followTheme") }}</button>
+            </div>
+            <div class="flex flex-wrap gap-3">
               <SfButton
                 v-for="option in ratioOptions"
                 :key="option.value"
@@ -130,18 +138,26 @@ const shapeOptions = computed(() => [
             </div>
           </div>
           <div class="flex flex-col gap-3 border-t border-sf-b pt-3">
-            <div class="flex items-center gap-3">
-              <span class="text-xs text-sf-text-2">
-                {{ $t("avatarRadius") }}{{ avatar.borderRadius === null ? ` (${$t("followTheme")})` : "" }}
-              </span>
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
-                @click="setAvatarValue('borderRadius', null)"
-              />
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-xs text-sf-text-2">{{ $t("avatarShape") }}</span>
+              <button
+                type="button"
+                class="cursor-pointer text-xs text-sf-text-2 transition-colors hover:text-sf-theme"
+                :class="{ 'text-sf-theme!': avatar.shape === 'theme' }"
+                @click="setAvatarShape('theme')"
+              >{{ $t("followTheme") }}</button>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap gap-3">
+              <SfButton
+                v-for="option in shapeOptions"
+                :key="option.value"
+                size="small"
+                border
+                :type="avatar.shape === option.value ? 'theme' : 'bg'"
+                @click="setAvatarShape(option.value)"
+              >{{ option.name }}</SfButton>
+            </div>
+            <div v-if="avatar.shape === 'custom'" class="flex items-center gap-3">
               <SfSlider
                 :model-value="avatarRadius"
                 :min="AVATAR_RADIUS_LIMITS.min"
@@ -164,29 +180,14 @@ const shapeOptions = computed(() => [
             </div>
           </div>
           <div class="flex flex-col gap-3 border-t border-sf-b pt-3">
-            <span class="text-xs text-sf-text-2">{{ $t("avatarShape") }}</span>
-            <div class="grid grid-cols-2 gap-3">
-              <SfButton
-                v-for="option in shapeOptions"
-                :key="option.value"
-                size="small"
-                border
-                :type="avatar.shape === option.value ? 'theme' : 'bg'"
-                @click="setAvatarShape(option.value)"
-              >{{ option.name }}</SfButton>
-            </div>
-          </div>
-          <div class="flex flex-col gap-3 border-t border-sf-b pt-3">
-            <div class="flex items-center gap-3">
-              <span class="text-xs text-sf-text-2">
-                {{ $t("avatarSize") }}{{ avatar.width === null ? ` (${$t("followTheme")} ${themeAvatarSize.width}px)` : "" }}
-              </span>
-              <SfIcon
-                icon="material-symbols:restart-alt"
-                size="4"
-                class="cursor-pointer text-sf-text-2 transition-colors hover:text-sf-theme"
+            <div class="flex items-center justify-between gap-3">
+              <span class="text-xs text-sf-text-2">{{ $t("avatarSize") }}</span>
+              <button
+                type="button"
+                class="cursor-pointer text-xs text-sf-text-2 transition-colors hover:text-sf-theme"
+                :class="{ 'text-sf-theme!': avatar.width === null }"
                 @click="setAvatarValue('width', null)"
-              />
+              >{{ $t("followTheme") }}</button>
             </div>
             <div class="flex items-center gap-3">
               <SfSlider
