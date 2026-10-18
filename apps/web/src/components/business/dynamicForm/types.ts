@@ -10,6 +10,8 @@ export interface ModelBinding {
   source: string[];
   prop: string;
   defaultValue?: any;
+  /** 填写口径：true 必填；false 或未设置表示可选。与 rules.required 的表单校验分离 */
+  required?: boolean;
   /** 仅从外部字典读取，不代理、不写入简历数据 */
   raw?: boolean;
 }
@@ -82,9 +84,11 @@ interface BaseFormField {
   rowClass?: string;
   /** 表单项提示 */
   tip?: string;
+  /** 填写口径：true 必填；false 或未设置表示可选。与 rules.required 的表单校验分离 */
+  required?: boolean;
   /** 表单项 UI 配置 */
   ui?: FieldUIConfig;
-  /** 字段校验规则，供表单提示、进度统计和 ATS 检查读取 */
+  /** 字段校验规则，供表单提示和 ATS 检查读取 */
   rules?: DynamicFormRule[];
   /** 模块标识（同时是数据路径首段） */
   key?: string;

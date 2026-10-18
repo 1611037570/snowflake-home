@@ -46,9 +46,8 @@ const isDeepEmpty = (val: any): boolean =>
 
 const getLabel = (field: any, prop: string): string => getFieldLabel(field) || prop || $t("field");
 
-// 完成度只把字段校验规则中明确标记必填的项计入。
-const isRequiredField = (field: any): boolean =>
-  field?.rules?.some((rule: any) => rule?.required === true) === true;
+// 完成度只统计字段上手动标记的必填口径，不由校验规则或所在分组推导。
+const isRequiredField = (field: any): boolean => field?.required === true;
 
 const getRuleIssues = (rules: any[], value: unknown, label: string) => {
   if (isDeepEmpty(value)) return [];
@@ -177,15 +176,9 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
   const activeLayout = ui?.[moduleConfig.key]?.layout;
 
   const missing: string[] = [];
-  // 建议补充：非必填字段未填写时只提示，不计入完成度
-  const optional: string[] = [];
   const issues: Array<{ label: string; message: string; severity?: "error" | "warning" }> = [];
   let done = 0;
   let total = 0;
-  // 记录一条建议补充，避免同一文案重复
-  const pushOptional = (label: string) => {
-    if (label && !optional.includes(label)) optional.push(label);
-  };
   // 模块字段统一从分组上下文解析相对路径
   const moduleContext = moduleConfig.context?.length
     ? createDataPathContext(moduleConfig.context)
@@ -225,10 +218,7 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
         return key ? $t(key) : "";
       };
       // 记录容器级别的必填只表示「至少填一条记录」，不再下沉到每个子字段
-      const itemSchemaRequired =
-        inheritedRules.some((rule) => rule?.required === true) ||
-        isRequiredField(itemSchema) ||
-        isRequiredField(field);
+      const itemSchemaRequired = isRequiredField(itemSchema) || isRequiredField(field);
       const itemDefs: Array<{ field: any; target: any; required: boolean }> = [];
       const collectItemFields = (fields: any[], inheritedRequired: boolean) => {
         for (const candidate of fields) {
@@ -255,17 +245,11 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
             ? [itemSchema.model]
             : [];
         for (const binding of bindings) {
-          // 绑定自身声明了规则时以规则为准；标记 optional 的绑定按选填处理
-          const bindingHasRules = Array.isArray(binding?.rules) && binding.rules.length > 0;
+          // 自定义条目的子字段只遵循绑定自身的 required 标记
           itemDefs.push({
             field: binding,
             target: binding,
-            required:
-              binding?.optional === true
-                ? false
-                : bindingHasRules
-                  ? isRequiredField(binding)
-                  : itemSchemaRequired,
+            required: binding?.required === true,
           });
         }
       }
@@ -280,11 +264,7 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
           // 内部状态字段与无法解析中文文案的字段不参与完成度统计
           const label = getItemLabel(def);
           if (isInternalField(def.target) || !label) continue;
-          if (!def.required) {
-            // 非必填项未填写时进入建议补充
-            pushOptional(label);
-            continue;
-          }
+          if (!def.required) continue;
           hasRequired = true;
           total += 1;
           if (!missing.includes(label)) missing.push(label);
@@ -327,13 +307,7 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
               `${itemLabel} · ${$t("recordIndex", { index: idx + 1 })}`,
             ),
           );
-          if (!def.required) {
-            // 修改：使用 src 最后一个元素判断是否为 content
-            const optionalFilled =
-              src[src.length - 1] === "content" ? !isContentEmpty(value) : !isEmpty(value);
-            if (!optionalFilled) pushOptional(itemLabel);
-            continue;
-          }
+          if (!def.required) continue;
 
           // 修改：使用 src 最后一个元素判断是否为 content
           const filled =
@@ -358,7 +332,11 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
     if (isInternalField(target)) continue;
 
     const resolvedPath = resolveDataPath(src, moduleContext);
-    if ((field.addable || target.addable) && !hasDataPath(rootData, resolvedPath)) continue;
+    const required = isRequiredField(target) || isRequiredField(field);
+    // 必填的可添加字段未添加时也要提示；可选的可添加字段未添加时直接忽略
+    if ((field.addable || target.addable) && !hasDataPath(rootData, resolvedPath) && !required) {
+      continue;
+    }
     const value = getValueByPath(rootData, resolvedPath);
     const rules = [
       ...inheritedRules,
@@ -370,19 +348,11 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
     const fieldLabel = getFieldLabel(field) || inheritedLabel || "";
     if (!fieldLabel && !isContentField) continue;
     issues.push(...getRuleIssues(rules, value, fieldLabel || $t("content")));
-    const required =
-      inheritedRules.some((rule) => rule?.required === true) ||
-      isRequiredField(target) ||
-      isRequiredField(field);
 
     // 修改：使用 src 最后一个元素判断是否为 content
     const filled = src[src.length - 1] === "content" ? !isContentEmpty(value) : !isEmpty(value);
 
-    if (!required) {
-      // 非必填项未填写时只进入建议补充，不影响完成度
-      if (!filled) pushOptional(isContentField ? $t("content") : fieldLabel);
-      continue;
-    }
+    if (!required) continue;
 
     total += 1;
     if (filled) {
@@ -400,7 +370,6 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
   ];
   return {
     missing,
-    optional,
     issues: uniqueIssues,
     score,
     done,
@@ -545,7 +514,6 @@ export function useProgress(
     name: string;
     progress: number;
     missing: string[];
-    optional: string[];
     issues: Array<{ label: string; message: string; severity?: "error" | "warning" }>;
     hasError: boolean;
   }> = [];
@@ -555,7 +523,7 @@ export function useProgress(
   const timelineModules: Array<{ key: string; config: any }> = [];
 
   for (const [key, config] of moduleMap) {
-    const { missing, optional, issues, score, done, total, hasError } = analyzeModule(
+    const { missing, issues, score, done, total, hasError } = analyzeModule(
       config,
       rootData,
       uiConfig,
@@ -565,7 +533,6 @@ export function useProgress(
       name: getModuleTitle(config, rootData, key),
       progress: score * 10,
       missing,
-      optional,
       issues,
       hasError,
     });

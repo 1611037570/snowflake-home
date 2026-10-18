@@ -248,10 +248,6 @@ const getTodoList = (item) => [
                 {{ $t("modify") }}
               </div>
             </div>
-            <!-- 建议补充：非必填项未填写时提示，不计入完成度 -->
-            <div v-if="item.optional?.length" class="mt-2 text-xs leading-5 text-sf-text-3">
-              {{ $t("resumeOptionalSuggest") }}：{{ item.optional.join("、") }}
-            </div>
           </div>
         </template>
       </SfScrollbar>

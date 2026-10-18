@@ -31,6 +31,8 @@ export type ResumeFieldSchema = {
   valueType: ResumeFieldValueType;
   // 字段缺失时是否允许 AI 首次写入
   addable: boolean;
+  // 填写口径：true 必填，false 可选；与表单 rules.required 分离
+  required: boolean;
   // 字段格式约束
   format?: ResumeFieldFormat;
   // 字段允许使用的枚举值
@@ -132,6 +134,8 @@ const collectFields = (
       const optionValues = getOptionValues(target, options);
       const patternRule = [...(field.rules ?? []), ...(target === field ? [] : (target.rules ?? []))]
         .find((rule: any) => rule?.pattern instanceof RegExp);
+      // 仅单业务绑定的普通字段允许回退到字段级 required；复合组件按绑定逐个声明
+      const businessBindings = getModelBindings(target).filter((binding) => !binding.raw);
       getModelBindings(target).forEach((binding) => {
         if (binding.raw || !acceptBinding(binding)) return;
         const key = binding.source[binding.source.length - 1];
@@ -143,6 +147,10 @@ const collectFields = (
           component: target.component,
           valueType: getValueType(target, binding, format),
           addable: target.addable === true,
+          // 绑定显式声明优先；单绑定普通字段回退到字段级标记
+          required:
+            binding.required ??
+            (businessBindings.length === 1 ? target.required === true : false),
           format,
           options: optionValues,
           pattern: patternRule
@@ -166,6 +174,7 @@ const collectFields = (
           ...next,
           label: getFieldLabel(field) || previous.label,
           addable: previous.addable || next.addable,
+          required: previous.required || next.required,
           options: next.options ?? previous.options,
           pattern: next.pattern ?? previous.pattern,
         };

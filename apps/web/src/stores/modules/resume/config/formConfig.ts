@@ -64,9 +64,9 @@ const createUserField = (
   key: string,
   label: string,
   field: ObjectFormField,
-  options: { tip?: string; addable?: boolean } = {},
+  options: { tip?: string; addable?: boolean; required?: boolean } = {},
 ): GroupFormField => {
-  const { tip = "推荐必填", addable } = options;
+  const { tip = "推荐必填", addable, required } = options;
   return {
     type: "group",
     component: "rowField",
@@ -77,11 +77,19 @@ const createUserField = (
     key,
     // 标签与操作区由包裹组件渲染，字段自身不再声明
     props: { label, tip },
+    // 填写口径由业务手动标记，与表单校验规则分离
+    required: required === true,
     // 可添加字段：数据存在才渲染
     ...(addable ? { addable: true } : {}),
     // 字段状态绑定到包裹组，供包裹组件双向绑定
     model: [{ source: ["ui", key, "hidden"], prop: "hidden", defaultValue: false }],
-    fields: [{ ...field, ...(addable ? { addable: true } : {}) }],
+    fields: [
+      {
+        ...field,
+        ...(addable ? { addable: true } : {}),
+        required: required === true,
+      },
+    ],
   };
 };
 
@@ -93,6 +101,8 @@ const createMoreField = (options: {
   iconKey: string;
   tip?: string;
   addable?: boolean;
+  // 填写口径：true 必填；未设置表示可选
+  required?: boolean;
   // 所属分类：供编辑器「更多」分区归类展示
   category?: string;
   // 展示形态选项：声明后编辑器提供切换，预览按选中形态展示
@@ -109,6 +119,7 @@ const createMoreField = (options: {
     iconKey,
     tip,
     addable,
+    required,
     category,
     displayOptions,
     dict,
@@ -132,6 +143,8 @@ const createMoreField = (options: {
     },
     // 可添加字段：数据存在才渲染
     ...(addable ? { addable: true } : {}),
+    // 填写口径由业务手动标记，与表单校验规则分离
+    required: required === true,
     // 字段状态绑定到包裹组，供包裹组件双向绑定
     model: [
       { source: ["ui", key, "hidden"], prop: "hidden", defaultValue: false },
@@ -154,6 +167,8 @@ const createMoreField = (options: {
         component,
         span: 24,
         ...(addable ? { addable: true } : {}),
+        // 内层字段是完成度和 AI 契约读取的字段声明
+        required: required === true,
         model: dict
           ? [
               { source: ["data", key], prop: "modelValue" },
@@ -192,6 +207,7 @@ export const DEFAULT_USER_FORM = [
         key: "avatar",
         label: "头像",
         component: "imageUpload",
+        required: false,
         span: 24,
         // 头像与其他个人信息字段统一圆角边框及上下左右留白。
         colClass: DEFAULT_COL_CLASS + " py-1 px-3!",
@@ -235,7 +251,7 @@ export const DEFAULT_USER_FORM = [
             trigger: "blur",
           },
         ],
-      }),
+      }, { required: true }),
       // 副标题分区：承载已标记为副标题的更多字段，顺序即姓名下方展示顺序
       {
         type: "group",
@@ -303,6 +319,7 @@ export const DEFAULT_USER_FORM = [
             iconKey: "personal-account",
             tip: "推荐必填",
             addable: true,
+            required: true,
             dict: "sex",
             props: {
               placeholder: "请选择性别",
@@ -396,6 +413,7 @@ export const DEFAULT_USER_FORM = [
             iconKey: "work-briefcase",
             tip: "推荐必填",
             addable: true,
+            required: true,
             dict: "position",
             props: {
               placeholder: "请选择或输入求职岗位",
@@ -427,6 +445,7 @@ export const DEFAULT_USER_FORM = [
             tip: "推荐必填",
             // 可添加字段：数据存在才渲染，删除后可从更多中重新添加
             addable: true,
+            required: true,
             props: {
               placeholder: "请输入电话",
               clearable: true,
@@ -698,11 +717,13 @@ export const DEFAULT_ACCOUNT_FORM = {
             source: ["data", "name"],
             defaultValue: "",
             prop: "name",
+            required: true,
           },
           {
             source: ["data", "url"],
             defaultValue: "",
             prop: "url",
+            required: true,
           },
           {
             source: ["ui", "hidden"],
@@ -712,7 +733,7 @@ export const DEFAULT_ACCOUNT_FORM = {
         ],
         type: "object",
         component: "rowAccount",
-        rules: [requiredFieldRule(), atsRule("socialLink")],
+        required: true, rules: [requiredFieldRule(), atsRule("socialLink")],
       },
     },
   ],
@@ -763,7 +784,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "学校名称",
             component: "input",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: {
               source: ["data", "name"],
@@ -779,7 +800,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "专业",
             component: "positionPicker",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: [
               {
@@ -799,7 +820,7 @@ export const DEFAULT_EDUCATION_FORM = {
           {
             type: "object",
             label: "开始时间",
-            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             component: "datePicker",
             span: 12,
             model: {
@@ -816,7 +837,7 @@ export const DEFAULT_EDUCATION_FORM = {
           {
             type: "object",
             label: "结束时间",
-            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             component: "datePickerPresent",
             span: 12,
             model: {
@@ -836,7 +857,7 @@ export const DEFAULT_EDUCATION_FORM = {
             label: "学历",
             component: "select",
             span: 6,
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             model: [
               {
                 source: ["data", "education"],
@@ -859,7 +880,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "学制",
             component: "select",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 6,
             model: [
               {
@@ -884,6 +905,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object", // 使用普通输入字段。
             label: "成绩/GPA", // 成绩字段标题。
             component: "input", // 使用文本输入组件。
+            required: false,
             span: 12, // 占半行宽度。
             model: {
               source: ["data", "score"], // 保存教育经历成绩。
@@ -898,6 +920,7 @@ export const DEFAULT_EDUCATION_FORM = {
             type: "object",
             label: "经历",
             component: "resumeContentEditor",
+            required: true,
             rules: [contentQualityRule()],
             span: 24,
             props: {
@@ -931,6 +954,7 @@ export const DEFAULT_EDUCATION_FORM = {
             fields: [
               // 教育经历复用通用的链接名称与地址编辑字段。
               {
+                required: false,
                 type: "object", // 使用对象字段承载链接。
                 label: "链接", // 通用链接字段标题。
                 component: "projectLink", // 复用链接编辑组件。
@@ -944,6 +968,7 @@ export const DEFAULT_EDUCATION_FORM = {
               },
               // 学院名称
               {
+                required: false,
                 type: "object",
                 label: "学院名称",
                 component: "input",
@@ -959,6 +984,7 @@ export const DEFAULT_EDUCATION_FORM = {
               },
               // 所在城市：省市字典由业务域注入
               {
+                required: false,
                 type: "object",
                 label: "所在城市",
                 component: "cityPicker",
@@ -980,6 +1006,7 @@ export const DEFAULT_EDUCATION_FORM = {
               },
               // 学校标签：可选标签由字段配置注入
               {
+                required: false,
                 type: "object",
                 label: "标签", // 学校标签字段标题。
                 component: "tag",
@@ -1027,7 +1054,7 @@ export const DEFAULT_SKILL_FORM = {
       // 正文布局使用富文本编辑器。
       type: "object",
       component: "resumeContentEditor",
-      rules: [requiredFieldRule(), contentQualityRule()],
+      required: true, rules: [requiredFieldRule(), contentQualityRule()],
       props: {
         kind: "skill",
       },
@@ -1055,17 +1082,19 @@ export const DEFAULT_SKILL_FORM = {
             source: ["data", "name"],
             defaultValue: "",
             prop: "name",
+            required: true,
           },
           {
             source: ["data", "desc"], // 技能描述。
             defaultValue: "", // 新增技能默认没有描述。
             prop: "desc", // 将描述传给技能编辑组件。
-            optional: true, // 技能描述为选填，不参与完成度统计。
+            required: false,
           },
           {
             source: ["data", "level"],
             defaultValue: 7,
             prop: "level", // 保存所有样式共用的一到十分技能评分
+            required: false,
           },
           {
             source: ["ui", "hidden"],
@@ -1075,7 +1104,7 @@ export const DEFAULT_SKILL_FORM = {
         ],
         type: "object",
         component: "rowSkill",
-        rules: [requiredFieldRule()],
+        required: true, rules: [requiredFieldRule()],
       },
     },
   ],
@@ -1095,7 +1124,7 @@ export const DEFAULT_ADVANTAGE_FORM = {
     {
       type: "object",
       component: "resumeContentEditor",
-      rules: [requiredFieldRule(), contentQualityRule()],
+      required: true, rules: [requiredFieldRule(), contentQualityRule()],
       props: {
         kind: "advantage",
       },
@@ -1125,6 +1154,7 @@ export const DEFAULT_SLOGAN_FORM = {
       key: "title",
       label: "标题",
       component: "input",
+      required: false,
       span: 24,
       model: [
         {
@@ -1142,6 +1172,7 @@ export const DEFAULT_SLOGAN_FORM = {
       key: "subtitle",
       label: "标语",
       component: "input",
+      required: false,
       span: 24,
       model: [
         {
@@ -1203,7 +1234,7 @@ export const DEFAULT_WORK_FORM = {
             type: "object",
             label: "公司名称",
             component: "input",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: {
               source: ["data", "name"],
@@ -1218,7 +1249,7 @@ export const DEFAULT_WORK_FORM = {
             type: "object",
             label: "岗位",
             component: "positionPicker",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: [
               {
@@ -1238,7 +1269,7 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "开始时间",
-            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             component: "datePicker",
             span: 12,
             model: {
@@ -1255,7 +1286,7 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "结束时间",
-            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             component: "datePickerPresent",
             span: 12,
             model: {
@@ -1273,7 +1304,7 @@ export const DEFAULT_WORK_FORM = {
           {
             type: "object",
             label: "经历",
-            rules: [requiredFieldRule(), contentQualityRule()],
+            required: true, rules: [requiredFieldRule(), contentQualityRule()],
             component: "resumeContentEditor",
             span: 24,
             props: {
@@ -1307,6 +1338,7 @@ export const DEFAULT_WORK_FORM = {
             fields: [
               // 所在城市：省市字典由业务域注入。
               {
+                required: false,
                 type: "object",
                 label: "所在城市",
                 component: "cityPicker",
@@ -1328,6 +1360,7 @@ export const DEFAULT_WORK_FORM = {
               },
               // 所在部门紧随城市，展示在同一行。
               {
+                required: false,
                 type: "object",
                 label: "所在部门",
                 component: "input",
@@ -1343,6 +1376,7 @@ export const DEFAULT_WORK_FORM = {
               },
               // 项目链接
               {
+                required: false,
                 type: "object",
                 label: "项目链接",
                 component: "projectLink",
@@ -1356,6 +1390,7 @@ export const DEFAULT_WORK_FORM = {
               },
               // 工作标签：可选标签由字段配置注入
               {
+                required: false,
                 type: "object",
                 label: "标签", // 工作标签字段标题。
                 component: "tag",
@@ -1425,7 +1460,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
             type: "object",
             label: "公司名称",
             component: "input",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: {
               source: ["data", "name"],
@@ -1441,7 +1476,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
             type: "object",
             label: "岗位",
             component: "positionPicker",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: [
               {
@@ -1462,7 +1497,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
           {
             type: "object",
             label: "开始时间",
-            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             component: "datePicker",
             span: 12,
             model: {
@@ -1480,7 +1515,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
           {
             type: "object",
             label: "结束时间",
-            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             component: "datePickerPresent",
             span: 12,
             model: {
@@ -1499,7 +1534,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
           {
             type: "object",
             label: "经历",
-            rules: [requiredFieldRule(), contentQualityRule()],
+            required: true, rules: [requiredFieldRule(), contentQualityRule()],
             component: "resumeContentEditor",
             span: 24,
             props: {
@@ -1533,6 +1568,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
             fields: [
               // 所在城市：省市字典由业务域注入。
               {
+                required: false,
                 type: "object",
                 label: "所在城市",
                 component: "cityPicker",
@@ -1554,6 +1590,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
               },
               // 所在部门紧随城市，展示在同一行。
               {
+                required: false,
                 type: "object",
                 label: "所在部门",
                 component: "input",
@@ -1569,6 +1606,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
               },
               // 实习相关作品链接。
               {
+                required: false,
                 type: "object",
                 label: "项目链接",
                 component: "projectLink",
@@ -1582,6 +1620,7 @@ export const DEFAULT_INTERNSHIP_FORM = {
               },
               // 实习标签：可选标签由字段配置注入。
               {
+                required: false,
                 type: "object",
                 label: "标签", // 实习标签字段标题。
                 component: "tag",
@@ -1649,7 +1688,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "项目名称",
             component: "input",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: {
               source: ["data", "name"],
@@ -1665,7 +1704,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "岗位",
             component: "positionPicker",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: [
               {
@@ -1685,7 +1724,7 @@ export const DEFAULT_PROJECT_FORM = {
           {
             type: "object",
             label: "开始时间",
-            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             component: "datePicker",
             span: 12,
             model: {
@@ -1702,7 +1741,7 @@ export const DEFAULT_PROJECT_FORM = {
           {
             type: "object",
             label: "结束时间",
-            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             component: "datePickerPresent",
             span: 12,
             model: {
@@ -1721,7 +1760,7 @@ export const DEFAULT_PROJECT_FORM = {
             type: "object",
             label: "经历",
             component: "resumeContentEditor",
-            rules: [requiredFieldRule(), contentQualityRule()],
+            required: true, rules: [requiredFieldRule(), contentQualityRule()],
             span: 24,
             props: {
               kind: "project",
@@ -1752,6 +1791,7 @@ export const DEFAULT_PROJECT_FORM = {
             fields: [
               // 所在城市与所在部门并排编辑。
               {
+                required: false,
                 type: "object",
                 label: "所在城市",
                 component: "cityPicker",
@@ -1772,6 +1812,7 @@ export const DEFAULT_PROJECT_FORM = {
                 },
               },
               {
+                required: false,
                 type: "object",
                 label: "所在部门",
                 component: "input",
@@ -1787,6 +1828,7 @@ export const DEFAULT_PROJECT_FORM = {
               },
               // 链接与标签沿用项目经历现有字段。
               {
+                required: false,
                 type: "object",
                 label: "项目链接",
                 component: "projectLink",
@@ -1799,6 +1841,7 @@ export const DEFAULT_PROJECT_FORM = {
                 },
               },
               {
+                required: false,
                 type: "object",
                 label: "标签", // 项目标签字段标题。
                 component: "tag",
@@ -1865,42 +1908,47 @@ export const DEFAULT_PORTFOLIO_FORM = {
                 source: ["data", "name"],
                 defaultValue: "",
                 prop: "name",
+                required: true,
               },
               {
                 // url：作品链接，适用于任何类型的作品。
                 source: ["data", "url"],
                 defaultValue: "",
                 prop: "url",
+                required: false,
               },
               {
                 // desc：作品描述。
                 source: ["data", "desc"],
                 defaultValue: "",
                 prop: "desc",
+                required: false,
               },
               {
                 // img：作品图片，可与作品链接同时使用。
                 source: ["data", "img"],
                 defaultValue: "",
                 prop: "img",
+                required: false,
               },
               {
                 // size：作品图片在预览中的显示大小百分比。
                 source: ["data", "size"],
                 defaultValue: 50,
                 prop: "size",
+                required: false,
               },
             ],
             type: "object",
             component: "portfolio",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
           },
         ],
         type: "group",
         component: "collapseItem",
         slot: "default",
         span: 24,
-        rules: [requiredFieldRule()],
+        required: true, rules: [requiredFieldRule()],
       },
     },
   ],
@@ -1955,7 +2003,7 @@ export const DEFAULT_HONOR_FORM = {
             type: "object",
             label: "荣誉名称",
             component: "input",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 24,
             model: {
               source: ["data", "name"],
@@ -1971,6 +2019,7 @@ export const DEFAULT_HONOR_FORM = {
             type: "object",
             label: "荣誉链接",
             component: "projectLink",
+            required: false,
             rules: [atsRule("projectLink")],
             span: 24,
             model: {
@@ -1984,6 +2033,7 @@ export const DEFAULT_HONOR_FORM = {
             type: "object",
             label: "荣誉描述",
             component: "input",
+            required: false,
             span: 24,
             props: {
               placeholder: "请输入荣誉描述", // 提示填写简短的荣誉说明。
@@ -2046,7 +2096,7 @@ export const DEFAULT_CLUB_FORM = {
             type: "object",
             label: "组织/活动", // 社团经历的名称字段标题。
             component: "input",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: {
               source: ["data", "name"],
@@ -2061,6 +2111,7 @@ export const DEFAULT_CLUB_FORM = {
             type: "object",
             label: "担任职务",
             component: "positionPicker",
+            required: true,
             span: 12,
             model: [
               {
@@ -2081,7 +2132,7 @@ export const DEFAULT_CLUB_FORM = {
           {
             type: "object",
             label: "开始时间",
-            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             component: "datePicker",
             span: 12,
             model: {
@@ -2098,7 +2149,7 @@ export const DEFAULT_CLUB_FORM = {
           {
             type: "object",
             label: "结束时间",
-            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             component: "datePickerPresent",
             span: 12,
             model: {
@@ -2117,7 +2168,7 @@ export const DEFAULT_CLUB_FORM = {
             type: "object",
             label: "经历",
             component: "resumeContentEditor",
-            rules: [requiredFieldRule(), contentQualityRule()],
+            required: true, rules: [requiredFieldRule(), contentQualityRule()],
             span: 24,
             props: { kind: "work" },
             model: {
@@ -2143,6 +2194,7 @@ export const DEFAULT_CLUB_FORM = {
             ],
             fields: [
               {
+                required: false,
                 type: "object",
                 label: "所在城市",
                 component: "cityPicker",
@@ -2163,6 +2215,7 @@ export const DEFAULT_CLUB_FORM = {
                 },
               },
               {
+                required: false,
                 type: "object",
                 label: "标签", // 社团经历的标签字段标题。
                 component: "tag",
@@ -2229,7 +2282,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
             type: "object",
             label: "组织名称",
             component: "input",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: {
               source: ["data", "name"],
@@ -2244,6 +2297,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
             type: "object",
             label: "服务时长",
             component: "input",
+            required: true,
             span: 12,
             model: {
               source: ["data", "duration"],
@@ -2258,7 +2312,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
           {
             type: "object",
             label: "开始时间",
-            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             component: "datePicker",
             span: 12,
             model: {
@@ -2275,7 +2329,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
           {
             type: "object",
             label: "结束时间",
-            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             component: "datePickerPresent",
             span: 12,
             model: {
@@ -2294,7 +2348,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
             type: "object",
             label: "经历",
             component: "resumeContentEditor",
-            rules: [requiredFieldRule(), contentQualityRule()],
+            required: true, rules: [requiredFieldRule(), contentQualityRule()],
             span: 24,
             props: {
               kind: "work",
@@ -2322,6 +2376,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
             ],
             fields: [
               {
+                required: false,
                 type: "object",
                 label: "所在城市",
                 component: "cityPicker",
@@ -2342,6 +2397,7 @@ export const DEFAULT_VOLUNTEER_FORM = {
                 },
               },
               {
+                required: false,
                 type: "object",
                 label: "标签", // 志愿者经历的标签字段标题。
                 component: "tag",
@@ -2411,7 +2467,7 @@ export const DEFAULT_PUBLICATION_FORM = {
             type: "object",
             label: "论文标题",
             component: "input",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 24,
             model: {
               source: ["data", "title"],
@@ -2427,6 +2483,7 @@ export const DEFAULT_PUBLICATION_FORM = {
             type: "object",
             label: "标签", // 论文索引标签字段标题。
             component: "tag",
+            required: false,
             span: 24,
             model: {
               source: ["data", "indexTags"],
@@ -2442,17 +2499,19 @@ export const DEFAULT_PUBLICATION_FORM = {
             type: "object",
             label: "作者",
             component: "publicationAuthors",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 24,
             model: [
               {
                 source: ["data", "authors"], // 作者署名文本。
                 prop: "modelValue", // 作者输入框的值。
+                required: true,
               },
               {
                 source: ["data", "selfAuthor"], // 预览中需要强调的本人姓名。
                 prop: "selfAuthor", // 本人选择结果。
                 defaultValue: "", // 空值沿用个人姓名识别，不让空白论文变成有效内容。
+                required: false,
               },
             ],
           },
@@ -2461,7 +2520,7 @@ export const DEFAULT_PUBLICATION_FORM = {
             type: "object",
             label: "发表状态",
             component: "select",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: [
               {
@@ -2484,7 +2543,7 @@ export const DEFAULT_PUBLICATION_FORM = {
             type: "object",
             label: "期刊 / 会议",
             component: "input",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             span: 12,
             model: {
               source: ["data", "venue"],
@@ -2500,7 +2559,7 @@ export const DEFAULT_PUBLICATION_FORM = {
             type: "object",
             label: "发表时间",
             component: "datePicker",
-            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             span: 12,
             model: {
               source: ["data", "date"],
@@ -2518,6 +2577,7 @@ export const DEFAULT_PUBLICATION_FORM = {
             type: "object",
             label: "DOI / 论文链接",
             component: "urlInput", // 链接地址可选协议前缀，DOI 编号可原样填写。
+            required: false,
             span: 12,
             model: {
               source: ["data", "doi"],
@@ -2534,6 +2594,7 @@ export const DEFAULT_PUBLICATION_FORM = {
             type: "object",
             label: "研究内容",
             component: "resumeContentEditor",
+            required: false,
             span: 24,
             props: {
               kind: "publication", // 学术论文使用与作者相同的多行文本输入框。
@@ -2595,7 +2656,7 @@ export const DEFAULT_CUSTOM_FORM = {
         fields: [
           {
             type: "object",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             label: "名称",
             component: "input",
             span: 12, // 名称与职位并排编辑。
@@ -2611,7 +2672,7 @@ export const DEFAULT_CUSTOM_FORM = {
           // 职位紧随名称，同教育经历的专业位置。
           {
             type: "object",
-            rules: [requiredFieldRule()],
+            required: true, rules: [requiredFieldRule()],
             label: "职位",
             component: "positionPicker",
             span: 12,
@@ -2632,7 +2693,7 @@ export const DEFAULT_CUSTOM_FORM = {
           },
           {
             type: "object",
-            rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_FORMAT_RULE],
             label: "开始时间",
             component: "datePicker",
             span: 12,
@@ -2649,7 +2710,7 @@ export const DEFAULT_CUSTOM_FORM = {
           },
           {
             type: "object",
-            rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
+            required: true, rules: [requiredFieldRule(), MONTH_PRESENT_FORMAT_RULE],
             label: "结束时间",
             component: "datePickerPresent",
             span: 12,
@@ -2668,7 +2729,7 @@ export const DEFAULT_CUSTOM_FORM = {
           {
             type: "object",
             label: "经历",
-            rules: [requiredFieldRule(), contentQualityRule()],
+            required: true, rules: [requiredFieldRule(), contentQualityRule()],
             component: "resumeContentEditor",
             span: 24,
             props: {
@@ -2698,6 +2759,7 @@ export const DEFAULT_CUSTOM_FORM = {
             ],
             fields: [
               {
+                required: false,
                 type: "object",
                 label: "项目链接",
                 component: "projectLink",
@@ -2710,6 +2772,7 @@ export const DEFAULT_CUSTOM_FORM = {
                 },
               },
               {
+                required: false,
                 type: "object",
                 label: "所在部门",
                 component: "input",
@@ -2724,6 +2787,7 @@ export const DEFAULT_CUSTOM_FORM = {
                 },
               },
               {
+                required: false,
                 type: "object",
                 label: "所在城市",
                 component: "cityPicker",
@@ -2744,6 +2808,7 @@ export const DEFAULT_CUSTOM_FORM = {
                 },
               },
               {
+                required: false,
                 type: "object",
                 label: "标签", // 自定义经历的标签字段标题。
                 component: "tag",

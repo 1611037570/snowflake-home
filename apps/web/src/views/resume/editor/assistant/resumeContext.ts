@@ -6,6 +6,7 @@ import {
   type DesensitizeField,
 } from "@/stores/modules/resume/config/desensitizeConfig";
 import { findResumeModuleSchema } from "./resumeSchemaRegistry";
+import { isContentEmpty } from "../preview/shared/validData";
 
 // 按字段路径读取模块当前生效的数据形态
 const getValueByPath = (source: any, path: string[]) =>
@@ -57,6 +58,38 @@ export const useResumeContext = () => {
     return next;
   };
 
+  // 读取副本的空白判断：富文本、普通字符串、数组与复合对象统一按无内容处理
+  const isEmptyValue = (value: unknown): boolean =>
+    value == null ||
+    (typeof value === "string" && isContentEmpty(value)) ||
+    (Array.isArray(value) && value.every(isEmptyValue)) ||
+    (typeof value === "object" && Object.values(value).every(isEmptyValue));
+
+  // 读取副本去掉空的可选字段，避免 AI 把用户没填的字段当成已填写
+  const omitEmptyOptionalFields = (data: any, fields: any[] = []) => {
+    const optionalPaths = fields
+      .filter((field) => !field.required)
+      .map((field) => (field.path?.[0] === "data" ? field.path.slice(1) : field.path || []))
+      .filter((path) => path.length);
+    const prune = (record: any) => {
+      for (const path of optionalPaths) {
+        let parent = record;
+        for (let index = 0; index < path.length - 1; index += 1) {
+          parent = parent?.[path[index]];
+          if (parent == null) break;
+        }
+        if (parent == null) continue;
+        const key = path[path.length - 1];
+        if (Object.prototype.hasOwnProperty.call(parent, key) && isEmptyValue(parent[key])) {
+          delete parent[key];
+        }
+      }
+    };
+    if (Array.isArray(data)) data.forEach(prune);
+    else if (data && typeof data === "object") prune(data);
+    return data;
+  };
+
   // 读取当前简历数据：跟随用户在 AI 助手里的模块选择；未选择任何模块时返回整份简历
   let forceFullResume = false;
   // 请求开始后冻结模块与脱敏字段选择，工具重读不得扩大本轮授权范围
@@ -105,6 +138,8 @@ export const useResumeContext = () => {
       const clone = Array.isArray(activeData)
         ? activeData.map((record: any) => record.data)
         : activeData;
+      // 按当前数据形态解析字段填写口径，供可选字段裁剪使用
+      const activeSchema = findResumeModuleSchema(key, clone, layout);
       const title = module.ui?.title || resumeStore.getModel(key)?.name || key;
       const removeOrganizationName =
         (key === "work" && selectedFieldSet.has("workOrganization")) ||
@@ -121,8 +156,8 @@ export const useResumeContext = () => {
       result[key] = {
         // 模块标题也可能含有用户姓名或组织名称
         title: shouldDesensitize ? sanitizeSensitiveText(title, sensitiveValues, selectedFieldSet) : title,
-        // 已裁剪媒体并按本轮字段选择脱敏的业务数据
-        data: sanitized,
+        // 已裁剪媒体、脱敏并去掉空可选字段的业务数据
+        data: omitEmptyOptionalFields(sanitized, activeSchema?.fields),
       };
     });
     return result;
