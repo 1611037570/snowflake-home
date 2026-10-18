@@ -6,6 +6,7 @@ import { parsePdfResume } from "../pdfParser";
 import { MAX_PDF_FILE_BYTES } from "../pdfDocument";
 import ImportResumePreview from "./importResumePreview.vue";
 import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
+import { hasResumeAiModel } from "@/views/resume/ai/request/client";
 import { useAiStore, useResumeStore } from "@/stores";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
@@ -85,8 +86,8 @@ const importDocumentConfig = async (format) => {
   if (!isPdf) {
     if (!ensureAiAvailable(configureParseModel)) return;
   } else {
-    const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId("resumeParser"));
-    if (!model?.key || !model.url || !model.model) {
+    // PDF 使用简历解析角色，按统一使用方的角色检查判断是否已绑定
+    if (!hasResumeAiModel("resumeParser")) {
       // 缺少模型时保留导入弹窗，由确认框提示，用户选择后再决定是否前往配置页。
       try {
         await confirm("PDF 解析需要支持图片识别的模型，请先绑定简历解析模型。", "未配置解析模型", {

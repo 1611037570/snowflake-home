@@ -4,6 +4,10 @@ import type { ResumeFieldSchema, ResumeModuleSchema } from "../editor/assistant/
 import { RESUME_SCHEMA } from "../editor/assistant/resumeSchemaRegistry";
 import { normalizeRichTextHtml } from "../editor/preview/shared/normalizeRichText";
 import { isContentEmpty } from "../editor/preview/shared/validData";
+import {
+  assertResumeAiResponseComplete,
+  readResumeAiResponseText,
+} from "@/views/resume/ai/request/response";
 
 const MODULE_SCHEMA = new Map(
   RESUME_SCHEMA.filter((module) => module.kind !== "custom").map((module) => [module.key, module]),
@@ -21,24 +25,6 @@ const hasValue = (value: unknown): boolean =>
   value !== "" &&
   (!Array.isArray(value) || value.some(hasValue)) &&
   (!isRecord(value) || Object.values(value).some(hasValue));
-
-// 兼容不同模型协议的文本返回结构，统一取出模型生成的 JSON 文本。
-export const extractResponseText = (response: any): string => {
-  if (typeof response === "string") return response;
-  const content = response?.choices?.[0]?.message?.content;
-  if (typeof content === "string") return content;
-  if (Array.isArray(content)) {
-    return content.map((item) => (typeof item === "string" ? item : item?.text || "")).join("");
-  }
-  if (typeof response?.output_text === "string") return response.output_text;
-  if (Array.isArray(response?.output)) {
-    return response.output
-      .flatMap((item: any) => (Array.isArray(item?.content) ? item.content : [item]))
-      .map((item: any) => (typeof item === "string" ? item : item?.text || ""))
-      .join("");
-  }
-  return "";
-};
 
 // 去除 Markdown 代码围栏并提取首个 JSON 对象，降低模型额外输出对导入的影响。
 export const parseJsonText = (text: string): Record<string, any> => {
@@ -232,10 +218,8 @@ export const normalizeResumeData = (parsed: Record<string, any>) => {
 
 // 两种文档共用完整性检查、字段转换与安全清洗，不按文件类型区别处理。
 export const readResumeImportResult = (response: any, onProgress: (message: string) => void) => {
-  if (response?.choices?.[0]?.finish_reason === "length" || response?.status === "incomplete") {
-    throw new Error("模型输出被截断，请减少内容或调整模型输出上限");
-  }
-  const text = extractResponseText(response);
+  assertResumeAiResponseComplete(response);
+  const text = readResumeAiResponseText(response);
   if (!text) throw new Error("简历解析模型没有返回内容，请检查模型配置");
   onProgress("正在校验简历字段");
   return normalizeResumeData(parseJsonText(text));

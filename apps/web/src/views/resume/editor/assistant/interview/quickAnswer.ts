@@ -1,4 +1,6 @@
 import { getXiaoYangLLM } from "@/apis";
+import type { ResumeAiMessage, ResumeAiTask } from "@/views/resume/ai/request";
+import { runResumeAiTask } from "@/views/resume/ai/request";
 import { useResumeContext } from "../resumeContext";
 
 // 快速回答仅用于逐题互动流程，押题报告与自我介绍不重复提供入口
@@ -26,7 +28,7 @@ export const buildQuickAnswerMessages = (
   questionContext: string,
   resumeData: unknown,
   previousAnswer = "",
-) => {
+): ResumeAiMessage[] => {
   // 换一个时携带上一版作为对照，仅要求生成不同表达，不累积到主对话
   const previousBlock = previousAnswer
     ? `\n\n<previous_answer>\n${previousAnswer}\n</previous_answer>`
@@ -40,17 +42,24 @@ export const buildQuickAnswerMessages = (
   ];
 };
 
-// 兼容普通对话与响应接口的非流式返回结构，统一提取回答正文
-const extractAnswer = (response: any): string => {
-  const chatContent = response?.choices?.[0]?.message?.content;
-  if (typeof chatContent === "string") return chatContent.trim();
-  if (typeof response?.output_text === "string") return response.output_text.trim();
-  const outputContent = response?.output
-    ?.flatMap((item: any) => item?.content || [])
-    ?.map((item: any) => item?.text || item?.output_text || "")
-    ?.join("")
-    ?.trim();
-  return outputContent || "";
+// 快速回答任务：单次非流式请求，只生成一个口述答案
+const QUICK_ANSWER_TASK: ResumeAiTask<{ messages: ResumeAiMessage[] }> = {
+  // 面试回答使用小羊模型
+  agent: "xiaoYang",
+  // 一次返回完整回答
+  stream: false,
+  // 只调用一次模型
+  retryCount: 0,
+  // 回答不需要推理过程
+  extraOptions: { thinking: { type: "disabled" } },
+  // 提示词与数据在调用前组装
+  buildMessages: ({ messages }) => messages,
+  // 正文为空时按失败处理
+  parse: (_response, text) => {
+    const answer = text.trim();
+    if (!answer) throw new Error("模型未返回回答内容");
+    return answer;
+  },
 };
 
 export const useInterviewQuickAnswer = () => {
@@ -70,21 +79,8 @@ export const useInterviewQuickAnswer = () => {
         resumeContext.getResumeData(),
         previousAnswer,
       );
-      const options =
-        llm.protocol === "responses"
-          ? { input: messages, thinking: { type: "disabled" } }
-          : { messages, thinking: { type: "disabled" } };
-      const { sendFn } = await llm.request({
-        options,
-        isStream: false,
-        isJson: false,
-        isDebug: false,
-        retryCount: 0,
-      });
-      const response = await sendFn();
-      const answer = extractAnswer(response);
-      if (!answer) throw new Error("模型未返回回答内容");
-      return answer;
+      // 统一请求使用方负责协议、非流式响应与取消
+      return await runResumeAiTask(QUICK_ANSWER_TASK, { messages }, { llm });
     } finally {
       resumeContext.afterRequest();
     }
