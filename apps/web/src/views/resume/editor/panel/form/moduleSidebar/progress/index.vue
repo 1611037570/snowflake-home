@@ -197,7 +197,9 @@ const getTodoList = (item) => [
         <span class="truncate max-md:hidden">{{ aiActionLabel }}</span>
       </button>
     </div>
+    <!-- 完成时隐藏状态文字，仅展示待处理问题 -->
     <button
+      v-if="needsAdjustment"
       type="button"
       class="flex w-full cursor-pointer flex-col rounded-2xl px-2 text-left text-[10px] leading-4 transition-colors max-md:hidden"
       :class="needsAdjustment ? 'bg-sf-warning-2 text-sf-warning' : 'bg-sf-success-2 text-sf-success'"
@@ -211,7 +213,6 @@ const getTodoList = (item) => [
       <span v-if="timelineData.issueCount > 0">
         {{ $t("resumeTimelineIssueCount", { count: timelineData.issueCount }) }}
       </span>
-      <span v-if="!needsAdjustment">{{ $t("resumeComplete") }}</span>
     </button>
   </div>
 
