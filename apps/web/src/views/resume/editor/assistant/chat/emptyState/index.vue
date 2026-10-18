@@ -3,6 +3,8 @@ import { ALL_MODULE_KEY } from "@/stores/modules/resume/config/defaultConfig";
 import { computed, ref } from "vue";
 import type { SuggestCard } from "../../types";
 import OneVOne from "./oneVOne.vue";
+import OneKeyIntro from "../../../components/oneKeyIntro.vue";
+import { useOneKeyActions, type OneKeyFlow } from "../../../hooks/useOneKeyActions";
 
 // 当前操作模块列表：选中哪些模块就遍历展示哪些模块
 const props = defineProps<{
@@ -27,46 +29,28 @@ const assistantDescription = computed(() =>
     : "基于你的简历开展岗位准备与模拟训练。",
 );
 
-// 简历分类中的一键优化独立置顶，其余建议保持原有网格布局
-const oneKeyOptimize = computed(() =>
-  visibleSuggestions.value.find((card) => card.flow === "oneKeyOptimize"),
+// 一键优化与一键调整并排置顶，其余建议保持原有网格布局
+const isOneKeyFlow = (flow: string): flow is OneKeyFlow =>
+  flow === "oneKeyOptimize" || flow === "oneKeyAdjust";
+const oneKeySuggestions = computed(() =>
+  visibleSuggestions.value.filter((card) => isOneKeyFlow(card.flow)),
 );
 const commonSuggestions = computed(() =>
-  visibleSuggestions.value.filter((card) => card.flow !== "oneKeyOptimize"),
+  visibleSuggestions.value.filter((card) => !isOneKeyFlow(card.flow)),
 );
 
-// 一键优化先展示能力与数据范围说明，用户确认后再进入原有引导流程
-const oneKeyIntroVisible = ref(false);
+// 一键优化与一键调整先展示共用功能说明，确认后再启动对应通用流程
+const { introVisible, introFlow, openOneKeyIntro, confirmOneKeyIntro } = useOneKeyActions(
+  (flow) => emit("suggest", { flow }),
+);
 // 带功能介绍的建议先展示详情，确认后再进入对应引导流程
 const featureIntroVisible = ref(false);
 const activeFeature = ref<SuggestCard | null>(null);
-const oneKeyFeatures = [
-  {
-    icon: "ph:stethoscope-duotone",
-    title: "全方位诊断",
-    description: "从完整度、阅读效率、职业契合、职业成就、发展潜力和稳定性六个维度检查简历。",
-  },
-  {
-    icon: "ph:magic-wand-duotone",
-    title: "智能优化",
-    description: "结合求职方向优化结构、表达和岗位关键词，让重点更清晰。",
-  },
-  {
-    icon: "fa6-solid:edit",
-    title: "必要增删",
-    description: "基于已有事实补充必要内容、精简重复套话；缺失事实会标记为待补充。",
-  },
-  {
-    icon: "fa-solid:chart-line",
-    title: "优化报告",
-    description: "展示六维评分、本次改动、优化亮点和下一步建议，方便继续完善。",
-  },
-];
 
 // 点击建议卡片，启动对应流程
 const handleSuggest = (card: SuggestCard) => {
-  if (card.flow === "oneKeyOptimize") {
-    oneKeyIntroVisible.value = true;
+  if (isOneKeyFlow(card.flow)) {
+    openOneKeyIntro(card.flow);
     return;
   }
   if (card.intro) {
@@ -75,13 +59,6 @@ const handleSuggest = (card: SuggestCard) => {
     return;
   }
   emit("suggest", { flow: card.flow });
-};
-
-// 用户确认了解功能后，关闭弹窗并启动一键优化流程
-const startOneKeyOptimize = () => {
-  if (!oneKeyOptimize.value) return;
-  oneKeyIntroVisible.value = false;
-  emit("suggest", { flow: oneKeyOptimize.value.flow });
 };
 
 // 关闭功能介绍并启动当前建议对应的引导流程
@@ -110,16 +87,19 @@ const startFeature = () => {
     <!-- 两个轻量分类保持当前页面以简历编辑为主，面试功能按需展开 -->
     <SfTab v-model="activeCategory" :list="categories" />
     <div class="flex flex-wrap items-center justify-center gap-x-3 text-sm">✨📄你可以这样问</div>
-    <!-- 一键优化入口独立置顶并突出主题色 -->
-    <div v-if="oneKeyOptimize" class="flex w-full max-w-md justify-center">
+    <!-- 一键优化与一键调整并排置顶并突出主题色 -->
+    <div
+      v-if="oneKeySuggestions.length"
+      class="flex w-full max-w-md items-center justify-center gap-3"
+    >
       <button
+        v-for="card in oneKeySuggestions"
+        :key="card.flow"
         class="group/card flex w-[140px] cursor-pointer items-center justify-center gap-1 rounded-3xl bg-sf-theme p-2 text-sf-theme-text transition-all duration-300 hover:-translate-y-0.5 hover:bg-sf-theme-2 active:scale-[0.98]"
-        @click="handleSuggest(oneKeyOptimize)"
+        @click="handleSuggest(card)"
       >
-        <SfIcon :icon="oneKeyOptimize.icon" size="4.5" />
-        <h3 class="text-[14px] font-bold tracking-tight">
-          {{ oneKeyOptimize.title }}
-        </h3>
+        <SfIcon :icon="card.icon" size="4.5" />
+        <h3 class="text-[14px] font-bold tracking-tight">{{ card.title }}</h3>
       </button>
     </div>
     <!-- 建议操作按钮 -->
@@ -159,43 +139,7 @@ const startFeature = () => {
       {{ activeCategory === "resume" ? "一键操作" : "开展训练" }}
     </div>
 
-    <SfModal v-model="oneKeyIntroVisible" title="一键优化能为你做什么" width="560px">
-      <div class="flex w-full flex-col gap-3 pb-3 text-left">
-        <p class="text-[14px] leading-relaxed text-sf-text-2">
-          一次完成简历诊断、内容优化和结果评估，所有改动都可以撤回。
-        </p>
-
-        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          <div
-            v-for="feature in oneKeyFeatures"
-            :key="feature.title"
-            class="flex gap-3 rounded-xl bg-sf-bg p-3"
-          >
-            <div
-              class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sf-bg-2 text-sf-theme"
-            >
-              <SfIcon :icon="feature.icon" size="5" />
-            </div>
-            <div class="flex flex-col gap-3">
-              <h3 class="text-[14px] font-bold text-sf-text">{{ feature.title }}</h3>
-              <p class="text-[13px] leading-relaxed text-sf-text-2">{{ feature.description }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="flex items-start gap-3 rounded-xl bg-sf-bg-2 p-3">
-          <SfIcon icon="mdi:database-outline" size="5" class="shrink-0 text-sf-theme" />
-          <p class="text-[13px] leading-relaxed text-sf-text-2">
-            为保证判断完整，一键优化需要读取整份简历。当前只选择部分模块时，下一步会单独询问读取授权；拒绝后不会发起请求。
-          </p>
-        </div>
-
-        <div class="flex justify-end gap-3 pt-3">
-          <SfButton type="bg" size="large" @click="oneKeyIntroVisible = false"> 暂不优化 </SfButton>
-          <SfButton size="large" @click="startOneKeyOptimize">开始一键优化</SfButton>
-        </div>
-      </div>
-    </SfModal>
+    <OneKeyIntro v-model="introVisible" :flow="introFlow" @confirm="confirmOneKeyIntro" />
 
     <SfModal
       v-model="featureIntroVisible"

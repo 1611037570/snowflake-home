@@ -237,6 +237,12 @@ export const suggestions: SuggestCard[] = [
     category: "resume",
   },
   {
+    icon: "ph:list-checks-duotone",
+    title: "一键调整",
+    flow: "oneKeyAdjust",
+    category: "resume",
+  },
+  {
     icon: "ph:rocket-launch-duotone",
     title: "一键优化",
     flow: "oneKeyOptimize",

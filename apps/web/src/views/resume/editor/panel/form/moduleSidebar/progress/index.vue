@@ -9,14 +9,19 @@ import { jumpToEditor } from "../../../../hooks/useModuleNav";
 import { useResumeStats } from "../../../../hooks/useResumeStats";
 import { $t } from "@/locales";
 import eventBus from "@/utils/modules/eventBus";
+import OneKeyIntro from "../../../../components/oneKeyIntro.vue";
+import { useOneKeyActions } from "../../../../hooks/useOneKeyActions";
 
 const resumeStore = useResumeStore();
 const { currentData, runtimeFields, currentUI, isGenerating } = storeToRefs(resumeStore);
 
+// 一键入口共用说明弹窗与流程启动，优化和调整都沿用同一套通用流程
+const { introVisible, introFlow, openOneKeyIntro, confirmOneKeyIntro } = useOneKeyActions(
+  (flow) => eventBus.emit("resume-start-assistant-flow", flow),
+);
+
 // 详情弹窗显隐
 const visible = ref(false);
-// 一键调整执行前说明弹窗显隐。
-const adjustIntroVisible = ref(false);
 
 // 总进度与各模块进度（含时间线一致性检查结果），传入界面配置用于判断双形态模块布局
 const progressData = computed(() =>
@@ -76,20 +81,8 @@ const aiActionClass = computed(() =>
 // 从检查入口切换到 AI 标签，并交由对应流程处理整份简历。
 const startAiAction = () => {
   if (isGenerating.value) return;
-  if (needsAdjustment.value) {
-    adjustIntroVisible.value = true;
-    return;
-  }
-  eventBus.emit("resume-start-assistant-flow", "oneKeyOptimize");
-};
-
-// 用户确认说明后再启动独立的一键调整对话。
-const confirmAiAdjust = () => {
-  adjustIntroVisible.value = false;
-  eventBus.emit(
-    "resume-start-assistant-flow",
-    "oneKeyAdjust",
-  );
+  // 存在检查问题时先调整，全部通过后再进入内容优化
+  openOneKeyIntro(needsAdjustment.value ? "oneKeyAdjust" : "oneKeyOptimize");
 };
 
 // 环形进度颜色：存在格式错误时优先警示，其余按阈值取色
@@ -265,19 +258,5 @@ const getTodoList = (item) => [
     </div>
   </SfModal>
 
-  <SfModal v-model="adjustIntroVisible" :title="$t('oneClickAdjustIntroTitle')" width="480px">
-    <div class="flex w-full flex-col gap-3 pb-3 text-left">
-      <p class="text-sm leading-6 text-sf-text-2">
-        {{ $t("oneClickAdjustIntroDescription") }}
-      </p>
-      <div class="flex items-start gap-3 rounded-2xl bg-sf-warning-2 p-3 text-sf-warning">
-        <SfIcon icon="lucide:triangle-alert" size="5" class="shrink-0" />
-        <p class="text-xs leading-5">{{ $t("oneClickAdjustIntroNotice") }}</p>
-      </div>
-      <div class="flex justify-end gap-3 pt-3">
-        <SfButton type="bg" @click="adjustIntroVisible = false">{{ $t("cancel") }}</SfButton>
-        <SfButton @click="confirmAiAdjust">{{ $t("startOneClickAdjust") }}</SfButton>
-      </div>
-    </div>
-  </SfModal>
+  <OneKeyIntro v-model="introVisible" :flow="introFlow" @confirm="confirmOneKeyIntro" />
 </template>
