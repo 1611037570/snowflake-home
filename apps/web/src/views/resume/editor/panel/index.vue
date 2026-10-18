@@ -21,6 +21,9 @@ const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/inde
 const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
 // 进入简历编辑器时默认打开编辑标签。
 const activeIndex = ref(0);
+// 外部入口待启动的 AI 流程由面板暂存，异步助手挂载后再消费。
+const pendingAssistantFlow = ref("");
+provide("resumeAssistantPendingFlow", pendingAssistantFlow);
 // 同步明确的标签标识，区分普通编辑、智能助手和模板场景。
 const activeEditorTab = inject("resumeEditorTab", ref("edit"));
 activeEditorTab.value = "edit";
@@ -36,9 +39,19 @@ provide("bg", "bg-sf-bg");
 const switchTab = (index) => {
   activeIndex.value = index;
 };
-onMounted(() => eventBus.on("switch-builder-tab", switchTab));
+// 完成度入口先切换到 AI 标签，再由助手组件启动指定流程。
+const startAssistantFlow = (flow) => {
+  if (typeof flow !== "string" || !flow) return;
+  pendingAssistantFlow.value = flow;
+  activeIndex.value = 1;
+};
+onMounted(() => {
+  eventBus.on("switch-builder-tab", switchTab);
+  eventBus.on("resume-start-assistant-flow", startAssistantFlow);
+});
 onBeforeUnmount(() => {
   eventBus.off("switch-builder-tab", switchTab);
+  eventBus.off("resume-start-assistant-flow", startAssistantFlow);
 });
 
 const resumeStore = useResumeStore();

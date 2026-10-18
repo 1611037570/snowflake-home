@@ -107,6 +107,7 @@ export const useChatRequest = ({
     resume_create: "读取《从零生成简历经历》",
     resume_interview: "读取《AI 简历面试》",
     resume_score: "读取《AI 简历评估》",
+    resume_one_key_adjust: "读取《一键调整》",
     resume_one_key_optimize: "读取《一键优化》",
     update_resume_language: "更新简历语言",
   };
@@ -213,6 +214,8 @@ export const useChatRequest = ({
       const requestMessage = [...currentMessages.value]
         .reverse()
         .find((message) => message.role === "user");
+      // 一键调整必须产生真实写入，最终回复不能代替数据修改。
+      const requireResumeWrite = requestMessage?.requestContext?.requireResumeWrite === true;
       beforeRequest?.(requestMessage?.requestContext, requestTaskId);
       // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
       let messages = currentMessages.value
@@ -231,11 +234,21 @@ export const useChatRequest = ({
       // 找到最后一个用户消息位置
       const lastUserIndex = messages.map((message) => message.role).lastIndexOf("user");
       if (lastUserIndex !== -1) {
-        // 插入到用户消息之前，完成提级
-        messages.splice(lastUserIndex, 0, {
-          role: "system",
-          content: defaultSkill.instructions,
-        });
+        // 插入到用户消息之前，完成默认规则与强制写入要求的提级。
+        messages.splice(
+          lastUserIndex,
+          0,
+          { role: "system", content: defaultSkill.instructions },
+          ...(requireResumeWrite
+            ? [
+                {
+                  role: "system" as const,
+                  content:
+                    "本轮是一键调整，必须调用 propose_resume_edits 并确认返回 applied 为 true、changed 非空、errors 为空。写入失败时必须根据错误修正参数并重试；未真实写入前禁止输出已完成、已更新或待确认内容。",
+                },
+              ]
+            : []),
+        );
       }
       const lastInput = messages.at(-1);
       if (!lastInput) return;
@@ -334,6 +347,17 @@ export const useChatRequest = ({
         },
         onFinal: (answer) => {
           if (!isCurrentRequest() || !lastMsg) return;
+          // 强制写入任务没有收到工具成功结果时作废文本结论，避免展示假成功。
+          if (requireResumeWrite && !writeMessages.has(lastMsg)) {
+            lastMsg.content = "一键调整未能写入简历数据，本次修改说明已作废，请重新执行。";
+            lastMsg.requestStatus = "error";
+            lastMsg.stepLabel = "";
+            lastMsg.thoughtCollapsed = true;
+            stepContent = "";
+            streamFinalContent = false;
+            scrollToBottom();
+            return;
+          }
           lastMsg.content = answer;
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";

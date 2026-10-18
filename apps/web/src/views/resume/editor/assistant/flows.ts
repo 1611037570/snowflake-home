@@ -4,6 +4,7 @@ import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConf
 import { interviewFlows } from "./interview/flows";
 import { interviewSuggestions } from "./interview/suggestions";
 import type { Flow, SuggestCard } from "./types";
+import { useProgress } from "../hooks/useProgress";
 
 // 获取可作为 AI 生成经历的已有模块名：过滤个人信息与社交账号，内置模块按默认顺序展示
 const getResumeCreateModuleOptions = (): string[] => {
@@ -23,6 +24,24 @@ const getResumeCreateModuleOptions = (): string[] => {
     })
     .map((key) => resumeStore.getModel(key)?.name || key)
     .filter(Boolean);
+};
+
+// 把完成度检查结果整理为本轮调整范围，供 AI 逐项核对而不是泛化优化。
+const getResumeAdjustmentIssues = (): string[] => {
+  const resumeStore = useResumeStore();
+  const result = useProgress(
+    resumeStore.runtimeFields || [],
+    resumeStore.currentData || {},
+    resumeStore.currentUI || {},
+  );
+  const issues = result.list.flatMap((item) => [
+    ...(item.missing || []).map((field) => `${item.name}：${field}未填写`),
+    ...(item.issues || []).map((issue) => `${item.name}：${issue.label}，${issue.message}`),
+  ]);
+  result.timeline.list.forEach((item) => {
+    item.issues.forEach((issue) => issues.push(`${item.name}：${issue.text}`));
+  });
+  return issues.length ? issues : ["当前检查结果已无待调整问题，请重新核对后结束本轮操作"];
 };
 
 export const flows: Record<string, Flow> = {
@@ -156,6 +175,21 @@ export const flows: Record<string, Flow> = {
       // 人生总结依赖完整时间线，本次请求固定读取整份简历
       requestContext: { resumeScope: "all" },
     }),
+  },
+  // 一键调整：直接补齐检查问题，生成内容在执行后统一标记为待确认。
+  oneKeyAdjust: {
+    userContent: "帮我一键调整简历问题", // 引导阶段展示的用户意图。
+    steps: [], // 点击后直接执行，不再追加授权或补充信息问答。
+    build: () => { // 根据点击时的最新检查结果构造真实请求。
+      const issues = getResumeAdjustmentIssues();
+      return {
+        userContent: `请对整份简历执行一键调整，只处理当前检查发现的缺失、格式和时间线问题。直接完成所有修改，不得在执行前向我提问；缺少真实依据时允许结合现有简历生成合理的临时内容，但必须在修改完成后用“待确认内容”集中列出所有生成或无法核实的值。\n\n当前检查问题：\n${issues.map((issue) => `- ${issue}`).join("\n")}`,
+        requestContext: {
+          resumeScope: "all", // 完成度检查覆盖整份简历，本轮固定读取全部模块。
+          requireResumeWrite: true, // 一键调整必须真实写入，禁止只返回修改说明。
+        },
+      };
+    },
   },
   // 一键优化：先收集求职方向（已填则确认、未填则输入）与身份，再发起完整优化并产出报告
   oneKeyOptimize: {

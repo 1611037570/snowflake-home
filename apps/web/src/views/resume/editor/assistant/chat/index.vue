@@ -8,7 +8,7 @@ import {
 } from "@/stores";
 import { useClipboard, useScroll } from "@vueuse/core";
 import { ElMessage } from "element-plus";
-import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
+import { computed, inject, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
 import { useChatRequest } from "./useChatRequest";
@@ -99,6 +99,8 @@ const chat = computed({
 // 生成状态来自宿主注入的引用，模板与输入框共用
 const generating = assistantConfig.generating;
 const isGenerating = computed(() => generating.value);
+// 编辑器检查入口请求的流程在 AI 面板异步挂载后统一消费。
+const pendingAssistantFlow = inject("resumeAssistantPendingFlow", ref(""));
 // 控制会话记录第二页的显示状态
 const chatListVisible = ref(false);
 // 专项面试期间开放语音转文字入口，其余简历任务保持原输入方式
@@ -670,6 +672,18 @@ const handleFlowOption = (option: string) => {
 const handleFlowInput = (content: string) => {
   handleFlowAnswer(content);
 };
+
+// 等待助手空闲后为一键任务创建独立对话，避免继承已有聊天上下文。
+watch(
+  [pendingAssistantFlow, generating, quickAnswerLoading, isChatLoading],
+  ([flow, isGeneratingNow, isQuickAnswerLoading, isLoading]) => {
+    if (!flow || isGeneratingNow || isQuickAnswerLoading || isLoading) return;
+    pendingAssistantFlow.value = "";
+    createNewChat();
+    handleSuggest({ flow });
+  },
+  { immediate: true, flush: "post" },
+);
 
 // 提前结束使用普通用户消息触发技能收尾与阶段性评分
 const handleEarlyEnd = () => {

@@ -8,12 +8,15 @@ import { useProgress } from "../../../../hooks/useProgress";
 import { jumpToEditor } from "../../../../hooks/useModuleNav";
 import { useResumeStats } from "../../../../hooks/useResumeStats";
 import { $t } from "@/locales";
+import eventBus from "@/utils/modules/eventBus";
 
 const resumeStore = useResumeStore();
-const { currentData, runtimeFields, currentUI } = storeToRefs(resumeStore);
+const { currentData, runtimeFields, currentUI, isGenerating } = storeToRefs(resumeStore);
 
 // 详情弹窗显隐
 const visible = ref(false);
+// 一键调整执行前说明弹窗显隐。
+const adjustIntroVisible = ref(false);
 
 // 总进度与各模块进度（含时间线一致性检查结果），传入界面配置用于判断双形态模块布局
 const progressData = computed(() =>
@@ -48,6 +51,46 @@ const missingCount = computed(() =>
 const formatIssueCount = computed(() =>
   progressData.value.list.reduce((total, item) => total + (item.issues?.length || 0), 0),
 );
+
+// 缺失、格式或时间线任一检查未通过时先调整，全部通过后才进入内容优化。
+const needsAdjustment = computed(
+  () =>
+    progressData.value.progress < 100 ||
+    missingCount.value > 0 ||
+    formatIssueCount.value > 0 ||
+    timelineData.value.issueCount > 0,
+);
+const aiActionLabel = computed(() => {
+  if (isGenerating.value) {
+    return $t(needsAdjustment.value ? "adjustingResume" : "optimizingResume");
+  }
+  return $t(needsAdjustment.value ? "oneClickAdjust" : "oneClickOptimize");
+});
+// 调整使用警示色提示尚有问题，全部通过后的优化使用成功色。
+const aiActionClass = computed(() =>
+  needsAdjustment.value
+    ? "bg-sf-warning-2 text-sf-warning hover:bg-sf-warning hover:text-white"
+    : "bg-sf-success-2 text-sf-success hover:bg-sf-success hover:text-white",
+);
+
+// 从检查入口切换到 AI 标签，并交由对应流程处理整份简历。
+const startAiAction = () => {
+  if (isGenerating.value) return;
+  if (needsAdjustment.value) {
+    adjustIntroVisible.value = true;
+    return;
+  }
+  eventBus.emit("resume-start-assistant-flow", "oneKeyOptimize");
+};
+
+// 用户确认说明后再启动独立的一键调整对话。
+const confirmAiAdjust = () => {
+  adjustIntroVisible.value = false;
+  eventBus.emit(
+    "resume-start-assistant-flow",
+    "oneKeyAdjust",
+  );
+};
 
 // 环形进度颜色：存在格式错误时优先警示，其余按阈值取色
 const ringColorClass = computed(() => {
@@ -105,76 +148,72 @@ const getTodoList = (item) => [
 </script>
 
 <template>
-  <!-- 完成度固定在模块列表上方：自身承担下边距与分隔线，避免依赖外部类 -->
-  <SfTooltip
-    :content="tooltipText"
-    placement="right"
-    class="mb-1.5 block w-full shrink-0 border-b border-sf-b pb-1.5"
-  >
+  <!-- 操作按钮放在圆环旁，检查摘要下沉到原按钮所在的整行区域。 -->
+  <div class="mb-1.5 flex w-full shrink-0 flex-col gap-1 border-b border-sf-b pb-1.5">
+    <div class="flex items-center gap-1 max-md:flex-col">
+      <SfTooltip :content="tooltipText" placement="right" class="block shrink-0">
+        <button
+          type="button"
+          class="relative flex h-8 w-8 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-sf-bg"
+          :aria-label="$t('progressDetail')"
+          @click="visible = true"
+        >
+          <svg class="h-8 w-8 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
+            <circle
+              cx="24"
+              cy="24"
+              r="19"
+              fill="none"
+              stroke="currentColor"
+              class="text-sf-bg-2"
+              stroke-width="6"
+            />
+            <circle
+              cx="24"
+              cy="24"
+              r="19"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="6"
+              stroke-linecap="round"
+              stroke-dasharray="119.38"
+              :class="ringColorClass"
+              :stroke-dashoffset="119.38 - (119.38 * Math.round(animatedProgress)) / 100"
+            />
+          </svg>
+          <span class="absolute inset-0 grid place-content-center text-[10px] font-bold text-sf-text">
+            {{ Math.round(animatedProgress) }}
+          </span>
+        </button>
+      </SfTooltip>
+      <button
+        type="button"
+        class="flex h-8 min-w-0 flex-1 cursor-pointer items-center justify-center gap-1 rounded-3xl px-1 text-xs font-medium transition-colors disabled:cursor-wait disabled:opacity-60 max-md:w-8 max-md:flex-none max-md:px-0"
+        :class="aiActionClass"
+        :disabled="isGenerating"
+        @click="startAiAction"
+      >
+        <SfIcon :icon="isGenerating ? 'line-md:loading-twotone-loop' : 'lucide:sparkles'" size="3" />
+        <span class="truncate max-md:hidden">{{ aiActionLabel }}</span>
+      </button>
+    </div>
     <button
       type="button"
-      class="relative flex w-full cursor-pointer items-center gap-1.5 rounded-3xl px-1 py-1.5 text-left transition-colors hover:bg-sf-bg max-md:justify-center"
+      class="flex w-full cursor-pointer flex-col rounded-2xl px-2 text-left text-[10px] leading-4 transition-colors max-md:hidden"
+      :class="needsAdjustment ? 'bg-sf-warning-2 text-sf-warning' : 'bg-sf-success-2 text-sf-success'"
       :aria-label="$t('progressDetail')"
       @click="visible = true"
     >
-      <!-- 环形进度：窄屏只保留这一圈 -->
-      <span class="relative h-8 w-8 shrink-0">
-        <svg class="h-8 w-8 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
-          <circle
-            cx="24"
-            cy="24"
-            r="19"
-            fill="none"
-            stroke="currentColor"
-            class="text-sf-bg-2"
-            stroke-width="6"
-          />
-          <circle
-            cx="24"
-            cy="24"
-            r="19"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="6"
-            stroke-linecap="round"
-            stroke-dasharray="119.38"
-            :class="ringColorClass"
-            :stroke-dashoffset="119.38 - (119.38 * Math.round(animatedProgress)) / 100"
-          />
-        </svg>
-        <span
-          class="absolute inset-0 grid place-content-center text-[10px] font-bold text-sf-text"
-        >
-          {{ Math.round(animatedProgress) }}
-        </span>
+      <span v-if="missingCount > 0">{{ $t("resumeMissingCount", { count: missingCount }) }}</span>
+      <span v-if="formatIssueCount > 0">
+        {{ $t("resumeFormatIssueCount", { count: formatIssueCount }) }}
       </span>
-      <!-- 桌面显示标题与摘要，窄屏隐藏 -->
-      <span class="flex min-w-0 flex-col gap-1 max-md:hidden">
-        <span class="truncate text-[11px] leading-none font-semibold text-sf-text">
-          {{ $t("resumeCompletion") }}
-        </span>
-        <span v-if="missingCount > 0" class="truncate text-[10px] leading-none text-sf-text-3">
-          {{ $t("resumeMissingCount", { count: missingCount }) }}
-        </span>
-        <span v-if="formatIssueCount > 0" class="truncate text-[10px] leading-none text-sf-warning">
-          {{ $t("resumeFormatIssueCount", { count: formatIssueCount }) }}
-        </span>
-        <span
-          v-if="!missingCount && !formatIssueCount"
-          class="truncate text-[10px] leading-none text-sf-text-3"
-        >
-          {{ $t("resumeComplete") }}
-        </span>
+      <span v-if="timelineData.issueCount > 0">
+        {{ $t("resumeTimelineIssueCount", { count: timelineData.issueCount }) }}
       </span>
-      <!-- 有格式错误时提示：进度不受影响，但需要用户回头修 -->
-      <SfIcon
-        v-if="progressData.hasError"
-        icon="mdi:alert-circle"
-        size="3"
-        class="shrink-0 text-sf-warning max-md:absolute max-md:top-0.5 max-md:right-0.5"
-      />
+      <span v-if="!needsAdjustment">{{ $t("resumeComplete") }}</span>
     </button>
-  </SfTooltip>
+  </div>
 
   <SfModal v-model="visible" :title="$t('progressDetail')">
     <div class="flex w-full max-w-[400px] flex-col gap-1.5">
@@ -222,6 +261,22 @@ const getTodoList = (item) => [
           </div>
         </template>
       </SfScrollbar>
+    </div>
+  </SfModal>
+
+  <SfModal v-model="adjustIntroVisible" :title="$t('oneClickAdjustIntroTitle')" width="480px">
+    <div class="flex w-full flex-col gap-3 pb-3 text-left">
+      <p class="text-sm leading-6 text-sf-text-2">
+        {{ $t("oneClickAdjustIntroDescription") }}
+      </p>
+      <div class="flex items-start gap-3 rounded-2xl bg-sf-warning-2 p-3 text-sf-warning">
+        <SfIcon icon="lucide:triangle-alert" size="5" class="shrink-0" />
+        <p class="text-xs leading-5">{{ $t("oneClickAdjustIntroNotice") }}</p>
+      </div>
+      <div class="flex justify-end gap-3 pt-3">
+        <SfButton type="bg" @click="adjustIntroVisible = false">{{ $t("cancel") }}</SfButton>
+        <SfButton @click="confirmAiAdjust">{{ $t("startOneClickAdjust") }}</SfButton>
+      </div>
     </div>
   </SfModal>
 </template>

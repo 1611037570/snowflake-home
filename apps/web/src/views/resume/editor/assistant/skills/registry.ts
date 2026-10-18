@@ -10,6 +10,7 @@ export const onDemandSkills: SkillLoader[] = [
   () => import("./skill_resume_data_contract").then((module) => module.resumeDataContract()),
   () => import("./skill_resume_writing").then((module) => module.resumeWriting()),
   () => import("./skill_resume_optimization").then((module) => module.resumeOptimization()),
+  () => import("./skill_resume_one_key_adjust").then((module) => module.resumeOneKeyAdjust()),
   () => import("./skill_resume_one_key_optimize").then((module) => module.resumeOneKeyOptimize()),
   () => import("./skill_job_match").then((module) => module.jobMatch()),
   () => import("./skill_greeting").then((module) => module.greeting()),
