@@ -116,8 +116,9 @@ const toolbarItems = computed(() => [
       class="flex flex-col items-center justify-center"
       :class="isMobile && 'mobile-toolbar-panel h-svh  border-l border-sf-b bg-sf-primary p-3'"
     >
+      <!-- 工具栏按内容自然撑开，不在工具轨内部生成滚动条。 -->
       <div
-        class="relative flex max-h-full w-12 flex-col items-center gap-0 overflow-y-auto overflow-x-visible rounded-3xl border border-sf-b bg-sf-primary py-3 text-sf-text-3 shadow-sm transition-all duration-300 hover:border-sf-theme/40 hover:shadow-md"
+        class="relative flex w-12 flex-col items-center gap-0 rounded-3xl border border-sf-b bg-sf-primary py-3 text-sf-text-3 shadow-sm transition-all duration-300 hover:border-sf-theme/40 hover:shadow-md"
         :class="{ 'shrink-0': isMobile }"
       >
         <!-- 在线写作人数：由文件栏移入工具轨，放在最顶部避免被内容挤出可视区 -->

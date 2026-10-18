@@ -194,8 +194,7 @@ const getTodoList = (item) => [
     <button
       v-if="needsAdjustment"
       type="button"
-      class="flex w-full cursor-pointer flex-col rounded-2xl px-2 text-left text-[10px] leading-4 transition-colors max-md:hidden"
-      :class="needsAdjustment ? 'bg-sf-warning-2 text-sf-warning' : 'bg-sf-success-2 text-sf-success'"
+      class="flex w-full cursor-pointer flex-col rounded-2xl px-2 text-left text-[10px] leading-4 text-sf-warning transition-colors max-md:hidden"
       :aria-label="$t('progressDetail')"
       @click="visible = true"
     >
