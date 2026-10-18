@@ -2,6 +2,7 @@ import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
 import type { ResumeFieldSchema } from "./resumeSchema";
 import { findResumeModuleSchema } from "./resumeSchemaRegistry";
 import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
+import { normalizeRichTextHtml } from "../preview/shared/normalizeRichText";
 
 // 校验单个字段值的时间、枚举与 HTML 格式
 const validateFieldValue = (
@@ -25,8 +26,8 @@ const validateFieldValue = (
     return;
   }
   if (rule.format === "html") {
-    if (typeof value !== "string" || !/<p(?:\s[^>]*)?>[\s\S]*?<\/p>/i.test(value)) {
-      errors.push(`模块 ${module} 字段 ${field} 必须是 <p> 包裹的 HTML 字符串`);
+    if (typeof value !== "string" || !/<(?:p|ul|ol)(?:\s[^>]*)?>[\s\S]*?<\/(?:p|ul|ol)>/i.test(value)) {
+      errors.push(`模块 ${module} 字段 ${field} 必须是包含段落或列表的 HTML 字符串`);
     }
     return;
   }
@@ -74,6 +75,45 @@ const getModuleRecords = (moduleView: { data: unknown }): any[] | null => {
   if (Array.isArray(moduleView?.data)) return moduleView.data;
   return null;
 };
+
+// 按当前字段契约把模型返回的 Markdown 或纯文本正文转换为富文本 HTML
+export const normalizeResumeEdits = (
+  operations: ResumeWriteOp[],
+  dataView: Record<string, { title?: string; data: unknown }>,
+): ResumeWriteOp[] =>
+  operations.map((operation) => {
+    // 无效操作保留给后续结构校验处理，归一化阶段不提前抛错
+    if (!operation || typeof operation !== "object" || typeof operation.module !== "string") {
+      return operation;
+    }
+    const moduleView = dataView?.[operation.module];
+    const moduleSchema = findResumeModuleSchema(operation.module, moduleView?.data);
+    const formats = new Map(moduleSchema?.fields.map((field) => [field.key, field.format]) ?? []);
+    if (
+      (operation.op === "updateModule" || operation.op === "updateRecord") &&
+      formats.get(operation.field) === "html" &&
+      typeof operation.value === "string"
+    ) {
+      return { ...operation, value: normalizeRichTextHtml(operation.value) };
+    }
+    if (
+      operation.op === "addRecord" &&
+      operation.record &&
+      typeof operation.record === "object" &&
+      !Array.isArray(operation.record)
+    ) {
+      const record = Object.fromEntries(
+        Object.entries(operation.record).map(([field, value]) => [
+          field,
+          formats.get(field) === "html" && typeof value === "string"
+            ? normalizeRichTextHtml(value)
+            : value,
+        ]),
+      );
+      return { ...operation, record };
+    }
+    return operation;
+  });
 
 /**
  * 校验语义化写操作：模块存在、数组下标合法、字段存在且值格式正确

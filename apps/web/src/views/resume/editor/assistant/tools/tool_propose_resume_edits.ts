@@ -1,6 +1,6 @@
 import type { ReactTool } from "@/apis/llm/react";
 import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
-import { validateResumeEdits } from "../resumeEdits";
+import { normalizeResumeEdits, validateResumeEdits } from "../resumeEdits";
 import { PROPOSE_RESUME_EDITS_RULE, TOOL_ARGUMENT_RULE } from "../skills/prompt_tool_rules";
 import type { ResumeToolContext } from "./tool_types";
 
@@ -65,10 +65,13 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
   execute: (args: any) => {
     // 清除本轮先前写入凭据，结构校验或执行失败均不得继续切换语言
     ctx.resetSuccessfulWrite?.();
-    const operations: ResumeWriteOp[] = Array.isArray(args?.operations) ? args.operations : [];
+    const submittedOperations: ResumeWriteOp[] = Array.isArray(args?.operations) ? args.operations : [];
+    const dataView = ctx.getResumeData() as any;
+    // 富文本字段统一转换为编辑器 HTML，避免 Markdown 或纯文本直接落库
+    const operations = normalizeResumeEdits(submittedOperations, dataView);
     // 空操作或缺失参数不能被当成合法写入结果
     const errors = operations.length
-      ? validateResumeEdits(operations, ctx.getResumeData() as any)
+      ? validateResumeEdits(operations, dataView)
       : ["operations 必须是非空的写操作数组"];
     if (errors.length) {
       console.log("[ReAct] propose_resume_edits 校验未通过:", errors);

@@ -28,11 +28,12 @@ export const resumeWriting = () => ({
 - 调整顺序：{ op: "moveRecord", module, from, to }
 
 # 操作要求
-1. 每次写操作都基于 read_resume_data 返回的真实数据定位：module 必须在返回范围内；update/delete/move 的 index、from、to 必须对应当前记录；同批操作按声明顺序执行，新增、删除或排序后，后续下标须按变化后的记录计算。
-2. 一次调用可包含多条 operations，系统会合并为一次写入，避免分多次零散提交。
-3. 若 propose_resume_edits 返回 errors 或部分操作失败，先依据 changed、failed 与 errors 判断实际结果，再调用 read_resume_data 读取最新数据；只重新构造未成功的操作并按最新记录下标提交，禁止重放已成功操作或沿用删除、排序前的旧下标。
-4. 起草新增内容时优先使用真实事实；缺失部分用【待补充：xxx】占位并在正文提醒补充核对，占位不算虚构，禁止把占位伪装成真实具体值。仅用户主动发起一键调整时例外：按 resume_one_key_adjust 生成格式合法的临时内容，并在结果中逐项列入待确认内容。
-5. 除非用户明确要求修改模块标题，或正在按翻译技能同步模块标题，否则不得主动调用 updateModuleTitle。
+1. 富文本字段写入值必须是 HTML：段落使用 <p>，列表使用 <ul>/<ol> 与 <li>，强调使用 <strong>/<em>；禁止把 Markdown 标记或未包裹的纯文本写入富文本字段。
+2. 每次写操作都基于 read_resume_data 返回的真实数据定位：module 必须在返回范围内；update/delete/move 的 index、from、to 必须对应当前记录；同批操作按声明顺序执行，新增、删除或排序后，后续下标须按变化后的记录计算。
+3. 一次调用可包含多条 operations，系统会合并为一次写入，避免分多次零散提交。
+4. 若 propose_resume_edits 返回 errors 或部分操作失败，先依据 changed、failed 与 errors 判断实际结果，再调用 read_resume_data 读取最新数据；只重新构造未成功的操作并按最新记录下标提交，禁止重放已成功操作或沿用删除、排序前的旧下标。
+5. 起草新增内容时优先使用真实事实；缺失部分用【待补充：xxx】占位并在正文提醒补充核对，占位不算虚构，禁止把占位伪装成真实具体值。仅用户主动发起一键调整时例外：按 resume_one_key_adjust 生成格式合法的临时内容，并在结果中逐项列入待确认内容。
+6. 除非用户明确要求修改模块标题，或正在按翻译技能同步模块标题，否则不得主动调用 updateModuleTitle。
 
 # 输出要求
 - 上层任务技能声明专用输出格式时以其为准；否则写操作完成后不整段复述写入正文，用 Markdown 表格按「模块 / 一句话改动要点」概括改了什么。

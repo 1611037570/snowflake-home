@@ -1,9 +1,9 @@
-import DOMPurify from "dompurify";
-import { RICH_TEXT_SANITIZE_CONFIG } from "../editor/preview/shared/richTextSanitize";
 import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
 import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import type { ResumeFieldSchema, ResumeModuleSchema } from "../editor/assistant/resumeSchema";
 import { RESUME_SCHEMA } from "../editor/assistant/resumeSchemaRegistry";
+import { normalizeRichTextHtml } from "../editor/preview/shared/normalizeRichText";
+import { isContentEmpty } from "../editor/preview/shared/validData";
 
 const MODULE_SCHEMA = new Map(
   RESUME_SCHEMA.filter((module) => module.kind !== "custom").map((module) => [module.key, module]),
@@ -91,19 +91,12 @@ const toText = (value: unknown): string => {
   if (Array.isArray(value)) return value.map(toText).filter(Boolean).join("\n");
   return isRecord(value) ? JSON.stringify(value) : "";
 };
-const escapeHtml = (value: string) => value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-
 // 导入只做编辑器必需的形态转换，不复用 AI 写入的整批拒绝规则。
 const normalizeFieldValue = (value: unknown, field: ResumeFieldSchema, warn: (value: unknown) => void): unknown => {
   if (field.format === "html") {
-    const text = toText(value);
-    const html = /<\/?[a-z][^>]*>/i.test(text)
-      ? text
-      : text.split(/\r?\n/).filter(Boolean).map((line) => `<p>${escapeHtml(line)}</p>`).join("");
-    const clean = DOMPurify.sanitize(html, RICH_TEXT_SANITIZE_CONFIG);
+    const clean = normalizeRichTextHtml(toText(value));
     // 清洗后只有空标签不算有效正文。
-    if (!new DOMParser().parseFromString(clean, "text/html").body.textContent?.trim()) return undefined;
-    return /<(?:p|ul|ol)(?:\s|>)/i.test(clean) ? clean : `<p>${clean}</p>`;
+    return isContentEmpty(clean) ? undefined : clean;
   }
   if (field.format === "month") {
     const text = toText(value).trim();

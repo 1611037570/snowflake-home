@@ -1,11 +1,10 @@
 import { onBeforeUnmount, ref, watch, type Ref } from "vue";
 import { ElMessage } from "element-plus";
-import DOMPurify from "dompurify";
 import { getXiaoZhouLLM, isAbortError } from "@/apis";
 import { useResumeStore } from "@/stores";
 import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
 import { findResumeModuleSchema } from "@/views/resume/editor/assistant/resumeSchemaRegistry";
-import { RICH_TEXT_SANITIZE_CONFIG } from "../../../../preview/shared/richTextSanitize";
+import { normalizeRichTextHtml } from "../../../../preview/shared/normalizeRichText";
 
 // 当前正文支持的操作类型
 type ContentAiAction = "generate" | "polish" | "simplify";
@@ -277,7 +276,8 @@ export const useResumeContentAi = (
       const flush = () => {
         clearTimer();
         if (taskVersion !== version) return;
-        candidate.html = DOMPurify.sanitize(stripFence(raw), RICH_TEXT_SANITIZE_CONFIG);
+        // 模型返回 Markdown 或纯文本时同步转换为编辑器可用的富文本 HTML
+        candidate.html = normalizeRichTextHtml(raw);
       };
       // 段落边界立即刷新，其余增量按固定间隔合并
       const schedule = (delta: string) => {
