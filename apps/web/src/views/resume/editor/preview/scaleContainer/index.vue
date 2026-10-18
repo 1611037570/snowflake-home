@@ -331,20 +331,32 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
 /* 纸张投影：与画布分层；导出与打印使用各自样式，不受这里影响 */
 .preview-canvas {
   --preview-paper-shadow:
-    0 1px 2px color-mix(in srgb, var(--sf-base) 6%, transparent),
-    0 16px 40px color-mix(in srgb, var(--sf-base) 8%, transparent);
+    0 1px 3px color-mix(in srgb, var(--sf-base) 8%, transparent),
+    0 18px 48px color-mix(in srgb, var(--sf-base) 12%, transparent);
+  --preview-grid-color: color-mix(in srgb, var(--sf-text-3) 38%, transparent);
+  background-color: color-mix(
+    in srgb,
+    var(--sf-background) 55%,
+    var(--sf-background-2) 45%
+  );
+  background-image: radial-gradient(
+    circle,
+    var(--preview-grid-color) 1px,
+    transparent 1px
+  );
+  background-size: 24px 24px;
 }
 
 :global(.dark) .preview-canvas {
   --preview-paper-shadow:
-    0 1px 2px color-mix(in srgb, var(--sf-base) 3%, transparent),
-    0 16px 40px color-mix(in srgb, var(--sf-base) 4%, transparent);
+    0 1px 3px color-mix(in srgb, var(--sf-base) 5%, transparent),
+    0 18px 48px color-mix(in srgb, var(--sf-base) 8%, transparent);
+  --preview-grid-color: color-mix(in srgb, var(--sf-text-3) 46%, transparent);
 }
 
-/* 预览纸张：套用工具轨一样的描边与圆角，仅作用于编辑器预览；导出与打印在独立文档里使用各自样式，不受影响 */
+/* 预览纸张保持真实纸张直角，通过描边和投影与画布分层。 */
 .preview-canvas :deep(.resume-page-item) {
-  border-radius: 24px;
-  overflow: hidden;
   box-shadow: var(--preview-paper-shadow);
 }
+
 </style>

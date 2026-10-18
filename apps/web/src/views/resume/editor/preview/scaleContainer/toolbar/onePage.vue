@@ -9,20 +9,24 @@ const onFitOnePage = () => {
 </script>
 
 <template>
-  <SfTooltip :content="$t('smartOnePage')">
-    <!-- 轨道缩至与工具栏其他图标接近的尺寸，保持原按钮占位。 -->
+  <!-- 智能一页名称常驻显示，避免依赖悬停提示才能识别功能。 -->
+  <button
+    type="button"
+    class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg"
+    @click="onFitOnePage"
+  >
     <svg
-      @click="onFitOnePage"
       width="28"
       height="28"
       viewBox="0 0 28 28"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      class="cursor-pointer rounded-full text-sf-text-2 hover:bg-sf-theme-2 hover:text-sf-theme-text"
+      class="h-4 w-4 shrink-0"
     >
       <ellipse cx="14" cy="14" rx="3.1" ry="9.2" stroke="currentColor" stroke-width="1.5" />
       <ellipse cx="14" cy="14" rx="3.1" ry="9.2" transform="rotate(60 14 14)" stroke="currentColor" stroke-width="1.5" />
       <ellipse cx="14" cy="14" rx="3.1" ry="9.2" transform="rotate(120 14 14)" stroke="currentColor" stroke-width="1.5" />
     </svg>
-  </SfTooltip>
+    <span class="text-[11px] leading-none whitespace-nowrap">{{ $t("smartOnePage") }}</span>
+  </button>
 </template>
