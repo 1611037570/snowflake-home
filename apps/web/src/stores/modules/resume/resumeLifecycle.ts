@@ -1,6 +1,7 @@
 import { getUUID } from "@/utils";
 import { merge } from "lodash-es";
 import { compactResumeUi, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
+import { DEFAULT_BLANK_USER_FIELDS } from "./config/defaultConfig";
 import {
   createResumeListItem,
   removeAiChatSummaries,
@@ -57,12 +58,27 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
   } = options;
 
   const mergeResumeItem = (item: any) => merge(structuredClone(defaultResumeItem), item);
+  const createBlankResumeItem = () => {
+    const resume = structuredClone(defaultResumeItem);
+    // 空白简历预置推荐的可添加个人信息，创建后直接显示在更多区域
+    resume.data = {
+      ...(resume.data ?? {}),
+      user: {
+        ...(resume.data?.user ?? {}),
+        data: {
+          ...(resume.data?.user?.data ?? {}),
+          ...structuredClone(DEFAULT_BLANK_USER_FIELDS),
+        },
+      },
+    };
+    return resume;
+  };
   const addResume = (config: any, jump = true, select = true) => {
     if (list.value.filter((item) => item.deletedAt === null).length >= maxCount) {
       onResumeLimit();
       return false;
     }
-    const resume = config ? mergeResumeItem(config) : structuredClone(defaultResumeItem);
+    const resume = config ? mergeResumeItem(config) : createBlankResumeItem();
     // 新建与导入只按当前主题展开，不从简历默认对象继承其他主题参数。
     resume.ui = resolveResumeUi(compactResumeUi(config?.ui));
     // 新建时间按本次创建计算，导入的备份时间仍保持原值
