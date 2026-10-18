@@ -28,6 +28,10 @@ export const runResumeAiTask = async <Input, Output = string>(
   input: Input,
   options: RunResumeAiTaskOptions<Output> = {},
 ): Promise<Output> => {
+  // 流式正文会累积增量，重试会把多轮输出拼在一起
+  if (task.stream && (task.retryCount ?? 0) > 0) {
+    throw new Error("流式任务不支持自动重试");
+  }
   // 调用方已注入模型时不再加载模型解析模块，避免无关请求引入额外依赖
   let llm = options.llm;
   if (!llm) {

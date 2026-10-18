@@ -17,6 +17,12 @@ const inspect = async (directory, pattern, message) => {
 // 静态文件清单可用于编号校验，但领域配置禁止直接加载视图模块。
 await inspect(path.join(sourceRoot, "domain/resume"), /(?:from\s*|import\s*\()\s*["']@\/views\//, "领域配置依赖视图模块");
 await inspect(path.join(sourceRoot, "stores/modules/resume"), /(?:from\s*|import\s*\()\s*["']@\/views\/resume\/theme/, "存储模块依赖主题视图");
+// AI 请求层只依赖请求库与领域能力，禁止反向引用功能视图。
+await inspect(
+  path.join(sourceRoot, "views/resume/ai/request"),
+  /(?:from\s*|import\s*\()\s*["'](?:@\/views\/resume\/(?:editor|mine)|\.\.\/.*(?:editor|mine))/,
+  "AI 请求层依赖功能视图",
+);
 if (failures.length) {
   console.error(failures.join("\n"));
   process.exitCode = 1;

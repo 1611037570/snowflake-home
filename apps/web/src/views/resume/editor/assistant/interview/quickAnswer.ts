@@ -1,6 +1,9 @@
 import { getXiaoYangLLM } from "@/apis";
 import type { ResumeAiMessage, ResumeAiTask } from "@/views/resume/ai/request";
-import { runResumeAiTask } from "@/views/resume/ai/request";
+import {
+  assertResumeAiResponseComplete,
+  runResumeAiTask,
+} from "@/views/resume/ai/request";
 import { useResumeContext } from "../resumeContext";
 
 // 快速回答仅用于逐题互动流程，押题报告与自我介绍不重复提供入口
@@ -54,8 +57,9 @@ const QUICK_ANSWER_TASK: ResumeAiTask<{ messages: ResumeAiMessage[] }> = {
   extraOptions: { thinking: { type: "disabled" } },
   // 提示词与数据在调用前组装
   buildMessages: ({ messages }) => messages,
-  // 正文为空时按失败处理
-  parse: (_response, text) => {
+  // 正文为空或输出被截断时按失败处理
+  parse: (response, text) => {
+    assertResumeAiResponseComplete(response);
     const answer = text.trim();
     if (!answer) throw new Error("模型未返回回答内容");
     return answer;
