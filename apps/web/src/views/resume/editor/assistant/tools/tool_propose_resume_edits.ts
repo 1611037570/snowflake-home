@@ -1,13 +1,13 @@
 import type { ReactTool } from "@/apis/llm/react";
 import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
-import { normalizeResumeEdits, validateResumeEdits } from "../resumeEdits";
+import { getResumeEditValidationIssues, normalizeResumeEdits } from "../resumeEdits";
 import { PROPOSE_RESUME_EDITS_RULE, TOOL_ARGUMENT_RULE } from "../skills/prompt_tool_rules";
 import type { ResumeToolContext } from "./tool_types";
 
 // 创建简历修改工具：校验后立即写入简历数据
 export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool => ({
   name: "propose_resume_edits",
-  description: `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，调用后立即写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段；updateModuleTitle 修改模块展示标题；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验，校验失败不写入并返回 errors，请按 errors 修正后重新提交。`,
+  description: `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，调用后立即写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段；updateModuleTitle 修改模块展示标题；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验；validationIssues 与 executionIssues 通过 operationIndex 标明失败操作，只修正对应项后重新提交。`,
   parameters: {
     type: "object",
     properties: {
@@ -70,18 +70,42 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
     // 富文本字段统一转换为编辑器 HTML，避免 Markdown 或纯文本直接落库
     const operations = normalizeResumeEdits(submittedOperations, dataView);
     // 空操作或缺失参数不能被当成合法写入结果
-    const errors = operations.length
-      ? validateResumeEdits(operations, dataView)
-      : ["operations 必须是非空的写操作数组"];
-    if (errors.length) {
+    const validationIssues = operations.length
+      ? getResumeEditValidationIssues(operations, dataView)
+      : [{ operationIndex: null, code: "INVALID_OPERATION", message: "operations 必须是非空的写操作数组" }];
+    if (validationIssues.length) {
+      const errors = validationIssues.map((issue) => issue.message);
       console.log("[ReAct] propose_resume_edits 校验未通过:", errors);
-      return { applied: false, changed: [], added: [], errors };
+      return {
+        applied: false,
+        changed: [],
+        added: [],
+        errors,
+        // 字段与格式校验失败项
+        validationIssues,
+        // 领域执行失败项，校验失败时为空
+        executionIssues: [],
+      };
     }
     // 工具只提交完整操作列表，具体执行语义由简历领域统一处理
     const result = ctx.applyResumeOperations(operations);
+    const executionIssues = result.failed.map((operationIndex) => ({
+      // 原始写操作下标，从零开始
+      operationIndex,
+      // 领域执行阶段失败的稳定错误类别
+      code: "EXECUTION_FAILED",
+      // 面向模型的具体错误说明
+      message: `第 ${operationIndex + 1} 条操作未执行成功`,
+    }));
     return {
       ...result,
-      errors: result.failed.map((index) => `第 ${index + 1} 条操作未执行成功`),
+      errors: executionIssues.map((issue) => issue.message),
+      // 字段与格式校验已通过
+      validationIssues: [],
+      // 领域执行失败项
+      executionIssues,
+      // 写入后立即返回剩余问题，一键调整据此继续处理而不是自行猜测完成状态
+      remainingIssues: ctx.getResumeIssues?.() ?? [],
     };
   },
 });

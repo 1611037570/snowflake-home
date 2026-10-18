@@ -9,6 +9,15 @@ export type ResumeModuleKind = "object" | "array" | "custom";
 export type ResumeFieldValueType = "string" | "number" | "array" | "object" | "unknown";
 export type ResumeFieldFormat = "month" | "html" | "heightWeight";
 
+export type ResumeFieldPattern = {
+  // 正则表达式正文
+  source: string;
+  // 正则表达式标志
+  flags: string;
+  // 格式不匹配时展示的中文说明
+  message?: string;
+};
+
 export type ResumeFieldSchema = {
   // 字段稳定标识
   key: string;
@@ -26,6 +35,8 @@ export type ResumeFieldSchema = {
   format?: ResumeFieldFormat;
   // 字段允许使用的枚举值
   options?: unknown[];
+  // 表单字段声明的正则格式约束
+  pattern?: ResumeFieldPattern;
 };
 
 export type ResumeModuleVariantSchema = {
@@ -119,6 +130,8 @@ const collectFields = (
       const wrapped = target !== field;
       const format = getFormat(target);
       const optionValues = getOptionValues(target, options);
+      const patternRule = [...(field.rules ?? []), ...(target === field ? [] : (target.rules ?? []))]
+        .find((rule: any) => rule?.pattern instanceof RegExp);
       getModelBindings(target).forEach((binding) => {
         if (binding.raw || !acceptBinding(binding)) return;
         const key = binding.source[binding.source.length - 1];
@@ -132,6 +145,13 @@ const collectFields = (
           addable: target.addable === true,
           format,
           options: optionValues,
+          pattern: patternRule
+            ? {
+                source: patternRule.pattern.source,
+                flags: patternRule.pattern.flags,
+                message: patternRule.message,
+              }
+            : undefined,
         };
         const position = positions.get(key);
         if (position === undefined) {
@@ -147,6 +167,7 @@ const collectFields = (
           label: getFieldLabel(field) || previous.label,
           addable: previous.addable || next.addable,
           options: next.options ?? previous.options,
+          pattern: next.pattern ?? previous.pattern,
         };
       });
       // 已用被包裹字段展开时不再递归，避免重复登记

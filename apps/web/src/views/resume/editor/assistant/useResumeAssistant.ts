@@ -8,6 +8,7 @@ import { createSkillTools } from "./skills/tool_skill_loader";
 import { useResumeContext } from "./resumeContext";
 import { RESUME_LANG_CODES } from "./tools/tool_update_resume_language";
 import type { AssistantConfig } from "./types";
+import { collectResumeAdjustmentIssues, useProgress } from "../hooks/useProgress";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
 export const useResumeAssistant = () => {
@@ -19,6 +20,8 @@ export const useResumeAssistant = () => {
   // 每次请求独立记录写入结果，语言工具只能在本轮完整写入成功后执行
   let hasSuccessfulWrite = false;
   let activeTaskId = "";
+  // 当前请求是否需要用完成度问题作为写后验收条件
+  let requiresResumeIssueClosure = false;
 
   const updateCurrentLang = (language: string): boolean => {
     const ui = resumeStore.currentUI;
@@ -42,6 +45,17 @@ export const useResumeAssistant = () => {
           if (result.applied && !result.failed.length) hasSuccessfulWrite = true;
           return result;
         },
+        // 复用左侧完成度检查口径，写入工具无需维护第二套验收规则
+        getResumeIssues: () =>
+          requiresResumeIssueClosure
+            ? collectResumeAdjustmentIssues(
+                useProgress(
+                  resumeStore.runtimeFields || [],
+                  resumeStore.currentData || {},
+                  resumeStore.currentUI || {},
+                ),
+              )
+            : [],
         // 本轮每次写入尝试独立确认，后续失败时禁止复用早先凭据
         resetSuccessfulWrite: () => { hasSuccessfulWrite = false; },
         hasSuccessfulWrite: () => hasSuccessfulWrite,
@@ -66,6 +80,7 @@ export const useResumeAssistant = () => {
     beforeRequest: (options, taskId) => {
       // 新请求开始时清空上轮写入凭据，禁止跨请求复用
       hasSuccessfulWrite = false;
+      requiresResumeIssueClosure = options?.requireResumeWrite === true;
       activeTaskId = taskId || "";
       resumeContext.beforeRequest(options, taskId);
     },
@@ -73,6 +88,7 @@ export const useResumeAssistant = () => {
       resumeContext.afterRequest(taskId);
       if (!taskId || taskId === activeTaskId) {
         hasSuccessfulWrite = false;
+        requiresResumeIssueClosure = false;
         activeTaskId = "";
       }
     },
@@ -88,6 +104,7 @@ export const useResumeAssistant = () => {
       ...createDefaultMessage(),
       role: "system",
       content: first.instructions,
+      systemSkillId: first.id,
       typing: false,
     });
     // 简历助手对话仅服务于当前正在编辑的简历
@@ -99,6 +116,7 @@ export const useResumeAssistant = () => {
         ...createDefaultMessage(),
         role: "system",
         content: skill.instructions,
+        systemSkillId: skill.id,
         typing: false,
       });
     });

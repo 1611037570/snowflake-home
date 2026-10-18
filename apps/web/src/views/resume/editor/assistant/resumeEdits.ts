@@ -4,6 +4,15 @@ import { findResumeModuleSchema } from "./resumeSchemaRegistry";
 import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
 import { normalizeRichTextHtml } from "../preview/shared/normalizeRichText";
 
+export type ResumeEditValidationIssue = {
+  // 原始写操作下标，从零开始；无法定位时为空
+  operationIndex: number | null;
+  // 稳定错误类别，供模型决定修正方式
+  code: "INVALID_OPERATION" | "INVALID_MODULE" | "INVALID_FIELD" | "INVALID_VALUE";
+  // 面向模型的具体错误说明
+  message: string;
+};
+
 // 校验单个字段值的时间、枚举与 HTML 格式
 const validateFieldValue = (
   module: string,
@@ -43,6 +52,14 @@ const validateFieldValue = (
       !Number.isFinite(dimensions.weight)
     ) {
       errors.push(`模块 ${module} 字段 ${field} 应为包含数字 height 和 weight 的对象`);
+    }
+    return;
+  }
+  if (rule.pattern && value !== "") {
+    const pattern = new RegExp(rule.pattern.source, rule.pattern.flags);
+    pattern.lastIndex = 0;
+    if ((typeof value !== "string" && typeof value !== "number") || !pattern.test(String(value))) {
+      errors.push(`模块 ${module} 字段 ${field} ${rule.pattern.message || "格式无效"}`);
     }
     return;
   }
@@ -306,3 +323,24 @@ export const validateResumeEdits = (
   });
   return errors;
 };
+
+// 将兼容的文本错误转换为可定位、可重试的结构化校验结果
+export const getResumeEditValidationIssues = (
+  operations: ResumeWriteOp[],
+  dataView: Record<string, { title?: string; data: unknown }>,
+): ResumeEditValidationIssue[] =>
+  validateResumeEdits(operations, dataView).map((message) => {
+    const order = message.match(/^第 (\d+) 条操作/);
+    const code = /不支持的操作类型|格式无效|必须提供/.test(message)
+      ? "INVALID_OPERATION"
+      : /模块 .*不存在于当前简历|不是数组型模块/.test(message)
+        ? "INVALID_MODULE"
+        : /不存在字段|不存在模块级字段|媒体字段/.test(message)
+          ? "INVALID_FIELD"
+          : "INVALID_VALUE";
+    return {
+      operationIndex: order ? Number(order[1]) - 1 : null,
+      code,
+      message,
+    };
+  });

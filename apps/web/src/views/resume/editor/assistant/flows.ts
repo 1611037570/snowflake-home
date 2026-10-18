@@ -4,7 +4,7 @@ import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConf
 import { interviewFlows } from "./interview/flows";
 import { interviewSuggestions } from "./interview/suggestions";
 import type { Flow, SuggestCard } from "./types";
-import { useProgress } from "../hooks/useProgress";
+import { collectResumeAdjustmentIssues, useProgress } from "../hooks/useProgress";
 
 // 获取可作为 AI 生成经历的已有模块名：过滤个人信息与社交账号，内置模块按默认顺序展示
 const getResumeCreateModuleOptions = (): string[] => {
@@ -34,13 +34,7 @@ const getResumeAdjustmentIssues = (): string[] => {
     resumeStore.currentData || {},
     resumeStore.currentUI || {},
   );
-  const issues = result.list.flatMap((item) => [
-    ...(item.missing || []).map((field) => `${item.name}：${field}未填写`),
-    ...(item.issues || []).map((issue) => `${item.name}：${issue.label}，${issue.message}`),
-  ]);
-  result.timeline.list.forEach((item) => {
-    item.issues.forEach((issue) => issues.push(`${item.name}：${issue.text}`));
-  });
+  const issues = collectResumeAdjustmentIssues(result);
   return issues.length ? issues : ["当前检查结果已无待调整问题，请重新核对后结束本轮操作"];
 };
 

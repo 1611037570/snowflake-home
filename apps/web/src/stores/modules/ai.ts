@@ -30,6 +30,8 @@ export type Message = {
   role: string;
   // 消息内容
   content: string;
+  // 系统技能稳定标识，用于替换已迭代的旧版系统提示
+  systemSkillId?: string;
   // 是否正在输入中
   typing: boolean;
   // 思考内容

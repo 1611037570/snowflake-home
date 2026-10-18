@@ -591,3 +591,15 @@ export function useProgress(
     timeline,
   };
 }
+
+// 将完成度与时间线检查统一整理为一键调整可复用的问题清单
+export const collectResumeAdjustmentIssues = (result: ReturnType<typeof useProgress>): string[] => {
+  const issues = result.list.flatMap((item) => [
+    ...(item.missing || []).map((field) => `${item.name}：${field}未填写`),
+    ...(item.issues || []).map((issue) => `${item.name}：${issue.label}，${issue.message}`),
+  ]);
+  result.timeline.list.forEach((item) => {
+    item.issues.forEach((issue) => issues.push(`${item.name}：${issue.text}`));
+  });
+  return issues;
+};

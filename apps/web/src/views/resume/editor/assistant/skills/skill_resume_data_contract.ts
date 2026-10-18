@@ -33,6 +33,7 @@ const getFieldNotes = (field: ResumeFieldSchema, moduleKey: string) => {
   if (field.format === "heightWeight") {
     notes.push("结构 { height: number（身高）, weight: number（体重） }");
   }
+  if (field.pattern) notes.push(field.pattern.message || `格式需匹配 /${field.pattern.source}/`);
   if (field.options?.length) notes.push(`可选值 ${formatOptions(field.options)}`);
   return notes.join("；") || "-";
 };

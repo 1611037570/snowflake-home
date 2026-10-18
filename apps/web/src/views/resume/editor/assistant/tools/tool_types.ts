@@ -9,6 +9,8 @@ export interface ResumeToolContext {
   getResumeData: () => unknown;
   // 批量执行已经校验通过的语义化写操作
   applyResumeOperations: (operations: ResumeWriteOp[]) => ResumeOperationResult;
+  // 读取写入后的完成度与时间线问题，用于确认一键调整是否闭环
+  getResumeIssues?: () => string[];
   // 每次写入尝试前清除旧凭据，失败不能复用先前成功结果
   resetSuccessfulWrite?: () => void;
   // 判断当前请求是否已经成功写入简历内容

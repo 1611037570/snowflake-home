@@ -200,6 +200,8 @@ export const useChatRequest = ({
     let lastMsg: Message | null = null;
     let state: ReturnType<typeof createChatState> | null = null;
     let totalTokenUsage = 0;
+    // 一键调整最近一次成功写入后仍未解决的问题
+    let remainingRequiredIssues: string[] | null = null;
     // 累加 ReAct 每一轮模型请求返回的 token 用量
     const addTokenUsage = (value: unknown) => {
       const tokens = typeof value === "number" ? value : Number(value);
@@ -218,19 +220,24 @@ export const useChatRequest = ({
       const requireResumeWrite = requestMessage?.requestContext?.requireResumeWrite === true;
       beforeRequest?.(requestMessage?.requestContext, requestTaskId);
       // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
+      const defaultSkill = defaultPrompt();
       let messages = currentMessages.value
-        .filter((message) => !message.skipContext)
+        .filter(
+          (message) =>
+            !message.skipContext &&
+            message.systemSkillId !== defaultSkill.id &&
+            !(
+              message.role === "system" &&
+              message.content.includes("# 角色\n你是叫小舟AI助手") &&
+              message.content.includes("# 任务分派")
+            ),
+        )
         .map((message) => ({
           role: message.role,
           content: message.content,
         }));
       // 动态提级默认提示词：先移除所有已存在的默认提示，再插入到最后一个用户消息之前
       // 确保每次请求规则都紧邻用户问题，避免长对话遗忘导致幻觉
-      const defaultSkill = defaultPrompt();
-      // 移除已有的默认提示（可能在开头）
-      messages = messages.filter(
-        (m) => !(m.role === "system" && m.content === defaultSkill.instructions),
-      );
       // 找到最后一个用户消息位置
       const lastUserIndex = messages.map((message) => message.role).lastIndexOf("user");
       if (lastUserIndex !== -1) {
@@ -244,7 +251,7 @@ export const useChatRequest = ({
                 {
                   role: "system" as const,
                   content:
-                    "本轮是一键调整，必须调用 propose_resume_edits 并确认返回 applied 为 true、changed 非空、errors 为空。写入失败时必须根据错误修正参数并重试；未真实写入前禁止输出已完成、已更新或待确认内容。",
+                    "本轮是一键调整，必须调用 propose_resume_edits 并确认返回 applied 为 true、changed 非空、errors 为空、remainingIssues 为空。validationIssues 与 executionIssues 按 operationIndex 指出失败项，只修正对应操作；未真实写入或仍有问题时禁止输出已完成、已更新或待确认内容。",
                 },
               ]
             : []),
@@ -329,6 +336,11 @@ export const useChatRequest = ({
               if (result.applied && result.changed?.length) {
                 writeMessages.add(lastMsg);
                 lastMsg.hasWriteChanges = true;
+                if (Array.isArray(result.remainingIssues)) {
+                  remainingRequiredIssues = result.remainingIssues.filter(
+                    (issue: unknown): issue is string => typeof issue === "string",
+                  );
+                }
               }
             } catch {
               // 无法确认执行结果时不显示撤回入口
@@ -350,6 +362,19 @@ export const useChatRequest = ({
           // 强制写入任务没有收到工具成功结果时作废文本结论，避免展示假成功。
           if (requireResumeWrite && !writeMessages.has(lastMsg)) {
             lastMsg.content = "一键调整未能写入简历数据，本次修改说明已作废，请重新执行。";
+            lastMsg.requestStatus = "error";
+            lastMsg.stepLabel = "";
+            lastMsg.thoughtCollapsed = true;
+            stepContent = "";
+            streamFinalContent = false;
+            scrollToBottom();
+            return;
+          }
+          // 一键调整仍有完成度或时间线问题时禁止显示全部完成
+          if (requireResumeWrite && remainingRequiredIssues?.length) {
+            lastMsg.content = `一键调整已写入部分内容，但仍有以下问题未解决：\n\n${remainingRequiredIssues
+              .map((issue) => `- ${issue}`)
+              .join("\n")}`;
             lastMsg.requestStatus = "error";
             lastMsg.stepLabel = "";
             lastMsg.thoughtCollapsed = true;
