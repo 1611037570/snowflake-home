@@ -5,6 +5,11 @@ import {
   normalizeDesensitizeFields,
   type DesensitizeField,
 } from "@/stores/modules/resume/config/desensitizeConfig";
+import { findResumeModuleSchema } from "./resumeSchemaRegistry";
+
+// 按字段路径读取模块当前生效的数据形态
+const getValueByPath = (source: any, path: string[]) =>
+  path.reduce((value, key) => value?.[key], source);
 
 // 简历数据上下文：统一提供读取范围、媒体裁剪与隐私脱敏
 export const useResumeContext = () => {
@@ -91,10 +96,15 @@ export const useResumeContext = () => {
       if (!module || typeof module !== "object" || !("data" in module || "list" in module)) return;
       // 媒体字段只从模块副本移除，保留原简历中的头像与作品图片
       const moduleClone = omitMediaFromData({ [key]: JSON.parse(JSON.stringify(module)) })[key];
-      // 数组记录只向 AI 暴露业务 data，不携带编辑器 ui 状态
-      const clone = Array.isArray(moduleClone.list)
-        ? moduleClone.list.map((record: any) => record.data)
+      const layout = (resumeStore.currentUI as any)?.[key]?.layout;
+      const moduleSchema = findResumeModuleSchema(key, undefined, layout);
+      const activeData = moduleSchema
+        ? getValueByPath(moduleClone, moduleSchema.dataPath)
         : moduleClone.data;
+      // 当前形态为数组时只向 AI 暴露业务 data，不携带编辑器 ui 状态
+      const clone = Array.isArray(activeData)
+        ? activeData.map((record: any) => record.data)
+        : activeData;
       const title = module.ui?.title || resumeStore.getModel(key)?.name || key;
       const removeOrganizationName =
         (key === "work" && selectedFieldSet.has("workOrganization")) ||

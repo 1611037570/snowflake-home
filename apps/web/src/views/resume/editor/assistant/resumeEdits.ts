@@ -130,7 +130,8 @@ export const validateResumeEdits = (
       }
       return;
     }
-    const moduleSchema = findResumeModuleSchema(op.module);
+    // 写入校验必须跟随 read_resume_data 当前返回的数据形态
+    const moduleSchema = findResumeModuleSchema(op.module, moduleView.data);
     const moduleRules = new Map(moduleSchema?.fields.map((field) => [field.key, field]) ?? []);
     const records = getModuleRecords(moduleView);
     if (op.op === "addRecord") {

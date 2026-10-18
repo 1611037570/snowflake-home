@@ -1,5 +1,10 @@
 import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
-import type { ResumeFieldSchema, ResumeModuleKind, ResumeModuleSchema } from "../resumeSchema";
+import type {
+  ResumeFieldSchema,
+  ResumeModuleKind,
+  ResumeModuleSchema,
+  ResumeModuleVariantSchema,
+} from "../resumeSchema";
 import { RESUME_SCHEMA } from "../resumeSchemaRegistry";
 
 const DESCRIPTION =
@@ -32,34 +37,61 @@ const getFieldNotes = (field: ResumeFieldSchema, moduleKey: string) => {
   return notes.join("；") || "-";
 };
 
-const getModuleDataLabel = (module: ResumeModuleSchema) => {
-  if (module.kind === "object") return `${module.key}.data`;
-  if (module.kind === "custom") return "custom_<id>.data[]";
+const getModuleDataLabel = (module: ResumeModuleSchema, variant: ResumeModuleVariantSchema) => {
+  if (variant.kind === "object") return `${module.key}.data`;
+  if (variant.kind === "custom") return "custom_<id>.data[]";
   return `${module.key}.data[]`;
 };
 
-const renderModule = (module: ResumeModuleSchema, index: number) => {
-  const rows = module.fields
+const renderVariant = (
+  module: ResumeModuleSchema,
+  variant: ResumeModuleVariantSchema,
+  heading: string,
+  headingLevel = "###",
+) => {
+  const rows = variant.fields
     .map(
       (field) =>
         `| \`${field.key}\` | ${field.label} | ${field.valueType} | ${getFieldNotes(field, module.key)} |`,
     )
     .join("\n");
   const customNote =
-    module.kind === "custom"
+    variant.kind === "custom"
       ? "> 自定义模块的实际顶层 key 以 `custom_` 开头；标题来自模块 `title`，记录与内置数组模块一样直接写入 `data`。\n\n"
       : "";
-  return `## ${index + 1}. ${module.title}（\`${getModuleDataLabel(module)}\`）
+  const layoutNote = variant.layout ? `；界面布局为 \`${variant.layout}\` 时生效` : "";
+  return `${headingLevel} ${heading}（\`${getModuleDataLabel(module, variant)}\`${layoutNote}）
 
 ${customNote}| 字段 | 中文标签 | 类型 | 格式/备注 |
 | :--- | :--- | :--- | :--- |
 ${rows}`;
 };
 
+const renderModule = (module: ResumeModuleSchema, index: number) => {
+  const variants = module.variants?.length ? module.variants : [module];
+  if (variants.length === 1) {
+    return renderVariant(module, variants[0]!, `${index + 1}. ${module.title}`, "##");
+  }
+  const content = variants
+    .map((variant, variantIndex) =>
+      renderVariant(
+        module,
+        variant,
+        `${index + 1}.${variantIndex + 1} ${module.title}`,
+      ),
+    )
+    .join("\n\n");
+  return `## ${index + 1}. ${module.title}\n\n${content}`;
+};
+
 // 数据规范直接由表单领域结构生成，字段调整后无需维护第二份静态表格
 const buildInstructions = () => {
   const moduleRows = RESUME_SCHEMA.map(
-    (module) => `| \`${module.key}\` | ${module.title} | ${KIND_LABELS[module.kind]} |`,
+    (module) => {
+      const variants = module.variants?.length ? module.variants : [module];
+      const kinds = variants.map((variant) => KIND_LABELS[variant.kind]).join(" / ");
+      return `| \`${module.key}\` | ${module.title} | ${kinds} |`;
+    },
   ).join("\n");
   const modules = RESUME_SCHEMA.map(renderModule).join("\n\n");
 
@@ -73,6 +105,7 @@ ${moduleRows}
 
 - 对象模块通过 \`updateModule\` 修改字段。
 - 数组模块通过 \`updateRecord\`、\`addRecord\`、\`deleteRecord\`、\`moveRecord\` 修改记录。
+- 同一模块存在多种数据形态时，\`read_resume_data\` 只返回当前界面布局生效的形态；必须按本次返回的对象或数组选择写操作，不得读取或修改未生效形态。
 - 字段表标记为“可添加字段”时，即使当前数据缺失，也允许 \`updateModule\` 首次写入。
 - 当前简历可能只包含模块清单的一部分，不得写入当前数据中不存在的模块。
 

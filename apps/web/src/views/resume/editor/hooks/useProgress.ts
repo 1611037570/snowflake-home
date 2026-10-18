@@ -165,12 +165,6 @@ const ITEM_FIELD_LABELS: Record<string, Record<string, string>> = {
   rowSkill: { name: "skillName", desc: "skillDescription", level: "proficiencyLevel" },
 };
 
-// 双形态模块：按当前布局只统计生效的形态，避免另一种形态被误判为缺失
-const DUAL_FORM_MODULES: Record<string, { listLayout: string; defaultLayout: string }> = {
-  // 专业技能同时提供富文本与技能列表两种布局
-  skill: { listLayout: "proficiency", defaultLayout: "proficiency" },
-};
-
 // ==================== 分析单个模块 ====================
 
 function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
@@ -178,9 +172,9 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
     return { missing: [], issues: [], score: 0 };
   }
 
-  // 双形态模块：判断当前生效的是列表形态还是正文形态
-  const dualForm = DUAL_FORM_MODULES[moduleConfig?.key];
-  const activeLayout = dualForm ? (ui?.[moduleConfig.key]?.layout ?? dualForm.defaultLayout) : "";
+  // 同时声明对象与数组字段时，按表单配置的布局开关判断当前生效形态
+  const listLayout = moduleConfig.props?.addWhenLayout;
+  const activeLayout = ui?.[moduleConfig.key]?.layout;
 
   const missing: string[] = [];
   // 建议补充：非必填字段未填写时只提示，不计入完成度
@@ -218,8 +212,8 @@ function analyzeModule(moduleConfig: any, rootData: any, ui?: any) {
   collectModuleFields(moduleConfig.fields);
 
   for (const { field, inheritedRules, inheritedLabel } of moduleFields) {
-    // 双形态模块只统计当前布局对应的形态
-    if (dualForm && (field.type === "array") !== (activeLayout === dualForm.listLayout)) continue;
+    // 可切换形态的模块只统计当前布局对应字段
+    if (listLayout && (field.type === "array") !== (activeLayout === listLayout)) continue;
     if (field.type === "array" && field.itemSchema) {
       const itemSchema = field.itemSchema;
       // 记录项模型字段没有配置标签时，按编辑组件映射到中文文案

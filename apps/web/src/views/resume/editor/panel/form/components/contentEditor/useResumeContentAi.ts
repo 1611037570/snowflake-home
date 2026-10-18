@@ -73,7 +73,8 @@ const getWritingRule = (action: ContentAiAction, kindKey: string, moduleKey: str
 
 // 生成当前模块的字段说明，避免模型靠字段名猜含义
 const buildFieldHint = (moduleKey: string) => {
-  const module = findResumeModuleSchema(moduleKey);
+  // 正文编辑器始终使用模块对象形态，避免混入同模块的列表字段
+  const module = findResumeModuleSchema(moduleKey, {});
   if (!module?.fields.length) return "";
   return module.fields
     .map(
