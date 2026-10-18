@@ -85,14 +85,9 @@ const startAiAction = () => {
   openOneKeyIntro(needsAdjustment.value ? "oneKeyAdjust" : "oneKeyOptimize");
 };
 
-// 环形进度颜色：存在格式错误时优先警示，其余按阈值取色
+// 环形进度与待处理状态保持一致，所有检查通过后才显示成功色。
 const ringColorClass = computed(() => {
-  if (progressData.value.hasError) return "text-sf-warning";
-  const progress = progressData.value.progress;
-  if (progress >= 80) return "text-sf-success";
-  if (progress >= 50) return "text-sf-theme";
-  if (progress >= 30) return "text-sf-warning";
-  return "text-sf-error";
+  return needsAdjustment.value ? "text-sf-warning" : "text-sf-success";
 });
 
 // 入口提示：格式错误 > 时间线问题 > 查看详情
