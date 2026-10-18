@@ -31,6 +31,7 @@
 
 vue文件 创建使用小驼峰，导入和使用使用大驼峰； js使用setup语法糖 优先使用 vueuse库；template 避免多重 div 嵌套，使用 Tailwind CSS 写法。
 间距类 Tailwind 类统一使用 3 的倍数（如 p-3、m-3、gap-3），避免零散的非 3 倍间距。
+卡片悬停只做边框或背景反馈，不要用原生 title 属性或其他方式补文字提示。
 组件 优先使用apps\web\src\components目录下的组件，没有再使用element-plus组件库。
 执行web项目时候，样式和图标相关内容，按需读取 knowledges 目录下的 Markdown 文档进行学习
 如果该模块存在 README.md，优先按照 README.md 中的规则执行。

@@ -1,23 +1,20 @@
 <script setup>
-import { useInfiniteScroll } from "@vueuse/core";
+import { useRouter } from "vue-router";
 import { useResumeStore } from "@/stores";
 import { trackResumeAction } from "@/hooks";
 import { $t } from "@/locales";
 import { createResumeStyleUi, resumeStyleTemplateList } from "@/views/resume/theme";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
-import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
+import { expandConfigModules, initializeDefaultAddedFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import ResumePreviewSkeleton from "@/views/resume/components/resumePreviewSkeleton.vue";
 import ResumeCardContainer from "./resumeCardContainer.vue";
 
 const resumeStore = useResumeStore();
+const router = useRouter();
 
 // 全部主题卡片共用同一份通用范本作内容，样式由各自主题预设提供。
 const PREVIEW_BASE_FILE = "xiaoZhou.ts";
-// 全屏预览复用模板页组件：异步加载，避免简历渲染链路进入草稿页首屏。
-const TemplatePreview = markRaw(
-  defineAsyncComponent(() => import("../../template/templatePreview.vue")),
-);
 
 const visible = ref(false);
 // 通用范本正文只用于展示缩略图，标记非响应式避免整份简历被深层代理。
@@ -46,49 +43,103 @@ const open = () => {
   ensureBaseItem();
 };
 
-// 画廊卡片：名称与说明取自语言文案，内容统一沿用通用范本。
+// 推荐档之外的版式去模板库看，先关弹窗再跳转
+const goAllTemplates = () => {
+  visible.value = false;
+  router.push("/resume/template");
+};
+
+// 画廊卡片：只放「推荐」档的主题，名称与说明取自语言文案，内容沿用通用范本。
+// 推荐档固定顺序：与模板页推荐排序一致（template/index.vue 的 recommendedTemplateIds）。
+const RECOMMENDED_ORDER = ["blueAngleHeader", "blueProfileBand", "default", "minimal"];
 const cards = computed(() => {
   const base = baseItem.value;
   if (!base) return [];
-  return resumeStyleTemplateList.map((style) => ({
-    id: style.id, // 主题编号，用作列表 key
-    name: $t(`resumeTemplateStyle_${style.localeId}_name`), // 模板显示名
-    description: $t(`resumeTemplateStyle_${style.localeId}_description`), // 模板一句话说明
-    ui: style.ui, // 套用时采用的界面配置
-    item: { data: base.data, config: base.config, ui: style.ui }, // 缩略预览所需的简历项
-  }));
+  const rank = (id) => {
+    const index = RECOMMENDED_ORDER.indexOf(id);
+    return index === -1 ? Number.MAX_SAFE_INTEGER : index;
+  };
+  return resumeStyleTemplateList
+    .filter((style) => style.design.includes("recommended"))
+    .map((style) => ({
+      id: style.id, // 主题编号，用作列表 key
+      name: $t(`resumeTemplateStyle_${style.localeId}_name`), // 模板显示名
+      ui: style.ui, // 套用时采用的界面配置
+      item: { data: base.data, config: base.config, ui: style.ui }, // 缩略预览所需的简历项
+    }))
+    .sort((left, right) => rank(left.id) - rank(right.id));
 });
-
-// 首批卡片数量：触底再追加一批，避免整份主题清单一次性挂载缩略图。
-const CARD_BATCH_SIZE = 20;
-const scrollRef = ref(null);
-const visibleCount = ref(CARD_BATCH_SIZE);
-const shownCards = computed(() => cards.value.slice(0, visibleCount.value));
-const hasMore = computed(() => visibleCount.value < cards.value.length);
-// 距离底部三百像素时追加下一批卡片。
-useInfiniteScroll(
-  scrollRef,
-  () => {
-    visibleCount.value += CARD_BATCH_SIZE;
-  },
-  { distance: 300 },
-);
 
 // 深拷贝：套用模板时隔离示例数据，避免与缩略预览共享引用。
 const deepClone = (value) => JSON.parse(JSON.stringify(value));
 
+// 创建分两步：先选版式，再写简历主人的姓名与求职岗位
+const step = ref(1);
+// 第二步预览与套用的版式：始终是一张真实模板卡
+const styleCard = ref(null);
+// 内容是否留空：随机选版式时只保留个人信息，其余模块交给编辑器
+const blankContent = ref(false);
+const formName = ref("");
+const formPosition = ref("");
+
+// 主动选中一套版式，内容取模板示例
+const chooseCard = (card) => {
+  styleCard.value = card;
+  blankContent.value = false;
+  step.value = 2;
+};
+// 随机挑一套推荐版式，内容从零开始
+const chooseRandom = () => {
+  const list = cards.value;
+  if (!list.length) return;
+  styleCard.value = list[Math.floor(Math.random() * list.length)];
+  blankContent.value = true;
+  step.value = 2;
+};
+
 // 套用主题：内容取通用范本，界面配置按主题预设展开栏位。
-const useStyle = (card) => {
+const buildFromCard = (card) => {
   const base = baseItem.value;
-  if (!base) return;
   const moduleKeys = expandConfigModules(base.config?.modules || [], base.data)
     .map((field) => field.key)
     .filter(Boolean);
-  const item = {
+  return {
     data: deepClone(base.data), // 与预览隔离的简历内容
     config: deepClone(base.config), // 与预览隔离的模块配置
     ui: createResumeStyleUi(card.ui, moduleKeys), // 当前主题的完整界面配置
   };
+};
+
+// 空白内容：与 addResume() 的空白初始化保持同一口径，版式取随机到的那套
+const buildBlank = (card) => {
+  const data = {};
+  initializeDefaultAddedFields(data);
+  if (!card) return { data };
+  // 空白内容只有个人信息模块，栏位按这一份配置展开
+  const moduleKeys = expandConfigModules([{ key: "user" }], data)
+    .map((field) => field.key)
+    .filter(Boolean);
+  return { data, ui: createResumeStyleUi(card.ui, moduleKeys) };
+};
+
+// 第二步填写的姓名与岗位写进个人信息模块，留空则保持所选版式的原样
+const applyUserInfo = (item) => {
+  const name = formName.value.trim();
+  const position = formPosition.value.trim();
+  if (!name && !position) return;
+  item.data = item.data || {};
+  item.data.user = item.data.user || {};
+  item.data.user.data = {
+    ...(item.data.user.data || {}),
+    ...(name ? { name } : {}),
+    ...(position ? { position } : {}),
+  };
+};
+
+// 第二步确认：按所选版式创建简历并进入编辑器
+const confirmCreate = () => {
+  const item = blankContent.value ? buildBlank(styleCard.value) : buildFromCard(styleCard.value);
+  applyUserInfo(item);
   // 新建成功后上报一次简历创建动作
   if (resumeStore.addResume(item)) {
     trackResumeAction({ eventType: "create", fileType: "none" });
@@ -96,31 +147,14 @@ const useStyle = (card) => {
   visible.value = false;
 };
 
-// 空白简历：不套任何版式，直接新建并进入编辑器。
-const createBlank = () => {
-  // 新建成功后上报一次简历创建动作
-  if (resumeStore.addResume()) trackResumeAction({ eventType: "create", fileType: "none" });
-  visible.value = false;
-};
-
-// 大图预览：点卡片本体看细节，确认后再套用。
-const previewCard = ref(null);
-const isPreviewVisible = computed(() => !!previewCard.value);
-const openPreview = (card) => {
-  previewCard.value = card;
-};
-const closePreview = () => {
-  previewCard.value = null;
-};
-const usePreview = () => {
-  if (previewCard.value) useStyle(previewCard.value);
-  closePreview();
-};
-
-// 关闭弹窗时复位预览，下次打开从推荐顺序重新开始。
+// 关闭弹窗时复位步骤、表单与选择，下次打开从第一步开始。
 watch(visible, (value) => {
   if (value) return;
-  previewCard.value = null;
+  step.value = 1;
+  styleCard.value = null;
+  blankContent.value = false;
+  formName.value = "";
+  formPosition.value = "";
 });
 </script>
 
@@ -142,116 +176,137 @@ watch(visible, (value) => {
   <SfModal v-model="visible" title="新建简历" width="min(90vw, 1440px)">
     <!-- 高度取弹窗上限减去标题与内边距，画廊滚动始终落在弹窗内 -->
     <div class="flex h-[calc(90vh-72px)] w-full flex-col gap-3">
-      <!-- 顶部：说明模板只管版式，右侧给出模板总数 -->
+      <!-- 步骤指示：先选版式，再填简历主人的姓名与岗位 -->
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <p class="text-sm text-sf-text-2">模板只决定版式，内容进编辑器再改</p>
-        <span v-if="cards.length" class="text-xs text-sf-text-3">共 {{ cards.length }} 套版式</span>
-      </div>
-
-      <!-- 范本正文未就绪时按真实卡片尺寸占位，避免弹窗里整片空白 -->
-      <div
-        v-if="baseLoading"
-        class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
-      >
-        <div
-          v-for="index in 10"
-          :key="index"
-          class="flex flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-primary"
-        >
-          <div class="relative aspect-[794/1123] w-full overflow-hidden">
-            <ResumePreviewSkeleton />
-          </div>
-          <div class="flex flex-col gap-3 border-t border-sf-b px-3 py-3">
-            <div class="h-3 w-1/2 animate-pulse rounded bg-sf-bg" />
-            <div class="h-3 w-5/6 animate-pulse rounded bg-sf-bg" />
-          </div>
+        <div class="flex items-center gap-3 text-sm">
+          <span :class="step === 1 ? 'font-bold text-sf-theme' : 'text-sf-text-3'">1 选版式</span>
+          <span class="h-px w-6 bg-sf-border" />
+          <span :class="step === 2 ? 'font-bold text-sf-theme' : 'text-sf-text-3'">2 填信息</span>
+        </div>
+        <div v-if="step === 1 && cards.length" class="flex items-center gap-3 text-xs text-sf-text-3">
+          <span>共 {{ cards.length }} 套推荐版式</span>
+          <button
+            type="button"
+            class="cursor-pointer font-bold text-sf-theme hover:underline"
+            @click="goAllTemplates"
+          >
+            查看全部
+          </button>
         </div>
       </div>
 
-      <!-- 范本加载失败时给出可重试的提示 -->
-      <div
-        v-else-if="!baseItem"
-        class="flex h-60 flex-col items-center justify-center gap-3 text-sf-text-2"
-      >
-        <SfIcon icon="lucide:circle-alert" size="8" class="text-sf-text-3" />
-        <span class="text-sm">模板暂时无法加载</span>
-        <SfButton plain @click="ensureBaseItem">重试</SfButton>
-      </div>
-
-      <!-- 模板画廊：空白卡常驻首位，其余按主题清单的推荐顺序平铺 -->
-      <div v-else ref="scrollRef" class="min-h-0 flex-1 overflow-y-auto pr-1">
-        <div class="grid grid-cols-2 gap-3 pb-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          <!-- 从零开始：整卡按 A4 比例，信息层浮在卡片底部，与模板页同构 -->
+      <!-- 第一步：从版式里挑一个起点 -->
+      <template v-if="step === 1">
+        <!-- 范本正文未就绪时按真实卡片尺寸占位，避免弹窗里整片空白 -->
+        <div
+          v-if="baseLoading"
+          class="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5"
+        >
           <div
-            class="flex aspect-[794/1123] w-full cursor-pointer flex-col overflow-hidden rounded-[4px] border-2 border-dashed border-sf-b bg-sf-primary transition-colors hover:border-sf-theme"
-            @click="createBlank"
+            v-for="index in 10"
+            :key="index"
+            class="flex flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-primary"
           >
-            <div
-              class="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 text-sf-text-2"
-            >
-              <span class="flex h-15 w-15 items-center justify-center rounded-full bg-sf-theme-2 text-sf-theme">
-                <SfIcon icon="ph:file-plus-duotone" size="7" />
-              </span>
-              <span class="text-base font-black">从零开始</span>
+            <div class="relative aspect-[794/1123] w-full overflow-hidden">
+              <ResumePreviewSkeleton />
             </div>
-            <div class="relative border-t border-sf-b bg-sf-primary p-1">
-              <div class="truncate text-center text-base font-black text-sf-text">空白简历</div>
+            <div class="flex flex-col gap-3 border-t border-sf-b px-3 py-3">
+              <div class="h-3 w-1/2 animate-pulse rounded bg-sf-bg" />
+              <div class="h-3 w-5/6 animate-pulse rounded bg-sf-bg" />
             </div>
           </div>
+        </div>
 
-          <!-- 主题卡片：缩略图铺满整卡，名称浮在卡片底部 -->
-          <div
-            v-for="card in shownCards"
-            :key="card.id"
-            class="group relative flex aspect-[794/1123] w-full cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-colors hover:border-sf-theme"
-            :title="card.description"
-            @click="openPreview(card)"
-          >
-            <!-- 缩略图铺满整卡，信息层浮在它的下半部分之上 -->
-            <div class="absolute inset-0">
-              <ThumbPreview :item="card.item" />
-            </div>
-            <!-- 信息层之外的剩余空间：悬浮遮罩与按钮在这里垂直居中 -->
-            <div class="relative min-h-0 flex-1">
+        <!-- 范本加载失败时给出可重试的提示 -->
+        <div
+          v-else-if="!baseItem"
+          class="flex h-60 flex-col items-center justify-center gap-3 text-sf-text-2"
+        >
+          <SfIcon icon="lucide:circle-alert" size="8" class="text-sf-text-3" />
+          <span class="text-sm">模板暂时无法加载</span>
+          <SfButton plain @click="ensureBaseItem">重试</SfButton>
+        </div>
+
+        <!-- 模板画廊：随机卡常驻首位，其余只放推荐档主题 -->
+        <SfScrollbar v-else class="min-h-0 flex-1" flush>
+          <div class="flex min-h-full shrink-0 flex-col">
+            <div class="grid grid-cols-2 gap-3 pb-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              <!-- 随机选：点一下从推荐档里随机挑一套版式，内容从零开始 -->
               <div
-                class="invisible absolute inset-0 flex items-center justify-center gap-3 bg-sf-transparent-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
+                class="flex aspect-[794/1123] w-full cursor-pointer flex-col overflow-hidden rounded-[4px] border-2 border-dashed border-sf-b bg-sf-primary transition-colors hover:border-sf-theme"
+                @click="chooseRandom"
               >
-                <SfButton @click.stop="openPreview(card)">预览</SfButton>
-                <SfButton @click.stop="useStyle(card)">使用此模板</SfButton>
+                <div class="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 text-sf-text-2">
+                  <span class="flex h-15 w-15 items-center justify-center rounded-full bg-sf-theme-2 text-sf-theme">
+                    <SfIcon icon="ph:dice-five-duotone" size="7" />
+                  </span>
+                  <span class="text-base font-black">随机挑一套</span>
+                </div>
+                <div class="relative border-t border-sf-b bg-sf-primary p-1">
+                  <div class="truncate text-center text-base font-black text-sf-text">随机选</div>
+                </div>
+              </div>
+
+              <!-- 主题卡片：缩略图铺满整卡，点一下即选中并进入第二步 -->
+              <div
+                v-for="card in cards"
+                :key="card.id"
+                class="relative flex aspect-[794/1123] w-full cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-colors hover:border-sf-theme"
+                @click="chooseCard(card)"
+              >
+                <!-- 缩略图铺满整卡，信息层浮在它的下半部分之上 -->
+                <div class="absolute inset-0">
+                  <ThumbPreview :item="card.item" />
+                </div>
+                <div class="relative min-h-0 flex-1" />
+                <!-- 信息层浮在卡片底部：纯色背景、高度随内容，名称居中 -->
+                <div class="relative border-t border-sf-b bg-sf-primary p-1">
+                  <div class="truncate text-center text-base font-black text-sf-text">
+                    {{ card.name }}
+                  </div>
+                </div>
               </div>
             </div>
-            <!-- 信息层浮在卡片底部：纯色背景、高度随内容，名称居中 -->
-            <div class="relative border-t border-sf-b bg-sf-primary p-1">
-              <div class="truncate text-center text-base font-black text-sf-text">{{ card.name }}</div>
-            </div>
+          </div>
+        </SfScrollbar>
+      </template>
+
+      <!-- 第二步：左边整页看版式，右边填姓名与求职岗位 -->
+      <div v-else class="flex min-h-0 flex-1 flex-col gap-3 md:flex-row md:gap-0">
+        <!-- 所选版式的整页预览：高度撑满，按 A4 比例等比缩放，不加外框 -->
+        <div class="relative min-h-0 flex-1 overflow-hidden p-3 md:pr-6">
+          <ThumbPreview v-if="styleCard" :item="styleCard.item" />
+          <div v-else class="flex h-full w-full items-center justify-center text-sf-text-3">
+            <SfIcon icon="ph:file-plus-duotone" size="12" />
           </div>
         </div>
-
-        <!-- 全部卡片已展开时给出结束提示 -->
         <div
-          v-if="cards.length && !hasMore"
-          class="flex items-center justify-center gap-3 pb-3 text-xs text-sf-text-3"
+          class="flex shrink-0 flex-col gap-3 md:w-[320px] md:border-l md:border-sf-b md:pl-6 lg:w-[360px]"
         >
-          <span class="h-px w-12 bg-sf-border" />
-          <span>{{ $t("resumeTemplateNoMore") }}</span>
-          <span class="h-px w-12 bg-sf-border" />
+          <div class="flex flex-col gap-1">
+            <div class="text-base font-black text-sf-text">先写下你自己</div>
+            <div class="text-sm leading-7 text-sf-text-2">
+              只填简历开头的信息，其余内容进编辑器再改
+            </div>
+          </div>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm text-sf-text-2">姓名</span>
+            <div class="flex h-10 items-center rounded-xl border border-sf-b px-3">
+              <SfInput v-model="formName" placeholder="选填" class="h-10 flex-1 bg-transparent" />
+            </div>
+          </label>
+          <label class="flex flex-col gap-1">
+            <span class="text-sm text-sf-text-2">求职岗位</span>
+            <div class="flex h-10 items-center rounded-xl border border-sf-b px-3">
+              <SfInput v-model="formPosition" placeholder="选填" class="h-10 flex-1 bg-transparent" />
+            </div>
+          </label>
+          <div class="mt-auto flex flex-col gap-3">
+            <SfButton size="large" class="w-full" @click="confirmCreate">创建并开始编辑</SfButton>
+            <SfButton size="large" plain class="w-full" @click="step = 1">返回选版式</SfButton>
+          </div>
         </div>
       </div>
     </div>
-
-    <!-- 全屏预览叠在弹窗之上，确认后直接套用 -->
-    <TemplatePreview
-      :visible="isPreviewVisible"
-      :item="previewCard?.item || {}"
-      single-page
-      level="z-90"
-      eyebrow-text="样式模板"
-      :title="previewCard?.name || ''"
-      :description="previewCard?.description || ''"
-      primary-action-text="使用此模板"
-      secondary-action-text="返回模板列表"
-      @close="closePreview"
-      @action="usePreview"
-    />
   </SfModal>
 </template>

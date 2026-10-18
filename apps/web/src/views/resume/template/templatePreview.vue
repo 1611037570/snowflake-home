@@ -58,11 +58,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  // 图层层级类名：叠在弹窗之上时由调用方传入更高层级
-  level: {
-    type: String,
-    default: "z-50",
-  },
 });
 
 const emit = defineEmits(["close", "action"]);
@@ -138,8 +133,7 @@ onBeforeUnmount(() => {
   <Teleport to="body">
     <div
       v-if="visible"
-      class="fixed inset-0 flex h-dvh w-full flex-col overflow-hidden bg-sf-bg-2 md:flex-row"
-      :class="level"
+      class="fixed inset-0 z-50 flex h-dvh w-full flex-col overflow-hidden bg-sf-bg-2 md:flex-row"
     >
       <section
         class="flex min-h-0 w-full min-w-0 flex-1 items-center justify-center overflow-hidden py-3 md:h-full md:w-2/3"
