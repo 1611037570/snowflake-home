@@ -57,6 +57,15 @@ const moduleItems = computed(() =>
   }),
 );
 
+// 表单进入模块编辑状态时，同步更新模块树高亮项。
+watch(
+  () => resumeStore.editingModuleKey,
+  (key) => {
+    if (!key || !moduleItems.value.some((item) => item.key === key)) return;
+    activeKey.value = key;
+  },
+);
+
 watch(
   moduleItems,
   (items) => {
