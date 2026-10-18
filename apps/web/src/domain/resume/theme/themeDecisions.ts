@@ -3,6 +3,7 @@ import { resumeThemeRegistry } from "@/domain/resume/theme/styles";
 import type { ThemeCapabilities } from "@/domain/resume/theme/themeContract";
 import { validateThemeDecisions } from "@/domain/resume/theme/themeContract";
 import { resolveUserTemplate } from "@/domain/resume/theme/userTemplates";
+import { DEFAULT_PORTRAIT_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 // 编号取自真实文件清单，配置解析不引入渲染组件。
 const componentIds = (files: Record<string, unknown>) => new Set(
   Object.keys(files).map((file) => file.slice(file.lastIndexOf("/") + 1, -4)),
@@ -24,6 +25,13 @@ export interface ThemeDecisions extends ThemeCapabilities {
     /** 边框颜色 */
     color: string;
   };
+  /** 主题默认头像尺寸 */
+  avatarSize: {
+    /** 主题默认头像宽度，单位像素 */
+    width: number;
+    /** 主题默认头像高度，单位像素 */
+    height: number;
+  };
   /** 页面背景纹理编号，未声明表示不使用纹理 */
   pageBackgroundPattern?: string;
 }
@@ -34,6 +42,9 @@ export const DEFAULT_THEME_DECISIONS: ThemeDecisions = {
   pageBorder: { // 默认纸张边框
     width: 0, // 默认不描边
     color: "#e9edf0", // 默认边框颜色
+  },
+  avatarSize: { // 默认主题头像尺寸
+    ...DEFAULT_PORTRAIT_AVATAR_SIZE,
   },
 };
 
@@ -63,6 +74,10 @@ export const resolveThemeDecisions = (themeId?: string): ThemeDecisions => {
     pageBorder: {
       width: themeDecisions.pageBorder?.width ?? DEFAULT_THEME_DECISIONS.pageBorder.width,
       color: themeDecisions.pageBorder?.color ?? DEFAULT_THEME_DECISIONS.pageBorder.color,
+    },
+    avatarSize: {
+      width: themeDecisions.avatarSize?.width ?? DEFAULT_THEME_DECISIONS.avatarSize.width,
+      height: themeDecisions.avatarSize?.height ?? DEFAULT_THEME_DECISIONS.avatarSize.height,
     },
     ...(themeDecisions.pageBackgroundPattern
       ? { pageBackgroundPattern: themeDecisions.pageBackgroundPattern }

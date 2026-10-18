@@ -6,10 +6,8 @@ const {
 } = useResumePreviewContext();
 // 弧线沿公共区域上留白绘制，只额外保留头像半高的装饰尺寸。
 const arcHeight = "calc(var(--resume-region-inset-top) + 54px)";
-// 头像跨在弧线两侧，尺寸与裁切由公共头像组件读取变量。
+// 头像跨在弧线两侧，裁切外观由公共头像组件读取变量。
 const appearanceStyle = {
-  "--resume-user-avatar-width": "108px", // 头像宽度
-  "--resume-user-avatar-height": "108px", // 头像高度
   "--resume-user-avatar-radius": "50%", // 头像取圆形
   "--resume-user-avatar-position": "center top", // 优先保留头像顶部，避免居中裁切截掉头部
 };

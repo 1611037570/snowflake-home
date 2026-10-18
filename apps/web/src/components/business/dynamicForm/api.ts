@@ -22,7 +22,7 @@ export {
   getModelBindings,
   walkFormFields,
 } from "./code/schemaAccess";
-export { getFieldDataPath, unwrapField } from "./code/fieldData";
+export { addFieldData, getFieldDataPath, unwrapField } from "./code/fieldData";
 export { createDataPathContext, resolveDataPath } from "./code/pathContext";
 export { addArrayRecord, moveArrayRecord, removeArrayRecord } from "./code/arrayData";
 export { moveFieldByKey, moveFieldToContainer } from "./code/orderData";

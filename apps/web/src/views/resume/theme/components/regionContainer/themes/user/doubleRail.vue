@@ -9,8 +9,6 @@ const headerStyle = {
   "--resume-user-name-color": "#FFFFFF", // 姓名纯白
   "--resume-user-subtitle-spacing": "0.2em", // 副标题加宽字距
   "--resume-user-subtitle-color": "#B9B3AB", // 副标题灰米色
-  "--resume-user-avatar-width": "96px", // 头像宽度
-  "--resume-user-avatar-height": "128px", // 头像高度
   "--resume-user-avatar-radius": "0", // 头像收为直角
 };
 </script>

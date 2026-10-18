@@ -2,8 +2,6 @@
 // 个人信息沿用公共排布，本主题只下发姓名与头像的尺寸。
 const appearanceStyle = {
   "--resume-user-name-size": "30px", // 姓名字号
-  "--resume-user-avatar-width": "134px", // 头像宽度
-  "--resume-user-avatar-height": "134px", // 头像高度
   "--resume-user-avatar-radius": "0", // 头像直角，与模块细边框呼应
 };
 </script>

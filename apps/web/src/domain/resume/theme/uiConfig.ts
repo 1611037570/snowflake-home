@@ -1,4 +1,5 @@
 import { darkThemeColors } from "@/configs";
+import { DEFAULT_AVATAR_APPEARANCE } from "@/domain/resume/theme/avatar";
 // ===========列表=====================
 // 主题色列表
 export const themeColors = [
@@ -346,6 +347,7 @@ export const DEFAULT_UI = {
     infoLayout: defaultUserInfoLayout,
     avatarPosition: defaultAvatarPosition,
     infoPosition: defaultInfoPosition,
+    avatar: { ...DEFAULT_AVATAR_APPEARANCE }, // 头像外观默认跟随主题，用户调整后写入覆盖值
   },
   skill: {
     layout: "text", // 默认使用富文本正文布局

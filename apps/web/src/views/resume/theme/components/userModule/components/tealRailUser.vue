@@ -43,10 +43,8 @@ const avatarAlignClass = computed(() => {
 </template>
 
 <style scoped>
-/* 方形头像尺寸通过公共头像变量下发，不影响其它双栏主题。 */
+/* 方形头像圆角通过公共头像变量下发，不影响其它双栏主题。 */
 .teal-rail-user {
-  --resume-user-avatar-width: 120px;
-  --resume-user-avatar-height: 120px;
   --resume-user-avatar-radius: 3px;
 }
 </style>

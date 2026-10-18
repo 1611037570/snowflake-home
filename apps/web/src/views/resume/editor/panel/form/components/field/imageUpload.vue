@@ -1,33 +1,70 @@
 <script setup>
 import { loadCropper } from "./cropperLoader";
 import { ElMessage } from "element-plus";
-import { onBeforeUnmount, ref, watch } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useImageUpload } from "@/hooks";
 import { routerNavigation } from "@/utils";
+import { useResumeStore } from "@/stores";
+import { storeToRefs } from "pinia";
+import {
+  AVATAR_OUTPUT_SCALE,
+  AVATAR_RADIUS_LIMITS,
+  DEFAULT_AVATAR_APPEARANCE,
+  DEFAULT_PORTRAIT_AVATAR_SIZE,
+  resolveAvatarAspectRatio,
+} from "@/domain/resume/theme/avatar";
+import { resolveThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 
 // 新窗口打开 image 工具页
 const goImageTools = () => routerNavigation("/image");
 
 // 编辑区头像保持紧凑显示，裁剪输出继续使用高分辨率提升预览与导出清晰度
 const DISPLAY_WIDTH = 70;
-const DISPLAY_HEIGHT = 98;
 
 const props = defineProps({
   /** 裁剪输出宽度（px），默认使用显示尺寸的三倍 */
   width: {
     type: Number,
-    default: 282,
+    default: DEFAULT_PORTRAIT_AVATAR_SIZE.width * AVATAR_OUTPUT_SCALE,
   },
   /** 裁剪输出高度（px），默认使用显示尺寸的三倍 */
   height: {
     type: Number,
-    default: 396,
+    default: DEFAULT_PORTRAIT_AVATAR_SIZE.height * AVATAR_OUTPUT_SCALE,
   },
 });
 
 const image = defineModel("modelValue", {
   type: String,
   default: "",
+});
+const { currentUI } = storeToRefs(useResumeStore());
+const avatarAppearance = computed(() => ({
+  ...DEFAULT_AVATAR_APPEARANCE,
+  ...(currentUI.value?.user?.avatar || {}),
+}));
+const themeAvatarSize = computed(() =>
+  resolveThemeDecisions(currentUI.value?.theme?.template).avatarSize,
+);
+const themeCropRatio = computed(() =>
+  themeAvatarSize.value.width === themeAvatarSize.value.height ? "1:1" : "5:7",
+);
+// 上传入口默认跟随主题声明的证件照或正方形比例
+const displayRatio = computed(() =>
+  avatarAppearance.value.ratio === "theme" && avatarAppearance.value.shape !== "circle"
+    ? themeAvatarSize.value.width / themeAvatarSize.value.height
+    : resolveAvatarAspectRatio(avatarAppearance.value),
+);
+const displayHeight = computed(() => Math.round(DISPLAY_WIDTH / displayRatio.value));
+const displayRadius = computed(() => {
+  const configuredRadius = Number(avatarAppearance.value.borderRadius);
+  if (avatarAppearance.value.borderRadius !== null && Number.isFinite(configuredRadius)) {
+    return `${Math.min(AVATAR_RADIUS_LIMITS.max, Math.max(AVATAR_RADIUS_LIMITS.min, configuredRadius))}%`;
+  }
+  if (avatarAppearance.value.shape === "square") return "0";
+  if (avatarAppearance.value.shape === "rounded") return "0.75rem";
+  if (avatarAppearance.value.shape === "circle") return "50%";
+  return "1.5rem";
 });
 
 // 图片查看器显隐
@@ -67,6 +104,26 @@ const pickFromModal = () => {
 const cropImgRef = ref(null);
 let cropper = null;
 const cropperReady = ref(false);
+const cropRatio = ref("5:7");
+const cropCustomRatioWidth = ref(5);
+const cropCustomRatioHeight = ref(7);
+const cropUsesOneInchPreset = ref(false);
+const cropRatioChanged = ref(false);
+const cropAppearance = computed(() => ({
+  ...avatarAppearance.value,
+  ratio: cropRatio.value,
+  customRatioWidth: cropCustomRatioWidth.value,
+  customRatioHeight: cropCustomRatioHeight.value,
+  shape:
+    cropRatio.value === "1:1" && avatarAppearance.value.shape === "circle"
+      ? "circle"
+      : "square",
+}));
+const cropAspectRatio = computed(() =>
+  !cropRatioChanged.value && avatarAppearance.value.ratio === "theme"
+    ? themeAvatarSize.value.width / themeAvatarSize.value.height
+    : resolveAvatarAspectRatio(cropAppearance.value),
+);
 let cropVersion = 0;
 // 字段卸载时释放裁剪器，避免旧弹窗的监听与图片节点继续占用内存
 onBeforeUnmount(() => {
@@ -78,7 +135,17 @@ onBeforeUnmount(() => {
 // 弹窗关闭时同步销毁裁切器（含右上角关闭等场景）
 watch(cropVisible, (visible) => {
   // 弹窗打开即开始加载，与图片解码并行；创建时统一处理加载失败。
-  if (visible) void loadCropper().catch(() => {});
+  if (visible) {
+    cropRatio.value =
+      avatarAppearance.value.ratio === "theme"
+        ? themeCropRatio.value
+        : avatarAppearance.value.ratio;
+    cropCustomRatioWidth.value = avatarAppearance.value.customRatioWidth;
+    cropCustomRatioHeight.value = avatarAppearance.value.customRatioHeight;
+    cropUsesOneInchPreset.value = false;
+    cropRatioChanged.value = false;
+    void loadCropper().catch(() => {});
+  }
   if (!visible) {
     // 关闭时使仍在下载中的裁剪任务失效。
     cropVersion++;
@@ -104,8 +171,8 @@ const initCropper = async () => {
   if (version !== cropVersion || !cropVisible.value || cropImgRef.value !== imageElement || !imageElement) return;
   if (cropper) cropper.destroy();
   cropper = new Cropper(imageElement, {
-    // 固定按组件宽高比裁切，不支持更改
-    aspectRatio: props.width / props.height,
+    // 裁剪框读取本次选择的头像比例，允许在弹窗内切换
+    aspectRatio: cropAspectRatio.value,
     // 最大化利用空间，裁剪区域不超出图片
     viewMode: 2,
     guides: true,
@@ -126,11 +193,47 @@ const resetCrop = () => {
   cropper?.reset();
 };
 
+// 裁剪比例先保存在弹窗内，确认后才写入简历视觉配置
+const applyCropRatio = (value) => {
+  cropRatio.value = value;
+  cropUsesOneInchPreset.value = false;
+  cropRatioChanged.value = true;
+  cropper?.setAspectRatio(cropAspectRatio.value);
+};
+const applyOneInchCrop = () => {
+  cropRatio.value = "5:7";
+  cropUsesOneInchPreset.value = true;
+  cropRatioChanged.value = true;
+  cropper?.setAspectRatio(cropAspectRatio.value);
+};
+const applyCustomCropRatio = () => {
+  cropUsesOneInchPreset.value = false;
+  cropRatioChanged.value = true;
+  cropper?.setAspectRatio(cropAspectRatio.value);
+};
+
 // 确认裁切：hook 内部压缩并写入结果，组件负责销毁裁切器
 const handleConfirmCrop = async () => {
   if (!cropper) return;
   try {
-    await confirmCrop(cropper);
+    const ratio = cropAspectRatio.value;
+    const outputHeight = Math.max(1, Math.round(props.width / ratio));
+    // 默认输出按头像宽度生成三倍清晰图，过高比例仍受既有高度上限约束
+    const outputSize = outputHeight <= props.height
+      ? { width: props.width, height: outputHeight }
+      : { width: Math.max(1, Math.round(props.height * ratio)), height: props.height };
+    await confirmCrop(cropper, outputSize);
+    if (currentUI.value) {
+      currentUI.value.user.avatar = {
+        ...avatarAppearance.value,
+        ratio: cropRatioChanged.value ? cropRatio.value : avatarAppearance.value.ratio,
+        customRatioWidth: cropCustomRatioWidth.value,
+        customRatioHeight: cropCustomRatioHeight.value,
+        ...(cropUsesOneInchPreset.value
+          ? { shape: "square", width: DEFAULT_PORTRAIT_AVATAR_SIZE.width }
+          : {}),
+      };
+    }
   } catch (err) {
     console.error("图片裁切压缩失败:", err);
   } finally {
@@ -154,12 +257,16 @@ const removeImage = () => {
 
 <template>
   <!-- 固定整体高度，保证上传前后表单区域不跳动 -->
-  <div class="flex flex-col" :style="{ minHeight: `${DISPLAY_HEIGHT}px` }">
+  <div class="flex flex-col" :style="{ minHeight: `${displayHeight}px` }">
     <div class="flex gap-1">
       <!-- 始终保留上传入口：未上传展示占位，已上传时点击图片进入上传弹窗 -->
       <div
         class="border-sf-border group relative flex cursor-pointer items-center justify-center overflow-hidden rounded-3xl border border-dashed text-sf-text-3 transition-colors hover:border-sf-theme hover:text-sf-theme"
-        :style="{ width: `${DISPLAY_WIDTH}px`, height: `${DISPLAY_HEIGHT}px` }"
+        :style="{
+          width: `${DISPLAY_WIDTH}px`,
+          height: `${displayHeight}px`,
+          borderRadius: displayRadius,
+        }"
         :title="image ? $t('changeAvatar') : $t('uploadAvatar')"
         @click="uploadVisible = true"
       >
@@ -283,6 +390,63 @@ const removeImage = () => {
           class="max-w-full"
           @load="initCropper"
         />
+      </div>
+      <div class="mt-3 flex flex-col gap-3">
+        <div class="flex flex-col gap-3">
+          <span class="text-sm text-sf-text-2">{{ $t("avatarRatio") }}</span>
+          <div class="grid grid-cols-3 gap-3">
+            <SfButton
+              size="small"
+              border
+              :type="cropUsesOneInchPreset ? 'theme' : 'bg'"
+              @click="applyOneInchCrop"
+            >{{ $t("oneInchPhoto") }}</SfButton>
+            <SfButton
+              size="small"
+              border
+              :type="!cropUsesOneInchPreset && cropRatio === '1:1' ? 'theme' : 'bg'"
+              @click="applyCropRatio('1:1')"
+            >1:1</SfButton>
+            <SfButton
+              size="small"
+              border
+              :type="!cropUsesOneInchPreset && cropRatio === '4:3' ? 'theme' : 'bg'"
+              @click="applyCropRatio('4:3')"
+            >4:3</SfButton>
+            <SfButton
+              size="small"
+              border
+              :type="!cropUsesOneInchPreset && cropRatio === '3:4' ? 'theme' : 'bg'"
+              @click="applyCropRatio('3:4')"
+            >3:4</SfButton>
+            <SfButton
+              size="small"
+              border
+              :type="!cropUsesOneInchPreset && cropRatio === '16:9' ? 'theme' : 'bg'"
+              @click="applyCropRatio('16:9')"
+            >16:9</SfButton>
+            <SfButton
+              size="small"
+              border
+              :type="cropRatio === 'custom' ? 'theme' : 'bg'"
+              @click="applyCropRatio('custom')"
+            >{{ $t("customRatio") }}</SfButton>
+          </div>
+          <div v-if="cropRatio === 'custom'" class="grid grid-cols-2 gap-3">
+            <SfInputNumber
+              v-model="cropCustomRatioWidth"
+              :min="1"
+              :max="20"
+              @change="applyCustomCropRatio"
+            />
+            <SfInputNumber
+              v-model="cropCustomRatioHeight"
+              :min="1"
+              :max="20"
+              @change="applyCustomCropRatio"
+            />
+          </div>
+        </div>
       </div>
       <!-- 底部操作栏 -->
       <footer class="mt-4 flex justify-end gap-3">

@@ -103,6 +103,8 @@ const createMoreField = (options: {
   addable?: boolean;
   // 填写口径：true 必填；未设置表示可选
   required?: boolean;
+  // 空白简历创建时默认添加该可添加字段
+  defaultAdded?: boolean;
   // 所属分类：供编辑器「更多」分区归类展示
   category?: string;
   // 展示形态选项：声明后编辑器提供切换，预览按选中形态展示
@@ -120,6 +122,7 @@ const createMoreField = (options: {
     tip,
     addable,
     required,
+    defaultAdded,
     category,
     displayOptions,
     dict,
@@ -143,6 +146,8 @@ const createMoreField = (options: {
     },
     // 可添加字段：数据存在才渲染
     ...(addable ? { addable: true } : {}),
+    // 空白简历创建时默认添加该字段
+    ...(defaultAdded ? { defaultAdded: true } : {}),
     // 填写口径由业务手动标记，与表单校验规则分离
     required: required === true,
     // 字段状态绑定到包裹组，供包裹组件双向绑定
@@ -167,7 +172,8 @@ const createMoreField = (options: {
         component,
         span: 24,
         ...(addable ? { addable: true } : {}),
-        // 内层字段是完成度和 AI 契约读取的字段声明
+        // 内层字段是完成度和 AI 契约读取的字段声明，也承载默认添加标记
+        ...(defaultAdded ? { defaultAdded: true } : {}),
         required: required === true,
         model: dict
           ? [
@@ -299,6 +305,7 @@ export const DEFAULT_USER_FORM = [
             rules: [MONTH_FORMAT_RULE],
             tip: "推荐必填",
             addable: true,
+            defaultAdded: true,
             // 展示形态：简历上展示年龄或日期
             displayOptions: [
               { label: "年龄", value: "age" },
@@ -319,6 +326,7 @@ export const DEFAULT_USER_FORM = [
             iconKey: "personal-account",
             tip: "推荐必填",
             addable: true,
+            defaultAdded: true,
             required: true,
             dict: "sex",
             props: {
@@ -413,6 +421,7 @@ export const DEFAULT_USER_FORM = [
             iconKey: "work-briefcase",
             tip: "推荐必填",
             addable: true,
+            defaultAdded: true,
             required: true,
             dict: "position",
             props: {
@@ -429,6 +438,7 @@ export const DEFAULT_USER_FORM = [
             rules: [MONTH_FORMAT_RULE],
             tip: "推荐必填",
             addable: true,
+            defaultAdded: true,
             props: {
               placeholder: "请选择参加工作时间",
               valueFormat: "YYYY.MM",
@@ -445,6 +455,7 @@ export const DEFAULT_USER_FORM = [
             tip: "推荐必填",
             // 可添加字段：数据存在才渲染，删除后可从更多中重新添加
             addable: true,
+            defaultAdded: true,
             required: true,
             props: {
               placeholder: "请输入电话",

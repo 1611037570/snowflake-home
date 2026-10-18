@@ -39,8 +39,6 @@ const { theme: { themeColor } } = useResumePreviewContext();
 .frame-profile-user {
   --resume-user-name-size: 42px; /* 姓名字号 */
   --resume-user-name-line-height: 1.1; /* 姓名行高 */
-  --resume-user-avatar-width: 118px; /* 头像宽度 */
-  --resume-user-avatar-height: 118px; /* 头像高度 */
   --resume-user-contact-gap: 6px 12px; /* 资料行距与列间距 */
   --resume-user-contact-item-column-gap: 10px; /* 图标与数值之间的间距 */
 }

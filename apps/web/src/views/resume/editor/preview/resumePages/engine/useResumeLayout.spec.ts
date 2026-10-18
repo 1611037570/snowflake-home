@@ -1,7 +1,7 @@
 import { computed, ref } from "vue";
 import { describe, expect, it, vi } from "vitest";
 import { useResumeLayout } from "./useResumeLayout";
-import type { ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
+import { DEFAULT_THEME_DECISIONS, type ThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 import type { LayoutNode } from "./types";
 import type { MeasuredNode } from "./measure/types";
 
@@ -49,8 +49,8 @@ describe("双栏模块顺序同步", () => {
       }))), // 原始表单模块配置
       ui: computed(() => ui.value), // 响应式布局配置
       themeDecisions: computed<ThemeDecisions>(() => ({
+        ...DEFAULT_THEME_DECISIONS,
         layoutType: type as ThemeDecisions["layoutType"], // 主题固定版式
-        pageBorder: { width: 0 /* 边框宽度 */, color: "#e9edf0" /* 边框颜色 */ },
       })), // 独立主题外观
       showPageNumber: computed(() => false), // 不显示页码
       fontReadyVersion: ref(0), // 固定字体版本

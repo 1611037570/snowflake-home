@@ -1,4 +1,10 @@
 import { allConfig, DEFAULT_CONFIG, DEFAULT_USER_FORM } from "../config/formConfig";
+import {
+  addFieldData,
+  createDataPathContext,
+  type DataPathContext,
+  type FormField,
+} from "@/components/business/dynamicForm/api";
 import { createUserCustomField, isUserCustomFieldKey } from "./useUserCustomField";
 import { applyUserSubtitleOrder } from "./useUserSubtitle";
 import { localizeResumeConfig } from "./useResumeEditorLocale";
@@ -20,6 +26,22 @@ export function getModuleTemplate(key: string) {
   if (key === "user") return DEFAULT_USER_FORM[0];
   if (key.startsWith("custom_")) return allConfig.custom;
   return (allConfig as Record<string, any>)[key];
+}
+
+// 空白简历按表单声明初始化默认添加字段，不维护独立的字段名清单
+export function initializeDefaultAddedFields(data: Record<string, any>) {
+  const initializeFields = (fields: FormField[], context?: DataPathContext) => {
+    fields.forEach((field) => {
+      const currentContext =
+        field.type === "group" && field.context?.length
+          ? createDataPathContext(field.context, context)
+          : context;
+      if (field.addable && field.defaultAdded) addFieldData(data, field, currentContext);
+      if (field.type === "group") initializeFields(field.fields, currentContext);
+    });
+  };
+
+  initializeFields(DEFAULT_USER_FORM as FormField[]);
 }
 
 // 简历模块顺序展开为可渲染的完整表单定义

@@ -55,6 +55,7 @@ const ui = {
 | `regions.<槽位>.columns` | 按左栏、右栏语义声明栏内左右装饰空间，仅双栏应用 |
 | `regions.<槽位>.joinsPrevious` | 当前区域紧贴前一区域，关闭该区域边界的模块间距；栏内模块间距不变 |
 | `regions.user.fillsPageTop` | 个人信息背景覆盖纸张顶边，公共布局仍注入用户页边距 |
+| `avatarSize.width` / `avatarSize.height` | 主题默认头像宽高，控制面板与公共头像组件读取同一声明 |
 | `ui.theme.userTemplate` | 个人信息组件编号；`auto` 或不声明时按版式使用公共组件，未知组件报错；分片能力由组件清单提供 |
 | `usesDateRail` | 固定日期栏能力，条目与设置限制读取同一声明 |
 | `restrictions` | 用户设置限制及原因，集中维护 |
@@ -132,16 +133,16 @@ grep -rn "titleTemplate: \"<标题样式编号>\"" src/domain/resume/theme/style
 - 结构排布：字段顺序或栏内分组与公共组件不同，例如姓名独占左半栏、资料与头像同侧堆叠、自带成块的页眉装饰底板。
 - 字段行为：公共组件没有的取值或占位逻辑，例如无头像时用姓名首字生成肖像。
 
-姓名与头像的尺寸、行高、圆角、描边、颜色都不构成定制理由，改由主题变量下发，变量的默认值就是公共观感：
+姓名与头像的尺寸、行高、圆角、描边、颜色都不构成定制理由；头像宽高由 `decisions.avatarSize` 声明，其余外观由主题变量下发：
 
 | 变量组 | 中文含义 | 消费组件 |
 | --- | --- | --- |
 | `--resume-user-name-size` / `-line-height` / `-spacing` / `-color` / `-family` / `-weight` / `-shadow` | 姓名字号、行高、字距、颜色、字体族、字重、文字阴影 | `userName.vue` |
 | `--resume-user-subtitle-size` / `-weight` / `-family` / `-spacing` / `-color` / `-background` / `-padding` / `-shadow` | 副标题字号、字重、字体族、字距、文字色、底纹色、底纹内留白、文字阴影 | `userSubtitle.vue` |
-| `--resume-user-avatar-width` / `-height` / `-max-width` / `-radius` / `-fit` / `-position` / `-border` / `-shadow` | 头像宽、高、最大宽、圆角、填充方式、裁切位置、描边、外圈阴影 | `userAvatar.vue` |
+| `--resume-user-avatar-max-width` / `-radius` / `-fit` / `-position` / `-border` / `-shadow` | 头像最大宽度、圆角、填充方式、裁切位置、描边、外圈阴影；宽高由 `decisions.avatarSize` 声明 | `userAvatar.vue` |
 | `--resume-user-contact-gap` / `-align` / `--resume-user-contact-item-column-gap` / `--resume-user-contact-label-color` / `--resume-user-icon-color` | 资料行列间距、资料文本对齐、单项标签与数值间距、标签配色、图标配色 | `userContact.vue`、`userContactItem.vue` |
 
-变量声明位置取职责更近的一处：个人信息通栏主题放 `regionContainer/themes/user/<主题编号>.vue`；个人信息排在栏内的双栏主题放已有的 `regionContainer/themes/main/<主题编号>.vue`，区域根元素上的变量会继续传进栏内；只在某个自建排布内生效的放该内容组件根节点。禁止用 `:deep(公共组件内部类名)` 改尺寸与配色，公共组件的类名不是契约；也禁止把 `box-shadow`、`font-family`、`text-shadow` 直接写在传给公共组件根节点的类上，这类写法与组件内部的变量默认值同特异性，生效结果取决于声明顺序，一律改用变量。`userContainer/themes` 现只保留带自身装饰（底色块、页眉底线、区域细线）的外壳，姓名、副标题、头像与资料一律走变量。核对哪些主题仍自建个人信息组件，以及主题侧是否残留穿透写法：
+变量声明位置取职责更近的一处：个人信息通栏主题放 `regionContainer/themes/user/<主题编号>.vue`；个人信息排在栏内的双栏主题放已有的 `regionContainer/themes/main/<主题编号>.vue`，区域根元素上的变量会继续传进栏内；只在某个自建排布内生效的放该内容组件根节点。禁止用 `:deep(公共组件内部类名)` 改尺寸与配色，公共组件的类名不是契约；也禁止把 `box-shadow`、`font-family`、`text-shadow` 直接写在传给公共组件根节点的类上，这类写法与组件内部的变量默认值同特异性，生效结果取决于声明顺序，一律改用变量。`userContainer/themes` 现只保留带自身装饰（底色块、页眉底线、区域细线）的外壳，头像宽高走固定声明，姓名、副标题、头像其余外观与资料走变量。核对哪些主题仍自建个人信息组件，以及主题侧是否残留穿透写法：
 
 ```bash
 # 在 apps/web 下执行，逐个对照上面的三类差异，尺寸配色类应改为公共组件加变量

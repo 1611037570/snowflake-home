@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "彩点便签", // 主题显示名称
@@ -6,6 +7,7 @@ export default {
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "姓名便签、求职方向与资料通栏置顶，点阵纸纹和蓝绿分栏标题组成活泼的双栏简历。", // 主题说明
   decisions: { // 固定版式与装饰能力
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     layoutType: "topUserTwoColumn", // 个人信息通栏置顶，正文左右双栏
   },
   ui: { // 用户可调参数的主题默认值

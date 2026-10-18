@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "砚青留白", // 主题显示名称
@@ -6,6 +7,7 @@ export default {
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "暖白纸张、右上细圆弧与大幅留白，衬线文字和细底线组织双栏内容。", // 主题说明
   decisions: { // 主题固定版式
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     layoutType: "topUserTwoColumn", // 个人信息通栏、正文双栏
   },
   ui: { // 主题默认界面配置

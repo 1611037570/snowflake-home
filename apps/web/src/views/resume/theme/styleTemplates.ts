@@ -1,6 +1,7 @@
 import { getResumeThemeTemplate, resumeThemeRegistry, themeTemplateList } from "@/domain/resume/theme/styles";
 import { resolveThemeDecisions } from "@/domain/resume/theme/themeDecisions";
 import { layoutUsesColumns, resolveLayoutColumns } from "@/domain/resume/theme/layouts";
+import type { ResumeAvatarAppearance } from "@/domain/resume/theme/avatar";
 import type { ResumeUi } from "@/domain/resume/theme/uiTypes";
 import { toRaw } from "vue";
 
@@ -20,7 +21,7 @@ export const resumeStyleTemplateList: ResumeStyleTemplate[] = themeTemplateList.
 }));
 
 // 编辑器切换与模板库新建共用主题预设展开，避免两处分别计算栏位。
-export const createResumeStyleUi = (preset: ResumeUi, moduleKeys: string[], language?: string, currentSkillTemplate?: string, currentHonorLayout?: ResumeUi["honor"]["layout"]): ResumeUi => {
+export const createResumeStyleUi = (preset: ResumeUi, moduleKeys: string[], language?: string, currentSkillTemplate?: string, currentHonorLayout?: ResumeUi["honor"]["layout"], currentAvatar?: Partial<ResumeAvatarAppearance>): ResumeUi => {
   // 模板卡片经响应式列表传入时，先取原始预设再克隆。
   const ui = structuredClone(toRaw(preset));
   if (language !== undefined) ui.content.language = language;
@@ -32,6 +33,8 @@ export const createResumeStyleUi = (preset: ResumeUi, moduleKeys: string[], lang
   if (currentHonorLayout && !resumeThemeRegistry[ui.theme.template]?.ui.honor?.layout) {
     ui.honor.layout = currentHonorLayout;
   }
+  // 切换主题时保留头像用户覆盖，空宽度仍会读取新主题的默认尺寸
+  if (currentAvatar) ui.user.avatar = { ...ui.user.avatar, ...toRaw(currentAvatar) };
   const { layoutType } = resolveThemeDecisions(ui.theme.template);
   ui.layout.columns = layoutUsesColumns(layoutType)
     ? resolveLayoutColumns(layoutType, moduleKeys, ui.layout.columns)

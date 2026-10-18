@@ -9,8 +9,6 @@ const appearanceStyle = computed(() => ({
   "--resume-user-name-size": "31px", // 窄栏姓名字号
   "--resume-user-name-line-height": "1.2", // 姓名行高
   "--resume-user-name-color": "#513D2D", // 姓名使用深棕色
-  "--resume-user-avatar-width": "108px", // 头像宽度
-  "--resume-user-avatar-height": "108px", // 头像高度
   "--resume-user-avatar-radius": "50%", // 头像使用圆形裁切
   "--resume-user-avatar-border": "3px solid #FFFFFF", // 头像与资料栏底色分离
   "--resume-user-contact-label-color": "#765942", // 联系方式标签颜色

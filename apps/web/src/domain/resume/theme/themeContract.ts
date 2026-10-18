@@ -30,6 +30,10 @@ export interface ThemeContentContract {
 /** 固定能力集中声明，外观组件不得重新决定公共尺寸。 */
 export interface ThemeCapabilities {
   regions?: Partial<Record<RegionSlotId, ThemeRegionContract>>; // 区域与栏装饰尺寸
+  avatarSize?: { // 主题默认头像尺寸
+    width: number; // 主题默认头像宽度，单位像素
+    height: number; // 主题默认头像高度，单位像素
+  };
   usesDateRail?: boolean; // 经历条目是否使用固定日期栏
   restrictions?: ThemeRestrictions; // 用户设置限制
   topDecoration?: string; // 首页顶部独立装饰组件编号，高度由真实测量得到
@@ -49,6 +53,10 @@ export const validateThemeCapabilities = (capabilities: ThemeCapabilities): stri
   const check = (value: unknown, field: string) => {
     if (typeof value !== "number" || !Number.isFinite(value) || value < 0) errors.push(field);
   };
+  // 头像宽高必须为正数，避免主题默认尺寸无法参与比例计算
+  const checkPositive = (value: unknown, field: string) => {
+    if (typeof value !== "number" || !Number.isFinite(value) || value <= 0) errors.push(field);
+  };
   if (capabilities.regions !== undefined && !isObject(capabilities.regions)) errors.push("regions");
   for (const [slot, region] of Object.entries(isObject(capabilities.regions) ? capabilities.regions! : {})) {
     if (!["slogan", "user", "main"].includes(slot)) errors.push(`regions.${slot}`);
@@ -58,6 +66,11 @@ export const validateThemeCapabilities = (capabilities: ThemeCapabilities): stri
     if (region.columnDecoration !== undefined && typeof region.columnDecoration !== "boolean") errors.push(`regions.${slot}.columnDecoration`);
     if (region.inset !== undefined && !isObject(region.inset)) errors.push(`regions.${slot}.inset`);
     if (isObject(region.inset)) for (const side of ["top", "right", "bottom", "left"] as const) check(region.inset![side], `regions.${slot}.inset.${side}`);
+  }
+  if (capabilities.avatarSize !== undefined && !isObject(capabilities.avatarSize)) errors.push("avatarSize");
+  if (isObject(capabilities.avatarSize)) {
+    checkPositive(capabilities.avatarSize!.width, "avatarSize.width");
+    checkPositive(capabilities.avatarSize!.height, "avatarSize.height");
   }
   if (capabilities.usesDateRail !== undefined && typeof capabilities.usesDateRail !== "boolean") errors.push("usesDateRail");
   if (capabilities.topDecoration !== undefined && (typeof capabilities.topDecoration !== "string" || !capabilities.topDecoration.trim())) errors.push("topDecoration");

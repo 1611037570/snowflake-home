@@ -6,8 +6,6 @@ const { theme: { themeColor } } = useResumePreviewContext();
 // 侧栏底色覆盖纸张边缘，内容仍使用统一正文容器的留白与分页尺寸。
 const sidebarStyle = computed(() => ({
   "--sand-accent": themeColor.value, // 装饰与文字使用的主题色
-  "--resume-user-avatar-width": "84px", // 头像宽度
-  "--resume-user-avatar-height": "84px", // 头像高度
   "--resume-user-avatar-radius": "6px", // 头像小圆角
   "--resume-user-avatar-border": "1px solid color-mix(in srgb, var(--sand-accent) 36%, transparent)", // 头像细描边
   "--resume-user-avatar-shadow": "0 3px 9px color-mix(in srgb, var(--sand-accent) 16%, transparent)", // 头像淡投影

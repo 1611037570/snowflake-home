@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from "vue";
+import UserAvatar from "./userAvatar.vue";
 import UserName from "./userName.vue";
 import UserContact from "./userContact.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
@@ -12,12 +13,7 @@ const { isUserFieldHidden } = useUserFieldVisibility();
 
 <template>
   <div class="relative z-1 flex w-full min-w-0 items-end gap-9">
-    <img
-      v-if="!isUserFieldHidden('avatar') && user.avatar"
-      :src="user.avatar"
-      alt=""
-      class="h-[174px] w-[174px] shrink-0 object-contain object-bottom"
-    />
+    <UserAvatar v-if="!isUserFieldHidden('avatar') && user.avatar" class="violet-biography-user__avatar" />
     <div class="flex min-w-0 flex-1 flex-col gap-3 pb-3">
       <span class="text-3xl font-bold">Hello, I'm</span>
       <!-- 姓名、副标题及全部可见资料复用公共组件，不按主题裁剪字段。 -->
@@ -26,3 +22,10 @@ const { isUserFieldHidden } = useUserFieldVisibility();
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.violet-biography-user__avatar {
+  --resume-user-avatar-fit: contain; // 主题默认完整展示头像
+  --resume-user-avatar-position: center bottom; // 主题默认头像贴底
+}
+</style>

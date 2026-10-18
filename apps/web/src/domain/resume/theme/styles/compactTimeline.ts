@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "紧凑年表", // 主题显示名称
@@ -6,6 +7,7 @@ export default {
   design: ["single-column", "timeline", "minimal"], // 单栏、时间轴与简约分类
   description: "紧凑行距与细轴线并排展示日期和经历，适合内容较多的简历。", // 主题说明
   decisions: { // 固定版式与日期栏能力
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     layoutType: "topUserSingleColumn", // 个人信息置顶，正文单栏
     usesDateRail: true, // 经历日期使用公共固定栏
     regions: { // 个人信息与年表之间的装饰留白

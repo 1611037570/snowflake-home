@@ -23,8 +23,6 @@ const { theme: { themeColor } } = useResumePreviewContext();
   --resume-user-name-spacing: 0.08em;
   --resume-user-name-color: #3B2A2A;
   --resume-user-subtitle-color: #744944;
-  --resume-user-avatar-width: 122px;
-  --resume-user-avatar-height: 150px;
   --resume-user-avatar-radius: 0;
   --resume-user-contact-label-color: #744944;
 }

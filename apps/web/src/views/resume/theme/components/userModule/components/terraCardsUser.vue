@@ -20,10 +20,7 @@ const showPortrait = computed(() => !isUserFieldHidden("avatar") && (user.value.
   <!-- 无头像时只使用真实姓名首字，联系方式继续由公共字段组件处理。 -->
   <div class="flex min-h-36 min-w-0 flex-wrap items-center gap-6 p-9">
     <div v-if="showPortrait" class="shrink-0">
-      <UserAvatar
-        v-if="user.avatar"
-        :style="{ width: '96px', height: '96px', borderRadius: '16px' }"
-      />
+      <UserAvatar v-if="user.avatar" class="terra-cards-user__avatar" />
       <div
         v-else
         class="flex h-24 w-24 items-center justify-center rounded-2xl text-2xl"
@@ -38,3 +35,9 @@ const showPortrait = computed(() => !isUserFieldHidden("avatar") && (user.value.
     </div>
   </div>
 </template>
+
+<style lang="scss" scoped>
+.terra-cards-user__avatar {
+  --resume-user-avatar-radius: 16px; // 主题默认头像圆角
+}
+</style>

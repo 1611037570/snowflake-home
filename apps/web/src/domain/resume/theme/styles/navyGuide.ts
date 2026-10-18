@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "蓝线简历", // 主题显示名称
@@ -6,6 +7,7 @@ export default {
   design: ["single-column", "minimal"], // 单栏与简约分类
   description: "深色页眉搭配蓝色纵向引导线，突出个人信息和经历层次。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     regions: { // 区域装饰尺寸
       main: { // 正文区域
         inset: { // 区域四周装饰内边距

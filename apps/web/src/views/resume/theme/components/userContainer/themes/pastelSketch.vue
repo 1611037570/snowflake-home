@@ -17,8 +17,6 @@ const userStyle = computed(() => ({
   "--resume-user-name-line-height": "1.1", // 姓名行高
   "--resume-user-name-family": '"KaiTi", "STKaiti", "Kaiti SC", serif', // 姓名楷体
   "--resume-user-subtitle-family": '"KaiTi", "STKaiti", "Kaiti SC", serif', // 副标题同为楷体，正文与联系方式仍用通用字体
-  "--resume-user-avatar-width": "120px", // 头像宽度
-  "--resume-user-avatar-height": "120px", // 头像高度
   "--resume-user-avatar-radius": "9999px", // 头像取圆形
   "--resume-user-avatar-border": "4px solid white", // 头像白色内圈
   "--resume-user-avatar-shadow": `0 0 0 2px ${themeColorLine.value}, 0 12px 24px rgba(91, 69, 84, 0.12)`, // 头像外圈与柔和投影

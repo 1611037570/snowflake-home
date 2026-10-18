@@ -13,6 +13,7 @@ import { createResumeLifecycle } from "./resumeLifecycle";
 import { createResumeEditor } from "./resumeEditor";
 import { createResumeHistory } from "./resumeHistory";
 import { createResumeRuntime } from "./resumeRuntime";
+import { initializeDefaultAddedFields } from "./hooks/useConfigTemplate";
 import type { ResumeListItem } from "./resumeCatalog";
 import { createResumeListItem } from "./resumeCatalog";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
@@ -159,6 +160,7 @@ export const useResumeStore = defineStore(
       maxTrashCount,
       trashRetentionMs,
       defaultResumeItem: DEFAULT_RESUME_ITEM,
+      initializeBlankResumeData: initializeDefaultAddedFields,
       getResumeStorage,
       removeResumeStorage,
       setConfigModules,

@@ -809,5 +809,17 @@
   "publicationIndexCcfB": "CCF-B",
   "publicationIndexPkuCore": "北大核心",
   "publicationIndexRepresentative": "代表作",
-  "resumeExampleTitle_publication": "论文发表范例"
+  "resumeExampleTitle_publication": "论文发表范例",
+  "followTheme": "跟随主题",
+  "avatarSettings": "头像设置",
+  "avatarPreset": "头像预设",
+  "oneInchPhoto": "一寸照",
+  "avatarRatio": "头像比例",
+  "customRatio": "自定义",
+  "avatarShape": "头像形状",
+  "squareAvatar": "直角",
+  "roundedAvatar": "圆角",
+  "circleAvatar": "圆形",
+  "avatarSize": "头像大小",
+  "avatarRadius": "头像圆角"
 }

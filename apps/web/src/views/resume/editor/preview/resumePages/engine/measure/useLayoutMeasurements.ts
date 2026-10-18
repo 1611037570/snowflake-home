@@ -52,6 +52,7 @@ const resolveWatchSignature = (source: Record<string, any>): string => {
     source?.user?.infoMode,
     source?.user?.infoLayout,
     source?.user?.avatarPosition,
+    JSON.stringify(source?.user?.avatar || null), // 头像尺寸、比例和形状会改变个人信息区域高度
     source?.user?.infoPosition,
     JSON.stringify(source?.themeDecisions?.regions || null), // 所有区域与栏几何共用完整声明，不遗漏其他槽位
     source?.themeDecisions?.topDecoration, // 独立装饰切换重新测量

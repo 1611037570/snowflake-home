@@ -33,19 +33,6 @@ export const ALL_MODULE = {
 };
 // 自定义模块图标：名称由用户输入动态生成，仅图标在此统一维护
 export const CUSTOM_MODULE_ICON = "mdi:puzzle-outline";
-// 空白简历预置的推荐可添加个人信息：只影响从 0 创建，不改变模板与导入数据
-export const DEFAULT_BLANK_USER_FIELDS = {
-  // 年龄（出生日期）
-  birthday: "",
-  // 性别
-  sex: "",
-  // 求职岗位
-  position: "",
-  // 参加工作时间
-  workTime: "",
-  // 电话
-  phone: "",
-};
 // 默认简历项
 export const DEFAULT_RESUME_ITEM = {
   // 简历ID

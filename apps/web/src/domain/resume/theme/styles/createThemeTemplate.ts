@@ -85,7 +85,11 @@ export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeT
       columns: ui.layout?.columns ?? DEFAULT_UI.layout.columns,
       leftColumnWidth: ui.layout?.leftColumnWidth ?? DEFAULT_UI.layout.leftColumnWidth,
     },
-    user: { ...DEFAULT_UI.user, ...ui.user },
+    user: {
+      ...DEFAULT_UI.user,
+      ...ui.user,
+      avatar: { ...DEFAULT_UI.user.avatar, ...ui.user?.avatar }, // 头像外观按字段合并，主题可只覆盖其中一项
+    },
     skill: { ...DEFAULT_UI.skill, ...ui.skill },
     honor: { ...DEFAULT_UI.honor, ...ui.honor }, // 荣誉布局沿用主题或默认展示方式。
   };

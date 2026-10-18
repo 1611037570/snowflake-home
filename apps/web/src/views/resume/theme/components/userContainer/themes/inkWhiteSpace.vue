@@ -18,8 +18,6 @@ const userStyle = {
   "--resume-user-subtitle-spacing": "0.36em", // 副标题字距
   "--resume-user-subtitle-color": "#6F8983", // 副标题颜色
   "--resume-user-contact-label-color": "#8AA49D", // 资料标签颜色
-  "--resume-user-avatar-width": "84px", // 头像宽度
-  "--resume-user-avatar-height": "84px", // 头像高度
   "--resume-user-avatar-radius": "50%", // 头像圆形裁切
 };
 </script>

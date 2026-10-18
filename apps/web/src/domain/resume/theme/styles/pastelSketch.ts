@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "柔彩画纸", // 主题显示名称
@@ -6,6 +7,7 @@ export default {
   design: ["single-column", "premium"], // 单栏与臻品分类
   description: "奶油色画纸与柔彩光晕衬托个人信息，粉彩虚线引导正文标题。", // 主题说明
   decisions: { // 主题固定版式
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     layoutType: "topUserSingleColumn", // 个人信息与正文保持公共单栏布局
   },
   ui: { // 主题默认界面配置

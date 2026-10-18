@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "暖陶卡片", // 主题显示名称
@@ -6,6 +7,7 @@ export default {
   design: ["two-column", "premium"], // 双栏与臻品分类
   description: "暖米色个人信息卡与双栏正文卡片，陶色标题和细线组织内容。", // 主题说明
   decisions: { // 主题固定版式与个人信息内容
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     layoutType: "topUserTwoColumn", // 个人信息通栏、正文双栏，栏间只使用公共间距
   },
   ui: { // 主题默认界面配置

@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   /** 主题展示名称 */
@@ -11,6 +12,7 @@ export default {
   description: "通栏弧形页眉搭配居中圆形头像，姓名与联系方式居中排列。",
   /** 主题外观设置 */
   decisions: { // 主题固定外观，不进入用户界面配置
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     regions: { // 区域装饰尺寸
       user: { // 个人信息区域
         fillsPageTop: true, // 背景覆盖纸张顶边

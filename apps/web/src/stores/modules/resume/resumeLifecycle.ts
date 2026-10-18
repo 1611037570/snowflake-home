@@ -1,7 +1,6 @@
 import { getUUID } from "@/utils";
 import { merge } from "lodash-es";
 import { compactResumeUi, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
-import { DEFAULT_BLANK_USER_FIELDS } from "./config/defaultConfig";
 import {
   createResumeListItem,
   removeAiChatSummaries,
@@ -22,6 +21,7 @@ type ResumeLifecycleOptions = {
   maxTrashCount: number;
   trashRetentionMs: number;
   defaultResumeItem: any;
+  initializeBlankResumeData: (data: Record<string, any>) => void;
   getResumeStorage: (id: string, initialValue?: any, writeDefaults?: boolean) => any;
   removeResumeStorage: (id: string) => Promise<void>;
   setConfigModules: (item: any, modules: any[]) => void;
@@ -45,6 +45,7 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
     maxTrashCount,
     trashRetentionMs,
     defaultResumeItem,
+    initializeBlankResumeData,
     getResumeStorage,
     removeResumeStorage,
     setConfigModules,
@@ -60,17 +61,8 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
   const mergeResumeItem = (item: any) => merge(structuredClone(defaultResumeItem), item);
   const createBlankResumeItem = () => {
     const resume = structuredClone(defaultResumeItem);
-    // 空白简历预置推荐的可添加个人信息，创建后直接显示在更多区域
-    resume.data = {
-      ...(resume.data ?? {}),
-      user: {
-        ...(resume.data?.user ?? {}),
-        data: {
-          ...(resume.data?.user?.data ?? {}),
-          ...structuredClone(DEFAULT_BLANK_USER_FIELDS),
-        },
-      },
-    };
+    // 空白简历仅在首次创建时按表单声明初始化默认添加字段
+    initializeBlankResumeData(resume.data);
     return resume;
   };
   const addResume = (config: any, jump = true, select = true) => {

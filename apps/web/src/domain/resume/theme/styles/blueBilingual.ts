@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "蓝色双语", // 主题显示名称
@@ -6,6 +7,7 @@ export default {
   design: ["single-column", "minimal"], // 单栏与简约分类
   description: "通栏蓝色个人信息页眉，正文使用中英双语横带标题。", // 主题说明
   decisions: { // 主题固定版式
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     layoutType: "topUserSingleColumn", // 个人信息置顶、正文单栏
     regions: { // 区域装饰尺寸
       user: { // 个人信息区域

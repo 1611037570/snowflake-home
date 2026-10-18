@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "紫色履历", // 主题显示名称
@@ -10,6 +11,7 @@ export default {
     openBottomBorder: true, // 正文容器自带圆角，预览只保留顶部与两侧轮廓线
   },
   decisions: { // 主题固定外观，不进入用户界面配置
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     regions: { // 区域装饰尺寸
       main: { // 正文区域
         columnDecoration: true, // 栏间分隔线占据中缝，留白保留在栏内

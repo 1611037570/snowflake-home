@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "蓝色资料横带", // 主题显示名称
@@ -6,6 +7,7 @@ export default {
   design: ["single-column", "minimal", "recommended"], // 正文单栏且标题只输出一次，保留简约并加入推荐。
   description: "横向头像资料区搭配蓝色胶囊标题和浅蓝横带。", // 主题说明
   decisions: { // 主题固定版式
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     layoutType: "topUserSingleColumn", // 个人信息置顶、正文单栏
   },
   ui: { // 主题默认界面参数

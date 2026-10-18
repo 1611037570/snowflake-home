@@ -56,8 +56,6 @@ const { theme: { themeColor } } = useResumePreviewContext();
 }
 /* 头像裁成圆形并套上白蓝双层便签边框，压在黄色圆点底衬上。 */
 .color-dot-notes-user__avatar {
-  --resume-user-avatar-width: 96px;
-  --resume-user-avatar-height: 96px;
   --resume-user-avatar-radius: 9999px;
   --resume-user-avatar-shadow: 0 0 0 4px #ffffff, 0 0 0 7px var(--color-dot-notes-accent);
 }

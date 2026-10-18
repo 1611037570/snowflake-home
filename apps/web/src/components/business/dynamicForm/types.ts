@@ -96,6 +96,8 @@ interface BaseFormField {
   name?: string;
   /** 是否可由用户按需添加：开启后数据路径存在才渲染 */
   addable?: boolean;
+  /** 空白简历创建时默认添加该可添加字段；仅用于新建初始化 */
+  defaultAdded?: boolean;
   /** 表单控制配置（与 model/props 同级）：由动态表单处理 removed、hidden */
   checks?: FieldChecks;
   /** 是否可拖拽 */

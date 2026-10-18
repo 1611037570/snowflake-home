@@ -13,8 +13,6 @@ const appearanceStyle = computed(() => ({
   "--resume-user-subtitle-size": "15px", // 副标题字号
   "--resume-user-subtitle-spacing": "0.22em", // 副标题字距
   "--resume-user-subtitle-color": "#F4F1FF", // 副标题文字颜色
-  "--resume-user-avatar-width": "108px", // 头像宽度
-  "--resume-user-avatar-height": "108px", // 头像高度
   "--resume-user-avatar-radius": "50%", // 头像使用圆形裁切
   "--resume-user-avatar-border": "3px solid #FFFFFF", // 头像与背景分离
 }));

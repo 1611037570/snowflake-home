@@ -21,8 +21,6 @@ const { theme: { themeColor } } = useResumePreviewContext();
   --resume-user-name-spacing: 0.08em;
   --resume-user-name-color: var(--mono-editorial-accent);
   --resume-user-name-family: Georgia, "Times New Roman", serif;
-  --resume-user-avatar-width: 100px;
-  --resume-user-avatar-height: 128px;
   --resume-user-avatar-radius: 0;
   --resume-user-subtitle-color: #555555;
   --resume-user-contact-label-color: #666666;

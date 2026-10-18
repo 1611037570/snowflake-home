@@ -1,4 +1,5 @@
 import type { ThemeTemplateConfig } from "@/domain/resume/theme/styles/createThemeTemplate";
+import { DEFAULT_SQUARE_AVATAR_SIZE } from "@/domain/resume/theme/avatar";
 
 export default {
   name: "米色侧栏", // 主题显示名称
@@ -6,6 +7,7 @@ export default {
   design: ["two-column", "minimal"], // 模板分类：双栏、简约
   description: "米色侧栏搭配金棕色短线标题，简洁展示个人信息与经历。", // 主题说明
   decisions: { // 主题固定外观，不进入用户界面配置
+    avatarSize: DEFAULT_SQUARE_AVATAR_SIZE, // 主题默认使用统一正方形头像尺寸
     regions: { main: { columnDecoration: true } }, // 栏间装饰占据中缝，留白保留在栏内
     layoutType: "twoColumn", // 个人信息位于左栏的双栏布局
   },

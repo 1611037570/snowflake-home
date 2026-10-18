@@ -12,6 +12,7 @@ import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
 import SkillDropdown from "./skillDropdown.vue";
 import HonorDropdown from "./honorDropdown.vue";
+import AvatarDropdown from "./avatarDropdown.vue";
 import { $t } from "@/locales";
 const { proxy } = getCurrentInstance();
 
@@ -126,7 +127,10 @@ function handleAdd() {
             />
             <!-- 隐藏模块时为标题添加删除线标识 -->
             <EditableTitle v-model="title" :strike-through="hidden">
-              <template v-if="currentForm.key === 'skill'" #actions>
+              <template v-if="currentForm.key === 'user'" #actions>
+                <AvatarDropdown />
+              </template>
+              <template v-else-if="currentForm.key === 'skill'" #actions>
                 <SkillDropdown />
               </template>
               <!-- 荣誉证书提供文本描述、标签、笔记风、清单和详情卡片布局。 -->

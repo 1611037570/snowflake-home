@@ -116,9 +116,14 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
   const openPicker = () => open({ accept: "image/*" });
 
   // 确认裁切：内部取裁切画布并压缩为完整图片 Data URL
-  const confirmCrop = async (cropper: any) => {
+  const confirmCrop = async (
+    cropper: any,
+    outputSize?: { width: number; height: number },
+  ) => {
     if (!cropper) return;
-    if (!outputWidth || !outputHeight) {
+    const targetWidth = outputSize?.width ?? outputWidth;
+    const targetHeight = outputSize?.height ?? outputHeight;
+    if (!targetWidth || !targetHeight) {
       console.error("裁切模式需要提供 outputWidth 与 outputHeight");
       return;
     }
@@ -127,7 +132,7 @@ export function useImageUpload(options: UseImageUploadOptions = {}) {
         imageSmoothingEnabled: true,
         imageSmoothingQuality: "high",
       });
-      const { src } = await compressWebp(canvas, outputWidth, outputHeight, quality);
+      const { src } = await compressWebp(canvas, targetWidth, targetHeight, quality);
       onResult?.(src);
     } finally {
       closeCrop();

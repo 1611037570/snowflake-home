@@ -16,8 +16,6 @@ const { theme: { themeColor } } = useResumePreviewContext();
   --resume-user-name-size: 40px;
   --resume-user-name-line-height: 1.1;
   --resume-user-name-color: color-mix(in srgb, var(--compact-user-color) 78%, black);
-  --resume-user-avatar-width: 100px;
-  --resume-user-avatar-height: 100px;
   --resume-user-avatar-radius: 50%;
   --resume-user-subtitle-color: var(--compact-user-color);
 }

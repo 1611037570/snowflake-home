@@ -9,8 +9,6 @@ const {
 const appearanceStyle = computed(() => ({
   "--resume-user-name-size": "38px", // 姓名字号
   "--resume-user-name-line-height": "1.15", // 姓名行高倍数
-  "--resume-user-avatar-width": "120px", // 头像宽度
-  "--resume-user-avatar-height": "160px", // 头像高度
   "--resume-user-avatar-radius": "0", // 头像不收圆角
   "--resume-user-avatar-border": "6px solid #E8F4F8", // 头像浅色描边
   "--resume-user-subtitle-background": themeColorSoft.value, // 副标题底纹色

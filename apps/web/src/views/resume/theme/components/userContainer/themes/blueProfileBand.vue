@@ -16,7 +16,7 @@ const { theme: { fontValue, lineHeightValue, themeColor } } = useResumePreviewCo
     :class="moduleClass"
     :data-module="moduleKey"
     :data-theme="themeId"
-    :style="[fontValue(), lineHeightValue(), { '--resume-user-name-size': '40px', '--resume-user-name-color': themeColor, '--resume-user-avatar-width': '132px', '--resume-user-avatar-height': '132px', '--resume-user-avatar-radius': '0' }]"
+    :style="[fontValue(), lineHeightValue(), { '--resume-user-name-size': '40px', '--resume-user-name-color': themeColor, '--resume-user-avatar-radius': '0' }]"
   >
     <slot name="actions" />
     <slot />

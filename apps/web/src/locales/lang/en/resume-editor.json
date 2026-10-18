@@ -809,5 +809,17 @@
   "publicationIndexCcfB": "CCF-B",
   "publicationIndexPkuCore": "PKU Core",
   "publicationIndexRepresentative": "Representative Work",
-  "resumeExampleTitle_publication": "Publication Examples"
+  "resumeExampleTitle_publication": "Publication Examples",
+  "followTheme": "Follow Theme",
+  "avatarSettings": "Avatar Settings",
+  "avatarPreset": "Avatar Preset",
+  "oneInchPhoto": "One-inch Photo",
+  "avatarRatio": "Avatar Ratio",
+  "customRatio": "Custom",
+  "avatarShape": "Avatar Shape",
+  "squareAvatar": "Square",
+  "roundedAvatar": "Rounded",
+  "circleAvatar": "Circle",
+  "avatarSize": "Avatar Size",
+  "avatarRadius": "Avatar Radius"
 }

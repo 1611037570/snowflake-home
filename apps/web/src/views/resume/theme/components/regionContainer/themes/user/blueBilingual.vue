@@ -8,8 +8,6 @@ const appearanceStyle = computed(() => ({
   backgroundColor: themeColor.value, // 页眉底色
   "--resume-user-name-size": "40px", // 姓名字号
   "--resume-user-name-color": "#FFFFFF", // 姓名白色，贴合蓝色页眉
-  "--resume-user-avatar-width": "132px", // 头像宽度
-  "--resume-user-avatar-height": "132px", // 头像高度
   "--resume-user-avatar-radius": "0", // 头像直角，对应页眉左侧照片区
 }));
 </script>
