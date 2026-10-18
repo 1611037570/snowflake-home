@@ -74,8 +74,8 @@ async function bootstrap() {
     .build()
   const document = SwaggerModule.createDocument(app, swaggerConfig)
   SwaggerModule.setup('docs', app, document)
-  // 监听所有网卡，允许外部访问
-  await app.listen(config.app.port, '0.0.0.0')
+  // 只监听本机回环地址，避免服务直接暴露到局域网
+  await app.listen(config.app.port, '127.0.0.1')
   // 打印日志
   console.log(`✅ ${config.app.name}启动成功`)
   console.log(`🔗 服务地址: http://localhost:${config.app.port}`)

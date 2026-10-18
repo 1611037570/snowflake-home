@@ -13,7 +13,7 @@ const togglePrintMode = () => {
 </script>
 
 <template>
-  <!-- 工具栏入口：图标尺寸与其它入口一致 -->
+  <!-- 即时切换只用选中态反馈，避免与耗时操作的加载状态混淆。 -->
   <SfTooltip :content="system.printMode ? $t('printColorMode') : $t('printGrayMode')">
     <SfIcon
       :icon="
@@ -26,7 +26,7 @@ const togglePrintMode = () => {
       class="rounded-full"
       :class="
         system.printMode
-          ? 'text-sf-text-2 hover:bg-sf-warning-2 hover:text-sf-warning'
+          ? 'bg-sf-theme-2 text-sf-theme hover:bg-sf-theme-2'
           : 'text-sf-warning hover:bg-sf-warning-2'
       "
       @click="togglePrintMode"

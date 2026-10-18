@@ -9,7 +9,7 @@ import eventBus from "@/utils/modules/eventBus";
 const emit = defineEmits(["fullscreen"]);
 
 const resumeStore = useResumeStore();
-const { system, selectedModule } = storeToRefs(resumeStore);
+const { system, selectedModule, isFittingOnePage } = storeToRefs(resumeStore);
 // 下拉容器提供的关闭方法：执行操作后收起面板
 const closeDropdown = inject("sfDropdownClose", null);
 
@@ -42,11 +42,16 @@ const clearSelection = () => runAction(() => resumeStore.clearSelectedModules())
       <div class="flex w-44 flex-col gap-1 rounded-3xl border border-sf-b bg-sf-primary p-1.5">
         <button
           type="button"
-          class="flex h-9 w-full cursor-pointer items-center gap-3 rounded-full px-3 text-[13px] text-sf-text-2 transition-colors hover:bg-sf-bg"
+          class="flex h-9 w-full cursor-pointer items-center gap-3 rounded-full px-3 text-[13px] text-sf-text-2 transition-colors hover:bg-sf-bg disabled:cursor-wait disabled:text-sf-theme"
+          :disabled="isFittingOnePage"
+          :aria-busy="isFittingOnePage"
           @click="fitOnePage"
         >
-          <SfIcon icon="mdi:file-document-outline" size="4" />
-          <span>{{ $t("smartOnePage") }}</span>
+          <SfIcon
+            :icon="isFittingOnePage ? 'line-md:loading-twotone-loop' : 'mdi:file-document-outline'"
+            size="4"
+          />
+          <span>{{ isFittingOnePage ? $t("compressingOnePage") : $t("smartOnePage") }}</span>
         </button>
         <button
           type="button"
@@ -61,7 +66,7 @@ const clearSelection = () => runAction(() => resumeStore.clearSelectedModules())
                 : 'qlementine-icons:light-bulb-on-16'
             "
             size="4"
-            :class="system.printMode ? 'text-sf-text-2' : 'text-sf-warning'"
+            :class="system.printMode ? 'text-sf-theme' : 'text-sf-warning'"
           />
           <span>{{ $t("grayPrintMode") }}</span>
         </button>

@@ -172,10 +172,14 @@ const handleReauthorize = async () => {
     <SfTooltip :content="tooltipContent">
       <div
         class="flex h-9 cursor-pointer items-center gap-1 rounded-full p-3 transition-colors hover:bg-sf-bg-2"
+        :aria-label="backupState.label"
         @click="visible = true"
       >
         <SfIcon :icon="backupState.icon" :class="backupState.class" size="4" />
-        <span class="text-xs" :class="backupState.class">{{ backupState.label }}</span>
+        <!-- 备份成功只保留状态图标，避免与标题旁的“已保存”形成两套成功文案。 -->
+        <span v-if="backupStatus !== 'success'" class="text-xs" :class="backupState.class">
+          {{ backupState.label }}
+        </span>
       </div>
     </SfTooltip>
 

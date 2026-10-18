@@ -46,7 +46,7 @@
   "resumeOnlineWriters": "此时有 {count} 个小伙伴正在和你一起写简历🧑‍🤝‍🧑~",
   "resumeOnline": "在线",
   "resumeCompletion": "完成度",
-  "resumeMissingCount": "缺 {count} 项",
+  "resumeMissingCount": "{count} 处未填写",
   "resumeOptionalSuggest": "建议补充",
   "resumeFormatIssueCount": "{count} 处格式问题",
   "resumeComplete": "已完整",

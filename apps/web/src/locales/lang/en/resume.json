@@ -46,7 +46,7 @@
   "resumeOnlineWriters": "{count} friends are writing resumes with you right now 🧑‍🤝‍🧑~",
   "resumeOnline": "Online",
   "resumeCompletion": "Completion",
-  "resumeMissingCount": "{count} missing",
+  "resumeMissingCount": "{count} unfilled fields",
   "resumeOptionalSuggest": "Optional",
   "resumeFormatIssueCount": "{count} format issues",
   "resumeComplete": "Complete",
