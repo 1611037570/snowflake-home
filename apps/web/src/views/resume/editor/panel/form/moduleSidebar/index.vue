@@ -219,6 +219,13 @@ onUnmounted(() => {
       </SfDropdown>
       <AddModule />
     </div>
+    <!-- 收尾文案：沿用简历首页的同一句寄语，置于模块树最下方；窄屏栏宽只放得下图标，文案隐藏 -->
+    <div
+      class="max-md:hidden shrink-0 border-t border-sf-b px-1 pt-1.5 text-center text-[11px] leading-4 text-sf-text-3"
+    >
+      <div>{{ $t("resumeHomeClosingTitle") }}</div>
+      <div>{{ $t("resumeHomeClosingDescription") }}</div>
+    </div>
   </aside>
 </template>
 
