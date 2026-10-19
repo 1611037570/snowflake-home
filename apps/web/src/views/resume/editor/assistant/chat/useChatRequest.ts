@@ -334,6 +334,13 @@ export const useChatRequest = ({
           if (lastToolName === "propose_resume_edits") {
             try {
               const result = JSON.parse(observation.content);
+              // 打印每次写入的结果与剩余问题：ReAct 观察日志有长度截断，剩余问题在末尾会被裁掉
+              console.log(`[一键调整] 第 ${round} 轮写入结果:`, {
+                applied: result?.applied,
+                changed: result?.changed?.length ?? 0,
+                errors: result?.errors,
+                remainingIssues: result?.remainingIssues,
+              });
               if (result.applied && result.changed?.length) {
                 writeMessages.add(lastMsg);
                 lastMsg.hasWriteChanges = true;
@@ -343,8 +350,9 @@ export const useChatRequest = ({
                   );
                 }
               }
-            } catch {
-              // 无法确认执行结果时不显示撤回入口
+            } catch (error) {
+              // 解析失败时打印原始观察结果，避免静默吞掉导致验收误判无法排查
+              console.warn("[一键调整] 写入观察结果解析失败:", observation.content, error);
             }
           }
           const displayName = TOOL_NAMES[lastToolName] || lastToolName;
@@ -362,6 +370,8 @@ export const useChatRequest = ({
           if (!isCurrentRequest() || !lastMsg) return;
           // 强制写入任务没有收到工具成功结果时作废文本结论，避免展示假成功。
           if (requireResumeWrite && !writeMessages.has(lastMsg)) {
+            // 打印验收失败原因，便于排查最终阶段被判失败的问题
+            console.warn("[一键调整] 验收失败：未识别到成功的简历写入");
             lastMsg.content = "一键调整未能写入简历数据，本次修改说明已作废，请重新执行。";
             lastMsg.requestStatus = "error";
             lastMsg.stepLabel = "";
@@ -373,6 +383,8 @@ export const useChatRequest = ({
           }
           // 一键调整仍有完成度或时间线问题时禁止显示全部完成
           if (requireResumeWrite && remainingRequiredIssues?.length) {
+            // 打印验收失败原因与剩余问题清单，便于排查
+            console.warn("[一键调整] 验收失败：写入后仍有未解决问题", remainingRequiredIssues);
             lastMsg.content = `一键调整已写入部分内容，但仍有以下问题未解决：\n\n${remainingRequiredIssues
               .map((issue) => `- ${issue}`)
               .join("\n")}`;
