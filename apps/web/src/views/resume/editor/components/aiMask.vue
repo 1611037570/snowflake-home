@@ -8,7 +8,7 @@ const props = defineProps({
 <template>
   <div
     v-if="props.visible"
-    class="absolute inset-0 z-50 flex cursor-not-allowed items-center justify-center backdrop-blur-[1.5px]"
+    class="absolute inset-0 z-50 flex cursor-not-allowed items-center justify-center bg-sf-primary/[0.02] backdrop-blur-[0.2px]"
   >
     <div
       class="absolute bottom-12 flex items-center gap-3 rounded-3xl border border-sf-theme-2 bg-sf-primary p-3 text-center"
