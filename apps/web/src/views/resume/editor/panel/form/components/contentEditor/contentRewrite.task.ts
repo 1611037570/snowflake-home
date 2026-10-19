@@ -1,4 +1,5 @@
 import type { ResumeAiMessage, ResumeAiTask } from "@/views/resume/ai/request/types";
+import { RESUME_WRITING_DISCIPLINE, getWritingRule } from "@/views/resume/ai/writingRules";
 import { findResumeModuleSchema } from "@/views/resume/editor/assistant/resumeSchemaRegistry";
 
 // 当前正文支持的操作类型
@@ -12,19 +13,6 @@ const ACTION_INSTRUCTIONS: Record<ContentAiAction, string> = {
   simplify: "精简 currentText，保留关键职责、行动与成果，删去套话与重复；currentText 的条目结构原样保留，列表仍是列表",
 };
 
-// 不同字段类型的写作要求：篇幅与表达重心
-const KIND_RULES: Record<string, string> = {
-  // 一段经历通常有多项职责，按职责分条列举，单条职责才用一段
-  work: "按职责分条：多条职责用无序列表 <ul><li> 逐条列举，每条以动词开头，落到具体动作与结果；只有一条职责时用一段；每条 30~60 字，没有数字时不要编造数字。",
-  project: "按工作内容分条：多项内容用无序列表 <ul><li> 逐条列举，每条以动词开头，说明你的动作与可验证的结果；只有一项内容时用一段；每条 30~60 字，没有数字时不要编造数字。",
-  education: "写 1~2 句、40~100 字，只写主修课程、在校荣誉、排名或项目，不要写学校、专业与学制。",
-  // 技能条目写透技能名、掌握深度与应用场景，排序与禁罗列由系统提示通用条款兜底
-  skill: "用无序列表列举 6~8 条技能，每条写成「技能名称 + 掌握深度 + 应用场景或产出」的完整表述（如「Vue 3：独立负责中后台搭建，沉淀 20 余个通用组件」），每条 20~40 字；record 中未提供的深度与场景用【待补充：内容】占位，不要编造。",
-  advantage: "写 2~3 句、60~120 字，概括与目标岗位匹配的核心竞争力。",
-  publication: "写 2~3 句、60~120 字，说明研究问题、方法与本人承担的工作。",
-  custom: "写 2~3 句、60~160 字，按该模块的事实客观描述，不套用其他模块的写法。",
-};
-
 // 简历展示语言与输出语言名称的对应关系
 export const LANGUAGE_NAMES: Record<string, string> = {
   zh: "中文",
@@ -35,18 +23,6 @@ export const LANGUAGE_NAMES: Record<string, string> = {
   de: "德文",
   es: "西班牙文",
   ru: "俄文",
-};
-
-// 分条列举规则只适用于工作、实习、项目、作品这类经历模块
-const CAR_MODULES = new Set(["work", "internship", "project", "portfolio"]);
-
-// 按操作与模块选择写作规则：生成经历类模块时按职责分条列举，其余沿用字段类型规则
-const getWritingRule = (action: ContentAiAction, kindKey: string, moduleKey: string) => {
-  if (action === "generate" && CAR_MODULES.has(moduleKey)) {
-    // CAR 降为单条内部的句法：每条各自动作+结果，条与条之间用无序列表拆分
-    return "一段经历通常包含多项职责：仅在有业务或项目背景时用一句 <p> 交代背景，不要用公司、职位、时间充当背景；其余职责一律用无序列表 <ul><li> 逐条列举，每条以动词开头，写清负责什么、怎么做的、用了什么技术或方法，并在同一条内给出量化或可验证的结果；每条 30~60 字，条数按 record 中的事实决定，通常 2~5 条；没有数字时不要编造数字；不得把所有职责合并成一段。";
-  }
-  return KIND_RULES[kindKey] || "写 2~3 句、60~160 字，围绕事实客观描述。";
 };
 
 // 生成当前模块的字段说明，避免模型靠字段名猜含义
@@ -84,11 +60,9 @@ const buildSystemPrompt = (
     "【写作要求】",
     "- 按 moduleTitle 判断当前模块的类型，使用对应写法，不要套用其他模块的口径。",
     "- 只使用输入中的事实，不编造单位、职位、技术、时间、数字与成果；缺失时用【待补充：缺失内容】占位。",
-    // 模块标题已说明类别，引导句属于重复啰嗦，与总结句一并禁止
-    "- 简洁书面语，动词开头，不使用第一人称，不写称呼、自我介绍、前言、引导句与总结句。",
-    // 名词罗列与分类堆砌是低级写法的通病，所有模块默认按本条执行，字段类型规则另有要求的从其要求
-    "- 默认每条写到「动作 + 方法或程度 + 结果」的颗粒度，按与 position 的相关度从高到低排列；禁止纯技术名、课程名、奖项名的罗列，也禁止「分类标题：名词、名词」式的堆叠。",
-    "- 不使用「系统学习」「在校期间」「相关知识」这类没有信息量的套话。",
+    "- 简洁书面语，动词开头，不使用第一人称。",
+    // 写作纪律与 AI 助手链路共用同一份定义，禁止在提示词里另写一份
+    ...RESUME_WRITING_DISCIPLINE.map((rule) => `- ${rule}`),
     `- ${ACTION_INSTRUCTIONS[action]}`,
     `- 使用${language}输出，专有名词保留原文。`,
     `- ${getWritingRule(action, kindKey, moduleKey)}`,
