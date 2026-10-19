@@ -3,7 +3,6 @@ import { loadCropper } from "./cropperLoader";
 import { ElMessage } from "element-plus";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useImageUpload } from "@/hooks";
-import { routerNavigation } from "@/utils";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import {
@@ -14,9 +13,6 @@ import {
   resolveAvatarAspectRatio,
 } from "@/domain/resume/theme/avatar";
 import { resolveThemeDecisions } from "@/domain/resume/theme/themeDecisions";
-
-// 新窗口打开 image 工具页
-const goImageTools = () => routerNavigation("/image");
 
 // 编辑区头像保持紧凑显示，裁剪输出继续使用高分辨率提升预览与导出清晰度
 const DISPLAY_WIDTH = 70;
@@ -308,11 +304,6 @@ const removeImage = () => {
           <span class="text-xs">{{ $t("viewImage") }}</span>
         </div>
       </div>
-    </div>
-    <div class="flex cursor-pointer items-center gap-1 text-[11px] text-sf-text-2">
-      {{ $t("providedBy") }}
-      <span @click="goImageTools" class="hover:text-sf-theme">{{ $t("core.router.image") }}</span>
-      {{ $t("techSupport") }}
     </div>
     <!-- 图片查看器：点击查看上传的大图 -->
     <el-image-viewer v-if="previewVisible" :url-list="[image]" @close="previewVisible = false" />

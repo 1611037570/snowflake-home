@@ -5,17 +5,17 @@
         class="resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-x-12 gap-y-9 px-6 pt-24 pb-9 lg:grid-cols-2 lg:px-12"
       >
         <article class="relative z-10 mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
+          <!-- 功能主标题：承载免费、免注册、一键导出等检索词，提升抓取权重 -->
           <h1
             class="animate-rise animate-rise--delay-one text-4xl leading-[1.15] font-black tracking-[-0.04em] sm:text-5xl lg:text-6xl"
           >
-            {{ $t("resumeHomeHeroStart")
-            }}<span class="resume-home__highlight">{{ $t("resumeHomeHeroHighlight") }}</span
-            >，<br />
-            {{ $t("resumeHomeHeroEnd") }}
+            {{ $t("resumeHomeHeroTitle") }}
           </h1>
-          <!-- 功能副标题：承载免费、免注册等功能检索词，紧邻标题提升抓取权重 -->
+          <!-- 品牌副标题：以轻舟意象呼应产品名，弱化为小字陪衬主标题 -->
           <p class="animate-rise animate-rise--delay-two mt-6 text-base font-medium text-sf-text-2">
-            {{ $t("resumeHomeHeroSubtitle") }}
+            {{ $t("resumeHomeHeroSubtitleStart")
+            }}<span class="resume-home__highlight">{{ $t("resumeHomeHeroSubtitleHighlight") }}</span
+            >，{{ $t("resumeHomeHeroSubtitleEnd") }}
           </p>
           <!-- 首屏指标：数字在上、标签在下，内容水平垂直居中 -->
           <dl
