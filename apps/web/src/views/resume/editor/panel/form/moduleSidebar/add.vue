@@ -8,14 +8,13 @@ import {
 } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import { jumpAll } from "../../../hooks/useModuleNav";
 import { storeToRefs } from "pinia";
-import { computed, ref } from "vue";
+import { computed } from "vue";
 import { getUUID } from "@/utils";
 import i18n from "@/locales";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 defineOptions({ name: "AddModule" });
-const dropdownRef = ref(null);
 
 // 实习经历与工作、教育等经历模块一起提供添加入口。
 const BASIC_MODULE_KEYS = ["skill", "education", "project", "work", "internship"];
@@ -54,7 +53,7 @@ const otherModules = computed(() =>
   availableModules.value.filter((item) => !BASIC_MODULE_KEYS.includes(item.value)),
 );
 const handleAdd = (module) => {
-  dropdownRef.value?.handleClose?.();
+  // 添加后面板保持展开：可连续添加多个模块，已添加的模块会自动从候选中消失
   const type = module.value;
   // 自定义模块需要特殊处理
   if (type === "custom") {
@@ -65,6 +64,22 @@ const handleAdd = (module) => {
     // 预设模块由编辑器统一展开，新增入口只负责定位。
     if (resumeStore.addModule(type)) jumpAll(type);
   }
+};
+
+// 一键添加：常用模块一次性全部加入，数组模块顺带建好第一条记录，实现快速创建
+const handleAddAll = () => {
+  // 先快照候选列表，添加过程中候选会实时收敛，不能边加边遍历计算值
+  const targets = basicModules.value;
+  if (!targets.length) return;
+  let firstAdded = "";
+  targets.forEach((module) => {
+    if (!resumeStore.addModule(module.value)) return;
+    // 数组模块（教育/项目/工作/实习等）预建第一条子记录，打开即可直接填写
+    resumeStore.addDataRecord(module.value);
+    firstAdded ||= module.value;
+  });
+  // 定位到第一个新模块，接着即可填写
+  if (firstAdded) jumpAll(firstAdded);
 };
 
 const handleConfirm = () => {
@@ -106,7 +121,6 @@ const handleConfirm = () => {
   <!-- 入口高度随内容撑开，间距统一由侧栏容器控制。 -->
   <div class="w-full">
     <SfDropdown
-      ref="dropdownRef"
       class="w-full"
       trigger="click"
       placement="top-start"
@@ -125,7 +139,17 @@ const handleConfirm = () => {
           class="flex w-60 flex-col gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3 shadow-lg"
         >
           <div v-if="basicModules.length" class="flex flex-col gap-3">
-            <span class="text-xs text-sf-text-3">{{ $t("basicModules") }}</span>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-sf-text-3">{{ $t("basicModules") }}</span>
+              <button
+                type="button"
+                class="flex h-5 cursor-pointer items-center gap-1 rounded-3xl px-1.5 text-xs text-sf-theme transition-colors select-none hover:bg-sf-theme-3"
+                @click="handleAddAll"
+              >
+                <SfIcon icon="ic:round-add" size="3" />
+                <span>{{ $t("addAllModules") }}</span>
+              </button>
+            </div>
             <div class="flex flex-wrap gap-3">
               <button
                 v-for="item in basicModules"

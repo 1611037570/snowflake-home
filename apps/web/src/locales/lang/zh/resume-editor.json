@@ -63,6 +63,7 @@
   "basicModules": "常用模块",
   "otherModules": "其他模块",
   "customModule": "自定义模块",
+  "addAllModules": "一键添加",
   "avatar": "头像",
   "name": "姓名",
   "namePlaceholder": "请输入姓名",

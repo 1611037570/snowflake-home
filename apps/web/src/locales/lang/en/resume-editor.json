@@ -63,6 +63,7 @@
   "basicModules": "Common Modules",
   "otherModules": "Other Modules",
   "customModule": "Custom Module",
+  "addAllModules": "Add All",
   "avatar": "Avatar",
   "name": "Name",
   "namePlaceholder": "Please enter your name",

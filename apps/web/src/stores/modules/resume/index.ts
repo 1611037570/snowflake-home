@@ -83,6 +83,7 @@ export const useResumeStore = defineStore(
       runtimeFields,
       setConfigModules,
       addModule,
+      addDataRecord,
       restoreConfig,
       currentUI,
       currentUsage,
@@ -327,6 +328,7 @@ export const useResumeStore = defineStore(
       runtimeConfig,
       runtimeFields,
       addModule, // 预设模块统一经编辑器运行时配置展开。
+      addDataRecord, // 数组模块新增一条记录，供一键添加等表单外入口复用。
       currentUI,
       currentUsage,
       isPrinting,
