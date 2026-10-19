@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { RICH_TEXT_SANITIZE_CONFIG } from "../../../shared/richTextSanitize";
+import { RICH_TEXT_SANITIZE_CONFIG } from "@/views/resume/ai";
 import type { BreakPoint } from "../types";
 
 /** 富文本块的基础信息 */

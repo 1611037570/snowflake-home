@@ -1,4 +1,4 @@
-import { getValidData, getValidDataEntries, isContentEmpty } from "../../../shared/validData";
+import { getValidData, getValidDataEntries, isContentEmpty } from "@/views/resume/shared/validData";
 import type { LayoutNode } from "../types";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { createExperienceModuleAdapter } from "./experienceModules";

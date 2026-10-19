@@ -1,7 +1,7 @@
 import confirm from "@/components/business/confirm";
 import { $t } from "@/locales";
 import { useAiStore } from "@/stores";
-import { hasResumeAiModel } from "@/views/resume/ai/request/client";
+import { hasResumeAiModel } from "@/views/resume/ai";
 
 export const useResumeAiAvailability = () => {
   const aiStore = useAiStore();

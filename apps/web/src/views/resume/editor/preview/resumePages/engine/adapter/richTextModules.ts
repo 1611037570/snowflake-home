@@ -1,4 +1,4 @@
-import { isContentEmpty, getValidDataEntries } from "../../../shared/validData";
+import { isContentEmpty, getValidDataEntries } from "@/views/resume/shared/validData";
 import {
   createModuleTitleNode,
   type LayoutAdapter,

@@ -6,7 +6,7 @@ import { parsePdfResume } from "../pdfParser";
 import { MAX_PDF_FILE_BYTES } from "../pdfDocument";
 import ImportResumePreview from "./importResumePreview.vue";
 import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
-import { hasResumeAiModel } from "@/views/resume/ai/request/client";
+import { hasResumeAiModel } from "@/views/resume/ai";
 import { useAiStore, useResumeStore } from "@/stores";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useRouter } from "vue-router";

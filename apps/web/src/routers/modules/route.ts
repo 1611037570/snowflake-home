@@ -29,7 +29,7 @@ const resumeChildren: RouteRecordRaw[] = [
   { path: "template", component: () => import("@/views/resume/template/index.vue") },
   // 我的简历页内嵌导入流程，预览按编辑器字段契约展示模块与字段名，需一并加载编辑器语言包
   { path: "mine", component: () => import("@/views/resume/mine/index.vue"), meta: { localeFiles: ["resume", "resume-editor"] } },
-  { path: "ai", component: () => import("@/views/resume/ai/index.vue") },
+  { path: "ai", component: () => import("@/views/resume/settings/ai/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
   {
     path: "editor",

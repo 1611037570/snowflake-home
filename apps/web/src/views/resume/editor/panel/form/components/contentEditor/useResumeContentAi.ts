@@ -3,15 +3,15 @@ import { ElMessage } from "element-plus";
 import { isAbortError } from "@/apis";
 import { useResumeStore } from "@/stores";
 import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
-import { findResumeModuleSchema } from "@/views/resume/editor/assistant/resumeSchemaRegistry";
-import { runResumeAiTask } from "@/views/resume/ai/request";
-import { normalizeRichTextHtml } from "../../../../preview/shared/normalizeRichText";
 import {
   CONTENT_REWRITE_TASK,
   LANGUAGE_NAMES,
+  findResumeModuleSchema,
+  normalizeRichTextHtml,
+  runResumeAiTask,
   type ContentAiAction,
   type ContentRewriteInput,
-} from "./contentRewrite.task";
+} from "@/views/resume/ai";
 
 // 单个候选的生成状态
 type ContentCandidate = {

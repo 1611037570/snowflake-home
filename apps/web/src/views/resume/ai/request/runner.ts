@@ -78,7 +78,7 @@ export const runResumeAiTask = async <Input, Output = string>(
   const { sendFn, abortFn, traceId: requestTraceId } = await llm.request({
     options: body,
     isStream: task.stream,
-    isJson: false,
+    isJson: task.json ?? false,
     isDebug: false,
     retryCount: task.retryCount ?? 0,
     timeout: task.timeout,

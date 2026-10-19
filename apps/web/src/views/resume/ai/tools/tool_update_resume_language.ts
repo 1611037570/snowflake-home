@@ -1,0 +1,36 @@
+import type { ReactTool } from "@/apis/llm/react";
+import { TOOL_ARGUMENT_RULE } from "./promptRules";
+import type { ResumeToolContext } from "./tool_types";
+
+// 支持更新简历展示语言的语言代码
+export const RESUME_LANG_CODES = ["zh", "en", "ja", "ko", "fr", "de", "es", "ru"];
+
+// 创建更新简历展示语言工具
+export const createUpdateResumeLanguageTool = (ctx: ResumeToolContext): ReactTool => ({
+  name: "update_resume_language",
+  description:
+    `${TOOL_ARGUMENT_RULE}\n\n仅同步简历展示语言，不会翻译或写入任何简历字段。本次请求必须先通过 propose_resume_edits 成功写入翻译内容，否则调用会被拒绝。language 使用规范语言代码`,
+  parameters: {
+    type: "object",
+    properties: {
+      language: {
+        type: "string",
+        description:
+          "规范语言代码：zh 中文 / en 英语 / ja 日语 / ko 韩语 / fr 法语 / de 德语 / es 西班牙语 / ru 俄语",
+      },
+    },
+    required: ["language"],
+  },
+  execute: (args: any) => {
+    // 工具层强制校验本轮写入结果，避免只切换展示语言造成翻译假成功
+    if (!ctx.hasSuccessfulWrite?.()) {
+      return {
+        updated: false,
+        error: "本次请求尚未通过 propose_resume_edits 成功写入翻译内容，请先完成翻译写入",
+      };
+    }
+    const language = args?.language;
+    const updated = RESUME_LANG_CODES.includes(language) && (ctx.updateLanguage?.(language) ?? false);
+    return updated ? { updated: true } : { updated: false };
+  },
+});

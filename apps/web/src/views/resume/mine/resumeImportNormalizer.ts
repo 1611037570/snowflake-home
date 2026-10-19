@@ -2,14 +2,15 @@ import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
 import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import { $t } from "@/locales";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
-import type { ResumeFieldSchema, ResumeModuleSchema } from "../editor/assistant/resumeSchema";
-import { RESUME_SCHEMA } from "../editor/assistant/resumeSchemaRegistry";
-import { normalizeRichTextHtml } from "../editor/preview/shared/normalizeRichText";
-import { isContentEmpty } from "../editor/preview/shared/validData";
 import {
+  RESUME_SCHEMA,
   assertResumeAiResponseComplete,
+  normalizeRichTextHtml,
   readResumeAiResponseText,
-} from "@/views/resume/ai/request/response";
+  type ResumeFieldSchema,
+  type ResumeModuleSchema,
+} from "@/views/resume/ai";
+import { isContentEmpty } from "../shared/validData";
 
 const MODULE_SCHEMA = new Map(
   RESUME_SCHEMA.filter((module) => module.kind !== "custom").map((module) => [module.key, module]),

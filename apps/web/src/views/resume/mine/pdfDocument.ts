@@ -1,8 +1,8 @@
 import { $t } from "@/locales";
+import { MAX_PDF_REQUEST_BYTES } from "@/views/resume/ai";
 
 export const MAX_PDF_FILE_BYTES = 50 * 1024 * 1024;
 export const MAX_PDF_PAGES = 10;
-export const MAX_PDF_REQUEST_BYTES = 16 * 1024 * 1024;
 
 // 浏览器逐页渲染，取消时同时终止 Worker 与当前画布任务。
 export const extractPdfImages = async (

@@ -18,7 +18,7 @@ import BuilderEditorComponent from "./form/index.vue";
 // 编辑标签页外壳同步加载，动态表单在首帧后异步挂载
 const BuilderEditor = markRaw(BuilderEditorComponent);
 const AsyncTemplate = markRaw(defineAsyncComponent(() => import("./template/index.vue")));
-const AsyncAi = markRaw(defineAsyncComponent(() => import("../assistant/chat/index.vue")));
+const AsyncAi = markRaw(defineAsyncComponent(() => import("../../assistant/chat/index.vue")));
 // 进入简历编辑器时默认打开编辑标签。
 const activeIndex = ref(0);
 // 外部入口待启动的 AI 流程由面板暂存，异步助手挂载后再消费。

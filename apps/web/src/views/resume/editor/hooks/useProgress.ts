@@ -9,7 +9,7 @@ import {
   walkFormFields,
 } from "@/components/business/dynamicForm/api";
 import { $t } from "@/locales";
-import { isContentEmpty } from "../preview/shared/validData";
+import { isContentEmpty } from "../../shared/validData";
 
 // ==================== 工具函数 ====================
 

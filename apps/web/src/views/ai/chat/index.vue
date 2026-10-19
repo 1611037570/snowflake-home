@@ -2,8 +2,13 @@
 import { useAiStore, useResumeStore } from "@/stores";
 import { useScroll } from "@vueuse/core";
 import { computed, nextTick, ref, watch } from "vue";
-import { getXiaoZhouLLM } from "@/apis";
-import { useResumeContext } from "@/views/resume/editor/assistant/resumeContext";
+import { isAbortError } from "@/apis";
+import {
+  GENERAL_CHAT_TASK,
+  RESUME_CHAT_TASK,
+  runResumeAiTask,
+  useResumeContext,
+} from "@/views/resume/ai";
 
 import ChatInput from "./chatInput.vue";
 import MessageList from "./messageList.vue";
@@ -131,64 +136,44 @@ const handleAIResponse = async () => {
     lastMsg = currentMessages.value[currentMessages.value.length - 1];
     // 思考状态，初始为 false
     let thoughtStatus = false;
-    // 根据供应商契约选择请求消息字段
-    const llm = getXiaoZhouLLM();
-    const options = {
-      [llm.protocol === "chatCompletions" ? "messages" : "input"]: messages,
-      thinking: {
-        // 根据设置控制深度思考模式
-        // type: thinkMode.value ? "enabled" : "disabled",
-        type: "disabled",
-      }, // 👈 这个就是【深度思考开关】
-    };
-    // 调用当前配置的大模型流式接口
-    const { sendFn, abortFn } = await llm.request({
-      options,
-      isStream: true, // 开启流式响应
-      // 简历模式下，需要解析 JSON 字符串
-      isJson: type === "resume" ? true : false,
-      // 思考内容增量直接写入当前消息。
-      onReasoning: (data) => {
-        lastMsg.thought += data;
-        scrollToBottom();
+    const controller = new AbortController();
+    abortRequest = () => controller.abort();
+    // 所有会话请求统一交给简历 AI 能力层，页面只维护展示状态。
+    await runResumeAiTask(
+      type === "resume" ? RESUME_CHAT_TASK : GENERAL_CHAT_TASK,
+      { messages },
+      {
+        signal: controller.signal,
+        // 思考内容增量直接写入当前消息。
+        onReasoning: (data) => {
+          lastMsg.thought += data;
+          scrollToBottom();
+        },
+        // 回答内容增量直接写入当前消息。
+        onContent: (data) => {
+          if (!lastMsg.thoughtCollapsed && !thoughtStatus) {
+            thoughtStatus = true;
+            lastMsg.thoughtCollapsed = true;
+          }
+          lastMsg.content += data;
+          scrollToBottom();
+        },
+        // 令牌统计由专用回调更新。
+        onToken: (data) => {
+          lastMsg.total_tokens = data;
+        },
       },
-      // 回答内容增量直接写入当前消息。
-      onContent: (data) => {
-        if (!lastMsg.thoughtCollapsed && !thoughtStatus) {
-          thoughtStatus = true;
-          lastMsg.thoughtCollapsed = true;
-        }
-        lastMsg.content += data;
-        scrollToBottom();
-      },
-      // 令牌统计由专用回调更新。
-      onToken: (data) => {
-        lastMsg.total_tokens = data;
-      },
-      // 请求失败回调
-      onFail: (error) => {
-        lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
-        lastMsg.typing = false;
-        isSending.value = false;
-        // 更新请求状态为失败状态
-        lastMsg.requestStatus = "error";
-      },
-      // 请求成功回调（JSON格式）
-      onSuccess: (res) => {
-        console.log("res:>> ", res);
-
-        // 更新请求状态为成功状态
-        lastMsg.requestStatus = "success";
-      },
-    });
-
-    // 保存中止函数，供外部停止生成时调用
-    abortRequest = abortFn;
-    // 执行发送请求
-    await sendFn();
+    );
+    lastMsg.requestStatus = "success";
   } catch (error) {
-    // 捕获异常并打印
+    // 请求失败由页面转换为当前消息状态，不在页面直接访问模型实例。
+    if (isAbortError(error)) return;
     console.error("AI 请求异常:", error);
+    if (lastMsg) {
+      lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
+      lastMsg.requestStatus = "error";
+      lastMsg.typing = false;
+    }
   } finally {
     // 无论成功失败，统一清理状态
     isSending.value = false;

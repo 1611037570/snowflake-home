@@ -10,7 +10,7 @@ import FieldContent from "@/views/resume/editor/preview/components/resumeField/c
 import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
 import { useResumePreviewContext } from "@/views/resume/editor/preview/shared/previewContext";
 import { getTime } from "@/views/resume/editor/preview/resumePages/render/getTime";
-import { isContentEmpty } from "@/views/resume/editor/preview/shared/validData";
+import { isContentEmpty } from "@/views/resume/shared/validData";
 import { safeContentUrl } from "@/views/resume/editor/preview/resumePages/render/nodeContentContract";
 import {
   useNodeContent,

@@ -1,4 +1,4 @@
-import { getValidDataEntries, isContentEmpty } from "../../../shared/validData";
+import { getValidDataEntries, isContentEmpty } from "@/views/resume/shared/validData";
 import type { LayoutAdapter, LayoutAdapterContext, LayoutAdapterRegistry } from "./index";
 import { parseRichText } from "./richTextParser";
 

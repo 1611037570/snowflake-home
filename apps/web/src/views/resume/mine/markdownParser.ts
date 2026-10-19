@@ -1,6 +1,5 @@
 import { $t } from "@/locales";
-import { runResumeAiTask } from "@/views/resume/ai/request";
-import { MARKDOWN_IMPORT_TASK } from "./importResume.task";
+import { MARKDOWN_IMPORT_TASK, runResumeAiTask } from "@/views/resume/ai";
 import { readResumeImportResult } from "./resumeImportNormalizer";
 
 // 调用统一的简历 AI 任务使用方，返回可直接交给简历仓库创建的数据。

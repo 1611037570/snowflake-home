@@ -1,4 +1,4 @@
-import type { ContentAiAction } from "@/views/resume/editor/panel/form/components/contentEditor/contentRewrite.task";
+import type { ContentAiAction } from "./types";
 
 // 简历正文写作规则：所有会生成或改写简历正文的链路共用的唯一事实源。
 //

@@ -20,6 +20,8 @@ export type ResumeAiTask<Input> = {
   agent: ResumeAiAgent;
   // 是否流式返回
   stream: boolean;
+  // 是否按 JSON 响应处理
+  json?: boolean;
   // 超时毫秒，缺省沿用请求库默认值
   timeout?: number;
   // 失败重试次数，缺省不重试
