@@ -212,10 +212,17 @@ const chatContainer = ref<ChatContainerInstance | null>(null);
 const followOutput = ref(true);
 // 滚动监听，用于显示回到底部按钮
 const scrollTarget = computed(() => chatContainer.value?.wrapRef);
+let previousScrollTop = 0;
 const { arrivedState } = useScroll(scrollTarget, {
-  // 每次滚动后按是否到达底部同步跟随状态
+  // 只有用户确实向上滚动时才暂停跟随，内容增长造成的离底不视为用户操作。
   onScroll: () => {
-    followOutput.value = arrivedState.bottom;
+    const wrap = scrollTarget.value;
+    if (!wrap) return;
+    const currentScrollTop = wrap.scrollTop;
+    const bottomDistance = wrap.scrollHeight - wrap.clientHeight - currentScrollTop;
+    if (bottomDistance <= 2) followOutput.value = true;
+    else if (currentScrollTop < previousScrollTop - 1) followOutput.value = false;
+    previousScrollTop = currentScrollTop;
   },
 });
 
@@ -244,7 +251,11 @@ const scrollToBottom = () => {
     scrollFrame = 0;
     await nextTick();
     if (chatContainer.value?.wrapRef) {
-      chatContainer.value.setScrollTop(chatContainer.value.wrapRef.scrollHeight);
+      const wrap = chatContainer.value.wrapRef;
+      // 主动滚到底部代表恢复跟随，后续流式内容继续贴住最新位置。
+      followOutput.value = true;
+      chatContainer.value.setScrollTop(wrap.scrollHeight);
+      previousScrollTop = Math.max(0, wrap.scrollHeight - wrap.clientHeight);
     }
     flushScrollWaiters();
   });
