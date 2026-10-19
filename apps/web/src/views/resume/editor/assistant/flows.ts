@@ -216,7 +216,11 @@ export const flows: Record<string, Flow> = {
       return {
         userContent: `请对我的简历进行一键优化：求职方向为「${direction}」，身份为「${identity}」。请补齐缺失经历、综合优化内容，并给出评分与优化报告。`,
         // 用户已处于整个简历模式或在流程中明确授权，本次请求固定读取整份简历
-        requestContext: { resumeScope: "all" },
+        requestContext: {
+          resumeScope: "all",
+          // 报告声称存在改动时必须存在真实写入，空改动为合法分支，杜绝空口报告
+          verifyWriteReport: true,
+        },
       };
     },
   },

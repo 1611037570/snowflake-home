@@ -4,6 +4,7 @@ export const resumeOneKeyOptimize = () => ({
   name: "一键优化",
   description: `一键优化编排：按求职方向与身份，补齐缺失经历、综合优化内容并评分，输出结构化优化报告。`,
   instructions: `# 执行流程
+- changes 中的每一项必须来自 propose_resume_edits 的真实成功写入；未调用写入工具或工具未返回 applied 为 true 时，changes 必须为空数组，把计划的补充项放入 todo；不得把未执行的改动、纯占位记录或计划内容写进 changes。
 - 必须先调用 read_resume_data 读取整份简历真实数据，不得只读取或处理局部模块；再根据用户提供的求职方向，调用名称匹配目标行业的 industry_* 行业知识库技能读取岗位族、量化维度与写法要点，未命中专门行业改调 industry_general。
 - 本技能已包含写入、优化和评分规则，不再读取 resume_writing、resume_optimization 或 resume_score。只有确认存在安全且必要的写操作时，调用一次 resume_data_contract 获取字段契约；仅在需要补齐整段经历且已有基础事实时调用 resume_create。
 - 先逐模块审查完整性、重复度、岗位相关性和表达质量；存在有真实依据且能解决明确问题的改动时，再一次性通过 propose_resume_edits 写入必要的新增、修改、删除与排序操作，禁止只做同义改写。没有安全且必要的改动时允许不调用写入工具，changes 返回空数组并在 suggestions 说明原因。

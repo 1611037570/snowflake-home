@@ -105,6 +105,16 @@ export const parseResumeReport = (content: string): ResumeReport | null => {
   return parseReportJson(content);
 };
 
+// 报告是否声称本轮存在改动：changes 非空即声称。空 changes 是技能允许的合法分支
+// （无安全且必要的改动时不调用写入工具），不属于造假，不得拦截。
+// 无法解析为有效报告时按声称改动处理：报告型流程的最终输出必须是 report 代码块，
+// 解析失败说明输出违规或不完整，同样不能视为可信。
+export const reportClaimsChanges = (content: string): boolean => {
+  const report = parseResumeReport(content);
+  if (!report) return true;
+  return report.changes.length > 0;
+};
+
 // 仅移除有效报告，保留普通 JSON、无效报告与未完成的流式内容
 export const stripResumeReportBlock = (content: string): string => {
   if (!content) return content;

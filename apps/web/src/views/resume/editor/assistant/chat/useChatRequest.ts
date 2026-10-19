@@ -10,6 +10,8 @@ import { storeToRefs } from "pinia";
 import type { AssistantConfig } from "../types";
 // 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
 import { defaultPrompt } from "../skills/prompt_default";
+// 一键优化报告的改动声称检测，验收路径与真实写入比对
+import { reportClaimsChanges } from "../resumeReport";
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
   chat: Ref<Chat>; // 当前聊天会话
@@ -218,6 +220,8 @@ export const useChatRequest = ({
         .find((message) => message.role === "user");
       // 一键调整必须产生真实写入，最终回复不能代替数据修改。
       const requireResumeWrite = requestMessage?.requestContext?.requireResumeWrite === true;
+      // 一键优化的报告声称改动时同样必须存在真实写入，空改动为合法分支
+      const verifyWriteReport = requestMessage?.requestContext?.verifyWriteReport === true;
       beforeRequest?.(requestMessage?.requestContext, requestTaskId);
       // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
       const defaultSkill = defaultPrompt();
@@ -373,6 +377,20 @@ export const useChatRequest = ({
             // 打印验收失败原因，便于排查最终阶段被判失败的问题
             console.warn("[一键调整] 验收失败：未识别到成功的简历写入");
             lastMsg.content = "一键调整未能写入简历数据，本次修改说明已作废，请重新执行。";
+            lastMsg.requestStatus = "error";
+            lastMsg.stepLabel = "";
+            lastMsg.thoughtCollapsed = true;
+            stepContent = "";
+            streamFinalContent = false;
+            scrollToBottom();
+            return;
+          }
+          // 一键优化等报告型流程：报告声称存在改动却没有任何真实写入时，
+          // 说明模型把计划或未执行内容写成了 changes，与一键调整同等作废，杜绝假报告。
+          if (verifyWriteReport && reportClaimsChanges(answer) && !writeMessages.has(lastMsg)) {
+            // 打印验收失败原因，便于排查报告与写入不一致的问题
+            console.warn("[一键优化] 验收失败：报告声称存在改动但未识别到成功的简历写入");
+            lastMsg.content = "一键优化未能写入简历数据，本次优化报告已作废，请重新执行。";
             lastMsg.requestStatus = "error";
             lastMsg.stepLabel = "";
             lastMsg.thoughtCollapsed = true;
