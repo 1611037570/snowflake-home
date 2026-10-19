@@ -1,6 +1,10 @@
 <script setup>
 import { computed } from "vue";
 import { ElCascader } from "element-plus";
+import i18n, { $t } from "@/locales";
+
+// 下拉首行提示的标识值：禁用态不可选中，仅用于承载提示文案
+const INPUT_HINT_VALUE = "__dropdown_input_hint__";
 
 const props = defineProps({
   // 省市级联选项：由业务域字典注入，组件自身不内置城市数据
@@ -22,6 +26,13 @@ const props = defineProps({
 const city = defineModel("modelValue", {
   type: String,
   default: "",
+});
+
+// 支持自行输入：面板首行固定一条提示，告知预置城市之外还能输入自定义值（禁用态不可选中）
+const cityOptions = computed(() => {
+  // 读取当前语言建立依赖，提示文案随语言切换更新
+  i18n.global.locale.value;
+  return [{ value: INPUT_HINT_VALUE, label: $t("dropdownInputHint"), disabled: true }, ...props.list];
 });
 
 // 回显时按城市名反查所在省份
@@ -46,7 +57,7 @@ const selected = computed({
 <template>
   <SfCascader
     v-model="selected"
-    :options="list"
+    :options="cityOptions"
     filterable
     class="w-full"
     :placeholder="placeholder || $t('cityPlaceholder')"

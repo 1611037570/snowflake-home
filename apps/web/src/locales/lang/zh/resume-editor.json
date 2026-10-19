@@ -565,6 +565,7 @@
   "sortByTimePartial": "部分经历排序失败",
   "expandMore": "展开更多可选",
   "collapseMore": "收起更多可选",
+  "dropdownInputHint": "找不到合适的？输入即可自定义",
   "expandSidebarMore": "展开更多",
   "collapseSidebarMore": "收起更多",
   "customField": "自定义字段",

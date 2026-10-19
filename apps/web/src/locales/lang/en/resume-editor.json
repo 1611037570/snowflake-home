@@ -565,6 +565,7 @@
   "sortByTimePartial": "Some experiences could not be sorted",
   "expandMore": "Show More Options",
   "collapseMore": "Hide More Options",
+  "dropdownInputHint": "Can't find a match? Type to add your own",
   "expandSidebarMore": "Show More",
   "collapseSidebarMore": "Show Less",
   "customField": "Custom Field",
