@@ -42,6 +42,7 @@ interface SiteMetadata extends LocaleMetadata {
 export const SITE_CONFIGS: SiteConfig[] = [
   {
     route: "/home",
+    noindex: true, // 雪花起始页脱离简历域名收录范围，不再进入 sitemap
     changefreq: "monthly",
     priority: 0.5,
     locales: {

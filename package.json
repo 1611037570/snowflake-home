@@ -9,6 +9,7 @@
     "build": "turbo run build",
     "build:web": "pnpm --filter @snowflake/web build-only",
     "build:server": "pnpm --filter @snowflake/server build",
+    "seo": "node apps/web/scripts/submit-search-urls.mjs",
     "format": "turbo run format",
     "commit": "git-cz",
     "prepare": "husky"
