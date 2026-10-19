@@ -1,0 +1,37 @@
+/* ========== 简历富文本正文公共语义 ========== */
+/* Tailwind preflight 会重置 ul/ol 的列表标记与缩进、清空段落边距，
+   正文块统一在此恢复，保持编辑区与预览区的富文本语义一致。
+   预览、测量树、图片/PDF/HTML 导出与浏览器打印共用同一 DOM 与文档样式，
+   正文外观只维护这一处，导出侧无需单独同步。
+   选择器键为正文协议标记 data-layout-text-block：新正文组件带上该标记即自动生效，
+   主题需要自有正文外观时用更高特异性的覆盖规则（参照 redBlackEngineer 的短横线标记）。 */
+[data-layout-text-block] p,
+[data-layout-text-block] ul,
+[data-layout-text-block] ol {
+  margin: 0;
+}
+
+[data-layout-text-block] ul {
+  list-style: disc;
+  padding-left: 1.5em;
+}
+
+[data-layout-text-block] ol {
+  list-style: decimal;
+  padding-left: 1.5em;
+}
+
+/* 段落与列表相邻时补充段间距，与编辑器的多段正文视觉保持一致 */
+[data-layout-text-block] p + p,
+[data-layout-text-block] ul + p,
+[data-layout-text-block] p + ul,
+[data-layout-text-block] ol + p,
+[data-layout-text-block] p + ol {
+  margin-top: 4px;
+}
+
+/* 空段落保留一行；不额外叠加空行前后的段落间距，给正文尽量多留可用行高 */
+[data-layout-text-block] p:has(> br:only-child),
+[data-layout-text-block] p:has(> br:only-child) + p {
+  margin-top: 0;
+}
