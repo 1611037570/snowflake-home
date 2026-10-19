@@ -4,7 +4,7 @@
   "description": "",
   "author": "",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "postinstall": "node scripts/installChrome.mjs",
     "dev": "pnpm run start:dev",
