@@ -50,7 +50,7 @@ watch([() => route.path, isMobile], () => {
       <button
         type="button"
         class="flex h-9 w-9 cursor-pointer flex-col items-center justify-evenly text-sf-text md:hidden"
-        aria-label="打开导航"
+        :aria-label="$t('resumeNavOpen')"
         :aria-expanded="drawerVisible"
         @click="drawerVisible = true"
       >
@@ -87,7 +87,7 @@ watch([() => route.path, isMobile], () => {
   <!-- 抽屉从左向右展开，展示与桌面一致的导航入口。 -->
   <el-drawer
     v-model="drawerVisible"
-    title="导航"
+    :title="$t('resumeNavTitle')"
     direction="ltr"
     size="min(80vw, 20rem)"
     append-to-body

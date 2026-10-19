@@ -1,6 +1,6 @@
 export const jobPlatformList = [
   {
-    type: "常用求职平台",
+    key: "common", // 分类稳定标识，展示名走语言包
     array: [
       {
         name: "BOSS直聘",
@@ -26,7 +26,7 @@ export const jobPlatformList = [
     ],
   },
   {
-    type: "官方国企平台",
+    key: "official", // 分类稳定标识，展示名走语言包
     array: [
       {
         name: "中国公共招聘网",
@@ -56,7 +56,7 @@ export const jobPlatformList = [
     ],
   },
   {
-    type: "应届生/实习平台",
+    key: "campus", // 分类稳定标识，展示名走语言包
     array: [
       {
         name: "应届生求职网",
@@ -76,7 +76,7 @@ export const jobPlatformList = [
     ],
   },
   {
-    type: "互联网技术岗位",
+    key: "tech", // 分类稳定标识，展示名走语言包
     array: [
       {
         name: "拉勾网",
@@ -91,7 +91,7 @@ export const jobPlatformList = [
     ],
   },
   {
-    type: "兼职/其他",
+    key: "parttime", // 分类稳定标识，展示名走语言包
     array: [
       {
         name: "青团社",

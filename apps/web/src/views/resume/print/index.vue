@@ -3,6 +3,7 @@ import { nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 import { useResumeStore } from "@/stores";
+import { $t } from "@/locales";
 import ResumePages from "@/views/resume/editor/preview/resumePages/index.vue";
 import { waitForExportResources } from "@/views/resume/editor/preview/resumePages/export/exportResources";
 import { getExportLayoutStatus } from "@/views/resume/editor/preview/resumePages/export/exportLayout";
@@ -51,7 +52,7 @@ const waitForRender = async () => {
       const status = getExportLayoutStatus(assetsReady && Boolean(preview?.previewMeasured), plan?.status, "pages");
       if (status === "pending") return;
       if (status !== "ready") {
-        renderError.value = status === "overflow" ? "简历内容超出页面可用区域" : "简历页面布局配置有误";
+        renderError.value = status === "overflow" ? $t("resumePrintOverflow") : $t("resumePrintLayoutError");
         finish();
         return;
       }
@@ -64,7 +65,7 @@ const waitForRender = async () => {
       });
     };
     const timer = window.setTimeout(() => {
-      if (version === renderVersion) renderError.value = "简历排版等待超时";
+      if (version === renderVersion) renderError.value = $t("resumePrintTimeout");
       finish();
     }, 60000);
     stop = watch(() => [renderVersion, previewRef.value?.previewMeasured, previewRef.value?.pagePlan], check, { flush: "post" });
@@ -77,7 +78,7 @@ const waitForRender = async () => {
       assetsReady = true;
       check();
     })().catch(() => {
-      if (!finished) { renderError.value = "简历打印资源加载失败"; finish(); }
+      if (!finished) { renderError.value = $t("resumePrintResourceFailed"); finish(); }
     });
   });
   return version === renderVersion && isReady.value;
@@ -147,7 +148,7 @@ onBeforeUnmount(() => {
       :show-page-number="system.showPageNumber"
       mode="preview"
     />
-    <div v-else data-pdf-error>缺少简历数据</div>
+    <div v-else data-pdf-error>{{ $t("resumePrintNoData") }}</div>
     <div v-if="renderError" data-pdf-error>{{ renderError }}</div>
   </main>
 </template>

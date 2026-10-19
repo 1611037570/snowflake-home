@@ -1,3 +1,5 @@
+import { $t } from "@/locales";
+
 export const MAX_PDF_FILE_BYTES = 50 * 1024 * 1024;
 export const MAX_PDF_PAGES = 10;
 export const MAX_PDF_REQUEST_BYTES = 16 * 1024 * 1024;
@@ -8,11 +10,11 @@ export const extractPdfImages = async (
   signal: AbortSignal,
   onProgress: (page: number, total: number) => void,
 ) => {
-  if (file.size > MAX_PDF_FILE_BYTES) throw new Error("PDF 文件不能超过 50MB");
+  if (file.size > MAX_PDF_FILE_BYTES) throw new Error($t("resumeImportPdfTooLarge", { size: MAX_PDF_FILE_BYTES / 1024 / 1024 }));
   signal.throwIfAborted();
   const bytes = new Uint8Array(await file.arrayBuffer());
   if (!new TextDecoder().decode(bytes.subarray(0, 1024)).includes("%PDF-")) {
-    throw new Error("请选择有效的 PDF 文件");
+    throw new Error($t("resumeImportPdfInvalid"));
   }
   const [pdfjs, worker] = await Promise.all([
     import("pdfjs-dist/legacy/build/pdf.mjs"),
@@ -38,7 +40,7 @@ export const extractPdfImages = async (
   signal.addEventListener("abort", abort, { once: true });
   try {
     const pdf = await task.promise;
-    if (pdf.numPages > MAX_PDF_PAGES) throw new Error("PDF 最多支持 10 页");
+    if (pdf.numPages > MAX_PDF_PAGES) throw new Error($t("resumeImportPdfTooManyPages", { pages: MAX_PDF_PAGES }));
     const images: string[] = [];
     let imageBytes = 0;
     for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
@@ -53,7 +55,7 @@ export const extractPdfImages = async (
         canvas.width = 794;
         canvas.height = 1123;
         const context = canvas.getContext("2d", { alpha: false });
-        if (!context) throw new Error("浏览器无法渲染 PDF");
+        if (!context) throw new Error($t("resumeImportPdfRenderFailed"));
         const render = page.render({
           // 固定尺寸的输出画布
           canvas,
@@ -74,7 +76,7 @@ export const extractPdfImages = async (
         // 固定使用 WebP 与高质量编码，不动态降低尺寸或质量。
         const image = canvas.toDataURL("image/webp", 0.95);
         imageBytes += image.length;
-        if (imageBytes > MAX_PDF_REQUEST_BYTES) throw new Error("PDF 图片内容过大，请减少页数后重试");
+        if (imageBytes > MAX_PDF_REQUEST_BYTES) throw new Error($t("resumeImportPdfImagesTooLarge"));
         images.push(image);
       } finally {
         canvas.width = canvas.height = 0;
@@ -84,7 +86,7 @@ export const extractPdfImages = async (
     return images;
   } catch (error) {
     signal.throwIfAborted();
-    if (passwordRequired) throw new Error("暂不支持加密 PDF，请解除密码后重试");
+    if (passwordRequired) throw new Error($t("resumeImportPdfEncrypted"));
     throw error;
   } finally {
     signal.removeEventListener("abort", abort);

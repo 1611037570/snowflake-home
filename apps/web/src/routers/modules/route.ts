@@ -27,7 +27,8 @@ const componentModules = import.meta.glob("@/views/*/index.vue", { eager: false 
 const resumeChildren: RouteRecordRaw[] = [
   { path: "", name: "resume", component: () => import("@/views/resume/main/index.vue") },
   { path: "template", component: () => import("@/views/resume/template/index.vue") },
-  { path: "mine", component: () => import("@/views/resume/mine/index.vue") },
+  // 我的简历页内嵌导入流程，预览按编辑器字段契约展示模块与字段名，需一并加载编辑器语言包
+  { path: "mine", component: () => import("@/views/resume/mine/index.vue"), meta: { localeFiles: ["resume", "resume-editor"] } },
   { path: "ai", component: () => import("@/views/resume/ai/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
   {

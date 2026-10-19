@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import i18n, { $t } from "@/locales";
+import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import { RESUME_SCHEMA } from "../../editor/assistant/resumeSchemaRegistry";
 import type { normalizeResumeData } from "../resumeImportNormalizer";
 
@@ -22,36 +24,40 @@ const displayValue = (value: unknown, html: boolean): string => {
   document.querySelectorAll("p,li,br").forEach((element) => element.append("\n"));
   return document.body.textContent?.trim() ?? "";
 };
-const modules = computed(() => props.resume.config.modules.map(({ key }) => {
-  const schema = RESUME_SCHEMA.find((module) => module.key === key);
-  const module = props.resume.data[key];
-  const records = module.list ? module.list.map((record: any) => record.data) : [module.data];
-  return {
-    // 模块稳定标识
-    key,
-    // 表单契约中的展示标题
-    title: schema?.title ?? key,
-    // 按记录展示已提取字段
-    records: records.map((record: Record<string, unknown>) => Object.entries(record).map(([field, value]) => ({
-      // 字段稳定标识
-      key: field,
-      // 表单中的中文字段名称
-      label: schema?.fields.find((item) => item.key === field)?.label ?? field,
-      // 已转换为纯文本的字段内容
-      value: displayValue(value, schema?.fields.find((item) => item.key === field)?.format === "html"),
-    }))),
-  };
-}));
+// 模块标题与字段名来自编辑器表单契约，按既有映射本地化，未登记时回退源文案。
+const modules = computed(() => {
+  i18n.global.locale.value;
+  return props.resume.config.modules.map(({ key }) => {
+    const schema = RESUME_SCHEMA.find((module) => module.key === key);
+    const module = props.resume.data[key];
+    const records = module.list ? module.list.map((record: any) => record.data) : [module.data];
+    return {
+      // 模块稳定标识
+      key,
+      // 表单契约中的展示标题
+      title: String(translateResumeEditorText(schema?.title ?? key)),
+      // 按记录展示已提取字段
+      records: records.map((record: Record<string, unknown>) => Object.entries(record).map(([field, value]) => ({
+        // 字段稳定标识
+        key: field,
+        // 表单中的字段名称
+        label: String(translateResumeEditorText(schema?.fields.find((item) => item.key === field)?.label ?? field)),
+        // 已转换为纯文本的字段内容
+        value: displayValue(value, schema?.fields.find((item) => item.key === field)?.format === "html"),
+      }))),
+    };
+  });
+});
 </script>
 
 <template>
   <div class="flex w-full max-w-[600px] flex-col gap-3">
-    <p class="text-sm text-sf-text-3">请核对识别结果，确认后创建新简历。</p>
-    <p v-if="!resume.data.user?.data?.name" class="text-sm text-sf-text-3">未识别到姓名，导入后可在编辑器中补充。</p>
+    <p class="text-sm text-sf-text-3">{{ $t("resumeImportPreviewCheckTip") }}</p>
+    <p v-if="!resume.data.user?.data?.name" class="text-sm text-sf-text-3">{{ $t("resumeImportPreviewNoName") }}</p>
     <!-- 使用统一滚动条，并将高度限制交给滚动容器。 -->
     <SfScrollbar max-height="60vh" view-class="space-y-3">
       <section v-if="resume.warnings?.length" class="rounded-3xl border border-sf-b p-3">
-        <h3 class="mb-3 font-bold">以下内容需要导入后补充，不影响其他内容导入</h3>
+        <h3 class="mb-3 font-bold">{{ $t("resumeImportPreviewWarningsTitle") }}</h3>
         <p v-for="(warning, index) in resume.warnings" :key="index" class="mb-3 whitespace-pre-wrap break-words text-sm text-sf-text-3">{{ warning }}</p>
       </section>
       <section v-for="module in modules" :key="module.key" class="rounded-3xl border border-sf-b p-3">
@@ -65,8 +71,8 @@ const modules = computed(() => props.resume.config.modules.map(({ key }) => {
       </section>
     </SfScrollbar>
     <div class="flex justify-end gap-3">
-      <SfButton type="bg" @click="emit('cancel')">放弃导入</SfButton>
-      <SfButton @click="emit('confirm')">确认导入</SfButton>
+      <SfButton type="bg" @click="emit('cancel')">{{ $t("resumeImportPreviewCancel") }}</SfButton>
+      <SfButton @click="emit('confirm')">{{ $t("resumeImportPreviewConfirm") }}</SfButton>
     </div>
   </div>
 </template>

@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "vue";
+import { $t } from "@/locales";
 import { jobPlatformList } from "./data";
 import Tip from "./tip.vue";
 
@@ -23,18 +24,18 @@ const oepn = (data) => {
         <!-- 投递按钮：增加发送图标并美化样式 -->
         <SfButton>
           <SfIcon icon="ph:paper-plane-right-fill" class="mr-2 rotate-180" size="4" />
-          投递简历
+          {{ $t("resumeSendResume") }}
         </SfButton>
       </slot>
     </div>
-    <SfModal v-model="visible" title="投递简历">
+    <SfModal v-model="visible" :title="$t('resumeSendResume')">
       <SfScrollbar height="750px" class="overflow-hidden">
         <div class="flex w-full max-w-[420px] flex-col">
           <Tip />
-          <div v-for="item in jobPlatformList" :key="item.type" class="mb-3">
+          <div v-for="item in jobPlatformList" :key="item.key" class="mb-3">
             <div class="mb-2 flex items-center text-base font-bold text-sf-text">
               <span class="mr-2 inline-block h-4 w-1 rounded-full bg-sf-theme" />
-              {{ item.type }}
+              {{ $t(`resumeSendPlatform_${item.key}`) }}
             </div>
             <div class="flex flex-wrap gap-3 pl-1">
               <div v-for="platform in item.array" :key="platform.name">

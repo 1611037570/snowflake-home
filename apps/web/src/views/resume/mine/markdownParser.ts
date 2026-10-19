@@ -1,3 +1,4 @@
+import { $t } from "@/locales";
 import { runResumeAiTask } from "@/views/resume/ai/request";
 import { MARKDOWN_IMPORT_TASK } from "./importResume.task";
 import { readResumeImportResult } from "./resumeImportNormalizer";
@@ -9,8 +10,8 @@ export const parseMarkdownResume = async (
   onProgress: (message: string) => void = () => {},
 ) => {
   signal.throwIfAborted();
-  if (!markdown.trim()) throw new Error("Markdown 文件内容为空");
-  onProgress("正在识别简历内容，请稍候");
+  if (!markdown.trim()) throw new Error($t("resumeImportMarkdownEmpty"));
+  onProgress($t("resumeImportRecognizing"));
   return runResumeAiTask(MARKDOWN_IMPORT_TASK, { markdown }, {
     signal,
     // 导入字段转换仍由简历导入模块负责

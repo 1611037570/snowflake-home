@@ -10,6 +10,7 @@ import { hasResumeAiModel } from "@/views/resume/ai/request/client";
 import { useAiStore, useResumeStore } from "@/stores";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import i18n, { $t } from "@/locales";
 
 const props = defineProps({
   jumpAfterImport: { type: Boolean, default: false }, // 在编辑器导入成功后打开新简历
@@ -31,10 +32,16 @@ const { ensureAiAvailable } = useResumeAiAvailability();
 // 解析模型按格式区分：PDF 用简历解析角色（需图片识别），Markdown 用小舟。
 const agentModelLabel = (agent) => {
   const model = aiStore.modelList.find((item) => item.id === aiStore.getAgentModelId(agent));
-  return model ? model.name || model.model : "未配置";
+  return model ? model.name || model.model : $t("resumeImportModelUnconfigured");
 };
-const pdfModelLabel = computed(() => agentModelLabel("resumeParser"));
-const markdownModelLabel = computed(() => agentModelLabel("xiaoZhou"));
+const pdfModelLabel = computed(() => {
+  i18n.global.locale.value;
+  return agentModelLabel("resumeParser");
+});
+const markdownModelLabel = computed(() => {
+  i18n.global.locale.value;
+  return agentModelLabel("xiaoZhou");
+});
 
 const { click: clickJson, remove: removeJson, errorList: jsonErrors } = useFileDialog({
   accept: ".json,application/json",
@@ -90,9 +97,9 @@ const importDocumentConfig = async (format) => {
     if (!hasResumeAiModel("resumeParser")) {
       // 缺少模型时保留导入弹窗，由确认框提示，用户选择后再决定是否前往配置页。
       try {
-        await confirm("PDF 解析需要支持图片识别的模型，请先绑定简历解析模型。", "未配置解析模型", {
-          confirmText: "去配置",
-          cancelText: "取消",
+        await confirm($t("resumeImportPdfModelRequired"), $t("resumeImportPdfModelMissingTitle"), {
+          confirmText: $t("resumeImportGoConfigure"),
+          cancelText: $t("resumeImportCancel"),
         });
       } catch {
         // 用户取消配置：留在导入弹窗，不做跳转。
@@ -121,7 +128,7 @@ const importDocumentConfig = async (format) => {
   const controller = new AbortController();
   parseController = controller;
   parsing.value = true;
-  parseProgress.value = isPdf ? "正在读取 PDF" : "正在读取 Markdown";
+  parseProgress.value = isPdf ? $t("resumeImportReadingPdf") : $t("resumeImportReadingMarkdown");
   try {
     const onProgress = (message) => {
       if (parseController === controller) parseProgress.value = message;
@@ -136,7 +143,7 @@ const importDocumentConfig = async (format) => {
   } catch (error) {
     if (!controller.signal.aborted && parseController === controller) {
       ElMessage.error({
-        message: error instanceof Error ? error.message : "简历解析失败，请检查文件或模型配置",
+        message: error instanceof Error ? error.message : $t("resumeImportParseFailed"),
         position: "top-right",
         offset: 40,
       });
@@ -162,7 +169,7 @@ const confirmImport = () => {
     });
     pendingResume.value = null;
     visible.value = false;
-    ElMessage.success({ message: "简历导入成功", position: "top-right", offset: 40 });
+    ElMessage.success({ message: $t("resumeImportSuccess"), position: "top-right", offset: 40 });
   }
 };
 
@@ -170,7 +177,7 @@ const confirmImport = () => {
 const handleOpenImport = () => {
   if (resumeStore.list.filter((item) => item.deletedAt === null).length >= resumeStore.maxCount) {
     ElMessage.warning({
-      message: `简历数量已达上限（${resumeStore.maxCount}个），请先删除后再导入`,
+      message: $t("resumeImportMaxLimit", { max: resumeStore.maxCount }),
       position: "top-right",
       offset: 40,
     });
@@ -221,7 +228,7 @@ const parseJsonConfig = async (file) => {
         )))) ||
       (item.ui !== undefined && !isObject(item.ui)) ||
       (item.usage !== undefined && !isObject(item.usage))) {
-      throw new Error("无效的简历备份结构");
+      throw new Error($t("resumeImportInvalidBackup"));
     }
     // 以解析出的完整简历创建新简历，编辑器入口导入后跳到新简历。
     // 编辑器入口导入后进入新简历，列表页入口继续停留在列表。
@@ -229,53 +236,56 @@ const parseJsonConfig = async (file) => {
     if (ok) {
       // 导入成功后上报一次 JSON 导入动作
       trackResumeAction({ eventType: "import", fileType: "json" });
-      ElMessage.success({ message: "简历导入成功", position: "top-right", offset: 40 });
+      ElMessage.success({ message: $t("resumeImportSuccess"), position: "top-right", offset: 40 });
     }
   } catch (error) {
     console.error("解析简历文件失败:", error);
-    ElMessage.error({ message: "简历文件解析失败，请检查文件格式", position: "top-right", offset: 40 });
+    ElMessage.error({ message: $t("resumeImportJsonParseFailed"), position: "top-right", offset: 40 });
   }
 };
 
 // 导入入口沿用导出弹窗的格式配色与卡片层次。
-const importItems = [
-  {
-    // 格式标题
-    name: "PDF 智能解析",
-    // 文件图标
-    icon: "mdi:file-pdf-box",
-    // 图标背景与文字配色
-    iconClass: "bg-sf-error-2 text-sf-error",
-    // 格式说明
-    desc: "支持文字与扫描简历，最多 10 页、50MB；识别后预览确认。",
-    // 文件选择入口
-    fn: () => importDocumentConfig("pdf"),
-  },
-  {
-    // 格式标题
-    name: "Markdown 智能解析",
-    // 文件图标
-    icon: "mdi:language-markdown",
-    // 图标背景与文字配色
-    iconClass: "import-markdown-icon",
-    // 格式说明
-    desc: "识别 Markdown 内容并转换为简历，核对字段后确认导入。",
-    // 文件选择入口
-    fn: () => importDocumentConfig("markdown"),
-  },
-  {
-    // 格式标题
-    name: "JSON 完整备份",
-    // 文件图标
-    icon: "mdi:file-code-outline",
-    // 图标背景与文字配色
-    iconClass: "bg-sf-theme-3 text-sf-theme",
-    // 格式说明
-    desc: "导入完整简历备份，恢复内容与排版配置，继续编辑。",
-    // 文件选择入口
-    fn: importJsonConfig,
-  },
-];
+const importItems = computed(() => {
+  i18n.global.locale.value;
+  return [
+    {
+      // 格式标题
+      name: $t("resumeImportPdfParse"),
+      // 文件图标
+      icon: "mdi:file-pdf-box",
+      // 图标背景与文字配色
+      iconClass: "bg-sf-error-2 text-sf-error",
+      // 格式说明
+      desc: $t("resumeImportPdfParseDesc"),
+      // 文件选择入口
+      fn: () => importDocumentConfig("pdf"),
+    },
+    {
+      // 格式标题
+      name: $t("resumeImportMarkdownParse"),
+      // 文件图标
+      icon: "mdi:language-markdown",
+      // 图标背景与文字配色
+      iconClass: "import-markdown-icon",
+      // 格式说明
+      desc: $t("resumeImportMarkdownParseDesc"),
+      // 文件选择入口
+      fn: () => importDocumentConfig("markdown"),
+    },
+    {
+      // 格式标题
+      name: $t("resumeImportJsonBackup"),
+      // 文件图标
+      icon: "mdi:file-code-outline",
+      // 图标背景与文字配色
+      iconClass: "bg-sf-theme-3 text-sf-theme",
+      // 格式说明
+      desc: $t("resumeImportJsonBackupDesc"),
+      // 文件选择入口
+      fn: importJsonConfig,
+    },
+  ];
+});
 </script>
 
 <template>
@@ -283,20 +293,20 @@ const importItems = [
   <slot name="trigger" :open="handleOpenImport">
     <SfButton @click="handleOpenImport">
       <SfIcon icon="fa6-solid:file-import" size="4" class="mr-2" />
-      导入简历
+      {{ $t("resumeImportResume") }}
     </SfButton>
   </slot>
-  <SfModal v-model="visible" title="导入简历" :width="parsing || pendingResume ? '600px' : '720px'" title-class="justify-start! text-xl!">
+  <SfModal v-model="visible" :title="$t('resumeImportResume')" :width="parsing || pendingResume ? '600px' : '720px'" title-class="justify-start! text-xl!">
     <div v-if="parsing" class="flex w-full flex-col items-center gap-3 p-3">
       <SfIcon icon="line-md:loading-twotone-loop" size="8" class="text-sf-theme" />
       <div class="text-base">{{ parseProgress }}</div>
-      <SfButton type="bg" @click="cancelImport">取消解析</SfButton>
+      <SfButton type="bg" @click="cancelImport">{{ $t("resumeImportCancelParsing") }}</SfButton>
     </div>
     <ImportResumePreview v-else-if="pendingResume" :resume="pendingResume" @confirm="confirmImport" @cancel="cancelImport" />
     <!-- 菜单使用自然内容高度，避免窄屏滚动时底部被裁切。 -->
     <SfScrollbar v-else class="import-scrollbar h-auto! flex-none!" max-height="70vh">
       <div>
-        <p class="border-b border-sf-b pb-3 text-sm text-sf-text-3">选择已有简历或备份文件，开始创建你的新简历</p>
+        <p class="border-b border-sf-b pb-3 text-sm text-sf-text-3">{{ $t("resumeImportDescription") }}</p>
         <div class="grid grid-cols-1 gap-3 py-3 sm:grid-cols-2">
           <button
             v-for="item in importItems"
@@ -319,12 +329,12 @@ const importItems = [
         <div class="flex flex-col gap-3 rounded-2xl border border-sf-b bg-sf-bg p-3">
           <div class="flex flex-wrap items-center justify-between gap-3">
             <div class="min-w-0 text-sm text-sf-text-2">
-              <p class="break-words">PDF 解析模型：{{ pdfModelLabel }}</p>
-              <p class="break-words">Markdown 解析模型（小舟）：{{ markdownModelLabel }}</p>
+              <p class="break-words">{{ $t("resumeImportPdfModel") }}{{ pdfModelLabel }}</p>
+              <p class="break-words">{{ $t("resumeImportMarkdownModel") }}{{ markdownModelLabel }}</p>
             </div>
-            <SfButton type="bg" size="small" border @click="configureParseModel">配置解析模型</SfButton>
+            <SfButton type="bg" size="small" border @click="configureParseModel">{{ $t("resumeImportConfigureModel") }}</SfButton>
           </div>
-          <p class="text-sm leading-6 text-sf-text-3">PDF 需要支持图片识别的模型。</p>
+          <p class="text-sm leading-6 text-sf-text-3">{{ $t("resumeImportPdfModelTip") }}</p>
         </div>
       </div>
     </SfScrollbar>

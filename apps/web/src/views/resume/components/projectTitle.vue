@@ -17,7 +17,7 @@ const handleBack = () => {
 
 <template>
   <!-- 悬停提示：引导用户收藏本站 -->
-  <SfTooltip content="按「Ctrl+D」收藏本站或拖动LOGO到书签栏" placement="bottom">
+  <SfTooltip :content="$t('resumeBookmarkTip')" placement="bottom">
     <!-- 使用 a 标签承载站点永久地址，浏览器才能把 LOGO 拖拽到书签栏收藏 -->
     <a
       :href="SITE_URL"

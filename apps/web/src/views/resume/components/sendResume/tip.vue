@@ -11,12 +11,11 @@ import Money from "@/components/base/donation/money.vue";
           <span class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-100">
             <SfIcon icon="solar:heart-bold" class="text-pink-500" size="4" />
           </span>
-          <span class="text-sm font-medium text-sf-text">作者留言</span>
+          <span class="text-sm font-medium text-sf-text">{{ $t("resumeSendAuthorMessage") }}</span>
         </div>
       </template>
 
-      到这里，我想你的专属简历已经完成啦～很开心能陪你走完这一程。祝你求职顺利，斩获心仪
-      offer。感谢使用轻舟简历。
+      {{ $t("resumeSendAuthorMessageText") }}
     </SfCollapseItem>
     <SfCollapseItem name="money">
       <template #title>
@@ -24,7 +23,7 @@ import Money from "@/components/base/donation/money.vue";
           <span class="mr-2 inline-flex h-6 w-6 items-center justify-center rounded-md bg-pink-100">
             <SfIcon icon="solar:heart-bold" class="text-pink-500" size="4" />
           </span>
-          <span class="text-sm font-medium text-sf-text">支持项目</span>
+          <span class="text-sm font-medium text-sf-text">{{ $t("resumeSendSupportProject") }}</span>
         </div>
       </template>
       <Money />
@@ -37,11 +36,11 @@ import Money from "@/components/base/donation/money.vue";
           >
             <SfIcon icon="bi:shield-exclamation" size="4" class="text-amber-500" />
           </span>
-          <span class="text-sm font-medium text-sf-text">安全提醒</span>
+          <span class="text-sm font-medium text-sf-text">{{ $t("resumeSendSafetyTip") }}</span>
         </div>
       </template>
 
-      本平台仅作信息展示，不参与招聘。内容均来自互联网，仅供参考!!!
+      {{ $t("resumeSendSafetyTipText") }}
     </SfCollapseItem>
     <SfCollapseItem name="fraud">
       <template #title>
@@ -51,10 +50,10 @@ import Money from "@/components/base/donation/money.vue";
           >
             <SfIcon icon="stash:lock-closed" size="4" class="text-emerald-500" />
           </span>
-          <span class="text-sm font-medium text-sf-text">防骗指南</span>
+          <span class="text-sm font-medium text-sf-text">{{ $t("resumeSendFraudGuide") }}</span>
         </div>
       </template>
-      任何收费均为诈骗，勿泄露密码/验证码，认准官方域名，面试前核实企业资质。遇骗请立即报警。
+      {{ $t("resumeSendFraudGuideText") }}
     </SfCollapseItem>
   </SfCollapse>
 </template>

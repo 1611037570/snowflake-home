@@ -1,6 +1,7 @@
 <script setup>
 import { computed, nextTick, ref } from "vue";
 import { useCopy } from "@/hooks";
+import { $t } from "@/locales";
 import { SITE_URL } from "./config";
 
 const visible = ref(false);
@@ -18,7 +19,7 @@ const resumeUrl = computed(() => {
 
 // 复制当前简历的公开地址
 const copyLink = () => {
-  useCopy("轻舟简历永久地址：" + resumeUrl.value);
+  useCopy($t("resumeSharePermanentUrl", { url: resumeUrl.value }));
 };
 
 // 将分享卡片渲染为图片并保存到本地
@@ -39,7 +40,7 @@ const saveQrCode = async () => {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "轻舟简历回家地址.png";
+  link.download = $t("resumeShareImageName");
   link.click();
   URL.revokeObjectURL(url);
 };
@@ -58,20 +59,20 @@ const goBuy = () => {
       @click="openShare"
     >
       <SfIcon icon="ph:paper-plane-right-fill" size="5" />
-      <span class="pr-6 pl-3 text-sm whitespace-nowrap">分享{{ $t("core.router.resume") }}</span>
+      <span class="pr-6 pl-3 text-sm whitespace-nowrap">{{ $t("resumeShareTitle") }}</span>
     </div>
   </slot>
 
-  <SfModal v-model="visible" title="分享轻舟简历">
+  <SfModal v-model="visible" :title="$t('resumeShareTitle')">
     <div class="flex w-[360px] flex-col items-center gap-3">
       <div
         ref="shareCardRef"
         class="flex gap-3 rounded-3xl border border-sf-theme bg-sf-primary p-3"
       >
         <div class="flex flex-col justify-between">
-          <div class="text-xl font-bold text-sf-theme">轻舟简历</div>
-          <div class="">愿此简历，</div>
-          <div>能带你去往想去的地方。</div>
+          <div class="text-xl font-bold text-sf-theme">{{ $t("core.router.resume") }}</div>
+          <div class="">{{ $t("resumeShareSloganLine1") }}</div>
+          <div>{{ $t("resumeShareSloganLine2") }}</div>
           <!-- <div>永久地址</div> -->
           <div>{{ resumeUrl }}</div>
         </div>
@@ -80,18 +81,17 @@ const goBuy = () => {
         </div>
       </div>
       <div class="flex w-full gap-3">
-        <SfButton class="flex-1" @click="saveQrCode">保存图片</SfButton>
-        <SfButton class="flex-1" type="bg" @click="copyLink">复制链接</SfButton>
+        <SfButton class="flex-1" @click="saveQrCode">{{ $t("resumeShareSaveImage") }}</SfButton>
+        <SfButton class="flex-1" type="bg" @click="copyLink">{{ $t("resumeShareCopyLink") }}</SfButton>
       </div>
-      <div>按「Ctrl+D」收藏本站或拖动LOGO到书签栏</div>
+      <div>{{ $t("resumeBookmarkTip") }}</div>
       <div class="whitespace-normal">
         <span>
-          同款云服务器 免备案， <span class="text-sf-theme">2</span>核<span class="text-sf-theme"
+          {{ $t("resumeShareCloudAdPrefix") }}<span class="text-sf-theme">2</span>{{ $t("resumeShareCloudAdCpu") }}<span class="text-sf-theme"
             >2</span
-          >G<span class="text-sf-theme">20</span>M 三网直连(CN2+CMI+CUG)
-          ≈35ms，首月5折，仅需16.5元/月。</span
+          >{{ $t("resumeShareCloudAdMemory") }}<span class="text-sf-theme">20</span>{{ $t("resumeShareCloudAdNetwork") }}</span
         >
-        <span class="cursor-pointer font-medium text-sf-theme" @click="goBuy"> 点击这里购买 </span>
+        <span class="cursor-pointer font-medium text-sf-theme" @click="goBuy">{{ $t("resumeShareCloudAdBuy") }}</span>
       </div>
     </div>
   </SfModal>

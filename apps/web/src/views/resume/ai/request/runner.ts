@@ -1,3 +1,4 @@
+import { $t } from "@/locales";
 import { readResumeAiResponseText } from "./response";
 import type {
   ResumeAiMessage,
@@ -7,7 +8,7 @@ import type {
 
 // 主动中止错误：保持与请求库一致的 name，供调用方识别
 const createAbortError = () => {
-  const error = new Error("已中止");
+  const error = new Error($t("resumeAiAborted"));
   error.name = "AbortError";
   return error;
 };
@@ -30,7 +31,7 @@ export const runResumeAiTask = async <Input, Output = string>(
 ): Promise<Output> => {
   // 流式正文会累积增量，重试会把多轮输出拼在一起
   if (task.stream && (task.retryCount ?? 0) > 0) {
-    throw new Error("流式任务不支持自动重试");
+    throw new Error($t("resumeAiStreamNoRetry"));
   }
   // 调用方已注入模型时不再加载模型解析模块，避免无关请求引入额外依赖
   let llm = options.llm;
@@ -38,7 +39,7 @@ export const runResumeAiTask = async <Input, Output = string>(
     const { getResumeAiModel } = await import("./client");
     llm = getResumeAiModel(task.agent);
     if (!llm || !llm.apiKey || !llm.url || !llm.model) {
-      throw new Error(task.modelErrorMessage ?? "请先配置并选择 AI 模型");
+      throw new Error(task.modelErrorMessage ?? $t("resumeAiModelUnset"));
     }
   }
   if (options.signal?.aborted) throw createAbortError();

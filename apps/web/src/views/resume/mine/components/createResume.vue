@@ -28,7 +28,7 @@ const ensureBaseItem = async () => {
   try {
     baseItem.value = markRaw(await loadResumeTemplateData(PREVIEW_BASE_FILE));
   } catch {
-    ElMessage.error("模板暂时无法加载");
+    ElMessage.error($t("resumeCreateTemplateLoadFailed"));
   } finally {
     baseLoading.value = false;
   }
@@ -36,7 +36,7 @@ const ensureBaseItem = async () => {
 
 const open = () => {
   if (resumeStore.resumeList.length >= resumeStore.maxCount) {
-    ElMessage.warning(`简历数量已达上限（${resumeStore.maxCount}个），请先删除后再新建`);
+    ElMessage.warning($t("resumeCreateMaxLimit", { max: resumeStore.maxCount }));
     return;
   }
   visible.value = true;
@@ -168,29 +168,29 @@ watch(visible, (value) => {
           class="text-sf-theme transition-transform duration-300 group-hover:rotate-90"
         />
       </div>
-      <span class="text-base font-black text-sf-text">新建简历</span>
-      <span class="text-sm text-sf-text-2">挑一套版式，或从零开始</span>
+      <span class="text-base font-black text-sf-text">{{ $t("resumeCreateNewResume") }}</span>
+      <span class="text-sm text-sf-text-2">{{ $t("resumeCreateSubtitle") }}</span>
     </div>
   </ResumeCardContainer>
 
-  <SfModal v-model="visible" title="新建简历" width="min(90vw, 1440px)">
+  <SfModal v-model="visible" :title="$t('resumeCreateNewResume')" width="min(90vw, 1440px)">
     <!-- 高度取弹窗上限减去标题与内边距，画廊滚动始终落在弹窗内 -->
     <div class="flex h-[calc(90vh-72px)] w-full flex-col gap-3">
       <!-- 步骤指示：先选版式，再填简历主人的姓名与岗位 -->
       <div class="flex flex-wrap items-center justify-between gap-3">
         <div class="flex items-center gap-3 text-sm">
-          <span :class="step === 1 ? 'font-bold text-sf-theme' : 'text-sf-text-3'">1 选版式</span>
+          <span :class="step === 1 ? 'font-bold text-sf-theme' : 'text-sf-text-3'">{{ $t("resumeCreateStep1") }}</span>
           <span class="h-px w-6 bg-sf-border" />
-          <span :class="step === 2 ? 'font-bold text-sf-theme' : 'text-sf-text-3'">2 填信息</span>
+          <span :class="step === 2 ? 'font-bold text-sf-theme' : 'text-sf-text-3'">{{ $t("resumeCreateStep2") }}</span>
         </div>
         <div v-if="step === 1 && cards.length" class="flex items-center gap-3 text-xs text-sf-text-3">
-          <span>共 {{ cards.length }} 套推荐版式</span>
+          <span>{{ $t("resumeCreateRecommendedCount", { count: cards.length }) }}</span>
           <button
             type="button"
             class="cursor-pointer font-bold text-sf-theme hover:underline"
             @click="goAllTemplates"
           >
-            查看全部
+            {{ $t("resumeCreateViewAll") }}
           </button>
         </div>
       </div>
@@ -223,8 +223,8 @@ watch(visible, (value) => {
           class="flex h-60 flex-col items-center justify-center gap-3 text-sf-text-2"
         >
           <SfIcon icon="lucide:circle-alert" size="8" class="text-sf-text-3" />
-          <span class="text-sm">模板暂时无法加载</span>
-          <SfButton plain @click="ensureBaseItem">重试</SfButton>
+          <span class="text-sm">{{ $t("resumeCreateTemplateLoadFailed") }}</span>
+          <SfButton plain @click="ensureBaseItem">{{ $t("resumeCreateRetry") }}</SfButton>
         </div>
 
         <!-- 模板画廊：随机卡常驻首位，其余只放推荐档主题 -->
@@ -240,10 +240,10 @@ watch(visible, (value) => {
                   <span class="flex h-15 w-15 items-center justify-center rounded-full bg-sf-theme-2 text-sf-theme">
                     <SfIcon icon="ph:dice-five-duotone" size="7" />
                   </span>
-                  <span class="text-base font-black">随机挑一套</span>
+                  <span class="text-base font-black">{{ $t("resumeCreateRandomPick") }}</span>
                 </div>
                 <div class="relative border-t border-sf-b bg-sf-primary p-1">
-                  <div class="truncate text-center text-base font-black text-sf-text">随机选</div>
+                  <div class="truncate text-center text-base font-black text-sf-text">{{ $t("resumeCreateRandomCard") }}</div>
                 </div>
               </div>
 
@@ -284,26 +284,26 @@ watch(visible, (value) => {
           class="flex shrink-0 flex-col gap-3 md:w-[320px] md:border-l md:border-sf-b md:pl-6 lg:w-[360px]"
         >
           <div class="flex flex-col gap-1">
-            <div class="text-base font-black text-sf-text">先写下你自己</div>
+            <div class="text-base font-black text-sf-text">{{ $t("resumeCreateWriteYourself") }}</div>
             <div class="text-sm leading-7 text-sf-text-2">
-              只填简历开头的信息，其余内容进编辑器再改
+              {{ $t("resumeCreateWriteYourselfTip") }}
             </div>
           </div>
           <label class="flex flex-col gap-1">
-            <span class="text-sm text-sf-text-2">姓名</span>
+            <span class="text-sm text-sf-text-2">{{ $t("resumeCreateNameLabel") }}</span>
             <div class="flex h-10 items-center rounded-xl border border-sf-b px-3">
-              <SfInput v-model="formName" placeholder="选填" class="h-10 flex-1 bg-transparent" />
+              <SfInput v-model="formName" :placeholder="$t('resumeCreateOptional')" class="h-10 flex-1 bg-transparent" />
             </div>
           </label>
           <label class="flex flex-col gap-1">
-            <span class="text-sm text-sf-text-2">求职岗位</span>
+            <span class="text-sm text-sf-text-2">{{ $t("resumeCreatePositionLabel") }}</span>
             <div class="flex h-10 items-center rounded-xl border border-sf-b px-3">
-              <SfInput v-model="formPosition" placeholder="选填" class="h-10 flex-1 bg-transparent" />
+              <SfInput v-model="formPosition" :placeholder="$t('resumeCreateOptional')" class="h-10 flex-1 bg-transparent" />
             </div>
           </label>
           <div class="mt-auto flex flex-col gap-3">
-            <SfButton size="large" class="w-full" @click="confirmCreate">创建并开始编辑</SfButton>
-            <SfButton size="large" plain class="w-full" @click="step = 1">返回选版式</SfButton>
+            <SfButton size="large" class="w-full" @click="confirmCreate">{{ $t("resumeCreateConfirmButton") }}</SfButton>
+            <SfButton size="large" plain class="w-full" @click="step = 1">{{ $t("resumeCreateBackToStep1") }}</SfButton>
           </div>
         </div>
       </div>

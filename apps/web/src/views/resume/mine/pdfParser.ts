@@ -1,3 +1,4 @@
+import { $t } from "@/locales";
 import { getResumeParseLLM } from "@/apis";
 import { runResumeAiTask } from "@/views/resume/ai/request";
 import { PDF_IMPORT_TASK } from "./importResume.task";
@@ -12,13 +13,13 @@ export const parsePdfResume = async (
 ) => {
   const llm = getResumeParseLLM();
   if (!llm?.apiKey || !llm.url || !llm.model) {
-    throw new Error("请先配置并选择支持图片识别的简历解析模型");
+    throw new Error($t("resumeImportPdfModelUnset"));
   }
   const images = await extractPdfImages(file, signal, (page, total) => {
-    onProgress(`正在读取 PDF：第 ${page} / ${total} 页`);
+    onProgress($t("resumeImportReadingPdfPages", { page, total }));
   });
   signal.throwIfAborted();
-  onProgress("正在识别简历内容，请稍候");
+  onProgress($t("resumeImportRecognizing"));
   return runResumeAiTask(
     PDF_IMPORT_TASK,
     { images, model: llm.model },

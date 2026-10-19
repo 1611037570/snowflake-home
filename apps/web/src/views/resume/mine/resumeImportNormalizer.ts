@@ -1,5 +1,7 @@
 import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
 import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
+import { $t } from "@/locales";
+import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import type { ResumeFieldSchema, ResumeModuleSchema } from "../editor/assistant/resumeSchema";
 import { RESUME_SCHEMA } from "../editor/assistant/resumeSchemaRegistry";
 import { normalizeRichTextHtml } from "../editor/preview/shared/normalizeRichText";
@@ -34,9 +36,9 @@ export const parseJsonText = (text: string): Record<string, any> => {
     .replace(/\s*```$/i, "");
   const start = normalized.indexOf("{");
   const end = normalized.lastIndexOf("}");
-  if (start < 0 || end <= start) throw new Error("简历解析结果不是有效 JSON");
+  if (start < 0 || end <= start) throw new Error($t("resumeImportInvalidJson"));
   const parsed = JSON.parse(normalized.slice(start, end + 1));
-  if (!isRecord(parsed)) throw new Error("简历解析结果不是对象");
+  if (!isRecord(parsed)) throw new Error($t("resumeImportJsonNotObject"));
   return parsed;
 };
 
@@ -77,6 +79,8 @@ const toText = (value: unknown): string => {
   if (Array.isArray(value)) return value.map(toText).filter(Boolean).join("\n");
   return isRecord(value) ? JSON.stringify(value) : "";
 };
+// 提示文案里的模块与字段名按当前语言展示，模型字段匹配仍使用 schema 源文案。
+const localizeSchemaText = (value: string) => String(translateResumeEditorText(value));
 // 导入只做编辑器必需的形态转换，不复用 AI 写入的整批拒绝规则。
 const normalizeFieldValue = (value: unknown, field: ResumeFieldSchema, warn: (value: unknown) => void): unknown => {
   if (field.format === "html") {
@@ -116,7 +120,7 @@ const pickRecordFields = (value: any, module: ResumeModuleSchema, warnings: stri
     const content = module.fields.find((field) => field.format === "html");
     if (content && hasValue(value)) value = { [content.key]: value };
     else {
-      if (hasValue(value)) warnings.push(`${module.title}：未能匹配字段，原内容：${toText(value)}`);
+      if (hasValue(value)) warnings.push($t("resumeImportWarningUnmatchedContent", { module: localizeSchemaText(module.title), content: toText(value) }));
       return {};
     }
   }
@@ -134,14 +138,14 @@ const pickRecordFields = (value: any, module: ResumeModuleSchema, warnings: stri
     if (!name) return;
     consumed.add(name);
     const normalized = normalizeFieldValue(value[name], field, (original) => {
-      warnings.push(`${module.title} · ${field.label}：请导入后补充，原内容：${toText(original)}`);
+      warnings.push($t("resumeImportWarningFieldMissing", { module: localizeSchemaText(module.title), field: localizeSchemaText(field.label), content: toText(original) }));
     });
     if (hasValue(normalized)) record[field.key] = normalized;
   });
   // 无法识别的字段单独提示，已识别字段照常导入。
   Object.entries(value).forEach(([key, original]) => {
     if (!consumed.has(key) && hasValue(original) && !isResumeMediaField(module.key, key)) {
-      warnings.push(`${module.title} · ${key}：未匹配到字段，原内容：${toText(original)}`);
+      warnings.push($t("resumeImportWarningUnknownField", { module: localizeSchemaText(module.title), field: key, content: toText(original) }));
     }
   });
   return record;
@@ -199,11 +203,11 @@ export const normalizeResumeData = (parsed: Record<string, any>) => {
   });
   Object.entries(source).forEach(([key, value]) => {
     if (!consumed.has(key) && hasValue(value) && !["title", "warnings", "config", "ui", "usage", "id"].includes(key)) {
-      warnings.push(`${key}：未匹配到简历模块，原内容：${toText(value)}`);
+      warnings.push($t("resumeImportWarningUnknownModule", { module: key, content: toText(value) }));
     }
   });
   // 只在完全没有可用内容时失败，单个字段不符合格式不会拦截整份简历。
-  if (!Object.keys(data).length) throw new Error("未识别到可导入的简历内容，请检查文档或重试");
+  if (!Object.keys(data).length) throw new Error($t("resumeImportNoContent"));
   if (!data.user) data.user = { data: {} };
   const modules = MODULE_ORDER.filter((key) => data[key]).map((key) => ({ key }));
   return {
@@ -220,7 +224,7 @@ export const normalizeResumeData = (parsed: Record<string, any>) => {
 export const readResumeImportResult = (response: any, onProgress: (message: string) => void) => {
   assertResumeAiResponseComplete(response);
   const text = readResumeAiResponseText(response);
-  if (!text) throw new Error("简历解析模型没有返回内容，请检查模型配置");
-  onProgress("正在校验简历字段");
+  if (!text) throw new Error($t("resumeImportEmptyResponse"));
+  onProgress($t("resumeImportValidatingFields"));
   return normalizeResumeData(parseJsonText(text));
 };

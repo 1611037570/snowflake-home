@@ -5,6 +5,7 @@ import { useRoute, useRouter } from "vue-router";
 import ResumeHeader from "./components/resumeHeader.vue";
 import IssueFeedback from "./components/issueFeedback.vue";
 import Share from "./components/share.vue";
+import { $t } from "@/locales";
 
 const route = useRoute();
 const router = useRouter();
@@ -44,9 +45,9 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
 
 <template>
   <section v-if="resumeLoadError" class="flex-c h-svh w-full flex-col gap-3 bg-sf-page text-sf-text">
-    <p>简历读取失败，请稍后重试</p>
-    <SfButton @click="loadRouteResumes">重新读取</SfButton>
-    <SfButton plain @click="router.push('/resume')">返回简历首页</SfButton>
+    <p>{{ $t("resumeLoadFailed") }}</p>
+    <SfButton @click="loadRouteResumes">{{ $t("resumeLoadRetry") }}</SfButton>
+    <SfButton plain @click="router.push('/resume')">{{ $t("resumeLoadBackHome") }}</SfButton>
   </section>
   <LoadingComponent v-else-if="!resumeReady" class="h-svh w-full" />
   <router-view v-else-if="route.meta.hideResumeLayout" class="h-screen w-full" />

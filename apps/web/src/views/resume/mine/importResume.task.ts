@@ -1,3 +1,4 @@
+import { $t } from "@/locales";
 import type { ResumeAiProtocol, ResumeAiTask } from "@/views/resume/ai/request/types";
 import { resumeDataContract } from "../editor/assistant/skills/skill_resume_data_contract";
 import { MAX_PDF_REQUEST_BYTES } from "./pdfDocument";
@@ -34,8 +35,8 @@ export const MARKDOWN_IMPORT_TASK: ResumeAiTask<{ markdown: string }> = {
   timeout: 120_000,
   // 不自动重复提交解析请求
   retryCount: 0,
-  // 缺少模型时与原有提示保持一致
-  modelErrorMessage: "请先配置并选择小舟模型",
+  // 缺少模型时与原有提示保持一致（读取时取当前语言，切换语言后不落后）
+  get modelErrorMessage() { return $t("resumeImportMarkdownModelMissing"); },
   // 协议对应的完整请求体
   buildBody: ({ markdown }, protocol) => {
     const messages = [
@@ -103,15 +104,15 @@ export const PDF_IMPORT_TASK: ResumeAiTask<{ images: string[]; model: string }> 
   timeout: 120_000,
   // 不自动重复提交大体积请求
   retryCount: 0,
-  // 缺少模型时与原有提示保持一致
-  modelErrorMessage: "请先配置并选择支持图片识别的简历解析模型",
+  // 缺少模型时与原有提示保持一致（读取时取当前语言，切换语言后不落后）
+  get modelErrorMessage() { return $t("resumeImportPdfModelUnset"); },
   // 只记录页数摘要，避免监控持久化整份图片
   traceInput: ({ images }) => ({ task: "PDF 简历导入", pages: images.length }),
   // 协议对应的图片请求参数与体积检查
   buildBody: (input, protocol) => {
     const body = buildPdfImportBody(input, protocol);
     if (new Blob([JSON.stringify({ ...body, model: input.model })]).size > MAX_PDF_REQUEST_BYTES) {
-      throw new Error("解析请求超过 16MB，请减少 PDF 页数后重试");
+      throw new Error($t("resumeImportRequestTooLarge", { size: MAX_PDF_REQUEST_BYTES / 1024 / 1024 }));
     }
     return body;
   },

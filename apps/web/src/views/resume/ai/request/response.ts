@@ -1,3 +1,5 @@
+import { $t } from "@/locales";
+
 // 从对话补全或响应接口的非流式响应中提取正文
 export const readResumeAiResponseText = (response: unknown): string => {
   if (typeof response === "string") return response;
@@ -23,6 +25,6 @@ export const readResumeAiResponseText = (response: unknown): string => {
 export const assertResumeAiResponseComplete = (response: unknown) => {
   const data = response as any;
   if (data?.choices?.[0]?.finish_reason === "length" || data?.status === "incomplete") {
-    throw new Error("模型输出被截断，请减少内容或调整模型输出上限");
+    throw new Error($t("resumeAiTruncated"));
   }
 };

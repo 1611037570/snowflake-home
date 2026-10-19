@@ -2,6 +2,7 @@
 import { compactResumeItem } from "@/domain/resume/theme/resumeUi";
 import { useResumeStore } from "@/stores";
 import { trackResumeAction } from "@/hooks";
+import { $t } from "@/locales";
 import dayjs from "dayjs";
 import { storeToRefs } from "pinia";
 import { useRouter } from "vue-router";
@@ -59,7 +60,7 @@ const getLastUseTime = (item) => {
   return item?.usage?.lastUseTime ? dayjs(item.usage.lastUseTime).format("YYYY.MM.DD HH:mm") : "--";
 };
 const getResumePosition = (item) => {
-  return item?.data?.user?.data?.position || "未填写求职岗位";
+  return item?.data?.user?.data?.position || $t("resumeMinePositionEmpty");
 };
 
 // 导出指定简历的完整 JSON 配置，支持后续无损导入恢复。
@@ -99,8 +100,8 @@ const copyResume = (item) => {
   const copiedId = resumeStore.duplicateResume(item);
   if (!copiedId) return;
   ElNotification({
-    title: "复制成功",
-    message: "已创建一份新的简历",
+    title: $t("resumeMineCopySuccess"),
+    message: $t("resumeMineCopySuccessMessage"),
     position: "top-right",
     offset: 40,
   });
@@ -109,22 +110,22 @@ const copyResume = (item) => {
 // 草稿卡片操作菜单。
 const getActionList = (item) => [
   {
-    name: "重命名", // 草稿操作名称
+    name: $t("resumeMineRename"), // 草稿操作名称
     icon: "lucide:pencil-line", // 重命名入口图标
     fn: () => openRename(item), // 打开共用重命名弹窗
   },
   {
-    name: "复制",
+    name: $t("resumeMineCopy"),
     icon: "lucide:copy",
     fn: () => copyResume(item),
   },
   {
-    name: "导出 JSON",
+    name: $t("resumeMineExportJson"),
     icon: "fa6-solid:file-export",
     fn: () => exportJson(item),
   },
   {
-    name: "预览",
+    name: $t("resumeMinePreview"),
     icon: "lucide:eye",
     fn: () => openPreview(item),
   },
@@ -156,7 +157,7 @@ const editPreview = () => {
 };
 
 const handleDelete = (index) => {
-  proxy.$confirm("确定要删除当前简历吗？", "删除确认").then(() => {
+  proxy.$confirm($t("resumeMineDeleteConfirm"), $t("resumeMineDeleteConfirmTitle")).then(() => {
     if (index === -1) return;
     currentIndex.value = index;
     resumeStore.deleteResume();
@@ -166,7 +167,7 @@ const handleDelete = (index) => {
 // 清空前二次确认，避免误删回收站内容。
 const handleClearTrash = () => {
   if (!resumeStore.trashList.length) return;
-  proxy.$confirm("确定要永久删除回收站内的全部简历吗？", "全部删除确认").then(() => {
+  proxy.$confirm($t("resumeMineClearTrashConfirm"), $t("resumeMineClearTrashConfirmTitle")).then(() => {
     resumeStore.clearTrash();
   });
 };
@@ -182,14 +183,14 @@ const handleClearTrash = () => {
           class="flex-c h-10 text-[15px] font-extrabold"
           @click="selectTab('draft')"
         >
-          简历草稿({{ list.length }}/{{ maxCount }})
+          {{ $t("resumeMineDraftsCount", { current: list.length, max: maxCount }) }}
         </SfSpan>
         <SfSpan
           :active="activeTab === 'trash'"
           class="flex-c h-10 text-[15px] font-extrabold"
           @click="selectTab('trash')"
         >
-          回收站({{ trashCount }}/{{ maxTrashCount }})
+          {{ $t("resumeMineTrashCount", { current: trashCount, max: maxTrashCount }) }}
         </SfSpan>
       </div>
       <!-- 草稿与回收站使用对应操作入口。 -->
@@ -199,7 +200,7 @@ const handleClearTrash = () => {
           <SendResume />
         </template>
         <SfButton v-else plain type="error" icon="lucide:trash-2" @click="handleClearTrash">
-          全部删除
+          {{ $t("resumeMineClearAll") }}
         </SfButton>
       </div>
     </div>
@@ -242,7 +243,7 @@ const handleClearTrash = () => {
                   @click.stop="handleEdit(card.index)"
                   icon="lucide:pencil"
                 >
-                  编辑
+                  {{ $t("resumeMineEdit") }}
                 </SfButton>
                 <SfButton
                   :round="false"
@@ -252,7 +253,7 @@ const handleClearTrash = () => {
                   @click.stop="handleDelete(card.index)"
                   icon="lucide:trash-2"
                 >
-                  删除
+                  {{ $t("resumeMineDelete") }}
                 </SfButton>
               </div>
             </ResumeCardContainer>
@@ -266,7 +267,7 @@ const handleClearTrash = () => {
           key-field="id"
         >
           <template #default="{ item, index }">
-            <ResumeCardContainer :item="item" action-text="已删除">
+            <ResumeCardContainer :item="item" :action-text="$t('resumeMineDeleted')">
               <div class="truncate text-base font-black text-sf-text">
                 {{ getResumeTitle(item) }}
               </div>
@@ -275,7 +276,7 @@ const handleClearTrash = () => {
                   {{ getResumePosition(item) }}
                 </div>
                 <span class="shrink-0 text-xs text-sf-text-3">
-                  {{ resumeStore.getTrashRemainingDays(item) }}天后自动清理
+                  {{ $t("resumeMineTrashAutoClean", { days: resumeStore.getTrashRemainingDays(item) }) }}
                 </span>
               </div>
               <div class="mt-2 flex items-center gap-3">
@@ -286,7 +287,7 @@ const handleClearTrash = () => {
                   @click="resumeStore.restoreResume(index)"
                   icon="lucide:rotate-ccw"
                 >
-                  恢复
+                  {{ $t("resumeMineRestore") }}
                 </SfButton>
                 <SfButton
                   :round="false"
@@ -296,7 +297,7 @@ const handleClearTrash = () => {
                   @click="resumeStore.permanentlyDeleteResume(index)"
                   icon="lucide:trash-2"
                 >
-                  永久删除
+                  {{ $t("resumeMinePermanentDelete") }}
                 </SfButton>
               </div>
             </ResumeCardContainer>
@@ -311,12 +312,12 @@ const handleClearTrash = () => {
             size="8"
             class="mb-4 animate-spin text-sf-theme"
           />
-          <span class="text-base">正在加载回收站</span>
+          <span class="text-base">{{ $t("resumeMineTrashLoading") }}</span>
         </div>
         <!-- 回收站为空 -->
         <div v-else class="flex flex-col items-center justify-center py-20 text-sf-text-2">
           <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
-          <span class="text-base">回收站为空</span>
+          <span class="text-base">{{ $t("resumeMineTrashEmpty") }}</span>
         </div>
       </div>
     </SfScrollbar>
@@ -325,9 +326,9 @@ const handleClearTrash = () => {
       :visible="isPreviewVisible"
       :item="previewItem || {}"
       :title="getResumeTitle(previewItem)"
-      eyebrow-text="我的简历"
-      primary-action-text="编辑简历"
-      secondary-action-text="返回我的简历"
+      :eyebrow-text="$t('resumeNavMyResumes')"
+      :primary-action-text="$t('resumeMineEditResume')"
+      :secondary-action-text="$t('resumeMineBackToMine')"
       @close="closePreview"
       @action="editPreview"
     />

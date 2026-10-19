@@ -2,6 +2,7 @@
 import { useAiStore, useResumeStore, type Chat } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, ref, watch } from "vue";
+import { $t } from "@/locales";
 import { useResumeName } from "../../hooks/useResumeName";
 
 const aiStore = useAiStore();
@@ -39,9 +40,9 @@ const resumeTitles = computed(
 );
 
 function getChatResumeTitle(chat: Pick<Chat, "resumeId">) {
-  if (!chat.resumeId) return "未关联简历";
+  if (!chat.resumeId) return $t("resumeAiChatNoResume");
   if (resumeTitles.value.has(chat.resumeId)) return resumeTitles.value.get(chat.resumeId);
-  return list.value.some((item) => item.id === chat.resumeId) ? "简历" : "已删除简历";
+  return list.value.some((item) => item.id === chat.resumeId) ? $t("resumeAiChatResume") : $t("resumeAiChatDeletedResume");
 }
 
 async function selectChat(id: string) {
@@ -59,7 +60,7 @@ function formatTime(time: number) {
   <div class="flex h-full min-h-0 min-w-0 flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-primary md:flex-row">
     <aside class="flex h-36 shrink-0 flex-col border-b border-sf-b md:h-full md:w-60 md:border-r md:border-b-0">
       <div class="shrink-0 border-b border-sf-b px-3 py-3">
-        <h2 class="font-bold text-sf-text">消息</h2>
+        <h2 class="font-bold text-sf-text">{{ $t("resumeAiMessages") }}</h2>
       </div>
       <SfScrollbar class="min-h-0 flex-1 p-3">
         <div v-if="resumeAssistantChatList.length" class="flex flex-col gap-3">
@@ -85,14 +86,14 @@ function formatTime(time: number) {
           </button>
         </div>
         <div v-else class="flex h-full items-center justify-center text-sm text-sf-text-3">
-          暂无对话记录
+          {{ $t("resumeAiNoChats") }}
         </div>
       </SfScrollbar>
     </aside>
 
     <section class="flex min-w-0 flex-1 flex-col">
       <header class="shrink-0 border-b border-sf-b px-3 py-3 sm:px-6">
-        <h3 class="truncate font-bold text-sf-text">{{ activeChat?.title || "消息" }}</h3>
+        <h3 class="truncate font-bold text-sf-text">{{ activeChat?.title || $t("resumeAiMessages") }}</h3>
       </header>
       <SfScrollbar class="min-h-0 flex-1">
         <div v-if="messages.length" class="mx-auto flex w-full max-w-3xl flex-col gap-6 p-3 sm:p-6">
@@ -103,7 +104,7 @@ function formatTime(time: number) {
             :class="message.role === 'user' ? 'items-end' : 'items-start'"
           >
             <span class="text-xs font-bold text-sf-text-3">
-              {{ message.role === "user" ? "我" : "小舟AI" }}
+              {{ message.role === "user" ? $t("resumeAiRoleUser") : $t("resumeNavAi") }}
             </span>
             <div
               class="max-w-full rounded-2xl px-3 py-3 text-sm leading-7"
@@ -120,12 +121,12 @@ function formatTime(time: number) {
                 :editorId="`resume-ai-message-${index}`"
                 class="bg-transparent! p-0!"
               />
-              <span v-else class="text-sf-text-3">正在生成</span>
+              <span v-else class="text-sf-text-3">{{ $t("resumeAiGenerating") }}</span>
             </div>
           </article>
         </div>
         <div v-else class="flex h-full items-center justify-center text-sm text-sf-text-3">
-          暂无消息内容
+          {{ $t("resumeAiNoMessages") }}
         </div>
       </SfScrollbar>
     </section>

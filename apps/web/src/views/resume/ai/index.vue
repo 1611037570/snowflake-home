@@ -6,8 +6,8 @@ import ConversationViewer from "./components/conversationViewer.vue";
 // 左侧菜单控制右侧内容。
 const activePanel = ref("settings");
 const panelList = [
-  // { name: "消息", value: "messages", icon: "ph:chats-duotone" },
-  { name: "AI设置", value: "settings", icon: "lucide:settings-2" },
+  // { nameKey: "resumeAiMessages", value: "messages", icon: "ph:chats-duotone" },
+  { nameKey: "resumeAiSettings", value: "settings", icon: "lucide:settings-2" },
 ];
 </script>
 
@@ -29,7 +29,7 @@ const panelList = [
         @click="activePanel = panel.value"
       >
         <SfIcon :icon="panel.icon" size="4" />
-        {{ panel.name }}
+        {{ $t(panel.nameKey) }}
       </button>
     </aside>
     <section class="min-h-0 min-w-0 flex-1 p-3">

@@ -13,7 +13,7 @@ const goToIssues = () => {
       @click="goToIssues"
     >
       <SfIcon icon="ph:chat-teardrop-dots-fill" size="5" />
-      <span class="pr-6 pl-3 text-sm whitespace-nowrap">问题反馈</span>
+      <span class="pr-6 pl-3 text-sm whitespace-nowrap">{{ $t("resumeFeedback") }}</span>
     </div>
   </slot>
 </template>
