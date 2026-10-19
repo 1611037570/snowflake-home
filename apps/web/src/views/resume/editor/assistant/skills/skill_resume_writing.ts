@@ -1,6 +1,6 @@
 // 技能：简历编写
 // 描述：指导 AI 如何通过 propose_resume_edits 把用户诉求转成简历写操作
-import { RESUME_WRITING_DISCIPLINE } from "@/views/resume/ai/writingRules";
+import { ASSISTANT_WRITING_RULES_TEXT } from "@/views/resume/ai/writingRules";
 export const resumeWriting = () => ({
   id: "resume_writing",
   name: "简历编写",
@@ -31,8 +31,8 @@ export const resumeWriting = () => ({
 
 # 操作要求
 1. 富文本字段写入值必须是 HTML：段落使用 <p>，列表使用 <ul>/<ol> 与 <li>，强调使用 <strong>/<em>；禁止把 Markdown 标记或未包裹的纯文本写入富文本字段。
-2. 生成或改写正文时遵守统一写作纪律，与富文本框 AI 同口径：
-${RESUME_WRITING_DISCIPLINE.map((rule, index) => `  ${index + 1}. ${rule}`).join("\n")}
+2. 生成或改写正文时遵守统一写作规则，与富文本框 AI 同口径：
+${ASSISTANT_WRITING_RULES_TEXT.split("\n").map((line, index) => `  ${index + 1}. ${line}`).join("\n")}
 3. 每次写操作都基于 read_resume_data 返回的真实数据定位：module 必须在返回范围内；update/delete/move 的 index、from、to 必须对应当前记录；同批操作按声明顺序执行，新增、删除或排序后，后续下标须按变化后的记录计算。
 4. 一次调用可包含多条 operations，系统会合并为一次写入，避免分多次零散提交。
 5. 若 propose_resume_edits 返回 validationIssues、errors 或部分操作失败，先按 operationIndex、changed 与 failed 定位失败项，再调用 read_resume_data 读取最新数据；只重新构造未成功的操作并按最新记录下标提交，禁止重放已成功操作或沿用删除、排序前的旧下标。

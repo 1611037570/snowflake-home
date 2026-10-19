@@ -60,7 +60,6 @@ const buildSystemPrompt = (
     "【写作要求】",
     "- 按 moduleTitle 判断当前模块的类型，使用对应写法，不要套用其他模块的口径。",
     "- 只使用输入中的事实，不编造单位、职位、技术、时间、数字与成果；缺失时用【待补充：缺失内容】占位。",
-    "- 简洁书面语，动词开头，不使用第一人称。",
     // 写作纪律与 AI 助手链路共用同一份定义，禁止在提示词里另写一份
     ...RESUME_WRITING_DISCIPLINE.map((rule) => `- ${rule}`),
     `- ${ACTION_INSTRUCTIONS[action]}`,

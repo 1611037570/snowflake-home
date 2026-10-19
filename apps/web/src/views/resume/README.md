@@ -58,6 +58,17 @@ const sample = await data.loadResumeTemplateData("allFields.ts");
 
 ## 六、简历 AI 功能与迭代约定
 
+### 正文写作规则（唯一事实源）
+
+所有会生成或改写简历正文的链路，一律从 `ai/writingRules.ts` 取规则，禁止在各自提示词里另写一份，避免出现两套写法：
+
+| 出口 | 形态 | 消费方 |
+| --- | --- | --- |
+| `getWritingRule(action, kindKey, moduleKey)` | 按操作与模块精确选一条 | 富文本框快捷处理（`contentEditor/contentRewrite.task.ts`） |
+| `ASSISTANT_WRITING_RULES_TEXT` | 纪律 + 各类型规则 + 经历起草规则全量注入 | 助手常驻提示（`assistant/skills/prompt_default.ts`，覆盖一键调整/一键优化/从零生成等不读写入技能的流程）与写入技能 `resume_writing` |
+
+导入 / 解析（Markdown、PDF）只忠实转换原文，面试快答只生成口述答案，均不写简历正文，不注入写作规则。`resume_optimization` 是写作方法论知识库（STAR、量化维度、示例），按需读取，与规则冲突时以 `writingRules.ts` 为准。
+
 ### 当前功能入口
 
 简历助手位于 `editor/assistant/`，目录内的 `README.md` 说明文件职责。新增或调整现有 AI 能力时，须同步本节，避免入口、技能与实际行为出现迭代差异。
