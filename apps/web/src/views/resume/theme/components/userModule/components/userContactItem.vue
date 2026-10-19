@@ -1,8 +1,10 @@
 <script setup>
+import { computed } from "vue";
 import ResumeField from "@/views/resume/editor/preview/components/resumeField/index.vue";
+import { safeContentUrl } from "@/views/resume/editor/preview/resumePages/render/nodeContentContract";
 
 // 联系方式单项：统一处理图标 / 文字标签和字段值展示
-defineProps({
+const props = defineProps({
   icon: {
     type: String,
     default: "",
@@ -32,6 +34,9 @@ defineProps({
     default: false,
   },
 });
+
+// 仅把安全协议的网址渲染为可点击链接，普通联系方式继续按文本展示。
+const linkUrl = computed(() => safeContentUrl(props.modelValue));
 </script>
 
 <template>
@@ -45,7 +50,20 @@ defineProps({
   >
     <SfIcon v-if="iconMode" :icon="icon" size="4.5" class="shrink-0" />
     <span v-else-if="!hideLabel" class="resume-contact-label shrink-0">{{ label }}</span>
-    <span v-if="modelValue" class="min-w-0 font-medium">
+    <a
+      v-if="modelValue && linkUrl"
+      :href="linkUrl"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="min-w-0 font-medium hover:underline"
+    >
+      <ResumeField
+        :tag="flowMode ? 'span' : 'div'"
+        :model-value="modelValue"
+        class="max-w-full min-w-0 break-words"
+      />
+    </a>
+    <span v-else-if="modelValue" class="min-w-0 font-medium">
       <ResumeField
         :tag="flowMode ? 'span' : 'div'"
         :model-value="modelValue"

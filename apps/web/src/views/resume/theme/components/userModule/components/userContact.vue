@@ -86,8 +86,14 @@ const layoutClass = computed(() => {
       centered ? "justify-center" : alignEnd ? "justify-end" : "justify-start",
     ];
   }
+  if (!props.singleColumnGrid) {
+    return [
+      "resume-user-contact-adaptive-grid grid gap-3",
+      centered ? "justify-center" : alignEnd ? "justify-end" : "justify-start",
+    ];
+  }
   return [
-    props.singleColumnGrid ? "grid grid-cols-1 gap-3" : "grid grid-cols-2 gap-3",
+    "grid grid-cols-1 gap-3",
     centered && "justify-items-center",
     alignEnd && "justify-items-end",
   ];
@@ -330,11 +336,15 @@ const customItems = computed(() =>
   userFieldOrder.value
     .filter((key) => isUserCustomFieldKey(key))
     .filter((key) => !isUserFieldHidden(key) && user.value?.[key])
-    .map((key) => ({
-      key,
-      icon: fieldIcon(key),
-      label: userFieldLabels.value.get(key) || "自定义字段",
-    })),
+    .map((key) => {
+      const label = userFieldLabels.value.get(key) || "自定义字段";
+      return {
+        key,
+        icon: fieldIcon(key),
+        // 自定义联系方式与预设字段保持一致，文字标签末尾统一显示冒号。
+        label: /[:：]\s*$/.test(label) ? label : `${label}：`,
+      };
+    }),
 );
 // 统一整理基础信息、联系方式和扩展信息，交由通用单项组件渲染
 const contactItems = computed(() => {
@@ -439,5 +449,10 @@ const visibleContactItems = computed(() => props.singleColumnGrid
 .resume-user-contact {
   gap: var(--resume-user-contact-gap, 0.75rem); // 资料行距
   text-align: var(--resume-user-contact-align, inherit); // 资料文本对齐
+}
+
+/* 常规资料固定为两列，并按两列实际内容长度动态分配可用宽度。 */
+.resume-user-contact-adaptive-grid {
+  grid-template-columns: minmax(0, max-content) minmax(0, max-content);
 }
 </style>
