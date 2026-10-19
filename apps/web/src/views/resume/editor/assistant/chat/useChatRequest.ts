@@ -293,7 +293,8 @@ export const useChatRequest = ({
       }
       reactRunner = llm.react({
         tools,
-        maxSteps: 15,
+        // 单次请求的最大 ReAct 轮次上限
+        maxSteps: 99,
         reflection: true,
         reflectPrompt,
         onToolError,
