@@ -44,8 +44,12 @@ export const collectResumeStyles = (root: HTMLElement, source: HTMLElement): str
     }
     if (rule instanceof CSSKeyframesRule) return animations.has(rule.name) ? [resolveUrls(rule.cssText, base)] : [];
     if (rule instanceof CSSImportRule) {
-      try { return rule.styleSheet ? collect(rule.styleSheet.cssRules, rule.href) : []; }
-      catch { throw new Error("无法读取简历导出依赖的样式"); }
+      if (!rule.styleSheet) return [];
+      let importedRules: CSSRuleList;
+      try { importedRules = rule.styleSheet.cssRules; }
+      // 跨域导入会被浏览器禁止读取，仅跳过该外部样式，不能中断整份简历导出。
+      catch { return []; }
+      return collect(importedRules, rule.href);
     }
     if ("cssRules" in rule) {
       const children = collect((rule as CSSGroupingRule).cssRules, base);
@@ -56,7 +60,10 @@ export const collectResumeStyles = (root: HTMLElement, source: HTMLElement): str
     return [resolveUrls(rule.cssText, base)];
   });
   return Array.from(document.styleSheets).flatMap((sheet) => {
-    try { return collect(sheet.cssRules, sheet.href || document.baseURI); }
-    catch { throw new Error("无法读取简历导出依赖的样式"); }
+    let rules: CSSRuleList;
+    try { rules = sheet.cssRules; }
+    // 页面可能包含跨域字体或第三方样式，浏览器不允许读取其规则时继续收集其余本地样式。
+    catch { return []; }
+    return collect(rules, sheet.href || document.baseURI);
   }).join("\n");
 };
