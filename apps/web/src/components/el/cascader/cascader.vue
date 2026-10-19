@@ -47,7 +47,8 @@ const cascaderOptions = computed(() => {
       const label = String(option[labelKey] ?? "");
       const path = [...parentLabels, label].join(separator).toLowerCase();
       optionValues.add(option[valueKey]);
-      if (query && path.includes(query.toLowerCase())) hasMatch = true;
+      // 禁用节点不算匹配：首行提示等禁用文案含关键词时会误判为有匹配，导致不生成自定义选项而显示无匹配
+      if (!option.disabled && query && path.includes(query.toLowerCase())) hasMatch = true;
       const children = option[childrenKey];
       if (Array.isArray(children)) inspect(children, [...parentLabels, label]);
     });
