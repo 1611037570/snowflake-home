@@ -2,6 +2,7 @@
 import { AbortError, isAbortError } from "@/apis";
 import {
   createResumeAiReactRunner,
+  isPersistentTaskSkillId,
   REQUIRED_RESUME_WRITE_PROMPT,
   type Skill,
 } from "@/views/resume/ai";
@@ -223,18 +224,26 @@ export const useChatRequest = ({
       const requestMessage = [...currentMessages.value]
         .reverse()
         .find((message) => message.role === "user");
-      // 一键调整必须产生真实写入，最终回复不能代替数据修改。
+      // 修改类任务必须产生真实写入，最终回复不能代替数据修改。
       const requireResumeWrite = requestMessage?.requestContext?.requireResumeWrite === true;
+      // 只有一键调整需要同时关闭完成度问题，普通优化只验收真实写入。
+      const requireResumeIssueClosure =
+        requestMessage?.requestContext?.requireResumeIssueClosure === true;
       // 一键优化的报告声称改动时同样必须存在真实写入，空改动为合法分支
       const verifyWriteReport = requestMessage?.requestContext?.verifyWriteReport === true;
       beforeRequest?.(requestMessage?.requestContext, requestTaskId);
       // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
       const defaultSkill = defaultPrompt();
+      // 历史会话可能保存过多个任务或辅助技能，只发送最近的任务技能，避免提示持续膨胀。
+      const activeTaskSkillMessage = [...currentMessages.value]
+        .reverse()
+        .find((message) => isPersistentTaskSkillId(message.systemSkillId));
       let messages = currentMessages.value
         .filter(
           (message) =>
             !message.skipContext &&
             message.systemSkillId !== defaultSkill.id &&
+            (!message.systemSkillId || message === activeTaskSkillMessage) &&
             !(
               message.role === "system" &&
               message.content.includes("# 角色\n你是叫小舟AI助手") &&
@@ -283,11 +292,21 @@ export const useChatRequest = ({
 
       // 首次请求时才加载技能与简历工具清单
       const resolvedTools = await resolveTools((skill: Skill) => {
-        // 技能正文只在首次调用时写入隐藏系统消息，后续请求自动继承且不重复保存。
-        if (currentMessages.value.some((message) => message.systemSkillId === skill.id)) return;
+        // 规范、行业与写入方法只在当轮使用，只有任务技能跨轮保留。
+        if (!isPersistentTaskSkillId(skill.id)) return;
+        const activeTaskSkill = [...currentMessages.value]
+          .reverse()
+          .find((message) => isPersistentTaskSkillId(message.systemSkillId));
+        if (activeTaskSkill?.systemSkillId === skill.id) return;
+        // 切换任务时移除旧任务技能，确保会话中始终只有一个当前任务。
+        for (let index = currentMessages.value.length - 1; index >= 0; index -= 1) {
+          if (isPersistentTaskSkillId(currentMessages.value[index]?.systemSkillId)) {
+            currentMessages.value.splice(index, 1);
+          }
+        }
         addMessage({
           role: "system",
-          content: skill.instructions,
+          content: `# 当前任务技能：${skill.name}\n\n${skill.instructions}`,
           systemSkillId: skill.id,
           typing: false,
         });
@@ -302,7 +321,7 @@ export const useChatRequest = ({
           return tool.execute(args);
         },
       }));
-      // 所有请求统一走 React 编排，技能规范已随对话系统消息提供
+      // 所有请求统一走 React 编排，当前任务技能可由会话系统消息跨轮提供。
       reactRunner = createResumeAiReactRunner("xiaoZhou", {
         tools,
         // 单次请求的最大 ReAct 轮次上限
@@ -383,8 +402,8 @@ export const useChatRequest = ({
           // 强制写入任务没有收到工具成功结果时作废文本结论，避免展示假成功。
           if (requireResumeWrite && !writeMessages.has(lastMsg)) {
             // 打印验收失败原因，便于排查最终阶段被判失败的问题
-            console.warn("[一键调整] 验收失败：未识别到成功的简历写入");
-            lastMsg.content = "一键调整未能写入简历数据，本次修改说明已作废，请重新执行。";
+            console.warn("[简历写入] 验收失败：未识别到成功的简历写入");
+            lastMsg.content = "本轮操作未能写入简历数据，修改说明已作废，请重新执行。";
             lastMsg.requestStatus = "error";
             lastMsg.stepLabel = "";
             lastMsg.thoughtCollapsed = true;
@@ -408,7 +427,7 @@ export const useChatRequest = ({
             return;
           }
           // 一键调整仍有完成度或时间线问题时禁止显示全部完成
-          if (requireResumeWrite && remainingRequiredIssues?.length) {
+          if (requireResumeIssueClosure && remainingRequiredIssues?.length) {
             // 打印验收失败原因与剩余问题清单，便于排查
             console.warn("[一键调整] 验收失败：写入后仍有未解决问题", remainingRequiredIssues);
             lastMsg.content = `一键调整已写入部分内容，但仍有以下问题未解决：\n\n${remainingRequiredIssues

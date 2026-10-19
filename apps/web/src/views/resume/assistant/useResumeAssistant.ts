@@ -83,7 +83,7 @@ export const useResumeAssistant = () => {
     beforeRequest: (options, taskId) => {
       // 新请求开始时清空上轮写入凭据，禁止跨请求复用
       hasSuccessfulWrite = false;
-      requiresResumeIssueClosure = options?.requireResumeWrite === true;
+      requiresResumeIssueClosure = options?.requireResumeIssueClosure === true;
       activeTaskId = taskId || "";
       resumeContext.beforeRequest(options, taskId);
     },

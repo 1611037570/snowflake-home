@@ -1,3 +1,5 @@
+import { ASSISTANT_WRITING_RULES_TEXT } from "@/views/resume/ai/writingRules";
+
 // 一键优化编排技能：按求职方向与身份，补齐缺失经历、综合优化并评分，最终产出结构化优化报告
 export const resumeOneKeyOptimize = () => ({
   id: "resume_one_key_optimize",
@@ -25,6 +27,9 @@ export const resumeOneKeyOptimize = () => ({
 - changes 只记录实际写入的优化动作，highlights 说明这些动作对阅读效率、职业契合、职业成就或其他六维竞争力的实际改善。
 - suggestions 只保留本轮未解决的问题，每条使用“优先级｜问题｜具体行动｜预期改善”格式，禁止重复已完成改动或给出空泛建议。
 - checks 与 highlights 的每条内容均以“【维度名称】”开头并给出简历中的具体依据，使六维得分能够追溯；没有证据时明确写为信息缺口，不得补造依据。
+
+# 正文写作规则
+${ASSISTANT_WRITING_RULES_TEXT.split("\n").map((line) => `- ${line}`).join("\n")}
 
 # 评分口径
 - 信息完整度检查目标岗位和当前阶段所需信息、经历字段及时间线；阅读效率检查信息密度、重点前置、重复和理解成本；职业契合度检查目标岗位能力是否有经历佐证；职业成就检查个人行动与可验证结果；发展潜力检查学习、迁移和职责成长证据；职业稳定性只基于适用的真实任职记录，学生或依据不足时使用 null。

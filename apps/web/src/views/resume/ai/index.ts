@@ -32,6 +32,7 @@ export { createResumeTools, RESUME_LANG_CODES } from "./tools";
 export type { ResumeToolContext } from "./tools";
 export { createSkillTools } from "./tools/skillLoader";
 export { buildToolGuide } from "./tools/toolGuide";
+export { isPersistentTaskSkillId } from "./skills/taskSkillMemory";
 export {
   parseResumeReport,
   reportClaimsChanges,

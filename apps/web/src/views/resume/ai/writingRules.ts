@@ -9,8 +9,7 @@ import type { ContentAiAction } from "./types";
 //   1. getWritingRule(action, kindKey, moduleKey)：按操作与模块精确选一条，供富文本框这类
 //      「单字段请求」使用（它只需要当前模块那一条，全量表反而稀释约束）。
 //   2. ASSISTANT_WRITING_RULES_TEXT：纪律 + 类型规则表 + 经历起草规则的全量注入文本，
-//      供助手链路使用（常驻提示 + 写入技能两个挂载点；一键调整等不读写入技能的流程
-//      由常驻提示覆盖）。
+//      仅由需要通用编写规则的按需技能引用，禁止放入常驻提示重复发送。
 // - 不属于正文生成的链路不得注入：导入 / 解析（Markdown、PDF）须忠实转换原文，
 //   面试快答只生成口述答案，均不写简历正文。
 // - resume_optimization 是写作方法论知识库（STAR、量化维度、示例），不是规则本身，
@@ -79,7 +78,7 @@ const KIND_MODULE_LABELS: Record<string, string> = {
 };
 
 // 助手侧注入文本：纪律、类型规则与经历起草规则一次给全，与富文本框同口径。
-// 由常驻提示与写入技能共同引用；一键调整等不读写入技能的流程也经常驻提示覆盖。
+// 由按需写入技能注入，避免所有请求都携带与当前任务无关的完整规则。
 export const ASSISTANT_WRITING_RULES_TEXT = [
   `写作纪律：${RESUME_WRITING_DISCIPLINE.map((rule, index) => `${index + 1}) ${rule}`).join(" ")}`,
   `各类型规则（按当前模块选用）：${Object.entries(KIND_RULES)

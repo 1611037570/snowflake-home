@@ -52,6 +52,10 @@ export const flows: Record<string, Flow> = {
       // 翻译任务规范已抽离为技能，由模型按需加载；此处仅携带目标语言
       return {
         userContent: `请将我的简历内容翻译成${language}并更新到简历`,
+        requestContext: {
+          requireResumeWrite: true, // 翻译入口必须把结果写入简历。
+          resumeWriteTask: true, // 后续调整继续沿用本次写入任务。
+        },
       };
     },
   },
@@ -94,6 +98,12 @@ export const flows: Record<string, Flow> = {
         userContent: onlyAnalyze
           ? `请根据我提供的以下目标岗位 JD 内容，对我的简历做匹配分析（只给分析结论与补强方向，不改动简历）：\n\n${jd}`
           : `请根据我提供的以下目标岗位 JD 内容，对标优化我的简历并写入修改：\n\n${jd}`,
+        requestContext: onlyAnalyze
+          ? undefined
+          : {
+              requireResumeWrite: true, // 写入模式必须产生真实简历修改。
+              resumeWriteTask: true, // 后续优化继续沿用本次写入任务。
+            },
       };
     },
   },
@@ -110,6 +120,10 @@ export const flows: Record<string, Flow> = {
       // 简历优化统一走 resumeOptimization 技能，由模型按需加载；此处仅携带优化方向
       return {
         userContent: `请帮我优化简历，侧重${direction}`,
+        requestContext: {
+          requireResumeWrite: true, // 优化入口必须把优化结果写入简历。
+          resumeWriteTask: true, // 后续精简或调整继续沿用优化任务。
+        },
       };
     },
   },
@@ -131,6 +145,10 @@ export const flows: Record<string, Flow> = {
       // 任务规范已抽离为 resumeCreate 技能，由模型按需加载；此处携带所选模块与方向描述
       return {
         userContent: `请帮我生成这段${moduleName}：${direction}`,
+        requestContext: {
+          requireResumeWrite: true, // 经历生成入口必须新增真实简历记录。
+          resumeWriteTask: true, // 后续修改继续沿用本次写入任务。
+        },
       };
     },
   },
@@ -181,6 +199,8 @@ export const flows: Record<string, Flow> = {
         requestContext: {
           resumeScope: "all", // 完成度检查覆盖整份简历，本轮固定读取全部模块。
           requireResumeWrite: true, // 一键调整必须真实写入，禁止只返回修改说明。
+          requireResumeIssueClosure: true, // 一键调整还必须关闭完成度检查中的剩余问题。
+          resumeWriteTask: true, // 后续修正继续沿用本次写入任务。
         },
       };
     },

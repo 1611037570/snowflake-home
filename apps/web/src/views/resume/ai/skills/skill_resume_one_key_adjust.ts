@@ -1,3 +1,5 @@
+import { ASSISTANT_WRITING_RULES_TEXT } from "@/views/resume/ai/writingRules";
+
 // 一键调整技能：处理完成度检查发现的缺失、格式与时间线问题，不扩展到泛化内容优化。
 export const resumeOneKeyAdjust = () => ({
   id: "resume_one_key_adjust", // 技能稳定标识。
@@ -16,6 +18,9 @@ export const resumeOneKeyAdjust = () => ({
 - 时间线问题优先根据现有经历顺序修复；无法确定真实日期时生成合理的临时时间，并纳入待确认内容。
 - 不进行与检查问题无关的扩写、润色、增删或排序，不把一键调整扩展为一键优化。
 - 执行前和执行中都不得向用户提问；所有推断、生成和无法核实的修改统一在结果中标记为待确认。
+
+# 正文写作规则
+${ASSISTANT_WRITING_RULES_TEXT.split("\n").map((line) => `- ${line}`).join("\n")}
 
 # 输出要求
 - 有实际修改时，按默认修改说明格式简要列出已处理模块。

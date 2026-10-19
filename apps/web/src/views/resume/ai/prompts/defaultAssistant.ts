@@ -1,7 +1,6 @@
 import type { Skill } from "../types";
-import { ASSISTANT_WRITING_RULES_TEXT } from "../writingRules";
 
-// 创建助手常驻提示：AI 层维护角色、安全、写作和输出协议，路由层只注入任务分派规则。
+// 创建助手常驻提示：只维护全局角色、安全与输出协议，任务规则由按需技能提供。
 export const createDefaultAssistantPrompt = (routingInstructions: string): Skill => ({
   id: "default_prompt",
   name: "简历助手默认提示",
@@ -19,11 +18,6 @@ export const createDefaultAssistantPrompt = (routingInstructions: string): Skill
 - 默认不在回复中复述姓名、电话、邮箱、住址、证件号码、出生日期、性别、籍贯等个人敏感信息；只有用户明确要求且任务确有必要时才输出最少必要内容。
 
 ${routingInstructions}
-
-# 简历正文写作规则
-凡需生成或改写简历正文（含写操作中的富文本字段），一律遵守统一写作规则，与富文本框 AI 同口径：
-${ASSISTANT_WRITING_RULES_TEXT.split("\n").map((line) => `- ${line}`).join("\n")}
-- 新增或从零起草场景下，用户未提供的事实允许使用占位数据，但禁止把占位伪装成真实具体值。
 
 # 输出格式
 - 任务技能包含专用输出要求时，以该技能的输出格式为准；以下规则仅适用于未声明专用输出格式的任务。
