@@ -30,6 +30,20 @@ const { theme: { textAlign } } = useResumePreviewContext();
   margin: 0;
 }
 
+/* 恢复全局样式重置掉的列表标记与缩进，保持编辑区和预览区的富文本语义一致 */
+.layout-rich-text :deep(ul),
+.layout-rich-text :deep(ol) {
+  padding-left: 1.5em;
+}
+
+.layout-rich-text :deep(ul) {
+  list-style: disc;
+}
+
+.layout-rich-text :deep(ol) {
+  list-style: decimal;
+}
+
 .layout-rich-text :deep(p + p),
 .layout-rich-text :deep(ul + p),
 .layout-rich-text :deep(p + ul),
