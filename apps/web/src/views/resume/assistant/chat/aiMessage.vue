@@ -96,6 +96,15 @@ onBeforeUnmount(() => {
 const resumeShow = computed(() => props.msg.requestStatus === "success");
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
+// 失败时同样渲染正文：展示验收失败或请求出错的具体原因，避免只显示通用重试文案
+const showContent = computed(
+  () =>
+    (props.msg.requestStatus === "success" ||
+      props.msg.requestStatus === "error" ||
+      isGenerating.value) &&
+    !props.msg.contentCollapsed &&
+    !!textContent.value,
+);
 const hasThought = computed(() => !!props.msg.thought?.trim());
 const hasContent = computed(() => !!content.value?.trim());
 // 执行过程按钮文案：完成后标记“已完成”，运行中保持“执行过程”
@@ -173,18 +182,10 @@ const animatedTokens = useTransition(
       />
       <!-- 完成后的思考区与正文之间加分隔线，避免内容混淆 -->
       <div
-        v-if="resumeShow && !msg.contentCollapsed"
+        v-if="showContent"
         class="mt-3 border-t border-sf-b"
         aria-hidden="true"
       ></div>
-    </div>
-    <!-- 错误状态 -->
-    <div
-      v-if="msg.requestStatus === 'error'"
-      class="flex h-8 w-[170px] cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-sf-error-2 text-[14px] text-sf-error"
-      @click="retry(msg)"
-    >
-      生成失败，点击重试!
     </div>
     <!-- 一键优化结构化报告面板 -->
     <ReportPanel
@@ -192,15 +193,23 @@ const animatedTokens = useTransition(
       :report="report"
       class="mb-3"
     />
-    <!-- 正式回复内容（剥离报告代码块后的正文） -->
+    <!-- 正式回复内容（剥离报告代码块后的正文）；失败时展示具体原因 -->
     <SfMdPreview
-      v-if="(msg.requestStatus === 'success' || isGenerating) && !msg.contentCollapsed && textContent"
+      v-if="showContent"
       :modelValue="textContent"
       :theme="theme"
       :editorId="`ai-preview-${msg.id}`"
       class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
       :class="{ 'typing-active': msg.typing }"
     />
+    <!-- 错误状态：具体原因已在正文展示，此处只保留重试入口 -->
+    <div
+      v-if="msg.requestStatus === 'error'"
+      class="flex h-8 w-[170px] cursor-pointer items-center justify-center gap-1.5 rounded-xl bg-sf-error-2 text-[14px] text-sf-error"
+      @click="retry(msg)"
+    >
+      生成失败，点击重试!
+    </div>
     <!-- 操作区域 -->
     <nav
       v-if="msg.content && !msg.typing && (resumeShow || canWithdraw)"
