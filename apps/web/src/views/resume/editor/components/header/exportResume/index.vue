@@ -6,7 +6,7 @@ import { useSystemStore, useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import ExportItem from "./exportItem.vue";
-import { $t } from "@/locales";
+import i18n, { $t } from "@/locales";
 import {
   getDesensitizeSelectionName,
   normalizeDesensitizeFields,
@@ -28,10 +28,15 @@ const longImageExportType = ref("png");
 const selectedFields = computed(() => normalizeDesensitizeFields(desensitizeMode.value));
 const desensitizeName = computed(() => getDesensitizeSelectionName(selectedFields.value));
 
-const pdfExportOptions = computed(() => [
-  { name: $t("local"), value: "local" },
-  { name: $t("cloud"), value: "server", disabled: !isConnected.value },
-]);
+const pdfExportOptions = computed(() => {
+  // 读取当前语言建立依赖，选项文案随语言切换更新
+  i18n.global.locale.value;
+  return [
+    { name: $t("local"), value: "local" },
+    // 云端服务器暂不可用：选项常态禁用，导出仅保留本地方式
+    { name: $t("cloud"), value: "server", disabled: true },
+  ];
+});
 const longImageExportOptions = [
   { name: "PNG", value: "png" },
   { name: "PDF", value: "pdf" },
@@ -97,6 +102,8 @@ const list = computed(() => [
     options: pdfExportOptions.value,
     modelValue: pdfExportType.value,
     onChange: changePdfExportType,
+    // 云端禁用原因与效果说明，展示在卡片选项下方
+    note: $t("exportCloudUnavailableTip"),
     fn: () =>
       emitExport(
         pdfExportType.value === "server" && isConnected.value

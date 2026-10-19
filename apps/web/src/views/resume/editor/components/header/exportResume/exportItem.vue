@@ -52,6 +52,8 @@ const emit = defineEmits(["click"]);
         {{ option.name }}
       </SfButton>
     </div>
+    <!-- 补充说明（如云端禁用的原因），展示在选项下方。 -->
+    <p v-if="item.note" class="text-xs leading-6 text-sf-text-3">{{ item.note }}</p>
   </div>
 </template>
 
