@@ -1,7 +1,7 @@
-import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
+import { isResumeMediaField } from "../schema/resumeMedia";
 import type { ResumeFieldSchema } from "../schema/resumeSchema";
 import { findResumeModuleSchema } from "../schema/resumeSchemaRegistry";
-import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
+import type { ResumeWriteOp } from "./resumeOperations";
 import { normalizeRichTextHtml } from "../format/normalizeRichText";
 
 export type ResumeEditValidationIssue = {

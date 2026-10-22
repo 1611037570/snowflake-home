@@ -1,13 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getResumeAiModel } from "../request/client";
-import { useResumeContext } from "../context/resumeContext";
 import {
   buildQuickAnswerMessages,
   useInterviewQuickAnswer,
 } from "./interviewQuickAnswer";
 
 vi.mock("../request/client", () => ({ getResumeAiModel: vi.fn() }));
-vi.mock("../context/resumeContext", () => ({ useResumeContext: vi.fn() }));
 
 describe("interviewQuickAnswer", () => {
   beforeEach(() => {
@@ -50,13 +48,13 @@ describe("interviewQuickAnswer", () => {
       protocol: "chatCompletions",
       request,
     } as any);
-    vi.mocked(useResumeContext).mockReturnValue({
+    const resumeContext = {
       getResumeData: () => ({ project: "真实项目" }),
       beforeRequest,
       afterRequest,
-    });
+    };
 
-    const { requestQuickAnswer } = useInterviewQuickAnswer();
+    const { requestQuickAnswer } = useInterviewQuickAnswer(resumeContext);
     const answer = await requestQuickAnswer("请介绍项目难点");
 
     expect(answer).toBe("这是一个回答方案");

@@ -1,4 +1,4 @@
-import type { LLM } from "@/apis/llm";
+import type { LLM } from "@snowflake/ai";
 
 // 简历 AI 模型角色：普通简历任务、面试回答、PDF 解析
 export type ResumeAiAgent = "xiaoZhou" | "xiaoYang" | "resumeParser";

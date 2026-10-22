@@ -14,7 +14,7 @@ type MediaFieldDecl = {
   field: string;
 };
 
-const MEDIA_FIELD_DECLS: MediaFieldDecl[] = [
+export const RESUME_MEDIA_FIELDS: MediaFieldDecl[] = [
   // 个人信息头像：base64 Data URL，存于 user.data
   { moduleKey: "user", shape: "object", field: "avatar" },
   // 作品集图片：base64 Data URL，存于 portfolio.list[].data
@@ -23,7 +23,7 @@ const MEDIA_FIELD_DECLS: MediaFieldDecl[] = [
 
 // 简历 AI 的媒体只读判断与裁剪使用同一份声明
 export const isResumeMediaField = (moduleKey: string, field: string): boolean =>
-  MEDIA_FIELD_DECLS.some((decl) => decl.moduleKey === moduleKey && decl.field === field);
+  RESUME_MEDIA_FIELDS.some((decl) => decl.moduleKey === moduleKey && decl.field === field);
 
 // 单个媒体绑定：记录字段标识与所在数据对象的绝对路径
 type MediaBinding = {
@@ -56,14 +56,14 @@ export const mediaMark = (field: string, path: (string | number)[], value: strin
 // 媒体占位标识是否是本表声明过的字段，避免把普通文本误当媒体处理
 export const isMediaMark = (value: unknown): value is string =>
   typeof value === "string" &&
-  MEDIA_FIELD_DECLS.some((decl) => value.startsWith(`${MEDIA_MARK_PREFIX}${decl.field}:`));
+  RESUME_MEDIA_FIELDS.some((decl) => value.startsWith(`${MEDIA_MARK_PREFIX}${decl.field}:`));
 
 // 逐个媒体绑定求值，回调返回 false 时提前结束
 const scanMediaBindings = (
   data: any,
   visit: (binding: MediaBinding, held: any) => boolean | void,
 ): void => {
-  for (const decl of MEDIA_FIELD_DECLS) {
+  for (const decl of RESUME_MEDIA_FIELDS) {
     const module = data?.[decl.moduleKey];
     if (!module || typeof module !== "object") continue;
 

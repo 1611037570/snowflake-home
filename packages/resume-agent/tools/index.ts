@@ -13,3 +13,8 @@ export const createResumeTools = (ctx: ResumeToolContext): ResumeAgentTool[] => 
 
 export { RESUME_LANG_CODES };
 export type { ResumeToolContext } from "./tool_types";
+export type {
+  ResumeAddedRecord,
+  ResumeOperationResult,
+  ResumeWriteOp,
+} from "./resumeOperations";

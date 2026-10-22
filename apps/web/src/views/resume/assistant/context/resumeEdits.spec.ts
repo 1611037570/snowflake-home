@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
-import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
-import { validateResumeEdits } from "./resumeEdits";
+import type { ResumeWriteOp } from "@snowflake/resume-agent";
+import { validateResumeEdits } from "@snowflake/resume-agent/tools/resumeEdits";
+import { registerResumeAgentSchema } from "./resumeSchemaProvider";
+
+registerResumeAgentSchema();
 
 const validateUserOperation = (operation: ResumeWriteOp) =>
   validateResumeEdits([operation], {

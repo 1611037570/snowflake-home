@@ -1,16 +1,16 @@
 import { useAiStore, useResumeStore } from "@/stores";
 import { ToolNotFoundError } from "@/apis";
 import { storeToRefs } from "pinia";
-import { onDemandSkills, residentSkills } from "./routing/registry";
+import { referenceSkills, residentSkills, taskCapabilities } from "./routing/registry";
 import {
   ASSISTANT_REFLECT_PROMPT,
   buildToolGuide,
   createSkillReferenceTool,
   RESUME_LANG_CODES,
-  useResumeContext,
 } from "@snowflake/resume-agent";
 import type { AssistantConfig, AssistantResources } from "./types";
 import { collectResumeAdjustmentIssues, useProgress } from "../editor/hooks/useProgress";
+import { useResumeContext } from "./context/useResumeContext";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
 export const useResumeAssistant = () => {
@@ -19,8 +19,6 @@ export const useResumeAssistant = () => {
   const { isGenerating } = storeToRefs(resumeStore);
   const { createDefaultChat, createDefaultMessage } = aiStore;
   const resumeContext = useResumeContext();
-  // 每次请求独立记录写入结果，语言工具只能在本轮完整写入成功后执行
-  let hasSuccessfulWrite = false;
   let activeTaskId = "";
   // 当前请求是否需要用完成度问题作为写后验收条件
   let requiresResumeIssueClosure = false;
@@ -33,23 +31,16 @@ export const useResumeAssistant = () => {
   };
   // 能力与工具在首次请求时才组装，避免进入 AI 面板时提前加载。
   const resolveTools = async (): Promise<AssistantResources> => {
-    const [skills, { createResumeTools }] = await Promise.all([
-      Promise.all(onDemandSkills.map((load) => load())),
-      import("@snowflake/resume-agent"),
-    ]);
-    const capabilities = skills.filter((skill) => skill.role === "task");
-    const references = skills.filter((skill) => skill.role === "reference");
+    const { createResumeTools } = await import("@snowflake/resume-agent");
     return {
-      capabilities,
+      capabilities: taskCapabilities,
       tools: [
         // 参考知识通过单一工具按需读取，任务能力由首轮任务契约直接返回正文。
-        createSkillReferenceTool(references),
+        createSkillReferenceTool(referenceSkills),
         ...createResumeTools({
           getResumeData: resumeContext.getResumeData,
           applyResumeOperations: (operations) => {
-            const result = resumeStore.applyResumeOperations(operations);
-            if (result.applied && !result.failed.length) hasSuccessfulWrite = true;
-            return result;
+            return resumeStore.applyResumeOperations(operations);
           },
           // 复用左侧完成度检查口径，写入工具无需维护第二套验收规则
           getResumeIssues: () =>
@@ -62,9 +53,6 @@ export const useResumeAssistant = () => {
                   ),
                 )
               : [],
-          // 本轮每次写入尝试独立确认，后续失败时禁止复用早先凭据
-          resetSuccessfulWrite: () => { hasSuccessfulWrite = false; },
-          hasSuccessfulWrite: () => hasSuccessfulWrite,
           updateLanguage: updateCurrentLang,
         }),
       ],
@@ -84,8 +72,6 @@ export const useResumeAssistant = () => {
       return undefined;
     },
     beforeRequest: (options, taskId) => {
-      // 新请求开始时清空上轮写入凭据，禁止跨请求复用
-      hasSuccessfulWrite = false;
       requiresResumeIssueClosure = options?.requireResumeIssueClosure === true;
       activeTaskId = taskId || "";
       resumeContext.beforeRequest(options, taskId);
@@ -93,7 +79,6 @@ export const useResumeAssistant = () => {
     afterRequest: (taskId) => {
       resumeContext.afterRequest(taskId);
       if (!taskId || taskId === activeTaskId) {
-        hasSuccessfulWrite = false;
         requiresResumeIssueClosure = false;
         activeTaskId = "";
       }

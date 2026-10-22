@@ -1,4 +1,4 @@
-import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
+import type { ResumeWriteOp } from "./resumeOperations";
 import { RESUME_AGENT_FACTS, type ResumeAgentTool } from "../runtime/types";
 import { getResumeEditValidationIssues, normalizeResumeEdits } from "./resumeEdits";
 import { PROPOSE_RESUME_EDITS_RULE, TOOL_ARGUMENT_RULE } from "./promptRules";
@@ -63,8 +63,6 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
     required: ["operations"],
   },
   execute: (args: any) => {
-    // 清除本轮先前写入凭据，结构校验或执行失败均不得继续切换语言
-    ctx.resetSuccessfulWrite?.();
     const submittedOperations: ResumeWriteOp[] = Array.isArray(args?.operations) ? args.operations : [];
     const dataView = ctx.getResumeData() as any;
     // 富文本字段统一转换为编辑器 HTML，避免 Markdown 或纯文本直接落库

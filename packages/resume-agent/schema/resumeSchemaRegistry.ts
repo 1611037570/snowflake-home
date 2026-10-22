@@ -1,17 +1,16 @@
-import { allConfig } from "@/stores/modules/resume/config/formConfig";
-import { RESUME_VALUE_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
 import {
-  buildResumeSchema,
   getResumeModuleSchema,
   resolveResumeModuleSchema,
 } from "./resumeSchema";
+import type { ResumeModuleSchema } from "./resumeSchema";
 
-// 简历业务域负责注入表单配置与字典，引擎解析器不依赖具体业务字段
-// 只注入可选值字典：仅渲染用的字典（如省市级联树）不参与字段可选值提取
-export const RESUME_SCHEMA = buildResumeSchema(
-  Object.entries(allConfig).map(([key, schema]) => ({ key, schema })),
-  RESUME_VALUE_OPTIONS,
-);
+// 保持数组引用稳定，技能和导入流程始终读取宿主最近注册的字段契约。
+export const RESUME_SCHEMA: ResumeModuleSchema[] = [];
+
+// 注册由宿主表单配置生成的字段契约，领域逻辑不直接解析界面 DSL。
+export const configureResumeSchema = (schema: ResumeModuleSchema[]) => {
+  RESUME_SCHEMA.splice(0, RESUME_SCHEMA.length, ...schema);
+};
 
 export const findResumeModuleSchema = (moduleKey: string, data?: unknown, layout?: string) =>
   resolveResumeModuleSchema(getResumeModuleSchema(RESUME_SCHEMA, moduleKey), data, layout);

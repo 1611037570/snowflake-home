@@ -1,5 +1,5 @@
 import { RESUME_AGENT_FACTS } from "../runtime/types";
-import type { ResumeAgentTaskProfile } from "../runtime/resumeAgentTask";
+import type { ResumeAgentTaskProfile } from "../runtime/taskTypes";
 import { ASSISTANT_WRITING_RULES_TEXT } from "../writingRules";
 
 // 一键调整只由按钮入口装配，不注册为通用对话技能。

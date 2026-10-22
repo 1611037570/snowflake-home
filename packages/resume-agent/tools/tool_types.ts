@@ -1,7 +1,4 @@
-import type {
-  ResumeOperationResult,
-  ResumeWriteOp,
-} from "@/stores/modules/resume/resumeOperations";
+import type { ResumeOperationResult, ResumeWriteOp } from "./resumeOperations";
 
 // 简历工具的运行时上下文，由调用方注入，保持工具本身无副作用依赖
 export interface ResumeToolContext {
@@ -11,10 +8,6 @@ export interface ResumeToolContext {
   applyResumeOperations: (operations: ResumeWriteOp[]) => ResumeOperationResult;
   // 读取写入后的完成度与时间线问题，用于确认一键调整是否闭环
   getResumeIssues?: () => string[];
-  // 每次写入尝试前清除旧凭据，失败不能复用先前成功结果
-  resetSuccessfulWrite?: () => void;
-  // 判断当前请求是否已经成功写入简历内容
-  hasSuccessfulWrite?: () => boolean;
   // 更新简历展示语言（翻译完成后同步标题等界面文案语言）
   updateLanguage?: (language: string) => boolean;
 }

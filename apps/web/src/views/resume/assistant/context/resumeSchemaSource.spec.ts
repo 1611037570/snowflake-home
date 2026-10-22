@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import type { FormField } from "@/components/business/dynamicForm/api";
-import { buildResumeSchema, getResumeModuleSchema } from "./resumeSchema";
+import { getResumeModuleSchema } from "@snowflake/resume-agent";
+import { buildResumeSchema } from "./resumeSchemaSource";
 
 describe("resumeSchema", () => {
   it("从对象模块解析字段属性和字典选项", () => {

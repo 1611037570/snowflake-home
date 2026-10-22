@@ -1,4 +1,4 @@
-import { $t } from "@/locales";
+import { getResumeAiMessage } from "./messages";
 import { readResumeAiResponseText } from "./response";
 import type {
   ResumeAiMessage,
@@ -8,7 +8,7 @@ import type {
 
 // 主动中止错误：保持与请求库一致的 name，供调用方识别
 const createAbortError = () => {
-  const error = new Error($t("resumeAiAborted"));
+  const error = new Error(getResumeAiMessage("aborted"));
   error.name = "AbortError";
   return error;
 };
@@ -31,7 +31,7 @@ export const runResumeAiTask = async <Input, Output = string>(
 ): Promise<Output> => {
   // 流式正文会累积增量，重试会把多轮输出拼在一起
   if (task.stream && (task.retryCount ?? 0) > 0) {
-    throw new Error($t("resumeAiStreamNoRetry"));
+    throw new Error(getResumeAiMessage("streamNoRetry"));
   }
   // 调用方已注入模型时不再加载模型解析模块，避免无关请求引入额外依赖
   let llm = options.llm;
@@ -39,7 +39,7 @@ export const runResumeAiTask = async <Input, Output = string>(
     const { getResumeAiModel } = await import("./client");
     llm = getResumeAiModel(task.agent);
     if (!llm || !llm.apiKey || !llm.url || !llm.model) {
-      throw new Error(task.modelErrorMessage ?? $t("resumeAiModelUnset"));
+      throw new Error(task.modelErrorMessage ?? getResumeAiMessage("modelUnset"));
     }
   }
   if (options.signal?.aborted) throw createAbortError();
@@ -55,15 +55,14 @@ export const runResumeAiTask = async <Input, Output = string>(
   let traceId: string | undefined;
   let finishAbortedTrace: (() => void) | undefined;
   if (task.traceInput) {
-    const monitor = await import("@/apis/llm/monitor");
-    // 创建失败时使用占位标识，阻止请求库再次按完整请求体建立记录
+    // 使用模型自带的观测器建立摘要记录，避免领域包依赖宿主监控实现。
     traceId =
-      monitor.createLlmTrace({
+      llm.observer.createLlmTrace({
         provider: llm.provider,
         model: llm.model,
         input: task.traceInput(input),
       }) || "resume-ai-trace-unavailable";
-    finishAbortedTrace = () => monitor.finishLlmTrace(traceId!, "aborted");
+    finishAbortedTrace = () => llm.observer.finishLlmTrace(traceId!, "aborted");
   }
   if (options.signal?.aborted) {
     finishAbortedTrace?.();
@@ -93,8 +92,7 @@ export const runResumeAiTask = async <Input, Output = string>(
     onAbort();
     // 请求尚未发出时主动收口监控记录，避免遗留未完成的记录
     if (requestTraceId) {
-      const monitor = await import("@/apis/llm/monitor");
-      monitor.finishLlmTrace(requestTraceId, "aborted");
+      llm.observer.finishLlmTrace(requestTraceId, "aborted");
     }
     throw createAbortError();
   }

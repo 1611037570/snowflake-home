@@ -1,4 +1,4 @@
-import { $t } from "@/locales";
+import { getResumeAiMessage } from "./messages";
 
 // 从对话补全或响应接口的非流式响应中提取正文
 export const readResumeAiResponseText = (response: unknown): string => {
@@ -25,6 +25,6 @@ export const readResumeAiResponseText = (response: unknown): string => {
 export const assertResumeAiResponseComplete = (response: unknown) => {
   const data = response as any;
   if (data?.choices?.[0]?.finish_reason === "length" || data?.status === "incomplete") {
-    throw new Error($t("resumeAiTruncated"));
+    throw new Error(getResumeAiMessage("truncated"));
   }
 };

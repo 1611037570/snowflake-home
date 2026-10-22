@@ -1,9 +1,7 @@
 // 导入LLM接口
 import { AbortError, isAbortError } from "@/apis";
-import {
-  createResumeAgentTaskRuntime,
-  createResumeAiReactRunner,
-} from "@snowflake/resume-agent";
+import { createResumeAgentSession, type ResumeAgentSession } from "@snowflake/resume-agent";
+import type { ChatMessage } from "@snowflake/ai";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
@@ -74,8 +72,8 @@ export const useChatRequest = ({
   let lastToolName = "";
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
-  // ReAct 编排器引用，用于中止循环
-  let reactRunner: { abort: () => void; run: (messages: any[]) => Promise<string> } | null = null;
+  // 当前简历 Agent 会话引用，用于中止统一执行链。
+  let agentSession: ResumeAgentSession | null = null;
   // 请求版本号，用于避免旧请求干扰
   let requestVersion = 0;
   // 组件是否已卸载标记
@@ -231,7 +229,8 @@ export const useChatRequest = ({
             ),
         )
         .map((message) => ({
-          role: message.role,
+          // 会话只接受协议固定的角色枚举，历史记录里存的是普通字符串
+          role: message.role as ChatMessage["role"],
           content: message.content,
         }));
       // 动态提级默认提示词：先移除所有已存在的默认提示，再插入到最后一个用户消息之前
@@ -266,128 +265,89 @@ export const useChatRequest = ({
       const { tools: resolvedTools, capabilities: resolvedCapabilities } = await resolveTools();
       // 加载期间取消或切换会话时不再启动请求，工具执行前再次核对所属任务
       if (!isCurrentRequest()) return;
-      // 一键按钮直接取得任务配置，普通聊天仍由运行时选择通用能力。
-      const taskProfile = entryFlow === "oneKeyOptimize" || entryFlow === "oneKeyAdjust"
-        ? await import("@snowflake/resume-agent/tasks/oneKey")
-          .then((module) => module.getOneKeyResumeTaskProfile(entryFlow))
-        : undefined;
-      if (!isCurrentRequest()) return;
-      const capabilities = taskProfile
-        ? []
-        : resolvedCapabilities;
-      const taskRuntime = createResumeAgentTaskRuntime({
+      // 简历 Agent 会话统一解析入口任务、装配工具并启动 ReAct。
+      agentSession = await createResumeAgentSession({
         taskId: requestTaskId,
         source: typeof entryFlow === "string" ? entryFlow : "chat",
         previousTask,
-        capabilities,
-        taskProfile,
-      });
-      const requestIndex = messages.map((message) => message.role).lastIndexOf("user");
-      if (requestIndex !== -1) {
-        messages.splice(requestIndex, 0, { role: "system", content: taskRuntime.buildContext() });
-      }
-      const businessTools = resolvedTools.map((tool) => ({
-        ...tool,
-        // 失效请求不得读取或修改当前简历
-        execute: (args: any) => {
+        capabilities: resolvedCapabilities,
+        tools: resolvedTools,
+        assertActive: () => {
           if (!isCurrentRequest()) throw new AbortError();
-          return tool.execute(args);
         },
-      }));
-      // 任务控制工具与业务工具使用同一请求有效性边界。
-      const controlTools = taskRuntime.controlTools.map((tool) => ({
-        ...tool,
-        execute: (args: any) => {
-          if (!isCurrentRequest()) throw new AbortError();
-          return tool.execute(args);
+        onEvidence: (evidence) => {
+          if (
+            !isCurrentRequest() ||
+            !lastMsg ||
+            evidence.kind !== "resume_change" ||
+            evidence.status === "failed" ||
+            evidence.replayed
+          ) return;
+          // 运行时确认真实写入后开放撤回，不再解析 ReAct 观察文本。
+          writeMessages.add(lastMsg);
+          lastMsg.hasWriteChanges = true;
         },
-      }));
-      const tools = [...controlTools, ...taskRuntime.wrapTools(businessTools)];
-      // 所有请求统一由 ReAct 建立任务、执行工具并核对完成证据。
-      reactRunner = createResumeAiReactRunner("xiaoZhou", {
-        tools,
-        // 任务理解与后续执行由同一个 ReAct 连续完成。
-        initialTool: "plan_resume_task",
-        // 单次请求的最大 ReAct 轮次上限
-        maxSteps: 99,
-        reflection: true,
-        reflectPrompt,
-        onToolError,
-        beforeFinal: taskRuntime.beforeFinal,
-        onFinalRetry: () => {
-          if (!isCurrentRequest() || !lastMsg) return;
-          stepContent = "";
-          lastMsg.content = "";
-          lastMsg.stepLabel = "正在核对任务完成状态…";
+        reactConfig: {
+          // 单次请求的最大 ReAct 轮次上限
+          maxSteps: 99,
+          reflection: true,
+          reflectPrompt,
+          onToolError,
+          onFinalRetry: () => {
+            if (!isCurrentRequest() || !lastMsg) return;
+            stepContent = "";
+            lastMsg.content = "";
+            lastMsg.stepLabel = "正在核对任务完成状态…";
+          },
+          onReflectStart: () => {
+            if (!isCurrentRequest() || !lastMsg) return;
+            // 最终精炼轮开始：本轮 content 直接实时渲染为正文
+            stepContent = "";
+            streamFinalContent = true;
+            lastMsg.stepLabel = "正在审视并生成最终回复…";
+          },
+          thinking: {
+            type: thinkMode.value ? "enabled" : "disabled",
+          },
+          onReasoning: () => state?.onReasoning(),
+          onContent: (data) => state?.onContent(data),
+          onToken: (totalTokens) => state?.onToken(totalTokens),
+          onThink: (reasoning) => {
+            if (!isCurrentRequest() || !lastMsg || !reasoning) return;
+            lastMsg.stepLabel = "正在深度思考…";
+            lastMsg.thought += `\n\n### 思考\n${reasoning}`;
+            scrollToBottom();
+          },
+          onAct: (toolCall) => {
+            if (!isCurrentRequest() || !lastMsg) return;
+            lastToolName = toolCall.function.name;
+            const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
+            // 工具开始只记录执行动作，不写入参数与数据
+            stepContent = "";
+            streamFinalContent = false;
+            lastMsg.thought += `\n\n正在执行：${displayName}\n`;
+            lastMsg.stepLabel = `正在执行：${displayName}`;
+            scrollToBottom();
+          },
+          onObserve: (_observation, round) => {
+            if (!isCurrentRequest() || !lastMsg) return;
+            const displayName = TOOL_NAMES[lastToolName] || lastToolName;
+            // 工具完成时标注当前 ReAct 轮次，观察数据不写入思考区
+            lastMsg.thought += `\n第 ${round} 轮观测完成：${displayName}`;
+            lastMsg.stepLabel = `第 ${round} 轮观测完成，正在处理结果…`;
+            scrollToBottom();
+          },
+          onReflect: () => {
+            if (!isCurrentRequest() || !lastMsg) return;
+            lastMsg.stepLabel = "正在输出最终答案…";
+            scrollToBottom();
+          },
         },
-        onReflectStart: () => {
-          if (!isCurrentRequest() || !lastMsg) return;
-          // 最终精炼轮开始：本轮 content 直接实时渲染为正文
-          stepContent = "";
-          streamFinalContent = true;
-          lastMsg.stepLabel = "正在审视并生成最终回复…";
-        },
-        thinking: {
-          type: thinkMode.value ? "enabled" : "disabled",
-        },
-        onReasoning: () => state?.onReasoning(),
-        onContent: (data) => state?.onContent(data),
-        onToken: (totalTokens) => state?.onToken(totalTokens),
-        onThink: (reasoning) => {
-          if (!isCurrentRequest() || !lastMsg || !reasoning) return;
-          lastMsg.stepLabel = "正在深度思考…";
-          lastMsg.thought += `\n\n### 思考\n${reasoning}`;
-          scrollToBottom();
-        },
-        onAct: (toolCall) => {
-          if (!isCurrentRequest() || !lastMsg) return;
-          lastToolName = toolCall.function.name;
-          const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
-          // 工具开始只记录执行动作，不写入参数与数据
-          stepContent = "";
-          streamFinalContent = false;
-          lastMsg.thought += `\n\n正在执行：${displayName}\n`;
-          lastMsg.stepLabel = `正在执行：${displayName}`;
-          scrollToBottom();
-        },
-        onObserve: (observation, round) => {
-          if (!isCurrentRequest() || !lastMsg) return;
-          // 只有工具确认实际写入后才开放撤回，校验失败不算修改
-          if (lastToolName === "propose_resume_edits") {
-            try {
-              const result = JSON.parse(observation.content);
-              // 打印每次写入的结果与剩余问题：ReAct 观察日志有长度截断，剩余问题在末尾会被裁掉
-              console.log(`[一键调整] 第 ${round} 轮写入结果:`, {
-                applied: result?.applied,
-                changed: result?.changed?.length ?? 0,
-                errors: result?.errors,
-                remainingIssues: result?.remainingIssues,
-              });
-              if (result.applied && result.changed?.length) {
-                writeMessages.add(lastMsg);
-                lastMsg.hasWriteChanges = true;
-              }
-            } catch (error) {
-              // 解析失败时打印原始观察结果，避免静默吞掉导致验收误判无法排查
-              console.warn("[一键调整] 写入观察结果解析失败:", observation.content, error);
-            }
-          }
-          const displayName = TOOL_NAMES[lastToolName] || lastToolName;
-          // 工具完成时标注当前 ReAct 轮次，观察数据不写入思考区
-          lastMsg.thought += `\n第 ${round} 轮观测完成：${displayName}`;
-          lastMsg.stepLabel = `第 ${round} 轮观测完成，正在处理结果…`;
-          scrollToBottom();
-        },
-        onReflect: () => {
-          if (!isCurrentRequest() || !lastMsg) return;
-          lastMsg.stepLabel = "正在输出最终答案…";
-          scrollToBottom();
-        },
-        onFinal: (answer) => {
+        onFinal: (answer, task) => {
           if (!isCurrentRequest() || !lastMsg) return;
           // ReAct 自行依据任务理解与工具结果收口，写入记录只供撤回使用。
           lastMsg.content = answer;
-          lastMsg.resumeTask = taskRuntime.getTask();
+          lastMsg.resumeTask = task;
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";
           lastMsg.thoughtCollapsed = true;
@@ -399,8 +359,8 @@ export const useChatRequest = ({
           }, 10);
         },
       });
-      // 执行工具循环
-      await reactRunner.run(messages);
+      // 会话内部注入任务上下文并执行完整工具循环。
+      await agentSession.run(messages);
     } catch (error: any) {
       stepContent = "";
       streamFinalContent = false;
@@ -426,6 +386,7 @@ export const useChatRequest = ({
         // 仅当前任务可以收口生成状态，避免旧任务覆盖新任务
         generating.value = false;
         abortRequest = null;
+        agentSession = null;
         if (lastMsg?.typing) lastMsg.typing = false;
         if (chat.value) chat.value.updateTime = finishTime;
         // 按钮等尾部内容在 typing=false 后才渲染，收尾后补一次滚动避免被遮挡
@@ -443,8 +404,8 @@ export const useChatRequest = ({
     requestVersion += 1;
     abortRequest?.(); // 取消请求
     abortRequest = null;
-    reactRunner?.abort();
-    reactRunner = null;
+    agentSession?.abort();
+    agentSession = null;
     // 停止请求时同步停止耗时计数
     if (activeTimers) {
       clearTimers(activeTimers);
@@ -469,8 +430,8 @@ export const useChatRequest = ({
     requestVersion += 1; // 使所有旧请求失效
     abortRequest?.();
     abortRequest = null;
-    reactRunner?.abort();
-    reactRunner = null;
+    agentSession?.abort();
+    agentSession = null;
     if (activeTimers) {
       clearTimers(activeTimers);
       activeTimers = null;

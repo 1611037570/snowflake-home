@@ -1,8 +1,17 @@
 // 简历 AI 能力统一出口，页面与助手只通过本层调用请求、任务和领域能力。
-export { getResumeAiModel, hasResumeAiModel } from "./request/client";
+export {
+  configureResumeAiModelProvider,
+  getResumeAiModel,
+  hasResumeAiModel,
+} from "./request/client";
+export type { ResumeAiModelProvider } from "./request/client";
+export { configureResumeAiMessageProvider } from "./request/messages";
+export type {
+  ResumeAiMessageKey,
+  ResumeAiMessageProvider,
+} from "./request/messages";
 export {
   assertResumeAiResponseComplete,
-  createResumeAiReactRunner,
   readResumeAiResponseText,
   runResumeAiTask,
 } from "./request";
@@ -13,11 +22,28 @@ export type {
   ResumeAiTask,
   RunResumeAiTaskOptions,
 } from "./request";
-export { useResumeContext } from "./context/resumeContext";
+export type { ResumeDataContext } from "./context/types";
 export { normalizeRichTextHtml } from "./format/normalizeRichText";
 export { RICH_TEXT_SANITIZE_CONFIG } from "./format/richTextSanitize";
-export { RESUME_SCHEMA, findResumeModuleSchema } from "./schema/resumeSchemaRegistry";
-export type { ResumeFieldSchema, ResumeModuleSchema } from "./schema/resumeSchema";
+export {
+  configureResumeSchema,
+  RESUME_SCHEMA,
+  findResumeModuleSchema,
+} from "./schema/resumeSchemaRegistry";
+export { getResumeModuleSchema } from "./schema/resumeSchema";
+export {
+  configureResumeMediaFields,
+  isResumeMediaField,
+} from "./schema/resumeMedia";
+export type { ResumeMediaField } from "./schema/resumeMedia";
+export type {
+  ResumeFieldFormat,
+  ResumeFieldSchema,
+  ResumeFieldValueType,
+  ResumeModuleKind,
+  ResumeModuleSchema,
+  ResumeModuleVariantSchema,
+} from "./schema/resumeSchema";
 export { CONTENT_REWRITE_TASK, LANGUAGE_NAMES } from "./tasks/contentRewrite";
 export type { ContentRewriteInput } from "./tasks/contentRewrite";
 export { runInitialResumeGeneration } from "./tasks/initialResumeGeneration";
@@ -26,7 +52,20 @@ export type {
   InitialResumeGenerationStage,
   RunInitialResumeGenerationOptions,
 } from "./tasks/initialResumeGeneration";
-export type { ContentAiAction, Skill, SkillFactory, SkillLoader, SkillRole } from "./types";
+export type {
+  ContentAiAction,
+  Skill,
+  SkillFactory,
+  SkillLoader,
+  SkillRegistration,
+  SkillResource,
+  SkillRole,
+} from "./types";
+export {
+  resumeReferenceSkills,
+  resumeSkillRegistry,
+  resumeTaskCapabilities,
+} from "./skills/registry";
 export { MARKDOWN_IMPORT_TASK, PDF_IMPORT_TASK } from "./tasks/importResume";
 export { MAX_PDF_REQUEST_BYTES } from "./tasks/pdfLimits";
 export { GENERAL_CHAT_TASK, RESUME_CHAT_TASK } from "./tasks/chat";
@@ -35,13 +74,17 @@ export { useInterviewQuickAnswer } from "./tasks/interviewQuickAnswer";
 export { ASSISTANT_REFLECT_PROMPT } from "./prompts/assistant";
 export { createDefaultAssistantPrompt } from "./prompts/defaultAssistant";
 export { createResumeTools, RESUME_LANG_CODES } from "./tools";
-export type { ResumeToolContext } from "./tools";
+export type {
+  ResumeAddedRecord,
+  ResumeOperationResult,
+  ResumeToolContext,
+  ResumeWriteOp,
+} from "./tools";
 export { createSkillReferenceTool } from "./tools/skillLoader";
 export { buildToolGuide } from "./tools/toolGuide";
-export { createResumeAgentTaskRuntime } from "./runtime/resumeAgentTask";
+export { createResumeAgentSession } from "./runtime/resumeAgentSession";
 export { RESUME_AGENT_FACTS } from "./runtime/types";
 export type {
-  CreateResumeAgentTaskRuntimeOptions,
   ResumeAgentPendingInput,
   ResumeAgentTaskBlocker,
   ResumeAgentTaskEvidence,
@@ -49,7 +92,11 @@ export type {
   ResumeAgentTaskProfile,
   ResumeAgentTaskRelation,
   ResumeAgentTaskState,
-} from "./runtime/resumeAgentTask";
+} from "./runtime/taskTypes";
+export type {
+  CreateResumeAgentSessionOptions,
+  ResumeAgentSession,
+} from "./runtime/resumeAgentSession";
 export type {
   ResumeAgentCompletionPolicy,
   ResumeAgentEvidenceKind,

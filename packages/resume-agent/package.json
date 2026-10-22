@@ -8,5 +8,9 @@
     "./request": "./request/index.ts",
     "./skills/interview": "./skills/interview/index.ts",
     "./*": "./*.ts"
+  },
+  "dependencies": {
+    "@snowflake/ai": "workspace:*",
+    "dompurify": "3.4.13"
   }
 }

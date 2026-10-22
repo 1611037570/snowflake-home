@@ -1,5 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
-import { createProposeResumeEditsTool } from "./tool_propose_resume_edits";
+import { createProposeResumeEditsTool } from "@snowflake/resume-agent/tools/tool_propose_resume_edits";
+import { registerResumeAgentSchema } from "./resumeSchemaProvider";
+
+registerResumeAgentSchema();
 
 describe("createProposeResumeEditsTool", () => {
   it("校验通过后只向领域入口提交一次完整操作列表", () => {
@@ -17,7 +20,8 @@ describe("createProposeResumeEditsTool", () => {
     });
     const operations = [{ op: "updateModule", module: "user", field: "name", value: "李四" }];
 
-    expect(tool.execute({ operations })).toEqual({
+    // 工具结果会按运行时验收需要追加字段，这里只锁定写入语义
+    expect(tool.execute({ operations })).toMatchObject({
       applied: true,
       changed: [0],
       added: [],

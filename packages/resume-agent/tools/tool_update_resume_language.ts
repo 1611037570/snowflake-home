@@ -22,13 +22,6 @@ export const createUpdateResumeLanguageTool = (ctx: ResumeToolContext): ResumeAg
     required: ["language"],
   },
   execute: (args: any) => {
-    // 工具层强制校验本轮写入结果，避免只切换展示语言造成翻译假成功
-    if (!ctx.hasSuccessfulWrite?.()) {
-      return {
-        updated: false,
-        error: "本次请求尚未通过 propose_resume_edits 成功写入翻译内容，请先完成翻译写入",
-      };
-    }
     const language = args?.language;
     const updated = RESUME_LANG_CODES.includes(language) && (ctx.updateLanguage?.(language) ?? false);
     return updated ? { updated: true } : { updated: false };
@@ -37,6 +30,7 @@ export const createUpdateResumeLanguageTool = (ctx: ResumeToolContext): ResumeAg
     effect: "sync", // 该工具同步简历展示状态。
     evidenceKind: "language_update", // 成功后生成展示语言同步证据。
     replayScope: "state", // 简历数据变化后允许重新同步相同语言。
+    requiresEvidence: ["resume_change"], // 翻译内容完整写入后才允许同步展示语言。
     // 展示语言实际更新后才生成同步完成证据。
     evaluate: (result) => {
       const success = Boolean(result && typeof result === "object" && "updated" in result &&

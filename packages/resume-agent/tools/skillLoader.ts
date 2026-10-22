@@ -1,8 +1,8 @@
-import type { ReactTool } from "@/apis/llm/react";
-import type { Skill } from "../types";
+import type { ReactTool } from "@snowflake/ai";
+import { loadSkillResource, type SkillResource } from "../types";
 
 // 把参考知识合并成一个只读工具，避免每轮重复发送大量独立工具定义。
-export const createSkillReferenceTool = (skills: Skill[]): ReactTool => {
+export const createSkillReferenceTool = (skills: SkillResource[]): ReactTool => {
   const references = skills.filter((skill) => skill.role === "reference");
   if (!references.length) throw new Error("简历参考知识不能为空");
   const referenceMap = new Map(references.map((skill) => [skill.id, skill]));
@@ -25,24 +25,26 @@ export const createSkillReferenceTool = (skills: Skill[]): ReactTool => {
       required: ["guidanceId"], // 每次必须明确选择一项参考知识。
       additionalProperties: false, // 禁止提交未声明参数。
     },
-    execute: (args) => {
-      const skill = referenceMap.get(args?.guidanceId);
-      if (!skill) {
+    execute: async (args) => {
+      const resource = referenceMap.get(args?.guidanceId);
+      if (!resource) {
         // 非法标识作为可恢复结果返回，由同一 ReAct 重新选择。
         return {
           accepted: false, // 本次没有读取到参考知识。
           error: "未找到对应的简历参考知识", // 提供给模型的修正原因。
         };
       }
-      if (loadedReferenceIds.has(skill.id)) {
+      if (loadedReferenceIds.has(resource.id)) {
         // 同一 ReAct 已经取得过正文时只返回状态，避免重复注入大段参考知识。
         return {
           accepted: true, // 参考知识已经可供当前任务使用。
           alreadyLoaded: true, // 本次没有重复返回正文。
-          id: skill.id, // 返回已加载的参考知识标识。
-          name: skill.name, // 返回已加载的参考知识名称。
+          id: resource.id, // 返回已加载的参考知识标识。
+          name: resource.name, // 返回已加载的参考知识名称。
         };
       }
+      // 首次读取时才加载正文，未被使用的行业知识不会进入当前请求。
+      const skill = await loadSkillResource(resource);
       loadedReferenceIds.add(skill.id);
       return {
         accepted: true, // 本次已成功读取参考知识。

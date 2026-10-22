@@ -3,7 +3,7 @@ import {
   assertResumeAiResponseComplete,
   runResumeAiTask,
 } from "../request";
-import { useResumeContext } from "../context/resumeContext";
+import type { ResumeDataContext } from "../context/types";
 
 // 固定提示只生成一个口述答案，不进入技能、工具或面试追问流程
 const QUICK_ANSWER_SYSTEM_PROMPT = `你是面试答题助手。请根据候选人简历与最近一道面试题，生成一个可直接口述的回答方案。
@@ -57,8 +57,7 @@ const QUICK_ANSWER_TASK: ResumeAiTask<{ messages: ResumeAiMessage[] }> = {
   },
 };
 
-export const useInterviewQuickAnswer = () => {
-  const resumeContext = useResumeContext();
+export const useInterviewQuickAnswer = (resumeContext: ResumeDataContext) => {
 
   // 无工具、无重试、非流式请求确保点击后只调用一次模型
   const requestQuickAnswer = async (

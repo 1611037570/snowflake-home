@@ -17,6 +17,7 @@ import "./styles/tailwind.css";
 import { globalComponentInstaller } from "./components";
 // 导入默认事件加载器
 import { loadEvent, loadTheme } from "./utils";
+import { registerResumeAgentHost } from "./apis/llm/resumeAgentProvider";
 // 创建 Vue 应用实例
 const app = createApp(App);
 
@@ -24,6 +25,8 @@ const app = createApp(App);
 app.use(i18n);
 // 注册 Pinia 状态管理
 app.use(pinia);
+// Pinia 激活后注册简历 Agent 的模型选择适配器。
+registerResumeAgentHost();
 // 注册路由
 app.use(router);
 // 仅在当前路由与语言确定后更新页面信息，避免未完成导航覆盖当前页面。

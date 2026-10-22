@@ -5,7 +5,7 @@ import {
   normalizeDesensitizeFields,
   type DesensitizeField,
 } from "@/stores/modules/resume/config/desensitizeConfig";
-import { findResumeModuleSchema } from "../schema/resumeSchemaRegistry";
+import { findResumeModuleSchema, type ResumeDataContext } from "@snowflake/resume-agent";
 import { isContentEmpty } from "@/views/resume/shared/validData";
 
 // 按字段路径读取模块当前生效的数据形态
@@ -13,7 +13,7 @@ const getValueByPath = (source: any, path: string[]) =>
   path.reduce((value, key) => value?.[key], source);
 
 // 简历数据上下文：统一提供读取范围、媒体裁剪与隐私脱敏
-export const useResumeContext = () => {
+export const useResumeContext = (): ResumeDataContext => {
   const resumeStore = useResumeStore();
   const { selectedModule, desensitizeMode } = storeToRefs(resumeStore);
   const PHONE_PATTERN = /1[3-9]\d{9}/g;

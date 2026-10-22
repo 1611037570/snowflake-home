@@ -1,4 +1,4 @@
-import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
+import { isResumeMediaField } from "../schema/resumeMedia";
 import type {
   ResumeFieldSchema,
   ResumeModuleKind,

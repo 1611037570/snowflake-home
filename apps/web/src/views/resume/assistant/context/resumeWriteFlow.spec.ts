@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { executeResumeOperations } from "@/stores/modules/resume/resumeOperations";
-import { createProposeResumeEditsTool } from "./tool_propose_resume_edits";
+import { createProposeResumeEditsTool } from "@snowflake/resume-agent/tools/tool_propose_resume_edits";
+import { registerResumeAgentSchema } from "./resumeSchemaProvider";
+
+registerResumeAgentSchema();
 
 describe("resume write flow", () => {
   it("从真实字段契约校验后立即写入简历数据", () => {

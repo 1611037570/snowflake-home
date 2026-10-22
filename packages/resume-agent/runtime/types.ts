@@ -1,4 +1,4 @@
-import type { ReactTool } from "@/apis/llm/react";
+import type { ReactTool } from "@snowflake/ai";
 
 export const RESUME_AGENT_FACTS = {
   resumeIssuesResolved: "resume_issues_resolved", // 当前简历检查已没有剩余问题。
@@ -60,6 +60,8 @@ export type ResumeAgentToolRuntimeMeta = {
   invalidatesRead?: boolean;
   // 相同参数重复调用时的结果复用范围。
   replayScope?: ResumeAgentToolReplayScope;
+  // 调用本工具前必须已经取得的完整成功证据。
+  requiresEvidence?: ResumeAgentEvidenceKind[];
   // 根据业务结果判断完整成功、部分成功或失败。
   evaluate: (result: unknown) => ResumeAgentToolEvaluation;
 };
