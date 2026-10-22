@@ -48,6 +48,8 @@ const TEXT_KEYS_SOURCE = `
   请选择婚姻状况: "maritalPlaceholder",
   民族: "nation",
   请输入民族: "nationPlaceholder",
+  国籍: "nationality",
+  请输入国籍: "nationalityPlaceholder",
   星座: "zodiac",
   请选择星座: "zodiacPlaceholder",
   MBTI: "mbti",

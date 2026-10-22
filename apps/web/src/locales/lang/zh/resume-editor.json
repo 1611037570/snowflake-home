@@ -81,6 +81,8 @@
   "maritalPlaceholder": "请选择婚姻状况",
   "nation": "民族",
   "nationPlaceholder": "请输入民族",
+  "nationality": "国籍",
+  "nationalityPlaceholder": "请输入国籍",
   "zodiac": "星座",
   "zodiacPlaceholder": "请选择星座",
   "mbti": "MBTI",

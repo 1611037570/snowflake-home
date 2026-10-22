@@ -29,6 +29,7 @@ export const DESENSITIZE_FIELD_OPTIONS = [
   { key: "sex", name: "性别", description: "隐藏个人性别", group: "personal" },
   { key: "marital", name: "婚姻状况", description: "隐藏个人婚姻状况", group: "personal" },
   { key: "nation", name: "民族", description: "隐藏个人民族信息", group: "personal" },
+  { key: "nationality", name: "国籍", description: "隐藏个人国籍信息", group: "personal" },
   { key: "political", name: "政治面貌", description: "隐藏个人政治面貌", group: "personal" },
   { key: "nativePlace", name: "籍贯", description: "隐藏个人籍贯", group: "personal" },
   { key: "sourcePlace", name: "生源地", description: "隐藏个人生源地", group: "personal" },

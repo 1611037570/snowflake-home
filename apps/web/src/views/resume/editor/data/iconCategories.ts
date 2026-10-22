@@ -52,6 +52,7 @@ export const ICON_CATEGORIES: IconCategory[] = [
       { key: "personal-salary", icon: "mdi:currency-cny", name: "期望薪资" },
       { key: "personal-marital", icon: "mdi:heart-outline", name: "婚姻状况" },
       { key: "personal-nation", icon: "mdi:account-group-outline", name: "民族" },
+      { key: "personal-nationality", icon: "mdi:passport", name: "国籍" },
       { key: "personal-current-city", icon: "mdi:home-city-outline", name: "现居城市" },
     ],
   },

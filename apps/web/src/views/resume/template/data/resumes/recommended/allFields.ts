@@ -13,6 +13,7 @@ const resumeData: any = {
         sex: "男",
         marital: "未婚",
         nation: "汉族",
+        nationality: "中国", // 国籍
         zodiac: "双子座",
         mbti: "ENTJ",
         educationLevel: "本科",

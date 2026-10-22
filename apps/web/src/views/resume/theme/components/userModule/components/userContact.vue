@@ -248,6 +248,14 @@ const secondaryItems = computed(() => {
       label: getPreviewText("nationLabel", previewLang.value),
     });
   }
+  // 国籍有值且未隐藏时加入预览信息
+  if (!isUserFieldHidden("nationality") && user.value?.nationality) {
+    items.push({
+      key: "nationality",
+      icon: fieldIcon("nationality"),
+      label: getPreviewText("nationalityLabel", previewLang.value),
+    });
+  }
   if (!isUserFieldHidden("zodiac") && user.value?.zodiac) {
     items.push({
       key: "zodiac",

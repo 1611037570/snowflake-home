@@ -381,6 +381,19 @@ export const DEFAULT_USER_FORM = [
               clearable: true,
             },
           }),
+          // 国籍
+          createMoreField({
+            key: "nationality",
+            label: "国籍",
+            category: "基本信息",
+            component: "input",
+            iconKey: "personal-nationality",
+            addable: true,
+            props: {
+              placeholder: "请输入国籍",
+              clearable: true,
+            },
+          }),
           // 星座
           createMoreField({
             key: "zodiac",
