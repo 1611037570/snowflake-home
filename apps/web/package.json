@@ -23,6 +23,7 @@
     "format": "prettier --write src/",
     "test:unit": "vitest",
     "check:resume": "node scripts/check-resume-boundaries.mjs && vitest run src/views/resume/editor/preview/resumePages/engine --coverage.enabled=false --reporter=dot",
+    "check:resume:types": "node scripts/check-resume-types.mjs",
     "preview:test": "vite preview --outDir test",
     "vitest:ui": "vitest --ui",
     "build:ext": "pnpm --filter @snowflake/ai build && vite build --mode extension"
