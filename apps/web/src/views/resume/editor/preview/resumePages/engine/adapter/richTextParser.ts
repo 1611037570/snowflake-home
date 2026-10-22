@@ -165,6 +165,19 @@ export const sliceRichText = (parsed: ParsedRichText, start = 0, end?: number): 
 /** 预览富文本允许的标签和属性，与渲染拆分共用同一份白名单 */
 const sanitizeConfig = RICH_TEXT_SANITIZE_CONFIG;
 
+/** 正文链接统一新页面打开：清洗后为每个链接补上打开方式与安全属性，避免点击后原地跳转丢失编辑内容 */
+const openLinksInNewPage = (html: string) => {
+  const template = document.createElement("template");
+  template.innerHTML = html;
+  const anchors = template.content.querySelectorAll("a");
+  if (!anchors.length) return html;
+  anchors.forEach((anchor) => {
+    anchor.setAttribute("target", "_blank");
+    anchor.setAttribute("rel", "noopener noreferrer");
+  });
+  return template.innerHTML;
+};
+
 /** 字符级兜底断点最多保留的采样数量，避免超长正文生成过大的测量树。 */
 const MAX_CHAR_BREAK_POINTS = 64;
 /** 字符级断点最小步长：逐字采样，分片才能落在真实行尾，不会把整段从词中间切断；超长正文再按总数降密 */
@@ -305,7 +318,8 @@ export const parseRichText = (content: string): ParsedRichText => {
   const cached = getCached(parsedRichTextCache, key);
   if (cached) return cached;
 
-  const html = DOMPurify.sanitize(key, sanitizeConfig);
+  const sanitized = DOMPurify.sanitize(key, sanitizeConfig);
+  const html = openLinksInNewPage(sanitized);
   const { blocks, breakPoints, breakPointOffsets, textLength } = parseBlocks(html);
 
   if (textLength > 0 && !breakPointOffsets.has(textLength)) {
