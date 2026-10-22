@@ -286,14 +286,6 @@ export const DEFAULT_USER_FORM = [
         span: 24,
         // 更多字段内部卡片保留纵向间距，避免边框紧贴。
         rowClass: "gap-y-3",
-        model: [
-          {
-            source: ["ui", "moreCollapsed"],
-            prop: "collapsed",
-            // 更多分类默认收起，常用字段由组件保持显示
-            defaultValue: COLLAPSED,
-          },
-        ],
         fields: [
           // 年龄通过出生日期计算，也可切换为展示日期
           createMoreField({
