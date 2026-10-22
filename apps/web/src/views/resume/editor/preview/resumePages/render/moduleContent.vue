@@ -34,7 +34,7 @@ const handleContentClick = (node: LayoutNode) => {
 // 个人信息与标语属于版头区域，不参与条目悬停反馈；其余模块仅在编辑态悬停显示背景色，只读预览不显示
 const hoverBackgroundClass = computed(() =>
   props.isEdit && props.moduleKey !== "user" && props.moduleKey !== "slogan"
-    ? "hover:bg-sf-theme-2!"
+    ? "hover:bg-sf-theme-3!"
     : "",
 );
 </script>
