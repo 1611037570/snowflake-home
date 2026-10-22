@@ -309,23 +309,25 @@ export const useChatRequest = ({
         : entryFlow === "oneKeyAdjust"
           ? "resume_one_key_adjust"
           : null;
-      // 每轮根据用户原话、近期上下文和入口来源理解任务，避免用动词表决定是否写入。
+      // 手动一键入口已明确任务，其余请求再依据对话理解意图，避免重复分析干扰执行。
       let taskUnderstanding: Awaited<ReturnType<typeof understandAssistantTask>> = null;
-      try {
-        taskUnderstanding = await understandAssistantTask({
-          messages: messages
-            .filter((message) => (message.role === "user" || message.role === "assistant") && !!message.content)
-            .slice(-8)
-            .map((message) => ({ role: message.role as "user" | "assistant", content: message.content.slice(0, 1500) })),
-          entryFlow: typeof entryFlow === "string" ? entryFlow : undefined,
-          previousSkillId: activeTaskSkillMessage?.systemSkillId,
-          skills: skills.filter((skill) => (isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing") &&
-            (!ONE_KEY_SKILLS.has(skill.id) || skill.id === entrySkillId))
-            .map(({ id, name, description }) => ({ id, name, description })),
-        }, taskAbortController.signal, addTokenUsage);
-      } catch (error) {
-        if (isAbortError(error)) throw error;
-        console.warn("[任务理解] 前置分析失败，交由 ReAct 根据原始请求判断:", error);
+      if (!entrySkillId) {
+        try {
+          taskUnderstanding = await understandAssistantTask({
+            messages: messages
+              .filter((message) => (message.role === "user" || message.role === "assistant") && !!message.content)
+              .slice(-8)
+              .map((message) => ({ role: message.role as "user" | "assistant", content: message.content.slice(0, 1500) })),
+            entryFlow: typeof entryFlow === "string" ? entryFlow : undefined,
+            previousSkillId: activeTaskSkillMessage?.systemSkillId,
+            skills: skills.filter((skill) => (isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing") &&
+              (!ONE_KEY_SKILLS.has(skill.id) || skill.id === entrySkillId))
+              .map(({ id, name, description }) => ({ id, name, description })),
+          }, taskAbortController.signal, addTokenUsage);
+        } catch (error) {
+          if (isAbortError(error)) throw error;
+          console.warn("[任务理解] 前置分析失败，交由 ReAct 根据原始请求判断:", error);
+        }
       }
       if (!isCurrentRequest()) return;
       // 手动一键入口直接带入专用任务技能；聊天请求使用前置理解的技能建议。
@@ -350,6 +352,8 @@ export const useChatRequest = ({
       // 所有请求统一走 React 编排，当前任务技能可由会话系统消息跨轮提供。
       reactRunner = createResumeAiReactRunner("xiaoZhou", {
         tools,
+        // 手动一键操作以读取简历启动 ReAct，避免首轮直接把执行任务当成回复。
+        initialTool: entrySkillId ? "read_resume_data" : undefined,
         // 单次请求的最大 ReAct 轮次上限
         maxSteps: 99,
         reflection: true,

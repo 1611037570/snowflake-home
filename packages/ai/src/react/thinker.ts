@@ -4,6 +4,8 @@ import type { ChatMessage, ReactTool, ThinkResult, ToolCall } from "./types.js";
 export interface ThinkOptions {
   // 可用工具，用于构造 function calling 参数
   tools: ReactTool[];
+  // 本轮指定的工具；不传时由模型自行决定是否调用工具。
+  toolChoice?: string;
   // 模型名，可选
   model?: string;
   // 思考模式，不传时默认禁用
@@ -59,7 +61,10 @@ export async function think(
         parameters: t.parameters,
       },
     })),
-    tool_choice: "auto",
+    // 明确操作任务可指定首轮工具，其余轮次保持模型自主选择。
+    tool_choice: options.toolChoice
+      ? { type: "function", function: { name: options.toolChoice } }
+      : "auto",
     // response_format: { type: "json_object" },
     thinking: options.thinking ?? { type: "disabled" },
     ...(options.model ? { model: options.model } : {}),

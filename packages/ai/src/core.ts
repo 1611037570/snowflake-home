@@ -392,6 +392,8 @@ class LLM {
           if (aborted) throw new AbortError();
           const result = await think(this, history, {
             tools: config.tools,
+            // 仅首轮启动明确任务的读取工具，后续交由 ReAct 决定。
+            toolChoice: step === 0 ? config.initialTool : undefined,
             model: config.model,
             thinking: config.thinking,
             abortRef,
