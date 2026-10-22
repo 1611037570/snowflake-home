@@ -197,10 +197,23 @@ const a = {
                 脱敏简历
               </SfButton>
             </div>
+            <!-- 仅展示当前导出内容对应的配置说明。 -->
             <p class="min-w-0 flex-1 text-xs text-sf-text-3">
-              脱敏配置：{{ desensitizeName }}；完整备份不应用脱敏
+              {{
+                exportDesensitized
+                  ? `脱敏配置：${desensitizeName}`
+                  : "原始简历：保留完整内容，不应用脱敏"
+              }}
             </p>
-            <SfButton type="bg" size="small" border @click="desensitizeVisible = true">修改字段</SfButton>
+            <SfButton
+              v-if="exportDesensitized"
+              type="bg"
+              size="small"
+              border
+              @click="desensitizeVisible = true"
+            >
+              修改字段
+            </SfButton>
           </div>
         </section>
         <div class="grid grid-cols-1 gap-3 py-3 sm:grid-cols-2">
