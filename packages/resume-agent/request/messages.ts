@@ -6,6 +6,11 @@ export type ResumeAiMessageKey =
   | "truncated"
   | "emptyGeneration"
   | "emptyAnswer"
+  | "timeout"
+  | "rateLimited"
+  | "serverError"
+  | "network"
+  | "unknown"
   | "markdownModelMissing"
   | "pdfModelUnset"
   | "requestTooLarge";
@@ -23,6 +28,11 @@ const DEFAULT_MESSAGES: Record<ResumeAiMessageKey, string> = {
   truncated: "AI 返回内容不完整，请重试",
   emptyGeneration: "AI 未生成可用的简历数据",
   emptyAnswer: "模型未返回回答内容",
+  timeout: "AI 请求超时，请重试",
+  rateLimited: "请求过于频繁，请稍后再试",
+  serverError: "AI 服务暂时不可用，请稍后重试",
+  network: "网络连接异常，请检查网络后重试",
+  unknown: "生成失败，请重试",
   markdownModelMissing: "请先配置简历导入模型",
   pdfModelUnset: "请先配置支持图片识别的简历解析模型",
   requestTooLarge: "简历文件过大，请压缩至 {size} MB 以内",

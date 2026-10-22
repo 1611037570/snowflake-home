@@ -6,6 +6,7 @@ export {
   readResumeAiResponseText,
   runResumeAiTask,
 } from "./request";
+export { describeResumeAiError } from "./request/errors";
 export type {
   ResumeAiAgent,
   ResumeAiMessage,

@@ -1,7 +1,12 @@
 // 导入LLM接口
 import { AbortError, isAbortError } from "@/apis";
-import { createResumeAgentSession, type ResumeAgentSession } from "@snowflake/resume-agent";
+import {
+  createResumeAgentSession,
+  describeResumeAiError,
+  type ResumeAgentSession,
+} from "@snowflake/resume-agent";
 import type { ChatMessage } from "@snowflake/ai";
+import { resumeContextCompaction } from "@/apis/llm/contextCompaction";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
@@ -290,6 +295,8 @@ export const useChatRequest = ({
         reactConfig: {
           // 单次请求的最大 ReAct 轮次上限
           maxSteps: 99,
+          // 超出输入预算时压缩较早的历史，避免长对话溢出与指令失效
+          context: resumeContextCompaction,
           reflection: true,
           reflectPrompt,
           onToolError,
@@ -370,7 +377,7 @@ export const useChatRequest = ({
       if (isAbortError(error)) return;
       console.error("AI 请求异常:", error);
       if (lastMsg) {
-        lastMsg.content = `请求出错: ${error.message || "未知错误"}`;
+        lastMsg.content = describeResumeAiError(error);
         lastMsg.typing = false;
         lastMsg.requestStatus = "error";
         lastMsg.stepLabel = "";
