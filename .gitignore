@@ -41,6 +41,10 @@ test
 # WorkBuddy 工作区数据
 .workbuddy
 
+# 本地独立应用目录
+/apps/job-extension/
+/apps/resume-showcase/
+
 # TypeScript
 *.tsbuildinfo
 apps/web/src/types/components.d.ts
