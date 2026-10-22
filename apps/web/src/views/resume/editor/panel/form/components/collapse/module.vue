@@ -40,10 +40,6 @@ const title = defineModel("title", {
 });
 const { currentForm, addItem } = useFormContext();
 const resumeStore = useResumeStore();
-// 当前编辑模块仅通过主题色边框强调，避免增加背景层级。
-const isEditing = computed(
-  () => resumeStore.editingModuleKey === currentForm.value?.key,
-);
 // 仅在配置指定的布局下显示列表新增入口，正文布局保持原有编辑区。
 const showAdd = computed(() => {
   if (!props.add) return false;
@@ -113,7 +109,6 @@ function handleAdd() {
       name="1"
       lazy
       class="resume-module-box"
-      :class="{ 'resume-module-editing': isEditing }"
     >
       <template #title>
         <div class="group flex h-full w-full items-center justify-between">
@@ -200,9 +195,8 @@ function handleAdd() {
 .resume-module-box {
   @apply overflow-hidden border border-sf-b transition-colors;
 }
-/* 悬停与当前编辑状态只强化边框，不增加背景色。 */
-.resume-module-box:hover,
-.resume-module-box.resume-module-editing {
+/* 悬停时只强化边框，不增加背景色。 */
+.resume-module-box:hover {
   border-color: var(--color-sf-theme);
 }
 /* 折叠项经过组件转发，直接命中模块内容节点以清除默认下内边距。 */
