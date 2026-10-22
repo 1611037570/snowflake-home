@@ -806,7 +806,7 @@
   "resumeAiGenerateBackToEdit": "Edit Details",
   "resumeAiGenerateWorkingTitle": "Generating Your Resume",
   "resumeAiGenerateStage_analyzing": "Understanding your information and goal…",
-  "resumeAiGenerateStage_preparing": "Loading the generation skill and reading your details…",
+  "resumeAiGenerateStage_preparing": "Preparing resume capabilities and reading your details…",
   "resumeAiGenerateStage_generating": "Organizing and writing your resume…",
   "resumeAiGenerateStage_structuring": "Preparing the resume data for preview…",
   "resumeAiGenerateCancel": "Cancel Generation",

@@ -16,7 +16,6 @@ export const onDemandSkills: SkillLoader[] = [
   () => import("@snowflake/resume-agent/skills/skill_greeting").then((module) => module.greeting()),
   // 面试域技能通过独立清单整体注入，注册器不再感知单项实现
   ...interviewSkills,
-  () => import("@snowflake/resume-agent/skills/skill_resume_create").then((module) => module.resumeCreate()),
   () => import("@snowflake/resume-agent/skills/skill_resume_score").then((module) => module.resumeScore()),
   () => import("@snowflake/resume-agent/skills/skill_resume_translate").then((module) => module.resumeTranslate()),
   () => import("@snowflake/resume-agent/skills/skill_career_planning").then((module) => module.careerPlanning()),

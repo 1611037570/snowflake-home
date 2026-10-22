@@ -1,6 +1,7 @@
 // 导入LLM接口
 import { AbortError, isAbortError } from "@/apis";
 import {
+  buildAssistantTaskContext,
   createResumeAiReactRunner,
   isPersistentTaskSkillId,
   understandAssistantTask,
@@ -112,7 +113,6 @@ export const useChatRequest = ({
     interview_prediction: "读取《面试押题》",
     specialized_interview: "读取《专项面试模拟》",
     aptitude_hr_interview: "读取《行测与 HR 面试》",
-    resume_create: "读取《从零生成简历经历》",
     resume_interview: "读取《AI 简历面试》",
     resume_score: "读取《AI 简历评估》",
     resume_one_key_adjust: "读取《一键调整》",
@@ -309,25 +309,23 @@ export const useChatRequest = ({
         : entryFlow === "oneKeyAdjust"
           ? "resume_one_key_adjust"
           : null;
-      // 手动一键入口已明确任务，其余请求再依据对话理解意图，避免重复分析干扰执行。
+      // 所有入口统一生成任务契约；一键入口仍保留明确技能，避免再次询问入口已提供的信息。
       let taskUnderstanding: Awaited<ReturnType<typeof understandAssistantTask>> = null;
-      if (!entrySkillId) {
-        try {
-          taskUnderstanding = await understandAssistantTask({
-            messages: messages
-              .filter((message) => (message.role === "user" || message.role === "assistant") && !!message.content)
-              .slice(-8)
-              .map((message) => ({ role: message.role as "user" | "assistant", content: message.content.slice(0, 1500) })),
-            entryFlow: typeof entryFlow === "string" ? entryFlow : undefined,
-            previousSkillId: activeTaskSkillMessage?.systemSkillId,
-            skills: skills.filter((skill) => (isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing") &&
-              (!ONE_KEY_SKILLS.has(skill.id) || skill.id === entrySkillId))
-              .map(({ id, name, description }) => ({ id, name, description })),
-          }, taskAbortController.signal, addTokenUsage);
-        } catch (error) {
-          if (isAbortError(error)) throw error;
-          console.warn("[任务理解] 前置分析失败，交由 ReAct 根据原始请求判断:", error);
-        }
+      try {
+        taskUnderstanding = await understandAssistantTask({
+          messages: messages
+            .filter((message) => (message.role === "user" || message.role === "assistant") && !!message.content)
+            .slice(-8)
+            .map((message) => ({ role: message.role as "user" | "assistant", content: message.content.slice(0, 1500) })),
+          entryFlow: typeof entryFlow === "string" ? entryFlow : undefined,
+          previousSkillId: activeTaskSkillMessage?.systemSkillId,
+          skills: skills.filter((skill) => (isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing") &&
+            (!ONE_KEY_SKILLS.has(skill.id) || skill.id === entrySkillId))
+            .map(({ id, name, description }) => ({ id, name, description })),
+        }, taskAbortController.signal, addTokenUsage);
+      } catch (error) {
+        if (isAbortError(error)) throw error;
+        console.warn("[任务理解] 前置分析失败，交由 ReAct 根据原始请求判断:", error);
       }
       if (!isCurrentRequest()) return;
       // 手动一键入口直接带入专用任务技能；聊天请求使用前置理解的技能建议。
@@ -336,7 +334,7 @@ export const useChatRequest = ({
       if (taskUnderstanding && !isPersistentTaskSkillId(taskSkill?.id)) clearTaskSkill();
       if (taskSkill) activateTaskSkill(taskSkill);
       const taskContext = [
-        ...(taskUnderstanding ? [{ role: "system" as const, content: `# 本轮候选任务理解\n目标：${taskUnderstanding.objective}\n执行方向：${taskUnderstanding.approach}\n若与用户原话冲突，以用户原话为准；工具调用自行决定。` }] : []),
+        ...(taskUnderstanding ? [{ role: "system" as const, content: buildAssistantTaskContext(taskUnderstanding) }] : []),
         ...(taskSkill ? [{ role: "system" as const, content: `# 当前任务技能：${taskSkill.name}\n\n${taskSkill.instructions}` }] : []),
       ];
       const requestIndex = messages.map((message) => message.role).lastIndexOf("user");

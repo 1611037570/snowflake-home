@@ -806,7 +806,7 @@
   "resumeAiGenerateBackToEdit": "返回修改资料",
   "resumeAiGenerateWorkingTitle": "正在生成简历",
   "resumeAiGenerateStage_analyzing": "正在理解你的资料与生成目标…",
-  "resumeAiGenerateStage_preparing": "正在加载生成技能并读取资料…",
+  "resumeAiGenerateStage_preparing": "正在准备简历能力并读取资料…",
   "resumeAiGenerateStage_generating": "正在组织并撰写简历内容…",
   "resumeAiGenerateStage_structuring": "正在整理简历数据并准备预览…",
   "resumeAiGenerateCancel": "取消生成",

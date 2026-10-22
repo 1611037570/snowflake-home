@@ -8,7 +8,6 @@ const PERSISTENT_TASK_SKILL_IDS = new Set([
   "aptitude_hr_interview",
   "job_match",
   "resume_optimization",
-  "resume_create",
   "resume_interview",
   "resume_score",
   "resume_one_key_adjust",
