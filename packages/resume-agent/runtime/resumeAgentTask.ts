@@ -175,6 +175,8 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       };
       // 完成条件由任务效果与本轮选中的能力共同决定，不依赖模型自行声明完成。
       completionPolicy = resolvedPolicy;
+      // 观测：记录本轮任务契约，便于宿主还原验收口径。
+      options.onTrace?.({ type: "planned", task: cloneResumeAgentTask(task)! });
       return {
         accepted: true,
         task,
@@ -313,6 +315,8 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       tool: tool.name,
       requiredEffects: resolvedPolicy.requiredEffects,
     });
+    // 观测：降级建任务必须可见，否则无法解释验收口径为何放宽。
+    options.onTrace?.({ type: "implicit", task: cloneResumeAgentTask(task)!, tool: tool.name });
   };
 
   const beforeFinal = () => {
@@ -320,6 +324,12 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       // 规划始终缺失时放行回答，避免整轮请求因为契约缺失直接失败
       console.warn("[简历助手] 本轮未建立任务契约，跳过完成校验放行回答:", {
         source: options.source,
+      });
+      // 观测：跳过校验属于降级路径，必须留下记录。
+      options.onTrace?.({
+        type: "verdict",
+        completed: true,
+        reason: "本轮未建立任务契约，已跳过完成校验",
       });
       return null;
     }
@@ -333,9 +343,13 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       task.phase = "completed";
       task.pendingInput = undefined;
       task.blocker = undefined;
+      // 观测：放行最终回答时记录结论。
+      options.onTrace?.({ type: "verdict", completed: true, reason: null });
       return null;
     }
     task.phase = "verifying";
+    // 观测：拦截过早收口时记录拦截原因，排障依赖这条信号。
+    options.onTrace?.({ type: "verdict", completed: false, reason: result.retryMessage });
     return result.retryMessage;
   };
 

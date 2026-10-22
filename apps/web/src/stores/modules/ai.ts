@@ -22,6 +22,44 @@ export type Chat = {
   messages: Message[];
 };
 export type ResumeAssistantChatRecord = Omit<Chat, "resumeId"> & { resumeId: string };
+// 一次工具执行留下的观测记录
+export type ResumeAgentRunStep = {
+  // 证据执行序号
+  sequence: number;
+  // 工具名称
+  tool: string;
+  // 执行结果状态
+  status: string;
+  // 面向用户的结果摘要
+  summary: string;
+  // 结果额外证明的业务事实
+  facts?: string[];
+  // 是否复用了首次执行结果
+  replayed?: boolean;
+  // 记录时间
+  at: number;
+};
+// 一轮请求的 Agent 运行观测
+export type ResumeAgentRunTrace = {
+  // 任务标识
+  taskId: string;
+  // 功能入口
+  source: string;
+  // 请求开始时间
+  startedAt: number;
+  // 请求总耗时毫秒
+  durationMs?: number;
+  // 本轮 token 用量
+  tokens?: number;
+  // 最终任务快照
+  task?: ResumeAgentTaskState;
+  // 工具证据时间线
+  steps: ResumeAgentRunStep[];
+  // 完成校验结论
+  verdicts: Array<{ completed: boolean; reason: string | null; at: number }>;
+  // 降级说明
+  note?: string;
+};
 export type Message = {
   // 消息唯一标识
   id: string;
@@ -61,6 +99,8 @@ export type Message = {
   writeSummary?: string;
   // 本轮 Agent 任务契约，用于后续“继续”等承接表达恢复目标、范围与必需效果。
   resumeTask?: ResumeAgentTaskState;
+  // 本轮 Agent 运行观测，用于排障展示与复制导出。
+  agentRun?: ResumeAgentRunTrace;
   // 由业务宿主解释的请求上下文，重试与重新生成时保持一致
   requestContext?: Record<string, unknown>;
 };

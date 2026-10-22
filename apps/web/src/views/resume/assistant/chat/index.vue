@@ -307,6 +307,9 @@ const getMessageMemo = (msg: Message, index: number) => [
   msg.contentTime,
   msg.followQuestions?.join("\u0000"),
   msg.writeSummary,
+  msg.agentRun?.steps?.length,
+  msg.agentRun?.durationMs,
+  msg.agentRun?.task?.phase,
   index === displayMessages.value.length - 1,
   hasWriteChanges(msg),
 ];

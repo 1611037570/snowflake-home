@@ -79,6 +79,7 @@ export type {
   ResumeAgentTaskProfile,
   ResumeAgentTaskRelation,
   ResumeAgentTaskState,
+  ResumeAgentTraceEvent,
 } from "./runtime/taskTypes";
 export type {
   CreateResumeAgentSessionOptions,

@@ -9,6 +9,7 @@ import type {
   ResumeAgentTaskEvidence,
   ResumeAgentTaskProfile,
   ResumeAgentTaskState,
+  ResumeAgentTraceEvent,
 } from "./taskTypes";
 
 export type CreateResumeAgentSessionOptions = {
@@ -40,6 +41,8 @@ export type CreateResumeAgentSessionOptions = {
   reactConfig: Omit<ReactConfig, "tools" | "initialTool" | "beforeFinal" | "onFinal">;
   // 每次业务工具形成证据后通知宿主。
   onEvidence?: (evidence: ResumeAgentTaskEvidence) => void;
+  // 任务建立、降级与完成校验时通知宿主，用于运行观测。
+  onTrace?: (event: ResumeAgentTraceEvent) => void;
   // 最终回答生成后同时返回任务快照。
   onFinal?: (answer: string, task?: ResumeAgentTaskState) => void;
   // 工具执行和异步装配前检查当前请求是否仍然有效。
@@ -74,6 +77,7 @@ export const createResumeAgentSession = async (
     allowTaskPause: options.allowTaskPause,
     taskProfile,
     onEvidence: options.onEvidence,
+    onTrace: options.onTrace,
   });
   const guardTool = (tool: ReactTool): ReactTool => ({
     ...tool,

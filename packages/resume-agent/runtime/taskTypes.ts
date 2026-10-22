@@ -47,6 +47,15 @@ export type ResumeAgentTaskEvidence = {
   replayed?: boolean;
 };
 
+// 运行观测事件：宿主据此还原任务建立、降级与完成校验的过程。
+export type ResumeAgentTraceEvent =
+  // 模型已完成本轮任务规划。
+  | { type: "planned"; task: ResumeAgentTaskState }
+  // 规划缺失时按工具效果建立了隐式任务。
+  | { type: "implicit"; task: ResumeAgentTaskState; tool: string }
+  // 最终回答前的完成校验结论。
+  | { type: "verdict"; completed: boolean; reason: string | null };
+
 export type ResumeAgentPendingInput = {
   // 继续任务所缺少的具体事实。
   missingFacts: string[];
@@ -128,6 +137,8 @@ export type CreateResumeAgentTaskRuntimeOptions = {
   taskProfile?: ResumeAgentTaskProfile;
   // 每次业务工具形成证据后通知宿主，用于展示和撤回等交互状态。
   onEvidence?: (evidence: ResumeAgentTaskEvidence) => void;
+  // 任务建立、降级与完成校验时通知宿主，用于运行观测。
+  onTrace?: (event: ResumeAgentTraceEvent) => void;
 };
 
 export const TASK_RELATIONS: ResumeAgentTaskRelation[] = ["new", "continue", "revise"];

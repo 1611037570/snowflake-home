@@ -261,6 +261,16 @@ export const useChatRequest = ({
       lastMsg = currentMessages.value[currentMessages.value.length - 1] ?? null;
       if (lastMsg && backup != null) requestBackups.set(lastMsg, backup);
       state = createChatState(lastMsg, isCurrentRequest, addTokenUsage);
+      // 运行观测：从请求开始记录任务契约、工具证据与完成校验结论
+      if (lastMsg) {
+        lastMsg.agentRun = {
+          taskId: requestTaskId,
+          source: typeof entryFlow === "string" ? entryFlow : "chat",
+          startedAt: Date.now(),
+          steps: [],
+          verdicts: [],
+        };
+      }
       // 请求开始即启动计时，避免首个模型事件返回前没有耗时
       state.onReasoning();
 
@@ -281,7 +291,18 @@ export const useChatRequest = ({
           if (!isCurrentRequest()) throw new AbortError();
         },
         onEvidence: (evidence) => {
-          if (!isCurrentRequest() || !lastMsg || evidence.replayed) return;
+          if (!isCurrentRequest() || !lastMsg) return;
+          // 观测：完整记录每次工具事实，复用结果也保留
+          lastMsg.agentRun?.steps.push({
+            sequence: evidence.sequence,
+            tool: evidence.tool,
+            status: evidence.status,
+            summary: evidence.summary,
+            facts: evidence.facts,
+            replayed: evidence.replayed,
+            at: Date.now(),
+          });
+          if (evidence.replayed) return;
           // 证据摘要本身是用户可读的结果，直接作为阶段提示
           lastMsg.stepLabel = evidence.summary;
           if (evidence.kind !== "resume_change" || evidence.status === "failed") return;
@@ -289,6 +310,24 @@ export const useChatRequest = ({
           writeMessages.add(lastMsg);
           lastMsg.hasWriteChanges = true;
           lastMsg.writeSummary = evidence.summary;
+        },
+        onTrace: (event) => {
+          if (!isCurrentRequest() || !lastMsg?.agentRun) return;
+          if (event.type === "planned") {
+            lastMsg.agentRun.task = event.task;
+            return;
+          }
+          if (event.type === "implicit") {
+            // 降级建任务必须留下说明，否则验收口径为何放宽无法解释
+            lastMsg.agentRun.task = event.task;
+            lastMsg.agentRun.note = `未建立任务契约，已按 ${event.tool} 的效果降级处理`;
+            return;
+          }
+          lastMsg.agentRun.verdicts.push({
+            completed: event.completed,
+            reason: event.reason,
+            at: Date.now(),
+          });
         },
         reactConfig: {
           // 单次请求的最大 ReAct 轮次上限
@@ -387,6 +426,12 @@ export const useChatRequest = ({
         const finishTime = Date.now();
         // 仅当前任务可以收口生成状态，避免旧任务覆盖新任务
         generating.value = false;
+        // 观测：收口时补齐耗时、用量与最终任务快照
+        if (lastMsg?.agentRun) {
+          lastMsg.agentRun.durationMs = finishTime - lastMsg.agentRun.startedAt;
+          lastMsg.agentRun.tokens = lastMsg.total_tokens;
+          lastMsg.agentRun.task = agentSession?.getTask() ?? lastMsg.agentRun.task;
+        }
         abortRequest = null;
         agentSession = null;
         if (lastMsg?.typing) lastMsg.typing = false;
