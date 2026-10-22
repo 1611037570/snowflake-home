@@ -84,7 +84,7 @@ export const runInitialResumeGeneration = async (
     source: "initialResumeGeneration",
     capabilities: [writingSkill],
     preferredCapabilityId: writingSkill.id,
-    fixedExpectedResult: "draft",
+    fixedOutcome: "draft",
     allowTaskPause: false,
   });
   const businessTools: ReactTool[] = [
@@ -94,13 +94,14 @@ export const runInitialResumeGeneration = async (
       submittedResume = resume;
     }),
   ];
-  const tools = [taskRuntime.taskTool, ...taskRuntime.wrapTools(businessTools)];
+  // 初始生成入口复用任务控制工具，运行时会隐藏该入口不支持的暂停动作。
+  const tools = [...taskRuntime.controlTools, ...taskRuntime.wrapTools(businessTools)];
   let inputRead = false;
   options.onStage?.("analyzing");
   const runner = createResumeAiReactRunner("xiaoZhou", {
     tools,
     // 同一个 ReAct 先建立任务，再自行读取资料与提交草稿。
-    initialTool: "set_resume_task",
+    initialTool: "plan_resume_task",
     maxSteps: 10,
     thinking: { type: "disabled" },
     beforeFinal: taskRuntime.beforeFinal,
@@ -108,7 +109,7 @@ export const runInitialResumeGeneration = async (
       if (inputRead && !submittedResume) options.onStage?.("generating");
     },
     onAct: (toolCall) => {
-      if (toolCall.function.name === "set_resume_task") {
+      if (toolCall.function.name === "plan_resume_task") {
         options.onStage?.("analyzing");
         return;
       }

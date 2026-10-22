@@ -42,10 +42,13 @@ export { isPersistentTaskSkillId } from "./skills/taskSkillMemory";
 export { createResumeAgentTaskRuntime } from "./runtime/resumeAgentTask";
 export type {
   CreateResumeAgentTaskRuntimeOptions,
-  ResumeAgentExpectedResult,
+  ResumeAgentPendingInput,
+  ResumeAgentTaskBlocker,
   ResumeAgentTaskEvidence,
+  ResumeAgentTaskOutcome,
+  ResumeAgentTaskPhase,
+  ResumeAgentTaskRelation,
   ResumeAgentTaskState,
-  ResumeAgentTaskStatus,
 } from "./runtime/resumeAgentTask";
 export {
   parseResumeReport,

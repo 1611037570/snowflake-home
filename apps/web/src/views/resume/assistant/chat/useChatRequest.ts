@@ -99,7 +99,9 @@ export const useChatRequest = ({
 
   // 工具调用过程区展示用的中文名
   const TOOL_NAMES: Record<string, string> = {
-    set_resume_task: "理解本轮任务",
+    plan_resume_task: "规划本轮任务",
+    request_resume_input: "确认缺失信息",
+    report_resume_blocker: "记录任务阻塞",
     read_resume_data: "读取简历数据",
     propose_resume_edits: "修改简历数据",
     resume_data_contract: "读取《简历数据规范》",
@@ -295,7 +297,7 @@ export const useChatRequest = ({
         previousTask,
         capabilities,
         preferredCapabilityId: entrySkillId ?? undefined,
-        fixedExpectedResult: entrySkillId ? "resume_change" : undefined,
+        fixedOutcome: entrySkillId ? "resume_change" : undefined,
       });
       const requestIndex = messages.map((message) => message.role).lastIndexOf("user");
       if (requestIndex !== -1) {
@@ -309,19 +311,20 @@ export const useChatRequest = ({
           return tool.execute(args);
         },
       }));
-      const taskTool = {
-        ...taskRuntime.taskTool,
+      // 任务控制工具与业务工具使用同一请求有效性边界。
+      const controlTools = taskRuntime.controlTools.map((tool) => ({
+        ...tool,
         execute: (args: any) => {
           if (!isCurrentRequest()) throw new AbortError();
-          return taskRuntime.taskTool.execute(args);
+          return tool.execute(args);
         },
-      };
-      const tools = [taskTool, ...taskRuntime.wrapTools(businessTools)];
+      }));
+      const tools = [...controlTools, ...taskRuntime.wrapTools(businessTools)];
       // 所有请求统一由 ReAct 建立任务、执行工具并核对完成证据。
       reactRunner = createResumeAiReactRunner("xiaoZhou", {
         tools,
         // 任务理解与后续执行由同一个 ReAct 连续完成。
-        initialTool: "set_resume_task",
+        initialTool: "plan_resume_task",
         // 单次请求的最大 ReAct 轮次上限
         maxSteps: 99,
         reflection: true,
