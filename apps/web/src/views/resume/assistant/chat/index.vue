@@ -8,7 +8,7 @@ import {
 } from "@/stores";
 import { useClipboard, useScroll } from "@vueuse/core";
 import { ElMessage } from "element-plus";
-import { computed, inject, nextTick, onBeforeUnmount, ref, watch } from "vue";
+import { computed, inject, nextTick, onActivated, onBeforeUnmount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { debounce } from "lodash-es";
 import { useChatRequest } from "./useChatRequest";
@@ -75,6 +75,7 @@ const { selectedModule } = storeToRefs(resumeStore);
 const draftChat = ref<Chat | null>(null);
 const isChatLoading = ref(false);
 let chatLoadToken = 0;
+let hasActivated = false;
 // 当前简历只展示自身的助手对话
 const resumeId = computed(() => resumeStore.currentItem?.id || "");
 const resumeAssistantChats = computed(
@@ -125,6 +126,12 @@ function createNewChat() {
   quickAnswerVisible.value = false;
   chatListVisible.value = false;
 }
+
+// AI 标签再次进入时始终回到空白话题，不沿用离开前的会话标识。
+onActivated(() => {
+  if (hasActivated) createNewChat();
+  hasActivated = true;
+});
 
 async function selectChat(id: string) {
   if (generating.value || quickAnswerLoading.value) return;
@@ -328,22 +335,18 @@ const { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges } = useCha
   config: assistantConfig,
 });
 
-// 切换简历时先取消旧会话请求，再恢复目标简历的助手对话
+// 切换简历时先取消旧会话请求，并为目标简历创建空白话题。
 watch(
   resumeId,
-  async (id, previousId) => {
-    const token = ++chatLoadToken;
+  (id, previousId) => {
+    ++chatLoadToken;
     if (previousId && id !== previousId) stopGenerating();
-    const draft = id ? (aiStore.createNewResumeAssistantChat() ?? null) : null;
-    draftChat.value = draft;
+    resumeAssistantChat.value = null;
+    draftChat.value = id ? (aiStore.createNewResumeAssistantChat() ?? null) : null;
     if (!id) {
       isChatLoading.value = false;
       return;
     }
-    isChatLoading.value = true;
-    const savedChat = await aiStore.initializeResumeAssistantChat(id);
-    if (token !== chatLoadToken || resumeId.value !== id) return;
-    draftChat.value = savedChat ? null : draft;
     isChatLoading.value = false;
   },
   { immediate: true },
