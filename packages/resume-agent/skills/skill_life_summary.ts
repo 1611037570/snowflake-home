@@ -1,6 +1,7 @@
 // 人生总结技能：基于整份简历梳理可验证的经历脉络，不扩展未提供的人生信息
 export const lifeSummary = () => ({
   id: "life_summary",
+  role: "task" as const, // 参与任务契约规划的任务能力。
   name: "人生总结",
   description: `根据整份简历梳理经历脉络、关键成果与成长主题，生成有事实依据的阶段总结。`,
   instructions: `# 总结原则

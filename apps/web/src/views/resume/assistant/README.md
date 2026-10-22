@@ -9,7 +9,7 @@ editor/panel/index.vue（异步挂载助手）
        → routing/registry（登记按需 AI 能力）
        → useResumeAssistant（装配本轮工具与简历上下文）
        → chat/useChatRequest（接入任务运行时、维护会话状态与撤回）
-            → packages/resume-agent（同一 ReAct 建立任务、执行工具并核对完成证据）
+            → packages/resume-agent（同一 ReAct 建立任务契约、执行工具并核对完成证据）
 ```
 
 目录职责：
@@ -17,7 +17,7 @@ editor/panel/index.vue（异步挂载助手）
 - `chat/`：维护会话消息、输入、生成状态、撤回入口和展示组件。
 - `flows.ts`：维护助手功能入口、引导步骤和请求上下文。
 - `interview/`：维护面试流程、入口判断和建议卡片，不保存面试技能正文。
-- `routing/registry.ts`：登记常驻提示及按需技能加载关系。
+- `routing/registry.ts`：登记常驻提示、任务能力与参考知识的按需加载关系。
 - `routing/defaultPrompt.ts`：维护助手共用的读取、写入与事实边界。
 - `useResumeAssistant.ts`：根据当前简历状态装配 `packages/resume-agent` 提供的上下文、工具与错误引导。
 

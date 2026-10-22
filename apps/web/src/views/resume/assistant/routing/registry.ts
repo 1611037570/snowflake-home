@@ -5,7 +5,7 @@ import { defaultPrompt } from "./defaultPrompt";
 // 常驻技能：按顺序作为系统消息注入对话
 export const residentSkills: SkillFactory[] = [defaultPrompt];
 
-// 按需技能：只登记懒加载入口，首次组装工具列表时才拉取技能正文
+// 按需技能：任务能力交给契约规划器选择，参考知识通过统一工具读取。
 export const onDemandSkills: SkillLoader[] = [
   () => import("@snowflake/resume-agent/skills/skill_resume_data_contract").then((module) => module.resumeDataContract()),
   () => import("@snowflake/resume-agent/skills/skill_resume_writing").then((module) => module.resumeWriting()),

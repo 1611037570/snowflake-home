@@ -26,7 +26,7 @@ export type {
   InitialResumeGenerationStage,
   RunInitialResumeGenerationOptions,
 } from "./tasks/initialResumeGeneration";
-export type { ContentAiAction, Skill, SkillFactory, SkillLoader } from "./types";
+export type { ContentAiAction, Skill, SkillFactory, SkillLoader, SkillRole } from "./types";
 export { MARKDOWN_IMPORT_TASK, PDF_IMPORT_TASK } from "./tasks/importResume";
 export { MAX_PDF_REQUEST_BYTES } from "./tasks/pdfLimits";
 export { GENERAL_CHAT_TASK, RESUME_CHAT_TASK } from "./tasks/chat";
@@ -36,9 +36,8 @@ export { ASSISTANT_REFLECT_PROMPT } from "./prompts/assistant";
 export { createDefaultAssistantPrompt } from "./prompts/defaultAssistant";
 export { createResumeTools, RESUME_LANG_CODES } from "./tools";
 export type { ResumeToolContext } from "./tools";
-export { createSkillTools } from "./tools/skillLoader";
+export { createSkillReferenceTool } from "./tools/skillLoader";
 export { buildToolGuide } from "./tools/toolGuide";
-export { isPersistentTaskSkillId } from "./skills/taskSkillMemory";
 export { createResumeAgentTaskRuntime } from "./runtime/resumeAgentTask";
 export { RESUME_AGENT_FACTS } from "./runtime/types";
 export type {
@@ -46,7 +45,6 @@ export type {
   ResumeAgentPendingInput,
   ResumeAgentTaskBlocker,
   ResumeAgentTaskEvidence,
-  ResumeAgentTaskOutcome,
   ResumeAgentTaskPhase,
   ResumeAgentTaskProfile,
   ResumeAgentTaskRelation,
@@ -56,6 +54,7 @@ export type {
   ResumeAgentCompletionPolicy,
   ResumeAgentEvidenceKind,
   ResumeAgentEvidenceOrder,
+  ResumeAgentRequiredEffect,
   ResumeAgentTool,
   ResumeAgentToolEffect,
   ResumeAgentToolEvaluation,

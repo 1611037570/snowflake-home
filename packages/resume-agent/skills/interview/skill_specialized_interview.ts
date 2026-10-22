@@ -1,6 +1,7 @@
 // 专项面试模拟技能：围绕技术面或业务面开展逐轮追问、即时评分与反馈
 export const specializedInterview = () => ({
   id: "specialized_interview",
+  role: "task" as const, // 参与任务契约规划的任务能力。
   name: "专项面试模拟",
   description: `基于完整简历开展技术面或业务面的一对一模拟面试，逐轮追问并即时评分反馈。`,
   instructions: `# 启动要求

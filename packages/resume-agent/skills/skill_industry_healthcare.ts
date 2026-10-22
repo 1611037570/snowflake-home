@@ -2,6 +2,7 @@
 // 描述：提供医疗与大健康行业岗位族的 JD 关键词、量化维度与表达要点，供通用方法论技能按需叠加
 export const industryHealthcare = () => ({
   id: "industry_healthcare",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "医疗/大健康行业知识库",
   description: `医疗与大健康行业简历知识库：岗位族、JD 关键词、量化维度与表达要点。处理临床医疗、医药研发、医疗器械、医院管理、健康管理等岗位的简历优化、编写或 JD 匹配时读取。`,
   instructions: `# 医疗/大健康行业知识库

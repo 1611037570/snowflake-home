@@ -2,6 +2,7 @@
 // 描述：提供金融与财会行业岗位族的 JD 关键词、量化维度与表达要点，供通用方法论技能按需叠加
 export const industryFinance = () => ({
   id: "industry_finance",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "金融/财会行业知识库",
   description: `金融与财会行业简历知识库：岗位族、JD 关键词、量化维度与表达要点。处理银行、证券、基金、保险、财会审计等金融财会岗位的简历优化、编写或 JD 匹配时读取。`,
   instructions: `# 金融/财会行业知识库

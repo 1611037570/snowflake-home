@@ -2,6 +2,7 @@
 // 描述：提供教育与培训行业岗位族的 JD 关键词、量化维度与表达要点，供通用方法论技能按需叠加
 export const industryEducation = () => ({
   id: "industry_education",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "教育/培训行业知识库",
   description: `教育与培训行业简历知识库：岗位族、JD 关键词、量化维度与表达要点。处理教师、教研、课程设计、留学顾问、职业培训、教务管理等岗位的简历优化、编写或 JD 匹配时读取。`,
   instructions: `# 教育/培训行业知识库

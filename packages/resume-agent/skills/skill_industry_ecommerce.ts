@@ -2,6 +2,7 @@
 // 描述：提供电商、零售与快消行业岗位族的 JD 关键词、量化维度与表达要点，供通用方法论技能按需叠加
 export const industryEcommerce = () => ({
   id: "industry_ecommerce",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "电商/零售/快消行业知识库",
   description: `电商、零售与快消行业简历知识库：岗位族、JD 关键词、量化维度与表达要点。处理电商运营、品牌市场、零售门店、快消营销、供应链等岗位的简历优化、编写或 JD 匹配时读取。`,
   instructions: `# 电商/零售/快消行业知识库

@@ -125,6 +125,7 @@ ${modules}
 
 export const resumeDataContract = () => ({
   id: "resume_data_contract",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "简历数据规范",
   description: DESCRIPTION,
   instructions: buildInstructions(),

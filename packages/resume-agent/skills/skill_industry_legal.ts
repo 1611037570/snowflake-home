@@ -2,6 +2,7 @@
 // 描述：提供法律与法务行业岗位族的 JD 关键词、量化维度与表达要点，供通用方法论技能按需叠加
 export const industryLegal = () => ({
   id: "industry_legal",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "法律/法务行业知识库",
   description: `法律与法务行业简历知识库：岗位族、JD 关键词、量化维度与表达要点。处理律师、公司法务、合规、知识产权、仲裁等岗位的简历优化、编写或 JD 匹配时读取。`,
   instructions: `# 法律/法务行业知识库

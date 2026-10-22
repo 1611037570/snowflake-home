@@ -2,6 +2,7 @@
 // 描述：提供公务员、国企与事业单位岗位族的 JD 关键词、量化维度与表达要点，供通用方法论技能按需叠加
 export const industryGovernment = () => ({
   id: "industry_government",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "公务员/国企/事业单位行业知识库",
   description: `公务员、国企与事业单位简历知识库：岗位族、JD 关键词、量化维度与表达要点。处理行政、文秘、党群、综合管理、政策研究等机关与事业单位岗位的简历优化、编写或 JD 匹配时读取。`,
   instructions: `# 公务员/国企/事业单位行业知识库

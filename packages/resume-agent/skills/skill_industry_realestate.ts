@@ -2,6 +2,7 @@
 // 描述：提供地产、建筑与工程行业岗位族的 JD 关键词、量化维度与表达要点，供通用方法论技能按需叠加
 export const industryRealEstate = () => ({
   id: "industry_realestate",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "地产/建筑/工程行业知识库",
   description: `地产、建筑与工程行业简历知识库：岗位族、JD 关键词、量化维度与表达要点。处理地产开发、建筑设计、施工管理、工程造价、监理咨询等岗位的简历优化、编写或 JD 匹配时读取。`,
   instructions: `# 地产/建筑/工程行业知识库

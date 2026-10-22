@@ -2,6 +2,7 @@
 // 描述：当目标行业未匹配到专门行业知识库时，提供跨行业通用的岗位族框架、量化维度与关键词识别法
 export const industryGeneral = () => ({
   id: "industry_general",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "通用行业知识库",
   description: `通用简历知识库：跨行业岗位族框架、通用量化维度与 JD 关键词识别法。当目标行业未匹配到专门行业知识库时读取，作为兜底。`,
   instructions: `# 通用行业知识库

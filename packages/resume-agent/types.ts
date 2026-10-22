@@ -1,8 +1,17 @@
 import type { ResumeAgentCompletionPolicy } from "./runtime/types";
 
+export type SkillRole =
+  // 每轮对话始终提供的基础规则。
+  | "resident"
+  // 由任务契约规划器选择并直接返回正文的任务能力。
+  | "task"
+  // 执行过程中通过统一读取工具按需加载的参考知识。
+  | "reference";
+
 // AI 技能定义：能力正文由 AI 层维护，助手仅负责选择和装配。
 export interface Skill {
   id: string; // 技能稳定标识。
+  role: SkillRole; // 技能在任务规划与执行阶段承担的职责。
   name: string; // 技能展示名称。
   description: string; // 技能用途说明。
   instructions: string; // 提供给模型的技能正文。

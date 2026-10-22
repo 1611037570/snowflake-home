@@ -4,25 +4,18 @@ import type {
   ResumeAgentCompletionPolicy,
   ResumeAgentEvidenceKind,
   ResumeAgentEvidenceOrder,
+  ResumeAgentRequiredEffect,
   ResumeAgentTool,
   ResumeAgentToolResultStatus,
 } from "./types";
 
 export type ResumeAgentTaskRelation =
-  // 用户开始了与上一轮无关的新任务。
+  // 用户提出可独立完成或需要不同业务效果的新任务。
   | "new"
-  // 用户继续完成上一轮尚未结束或需要延展的任务。
+  // 用户继续完成上一轮目标并继承其业务效果。
   | "continue"
-  // 用户要求修正上一轮目标、范围或结果。
+  // 用户要求修正上一轮结果并继承其业务效果。
   | "revise";
-
-export type ResumeAgentTaskOutcome =
-  // 通过文字回答、分析或建议完成任务。
-  | "answer"
-  // 需要让当前简历数据发生实际变化。
-  | "resume_change"
-  // 需要提交一份独立的结构化简历草稿。
-  | "draft";
 
 export type ResumeAgentTaskPhase =
   // Agent 已经建立本轮任务计划。
@@ -93,10 +86,12 @@ export type ResumeAgentTaskState = {
   relation: ResumeAgentTaskRelation;
   // 用户最终希望达成的目标。
   objective: string;
-  // 用户期待的最终结果类型。
-  outcome: ResumeAgentTaskOutcome;
   // 当前目标模块、记录或内容范围。
   scope: string;
+  // 用户要求任务真实产生的业务效果；空数组表示文字回复即可完成。
+  requiredEffects: ResumeAgentRequiredEffect[];
+  // 用户可核对的任务完成条件。
+  successCondition: string;
   // 本轮选中的通用能力标识。
   capabilityIds: string[];
   // 由运行时维护的当前执行阶段。
@@ -114,8 +109,10 @@ export type ResumeAgentTaskProfile = {
   id: string;
   // 按钮已经明确的任务目标。
   objective: string;
-  // 按钮任务必须产生的结果类型。
-  outcome: ResumeAgentTaskOutcome;
+  // 按钮任务固定要求产生的业务效果。
+  requiredEffects: ResumeAgentRequiredEffect[];
+  // 按钮任务固定的用户可核对完成条件。
+  successCondition: string;
   // 仅在该按钮任务中注入的执行要求。
   instructions: string;
   // 由运行时核对的按钮任务完成条件。
@@ -133,8 +130,10 @@ export type CreateResumeAgentTaskRuntimeOptions = {
   capabilities?: Skill[];
   // 功能入口已经明确指定的主要能力。
   preferredCapabilityId?: string;
-  // 功能入口已经明确指定的结果类型。
-  fixedOutcome?: ResumeAgentTaskOutcome;
+  // 功能入口已经明确指定的必需业务效果。
+  fixedRequiredEffects?: ResumeAgentRequiredEffect[];
+  // 功能入口已经明确指定的完成条件。
+  fixedSuccessCondition?: string;
   // 当前入口是否允许以等待补充或阻塞状态暂停任务。
   allowTaskPause?: boolean;
   // 按钮入口直接指定的任务配置，不参与通用技能选择。
@@ -142,16 +141,14 @@ export type CreateResumeAgentTaskRuntimeOptions = {
 };
 
 const TASK_RELATIONS: ResumeAgentTaskRelation[] = ["new", "continue", "revise"];
-const TASK_OUTCOMES: ResumeAgentTaskOutcome[] = ["answer", "resume_change", "draft"];
+const TASK_REQUIRED_EFFECTS: ResumeAgentRequiredEffect[] = [
+  "resume_change",
+  "draft_submit",
+  "language_update",
+];
 
 const cloneTask = (task?: ResumeAgentTaskState): ResumeAgentTaskState | undefined =>
   task ? JSON.parse(JSON.stringify(task)) : undefined;
-
-const DEFAULT_REQUIRED_EVIDENCE: Record<ResumeAgentTaskOutcome, ResumeAgentEvidenceKind[]> = {
-  answer: [], // 文字回答不要求业务写入证据。
-  resume_change: ["resume_change"], // 修改任务要求简历写入成功。
-  draft: ["draft_submit"], // 草稿任务要求草稿提交成功。
-};
 
 const EVIDENCE_NAMES: Record<ResumeAgentEvidenceKind, string> = {
   read: "资料读取", // 资料读取证据的用户可读名称。
@@ -160,35 +157,69 @@ const EVIDENCE_NAMES: Record<ResumeAgentEvidenceKind, string> = {
   language_update: "展示语言同步", // 展示语言同步证据的用户可读名称。
 };
 
+type ResolvedResumeAgentCompletionPolicy = {
+  // 当前任务最终要求产生的业务效果。
+  requiredEffects: ResumeAgentRequiredEffect[];
+  // 任务完成所需的成功工具证据。
+  requiredEvidence: ResumeAgentEvidenceKind[];
+  // 指定业务效果之后必须重新取得的读取证据。
+  readAfterEvidence: ResumeAgentEvidenceKind[];
+  // 完成前必须由工具证明的业务事实。
+  requiredFacts: string[];
+  // 完成前必须满足的工具证据顺序。
+  evidenceOrder: ResumeAgentEvidenceOrder[];
+};
+
 // 同一个 Agent 只负责规划与行动，任务阶段和完成结果由运行时依据工具事实维护。
 export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRuntimeOptions) => {
   let task: ResumeAgentTaskState | undefined;
   const previousTask = cloneTask(options.previousTask);
   const capabilityMap = new Map((options.capabilities ?? []).map((skill) => [skill.id, skill]));
   const capabilityIds = [...capabilityMap.keys()];
+  const capabilityCatalog = [...capabilityMap.values()]
+    .map((skill) => `${skill.id}：${skill.name}，${skill.description}`)
+    .join("\n");
+  const capabilityDescription = capabilityCatalog
+    ? `完成本轮任务最相关的任务能力标识；没有合适能力时传空数组。可选能力：\n${capabilityCatalog}`
+    : "当前入口没有可选任务能力，传空数组。";
   const toolAttempts = new Map<string, ResumeAgentToolAttempt>();
   let toolSequence = 0;
   let lastReadInvalidationSequence = 0;
   let stateVersion = 0;
-  let completionPolicy: ResumeAgentCompletionPolicy = {
-    requiredEvidence: [], // 建立任务后再按结果类型和能力填充。
+  let completionPolicy: ResolvedResumeAgentCompletionPolicy = {
+    requiredEffects: [], // 建立任务后写入最终任务效果。
+    requiredEvidence: [], // 建立任务后再按必需效果和能力填充。
+    readAfterEvidence: [], // 建立任务后再合并写后读取要求。
+    requiredFacts: [], // 建立任务后再合并业务事实要求。
+    evidenceOrder: [], // 建立任务后再合并工具执行顺序。
   };
 
   const resolveCompletionPolicy = (
-    outcome: ResumeAgentTaskOutcome,
+    plannedEffects: ResumeAgentRequiredEffect[],
     selectedCapabilityIds: string[],
-  ): ResumeAgentCompletionPolicy => {
-    const requiredEvidence = new Set(DEFAULT_REQUIRED_EVIDENCE[outcome]);
+  ): ResolvedResumeAgentCompletionPolicy => {
+    const requiredEffects = new Set(plannedEffects);
     const readAfterEvidence = new Set<ResumeAgentEvidenceKind>();
     const requiredFacts = new Set<string>();
     const evidenceOrder: ResumeAgentEvidenceOrder[] = [];
     const policies = [
       options.taskProfile?.completionPolicy,
       ...selectedCapabilityIds.map((id) => capabilityMap.get(id)?.completionPolicy),
-    ];
+    ].filter((policy): policy is ResumeAgentCompletionPolicy =>
+      Boolean(policy && (!policy.whenEffect || requiredEffects.has(policy.whenEffect))),
+    );
     policies.forEach((policy) => {
-      if (!policy || (policy.outcome && policy.outcome !== outcome)) return;
-      policy.requiredEvidence.forEach((kind) => requiredEvidence.add(kind));
+      policy.requiredEffects?.forEach((effect) => requiredEffects.add(effect));
+    });
+    const requiredEvidence = new Set<ResumeAgentEvidenceKind>(requiredEffects);
+    ["resume_change", "draft_submit"].forEach((effect) => {
+      if (!requiredEffects.has(effect as ResumeAgentRequiredEffect)) return;
+      // 写入当前简历或提交草稿前必须先取得本轮授权范围内的真实资料。
+      requiredEvidence.add("read");
+      evidenceOrder.push({ evidence: effect as ResumeAgentRequiredEffect, after: "read" });
+    });
+    policies.forEach((policy) => {
+      policy.requiredEvidence?.forEach((kind) => requiredEvidence.add(kind));
       policy.readAfterEvidence?.forEach((kind) => readAfterEvidence.add(kind));
       policy.requiredFacts?.forEach((fact) => requiredFacts.add(fact));
       policy.evidenceOrder?.forEach((order) => {
@@ -198,7 +229,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       });
     });
     return {
-      outcome, // 当前合并策略对应的任务结果类型。
+      requiredEffects: [...requiredEffects], // 规划效果与能力补充效果合并后的最终契约。
       requiredEvidence: [...requiredEvidence], // 默认要求与能力要求合并后的完成证据。
       readAfterEvidence: [...readAfterEvidence], // 必须在操作后重新读取的证据类型。
       requiredFacts: [...requiredFacts], // 特定能力要求工具证明的业务事实。
@@ -237,27 +268,35 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
   const planTaskTool: ReactTool = {
     name: "plan_resume_task",
     description:
-      "根据用户原始消息、功能入口、近期对话和上一轮任务规划本轮任务。只描述目标与需要的结果，不判断任务是否已经完成。选择 capabilityIds 后会返回对应能力全文。",
+      "根据用户原始消息、功能入口、近期对话和上一轮任务建立本轮任务契约。判断文字回复是否足以完成请求；若用户需要当前简历、草稿或展示语言真实变化，必须声明对应 requiredEffects。选择 capabilityIds 后会返回对应能力全文。",
     parameters: {
       type: "object",
       properties: {
         relation: {
           type: "string",
           enum: TASK_RELATIONS,
-          description: "new 表示新任务；continue 表示继续上一任务；revise 表示修正上一任务。",
+          description: "new 表示可独立完成或需要不同业务效果的请求；continue 表示继续上一任务并继承其业务效果；revise 表示修正上一结果并继承其业务效果。",
         },
         objective: {
           type: "string",
           description: "用户最终希望达成的目标，结合近期对话理解省略表达。",
         },
-        outcome: {
-          type: "string",
-          enum: TASK_OUTCOMES,
-          description: "answer 表示文字回复；resume_change 表示修改当前简历；draft 表示提交独立草稿。",
-        },
         scope: {
           type: "string",
           description: "本轮涉及的模块、记录或内容范围；无法确定时如实说明。",
+        },
+        requiredEffects: {
+          type: "array",
+          items: {
+            type: "string",
+            enum: TASK_REQUIRED_EFFECTS,
+          },
+          uniqueItems: true,
+          description: "new 任务必须真实发生的业务效果；只需解释、分析或建议时传空数组。resume_change 表示当前简历必须写入，draft_submit 表示必须提交结构化草稿，language_update 表示必须同步展示语言。continue 或 revise 会继承上一任务效果。",
+        },
+        successCondition: {
+          type: "string",
+          description: "一句可核对的完成条件，说明用户最终应得到什么结果，不能只写已回答或已处理。",
         },
         capabilityIds: {
           type: "array",
@@ -267,10 +306,10 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
           },
           maxItems: 3,
           uniqueItems: true,
-          description: "完成本轮任务最相关的通用能力标识；没有合适能力时传空数组。",
+          description: capabilityDescription,
         },
       },
-      required: ["relation", "objective", "outcome", "scope", "capabilityIds"],
+      required: ["relation", "objective", "scope", "requiredEffects", "successCondition", "capabilityIds"],
       additionalProperties: false,
     },
     execute: (args) => {
@@ -281,12 +320,14 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       if (
         !TASK_RELATIONS.includes(args?.relation) ||
         typeof args?.objective !== "string" || !args.objective.trim() ||
-        !TASK_OUTCOMES.includes(args?.outcome) ||
         typeof args?.scope !== "string" || !args.scope.trim() ||
+        !Array.isArray(args?.requiredEffects) ||
+        args.requiredEffects.some((effect: unknown) => !TASK_REQUIRED_EFFECTS.includes(effect as ResumeAgentRequiredEffect)) ||
+        typeof args?.successCondition !== "string" || !args.successCondition.trim() ||
         !Array.isArray(args?.capabilityIds)
       ) {
         // 参数不完整时把原因留给 ReAct 自行修正，避免任务规划工具中断请求。
-        return { accepted: false, error: "任务计划参数不完整，请补全任务关系、目标、结果、范围和能力后重试" };
+        return { accepted: false, error: "任务契约参数不完整，请补全任务关系、目标、范围、必需效果、完成条件和能力后重试" };
       }
       // 明确功能入口和没有上一任务的对话都从新任务开始，避免误承接历史目标。
       const relation: ResumeAgentTaskRelation = options.source === "chat" && previousTask
@@ -301,22 +342,28 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
         ...requestedCapabilityIds,
         ...(requestedCapabilityIds.length ? [] : continuedCapabilityIds),
       ].filter((id, index, list) => capabilityMap.has(id) && list.indexOf(id) === index).slice(0, 3);
-      const outcome = options.taskProfile?.outcome ??
-        options.fixedOutcome ??
-        (args.outcome as ResumeAgentTaskOutcome);
+      const plannedEffects = options.taskProfile?.requiredEffects ??
+        options.fixedRequiredEffects ??
+        (relation !== "new" && previousTask
+          ? previousTask.requiredEffects
+          : args.requiredEffects as ResumeAgentRequiredEffect[]);
+      const resolvedPolicy = resolveCompletionPolicy(plannedEffects ?? [], selectedCapabilityIds);
       task = {
         id: options.taskId,
         source: options.source,
         relation,
         objective: options.taskProfile?.objective ?? args.objective.trim(),
-        outcome,
         scope: args.scope.trim(),
+        requiredEffects: resolvedPolicy.requiredEffects,
+        successCondition: options.taskProfile?.successCondition ??
+          options.fixedSuccessCondition ??
+          args.successCondition.trim(),
         capabilityIds: selectedCapabilityIds,
         phase: "planned",
         evidence: [],
       };
-      // 完成条件由入口结果类型与本轮选中的能力共同决定，不依赖模型自行声明完成。
-      completionPolicy = resolveCompletionPolicy(outcome, selectedCapabilityIds);
+      // 完成条件由任务效果与本轮选中的能力共同决定，不依赖模型自行声明完成。
+      completionPolicy = resolvedPolicy;
       return {
         accepted: true,
         task,
@@ -367,7 +414,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       ) {
         return { accepted: false, error: "缺失事实、问题和原因不能为空" };
       }
-      if (task.outcome !== "answer" && !hasFreshRead()) {
+      if (task.requiredEffects.length && !hasFreshRead()) {
         return { accepted: false, error: "请先读取当前最新的简历或入口资料，再判断需要用户补充什么" };
       }
       task.phase = "waiting";
@@ -408,7 +455,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       if (typeof args?.reason !== "string" || !args.reason.trim()) {
         return { accepted: false, error: "阻塞原因不能为空" };
       }
-      if (task.outcome !== "answer" && !hasFreshRead()) {
+      if (task.requiredEffects.length && !hasFreshRead()) {
         return { accepted: false, error: "请先读取当前最新的简历或入口资料，再判断任务是否无法继续" };
       }
       task.phase = "blocked";
@@ -564,8 +611,9 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
           id: previousTask.id, // 上一任务标识。
           source: previousTask.source, // 上一任务入口。
           objective: previousTask.objective, // 上一任务目标。
-          outcome: previousTask.outcome, // 上一任务结果类型。
           scope: previousTask.scope, // 上一任务作用范围。
+          requiredEffects: previousTask.requiredEffects, // 上一任务要求真实产生的业务效果。
+          successCondition: previousTask.successCondition, // 上一任务的用户可核对完成条件。
           capabilityIds: previousTask.capabilityIds, // 上一任务使用的能力。
           phase: previousTask.phase, // 上一任务结束阶段。
           pendingInput: previousTask.pendingInput, // 上一任务等待补充的信息。
@@ -579,9 +627,9 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       ? "当前入口不支持追问或阻塞结束，缺少字段时使用已有事实继续完成，不要编造。"
       : "需要补充时使用 request_resume_input，确认无法安全执行时使用 report_resume_blocker。";
     const taskProfile = options.taskProfile
-      ? `\n# 当前按钮任务\n目标：${options.taskProfile.objective}\n${options.taskProfile.instructions}`
+      ? `\n# 当前按钮任务\n目标：${options.taskProfile.objective}\n完成条件：${options.taskProfile.successCondition}\n${options.taskProfile.instructions}`
       : "";
-    return `# 任务运行规则\n当前入口：${options.source}。先调用 plan_resume_task，根据用户原始消息、入口、近期对话和上一轮任务判断新任务、继续或修正。任务阶段与完成结果由运行时依据工具事实维护。${pauseRule}${taskProfile}${previous}`;
+    return `# 任务运行规则\n当前入口：${options.source}。先调用 plan_resume_task，根据用户原始消息、入口、近期对话和上一轮任务建立任务契约。文字回复不能代替 requiredEffects 声明的真实业务效果；继续或修正上一任务时沿用上一任务效果，需要不同效果时建立 new 任务。任务阶段与完成结果由运行时依据工具事实维护。${pauseRule}${taskProfile}${previous}`;
   };
 
   return {

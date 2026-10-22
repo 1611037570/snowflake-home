@@ -4,7 +4,7 @@ import { createResumeAgentTaskRuntime } from "../runtime/resumeAgentTask";
 import type { ResumeAgentTool } from "../runtime/types";
 import { resumeDataContract } from "../skills/skill_resume_data_contract";
 import { resumeWriting } from "../skills/skill_resume_writing";
-import { createSkillTools } from "../tools/skillLoader";
+import { createSkillReferenceTool } from "../tools/skillLoader";
 
 // AI 初始简历生成输入：每个字段对应用户主动填写且未跳过的模块事实。
 export type InitialResumeGenerationInput = {
@@ -116,11 +116,12 @@ export const runInitialResumeGeneration = async (
     source: "initialResumeGeneration",
     capabilities: [writingSkill],
     preferredCapabilityId: writingSkill.id,
-    fixedOutcome: "draft",
+    fixedRequiredEffects: ["draft_submit"],
+    fixedSuccessCondition: "提交一份能够进入页面预览的结构化简历草稿",
     allowTaskPause: false,
   });
   const businessTools: ReactTool[] = [
-    ...createSkillTools([resumeDataContract()]),
+    createSkillReferenceTool([resumeDataContract()]),
     createInputTool(input),
     createSubmitTool((resume) => {
       submittedResume = resume;
@@ -145,7 +146,7 @@ export const runInitialResumeGeneration = async (
         options.onStage?.("analyzing");
         return;
       }
-      if (["resume_data_contract", "submit_generated_resume"].includes(toolCall.function.name)) {
+      if (["read_resume_guidance", "submit_generated_resume"].includes(toolCall.function.name)) {
         options.onStage?.("structuring");
         return;
       }

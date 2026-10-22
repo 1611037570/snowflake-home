@@ -5,7 +5,7 @@ import { onDemandSkills, residentSkills } from "./routing/registry";
 import {
   ASSISTANT_REFLECT_PROMPT,
   buildToolGuide,
-  createSkillTools,
+  createSkillReferenceTool,
   RESUME_LANG_CODES,
   useResumeContext,
 } from "@snowflake/resume-agent";
@@ -31,17 +31,19 @@ export const useResumeAssistant = () => {
     ui.content.language = language;
     return true;
   };
-  // 工具在首次请求时才组装：技能正文与简历工具（含表单结构）不进入 AI 面板首屏
+  // 能力与工具在首次请求时才组装，避免进入 AI 面板时提前加载。
   const resolveTools = async (): Promise<AssistantResources> => {
     const [skills, { createResumeTools }] = await Promise.all([
       Promise.all(onDemandSkills.map((load) => load())),
       import("@snowflake/resume-agent"),
     ]);
+    const capabilities = skills.filter((skill) => skill.role === "task");
+    const references = skills.filter((skill) => skill.role === "reference");
     return {
-      skills,
+      capabilities,
       tools: [
-        // 按需技能注册为只读工具，需要时由模型调用获取全文
-        ...createSkillTools(skills),
+        // 参考知识通过单一工具按需读取，任务能力由首轮任务契约直接返回正文。
+        createSkillReferenceTool(references),
         ...createResumeTools({
           getResumeData: resumeContext.getResumeData,
           applyResumeOperations: (operations) => {

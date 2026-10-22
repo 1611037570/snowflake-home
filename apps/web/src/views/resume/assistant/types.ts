@@ -47,16 +47,16 @@ export type SuggestCard = {
 
 // 宿主组装后传给 chat 的配置，技能与工具均由调用方传入
 export type AssistantResources = {
-  // ReAct 可调用的技能与简历工具。
+  // ReAct 可调用的参考知识与简历工具。
   tools: ReactTool[];
-  // 本轮可供任务运行时选择的能力元数据与正文。
-  skills: Skill[];
+  // 本轮可供任务契约规划器选择的任务能力。
+  capabilities: Skill[];
 };
 
 export interface AssistantConfig {
   // 请求期间置为 true 的生成状态
   generating: Ref<boolean>;
-  // ReAct 可用工具：首次请求时才解析，避免技能正文与工具实现进入 AI 面板首屏
+  // 首次请求时解析任务能力、参考知识与简历工具，避免进入 AI 面板时提前加载。
   resolveTools: () => Promise<AssistantResources>;
   // 反思轮提示词：反思口径由宿主按业务提供，请求引擎不内置
   reflectPrompt: string;

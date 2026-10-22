@@ -5,16 +5,15 @@ import { ASSISTANT_WRITING_RULES_TEXT } from "../writingRules";
 export const ONE_KEY_OPTIMIZE_TASK: ResumeAgentTaskProfile = {
   id: "oneKeyOptimize", // 按钮任务稳定标识。
   objective: "结合入口提供的求职岗位优化整份简历并输出评分报告", // 按钮已经明确的任务目标。
-  outcome: "resume_change", // 本任务必须实际修改当前简历。
+  requiredEffects: ["resume_change"], // 本任务必须实际修改当前简历。
+  successCondition: "当前简历已完成有事实依据的岗位优化，并基于写入后的数据生成评分报告", // 用户可核对的完成条件。
   completionPolicy: {
-    outcome: "resume_change", // 只约束本次按钮修改任务。
-    requiredEvidence: ["resume_change"], // 本轮必须产生实际简历写入。
     readAfterEvidence: ["resume_change"], // 评分报告必须依据写入后重新读取的数据。
   },
   instructions: `# 执行
 - 读取整份简历，结合用户提供的目标岗位与职业阶段，找出影响筛选判断、岗位匹配和成果表达的主要问题。行业知识库仅在确有帮助时读取，不能把通用词汇当成岗位要求。
 - 求职岗位已由入口提供，职业阶段根据简历判断；不再追问已明确的岗位或身份，缺少关键事实时列入 todo。
-- 本任务已包含写入和评分流程，无需再读取 resume_writing、resume_optimization 或 resume_score。需要新增记录、修改未出现的字段或确认格式时读取 resume_data_contract。
+- 本任务已包含写入、优化和评分规则，无需额外加载同类任务能力。需要新增记录、修改未出现的字段或确认格式时，通过参考知识工具读取《简历数据规范》。
 - 只对有事实依据且能解决明确问题的内容动笔；同义替换不算优化。必要经历若已有可确认的主体、角色与时间，可补充现有模块记录；缺少核心事实或模块不存在时列入 todo，不写纯占位经历。
 - 可压缩或删除重复、空洞表达；真实但弱相关的经历优先精简、后置，不删除唯一的真实工作、项目或教育记录，也不删除身份与联系方式。
 - 可选字段为空时默认不补写；数字、职责、技术与成果没有证据时不编造。确需占位时明确标记【待补充：内容】。

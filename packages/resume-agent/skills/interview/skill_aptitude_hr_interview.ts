@@ -1,6 +1,7 @@
 // 行测与 HR 面试技能：按阶段完成限时题目、软技能问答与综合评估
 export const aptitudeHrInterview = () => ({
   id: "aptitude_hr_interview",
+  role: "task" as const, // 参与任务契约规划的任务能力。
   name: "行测与 HR 面试",
   description: `通过行测模拟与 HR 软技能面试双重维度，评估综合能力并给出针对性反馈。`,
   instructions: `# 启动与事实边界

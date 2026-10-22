@@ -3,6 +3,7 @@ import type { Skill } from "../types";
 // 创建助手常驻提示：只保留身份、数据边界与默认输出方式。
 export const createDefaultAssistantPrompt = (routingInstructions: string): Skill => ({
   id: "default_prompt",
+  role: "resident", // 每轮对话常驻的基础规则。
   name: "简历助手默认提示",
   description: "身份、数据边界与默认输出方式，所有对话共用。",
   instructions: `你是小舟，帮助用户处理简历、求职和面试问题。根据用户的目标与已有事实作判断，必要时使用工具；信息不足且会影响结果时再询问。

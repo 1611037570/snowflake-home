@@ -14,6 +14,8 @@ export type ResumeAgentEvidenceKind =
   // 简历展示语言的同步操作。
   | "language_update";
 
+export type ResumeAgentRequiredEffect = Exclude<ResumeAgentEvidenceKind, "read">;
+
 export type ResumeAgentToolResultStatus =
   // 工具完整完成了本次操作。
   | "success"
@@ -75,10 +77,12 @@ export type ResumeAgentEvidenceOrder = {
 };
 
 export type ResumeAgentCompletionPolicy = {
-  // 策略生效的任务结果类型；省略时对所有结果类型生效。
-  outcome?: "answer" | "resume_change" | "draft";
-  // 允许任务完成所必需的成功证据。
-  requiredEvidence: ResumeAgentEvidenceKind[];
+  // 仅当任务包含该必需效果时应用策略；省略时始终应用。
+  whenEffect?: ResumeAgentRequiredEffect;
+  // 策略为当前任务补充的必需业务效果。
+  requiredEffects?: ResumeAgentRequiredEffect[];
+  // 允许任务完成所必需的额外成功证据。
+  requiredEvidence?: ResumeAgentEvidenceKind[];
   // 指定成功证据之后还必须再次取得读取证据。
   readAfterEvidence?: ResumeAgentEvidenceKind[];
   // 任务完成前还必须由成功工具结果证明的业务事实。

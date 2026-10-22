@@ -1,6 +1,7 @@
 // 职业规划技能：基于整份简历证据给出分阶段、可执行的职业发展路径
 export const careerPlanning = () => ({
   id: "career_planning",
+  role: "task" as const, // 参与任务契约规划的任务能力。
   name: "职业规划",
   description: `根据整份简历中的经历、能力与职业方向，生成有依据的阶段性职业规划。`,
   instructions: `# 分析原则

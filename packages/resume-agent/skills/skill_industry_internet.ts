@@ -2,6 +2,7 @@
 // 描述：提供互联网与科技行业岗位族的 JD 关键词、量化维度与表达要点，供通用方法论技能按需叠加
 export const industryInternet = () => ({
   id: "industry_internet",
+  role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "互联网/科技行业知识库",
   description: `互联网与科技行业简历知识库：岗位族、JD 关键词、量化维度与表达要点。处理研发、算法、数据、产品、测试、运维等互联网科技岗位的简历优化、编写或 JD 匹配时读取。`,
   instructions: `# 互联网/科技行业知识库

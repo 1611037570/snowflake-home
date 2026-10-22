@@ -3,7 +3,6 @@ import { AbortError, isAbortError } from "@/apis";
 import {
   createResumeAgentTaskRuntime,
   createResumeAiReactRunner,
-  isPersistentTaskSkillId,
 } from "@snowflake/resume-agent";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
@@ -71,7 +70,7 @@ export const useChatRequest = ({
   let streamFinalContent = false;
   // 最终回复正文是否已开始输出：执行过程完成标记与自动折叠只在首个正文分片触发一次
   let finalContentStarted = false;
-  // 最近一次执行的工具名：用于判断观察结果是否为技能加载，避免把技能全文存入思考区
+  // 最近一次执行的工具名：用于标记过程状态与识别写入观察结果
   let lastToolName = "";
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
@@ -102,18 +101,7 @@ export const useChatRequest = ({
     report_resume_blocker: "记录任务阻塞",
     read_resume_data: "读取简历数据",
     propose_resume_edits: "修改简历数据",
-    resume_data_contract: "读取《简历数据规范》",
-    resume_writing: "读取《简历编写》",
-    resume_optimization: "读取《简历写作方法论》",
-    job_match: "读取《岗位匹配与 ATS 优化》",
-    resume_translate: "读取《简历翻译》",
-    self_intro: "读取《面试自我介绍》",
-    greeting: "读取《打招呼语》",
-    interview_prediction: "读取《面试押题》",
-    specialized_interview: "读取《专项面试模拟》",
-    aptitude_hr_interview: "读取《行测与 HR 面试》",
-    resume_interview: "读取《AI 简历面试》",
-    resume_score: "读取《AI 简历评估》",
+    read_resume_guidance: "读取简历参考知识",
     update_resume_language: "更新简历语言",
   };
 
@@ -275,7 +263,7 @@ export const useChatRequest = ({
       state.onReasoning();
 
       // 首次请求时才加载能力与简历工具清单，跨轮承接由任务状态负责。
-      const { tools: resolvedTools, skills } = await resolveTools();
+      const { tools: resolvedTools, capabilities: resolvedCapabilities } = await resolveTools();
       // 加载期间取消或切换会话时不再启动请求，工具执行前再次核对所属任务
       if (!isCurrentRequest()) return;
       // 一键按钮直接取得任务配置，普通聊天仍由运行时选择通用能力。
@@ -286,7 +274,7 @@ export const useChatRequest = ({
       if (!isCurrentRequest()) return;
       const capabilities = taskProfile
         ? []
-        : skills.filter((skill) => isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing");
+        : resolvedCapabilities;
       const taskRuntime = createResumeAgentTaskRuntime({
         taskId: requestTaskId,
         source: typeof entryFlow === "string" ? entryFlow : "chat",
