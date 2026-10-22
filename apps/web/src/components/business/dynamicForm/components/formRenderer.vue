@@ -181,15 +181,12 @@ useDragOnDemand({
 /* 跟手拖拽的克隆体：抬升并微放大，位移由 Sortable 每帧写入 matrix 控制 */
 .df-drag-fallback {
   transform: scale(1.03);
-  /* 与卡片自身 rounded-3xl 保持一致，避免拖拽时圆角突变 */
-  border-radius: 24px;
   opacity: 1 !important;
   box-shadow: 0 14px 30px rgba(17, 24, 39, 0.18);
 }
 
 .drag-container-active {
   position: relative;
-  border-radius: 12px;
 }
 .drag-container-active::after {
   position: absolute;
@@ -197,7 +194,6 @@ useDragOnDemand({
   z-index: 1;
   box-sizing: border-box;
   border: 2px dashed var(--color-sf-theme);
-  border-radius: 12px;
   pointer-events: none;
   content: "";
 }

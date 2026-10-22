@@ -129,8 +129,6 @@ const getSpan = (span: number | string | undefined) => {
   z-index: 1;
   box-sizing: border-box;
   border: 2px dashed var(--color-sf-theme);
-  /* 与卡片自身 rounded-3xl 保持一致，避免边框圆角与卡片不齐 */
-  border-radius: 24px;
   pointer-events: none;
   content: "";
 }
