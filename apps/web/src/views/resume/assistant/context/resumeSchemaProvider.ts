@@ -1,7 +1,7 @@
 import {
   configureResumeMediaFields,
   configureResumeSchema,
-} from "@snowflake/resume-agent";
+} from "@snowflake/resume-agent/host";
 import { allConfig } from "@/stores/modules/resume/config/formConfig";
 import { RESUME_VALUE_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
 import { RESUME_MEDIA_FIELDS } from "@/stores/modules/resume/config/mediaFields";

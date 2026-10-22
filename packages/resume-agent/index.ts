@@ -1,15 +1,6 @@
 // 简历 AI 能力统一出口，页面与助手只通过本层调用请求、任务和领域能力。
-export {
-  configureResumeAiModelProvider,
-  getResumeAiModel,
-  hasResumeAiModel,
-} from "./request/client";
-export type { ResumeAiModelProvider } from "./request/client";
-export { configureResumeAiMessageProvider } from "./request/messages";
-export type {
-  ResumeAiMessageKey,
-  ResumeAiMessageProvider,
-} from "./request/messages";
+// 宿主启动时的注册入口见 ./host，本出口只暴露读取与执行能力。
+export { getResumeAiModel, hasResumeAiModel } from "./request/client";
 export {
   assertResumeAiResponseComplete,
   readResumeAiResponseText,
@@ -26,16 +17,11 @@ export type { ResumeDataContext } from "./context/types";
 export { normalizeRichTextHtml } from "./format/normalizeRichText";
 export { RICH_TEXT_SANITIZE_CONFIG } from "./format/richTextSanitize";
 export {
-  configureResumeSchema,
   RESUME_SCHEMA,
   findResumeModuleSchema,
 } from "./schema/resumeSchemaRegistry";
 export { getResumeModuleSchema } from "./schema/resumeSchema";
-export {
-  configureResumeMediaFields,
-  isResumeMediaField,
-} from "./schema/resumeMedia";
-export type { ResumeMediaField } from "./schema/resumeMedia";
+export { isResumeMediaField } from "./schema/resumeMedia";
 export type {
   ResumeFieldFormat,
   ResumeFieldSchema,

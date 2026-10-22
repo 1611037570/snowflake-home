@@ -903,6 +903,8 @@
   "resumeAiAborted": "Aborted",
   "resumeAiStreamNoRetry": "Streaming tasks do not support automatic retry",
   "resumeAiModelUnset": "Configure and select an AI model first.",
+  "resumeAiEmptyGeneration": "The model returned no usable resume data.",
+  "resumeAiEmptyAnswer": "The model returned an empty answer.",
   "resumePrintOverflow": "The resume content exceeds the available page area",
   "resumePrintLayoutError": "Invalid resume page layout configuration",
   "resumePrintTimeout": "Timed out waiting for the resume layout",

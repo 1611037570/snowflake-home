@@ -903,6 +903,8 @@
   "resumeAiAborted": "已中止",
   "resumeAiStreamNoRetry": "流式任务不支持自动重试",
   "resumeAiModelUnset": "请先配置并选择 AI 模型",
+  "resumeAiEmptyGeneration": "AI 未生成可用的简历数据",
+  "resumeAiEmptyAnswer": "模型未返回回答内容",
   "resumePrintOverflow": "简历内容超出页面可用区域",
   "resumePrintLayoutError": "简历页面布局配置有误",
   "resumePrintTimeout": "简历排版等待超时",

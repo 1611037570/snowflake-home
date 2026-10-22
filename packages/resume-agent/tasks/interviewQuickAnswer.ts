@@ -3,6 +3,7 @@ import {
   assertResumeAiResponseComplete,
   runResumeAiTask,
 } from "../request";
+import { getResumeAiMessage } from "../request/messages";
 import type { ResumeDataContext } from "../context/types";
 
 // 固定提示只生成一个口述答案，不进入技能、工具或面试追问流程
@@ -52,7 +53,7 @@ const QUICK_ANSWER_TASK: ResumeAiTask<{ messages: ResumeAiMessage[] }> = {
   parse: (response, text) => {
     assertResumeAiResponseComplete(response);
     const answer = text.trim();
-    if (!answer) throw new Error("模型未返回回答内容");
+    if (!answer) throw new Error(getResumeAiMessage("emptyAnswer"));
     return answer;
   },
 };

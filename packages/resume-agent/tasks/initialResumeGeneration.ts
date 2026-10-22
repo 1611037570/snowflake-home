@@ -1,4 +1,5 @@
 import type { ChatMessage, ReactTool } from "@snowflake/ai";
+import { getResumeAiMessage } from "../request/messages";
 import { createResumeAgentSession } from "../runtime/resumeAgentSession";
 import type { ResumeAgentTool } from "../runtime/types";
 import { resumeDataContract } from "../skills/skill_resume_data_contract";
@@ -165,6 +166,6 @@ export const runInitialResumeGeneration = async (
   } finally {
     options.signal?.removeEventListener("abort", abortRunner);
   }
-  if (!submittedResume) throw new Error("AI 未生成可用的简历数据");
+  if (!submittedResume) throw new Error(getResumeAiMessage("emptyGeneration"));
   return submittedResume;
 };

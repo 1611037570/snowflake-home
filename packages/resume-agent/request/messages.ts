@@ -4,6 +4,8 @@ export type ResumeAiMessageKey =
   | "streamNoRetry"
   | "modelUnset"
   | "truncated"
+  | "emptyGeneration"
+  | "emptyAnswer"
   | "markdownModelMissing"
   | "pdfModelUnset"
   | "requestTooLarge";
@@ -19,6 +21,8 @@ const DEFAULT_MESSAGES: Record<ResumeAiMessageKey, string> = {
   streamNoRetry: "流式 AI 请求不支持自动重试",
   modelUnset: "请先配置并选择 AI 模型",
   truncated: "AI 返回内容不完整，请重试",
+  emptyGeneration: "AI 未生成可用的简历数据",
+  emptyAnswer: "模型未返回回答内容",
   markdownModelMissing: "请先配置简历导入模型",
   pdfModelUnset: "请先配置支持图片识别的简历解析模型",
   requestTooLarge: "简历文件过大，请压缩至 {size} MB 以内",
