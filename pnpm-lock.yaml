@@ -267,6 +267,9 @@ importers:
       '@snowflake/ai':
         specifier: workspace:*
         version: link:../../packages/ai
+      '@snowflake/resume-agent':
+        specifier: workspace:*
+        version: link:../../packages/resume-agent
       '@vueuse/core':
         specifier: 13.9.0
         version: 13.9.0(vue@3.5.22(typescript@5.9.3))
@@ -481,6 +484,8 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+
+  packages/resume-agent: {}
 
 packages:
 

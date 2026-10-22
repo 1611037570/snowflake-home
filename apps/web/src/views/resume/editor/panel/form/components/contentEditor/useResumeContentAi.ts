@@ -11,7 +11,7 @@ import {
   runResumeAiTask,
   type ContentAiAction,
   type ContentRewriteInput,
-} from "@/views/resume/ai";
+} from "@snowflake/resume-agent";
 
 // 单个候选的生成状态
 type ContentCandidate = {

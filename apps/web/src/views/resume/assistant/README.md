@@ -9,7 +9,7 @@ editor/panel/index.vue（异步挂载助手）
        → routing/registry（按需选择 AI 技能）
        → useResumeAssistant（装配本轮工具、上下文与路由）
        → chat/useChatRequest（会话状态、写入验收与撤回）
-            → resume/ai（执行请求并提供技能、工具和报告能力）
+            → packages/resume-agent（执行请求并提供技能、工具和报告能力）
 ```
 
 目录职责：
@@ -19,11 +19,11 @@ editor/panel/index.vue（异步挂载助手）
 - `interview/`：维护面试流程、入口判断和建议卡片，不保存面试技能正文。
 - `routing/registry.ts`：登记常驻提示及按需技能加载关系。
 - `routing/defaultPrompt.ts`：维护任务分派和助手执行路由。
-- `useResumeAssistant.ts`：根据当前简历状态装配 `resume/ai` 提供的上下文、工具与错误引导。
+- `useResumeAssistant.ts`：根据当前简历状态装配 `packages/resume-agent` 提供的上下文、工具与错误引导。
 
 依赖约定：
 
-- 助手可以调用 `resume/ai`，`resume/ai` 不得依赖助手。
-- 新增技能、提示词、请求任务、工具、字段契约或报告解析时写入 `resume/ai`。
+- 助手可以调用 `packages/resume-agent`，`packages/resume-agent` 不得依赖助手。
+- 新增技能、提示词、请求任务、工具、字段契约或报告解析时写入 `packages/resume-agent`。
 - 新增功能入口、引导步骤、技能选择关系或会话交互时写入本目录。
-- 页面不得直接创建模型请求，统一调用 `resume/ai/index.ts` 的公开出口。
+- 页面不得直接创建模型请求，统一调用 `@snowflake/resume-agent` 的公开出口。

@@ -5,7 +5,7 @@ import {
   isPersistentTaskSkillId,
   REQUIRED_RESUME_WRITE_PROMPT,
   type Skill,
-} from "@/views/resume/ai";
+} from "@snowflake/resume-agent";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
@@ -17,7 +17,7 @@ import type { AssistantConfig } from "../types";
 // 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
 import { defaultPrompt } from "../routing/defaultPrompt";
 // 一键优化报告的改动声称检测，验收路径与真实写入比对
-import { reportClaimsChanges } from "@/views/resume/ai";
+import { reportClaimsChanges } from "@snowflake/resume-agent";
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
   chat: Ref<Chat>; // 当前聊天会话

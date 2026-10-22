@@ -8,7 +8,7 @@ import {
   RESUME_CHAT_TASK,
   runResumeAiTask,
   useResumeContext,
-} from "@/views/resume/ai";
+} from "@snowflake/resume-agent";
 
 import ChatInput from "./chatInput.vue";
 import MessageList from "./messageList.vue";

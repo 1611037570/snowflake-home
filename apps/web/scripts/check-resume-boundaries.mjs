@@ -3,6 +3,8 @@ import { fileURLToPath } from "node:url";
 import path from "node:path";
 
 const sourceRoot = fileURLToPath(new URL("../src/", import.meta.url));
+// 简历智能体已迁入独立工作区包，边界检查直接读取包内请求层。
+const resumeAgentRoot = fileURLToPath(new URL("../../../packages/resume-agent/", import.meta.url));
 const failures = []; // 违反简历公共依赖边界的文件与说明
 const inspect = async (directory, pattern, message) => {
   for (const entry of await readdir(directory, { withFileTypes: true })) {
@@ -19,7 +21,7 @@ await inspect(path.join(sourceRoot, "domain/resume"), /(?:from\s*|import\s*\()\s
 await inspect(path.join(sourceRoot, "stores/modules/resume"), /(?:from\s*|import\s*\()\s*["']@\/views\/resume\/theme/, "存储模块依赖主题视图");
 // AI 请求层只依赖请求库与领域能力，禁止反向引用功能视图。
 await inspect(
-  path.join(sourceRoot, "views/resume/ai/request"),
+  path.join(resumeAgentRoot, "request"),
   /(?:from\s*|import\s*\()\s*["'](?:@\/views\/resume\/(?:editor|mine)|\.\.\/.*(?:editor|mine))/,
   "AI 请求层依赖功能视图",
 );

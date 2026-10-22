@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { flows, suggestions } from "./flows";
 import { supportsInterviewEarlyEnd } from "./interview/flows";
-import { aptitudeHrInterview } from "@/views/resume/ai/skills/interview/skill_aptitude_hr_interview";
-import { interviewPrediction } from "@/views/resume/ai/skills/interview/skill_interview_prediction";
-import { specializedInterview } from "@/views/resume/ai/skills/interview/skill_specialized_interview";
+import { aptitudeHrInterview } from "@snowflake/resume-agent/skills/interview/skill_aptitude_hr_interview";
+import { interviewPrediction } from "@snowflake/resume-agent/skills/interview/skill_interview_prediction";
+import { specializedInterview } from "@snowflake/resume-agent/skills/interview/skill_specialized_interview";
 import { onDemandSkills } from "./routing/registry";
 
 vi.mock("@/stores", () => ({

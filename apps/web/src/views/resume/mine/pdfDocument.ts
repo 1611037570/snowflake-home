@@ -1,5 +1,5 @@
 import { $t } from "@/locales";
-import { MAX_PDF_REQUEST_BYTES } from "@/views/resume/ai";
+import { MAX_PDF_REQUEST_BYTES } from "@snowflake/resume-agent";
 
 export const MAX_PDF_FILE_BYTES = 50 * 1024 * 1024;
 export const MAX_PDF_PAGES = 10;

@@ -1,7 +1,7 @@
 import confirm from "@/components/business/confirm";
 import { $t } from "@/locales";
 import { useAiStore } from "@/stores";
-import { hasResumeAiModel } from "@/views/resume/ai";
+import { hasResumeAiModel } from "@snowflake/resume-agent";
 
 export const useResumeAiAvailability = () => {
   const aiStore = useAiStore();

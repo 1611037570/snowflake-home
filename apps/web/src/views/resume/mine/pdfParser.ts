@@ -1,5 +1,5 @@
 import { $t } from "@/locales";
-import { PDF_IMPORT_TASK, runResumeAiTask } from "@/views/resume/ai";
+import { PDF_IMPORT_TASK, runResumeAiTask } from "@snowflake/resume-agent";
 import { readResumeImportResult } from "./resumeImportNormalizer";
 import { extractPdfImages } from "./pdfDocument";
 

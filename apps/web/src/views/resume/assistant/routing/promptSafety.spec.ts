@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { onDemandSkills } from "./registry";
 import { defaultPrompt } from "./defaultPrompt";
-import { industryInternet } from "@/views/resume/ai/skills/skill_industry_internet";
-import { jobMatch } from "@/views/resume/ai/skills/skill_job_match";
-import { resumeCreate } from "@/views/resume/ai/skills/skill_resume_create";
-import { resumeOptimization } from "@/views/resume/ai/skills/skill_resume_optimization";
-import { resumeScore } from "@/views/resume/ai/skills/skill_resume_score";
-import { resumeTranslate } from "@/views/resume/ai/skills/skill_resume_translate";
+import { industryInternet } from "@snowflake/resume-agent/skills/skill_industry_internet";
+import { jobMatch } from "@snowflake/resume-agent/skills/skill_job_match";
+import { resumeCreate } from "@snowflake/resume-agent/skills/skill_resume_create";
+import { resumeOptimization } from "@snowflake/resume-agent/skills/skill_resume_optimization";
+import { resumeScore } from "@snowflake/resume-agent/skills/skill_resume_score";
+import { resumeTranslate } from "@snowflake/resume-agent/skills/skill_resume_translate";
 
 describe("promptSafety", () => {
   it("常驻提示明确区分用户指令与不可信数据", () => {

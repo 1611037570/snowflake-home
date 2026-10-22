@@ -9,8 +9,8 @@
 | 用途 | 位置 |
 | --- | --- |
 | 字段声明（key、标签、组件、字典、校验） | `apps/web/src/stores/modules/resume/config/formConfig.ts` |
-| 字段契约生成 | `apps/web/src/views/resume/ai/schema/resumeSchemaRegistry.ts` |
-| 模块与字段的契约文案（供模型与导入使用） | `apps/web/src/views/resume/ai/skills/skill_resume_data_contract.ts` |
+| 字段契约生成 | `packages/resume-agent/schema/resumeSchemaRegistry.ts` |
+| 模块与字段的契约文案（供模型与导入使用） | `packages/resume-agent/skills/skill_resume_data_contract.ts` |
 
 **判断某个字段是否存在，以 `formConfig.ts` 为准**，不要以范本数据为准。
 
@@ -42,7 +42,7 @@
 在浏览器控制台（开发环境）执行：
 
 ```js
-const registry = await import("/src/views/resume/ai/schema/resumeSchemaRegistry.ts");
+const registry = await import("@snowflake/resume-agent/schema/resumeSchemaRegistry");
 const data = await import("/src/views/resume/template/data/resumeData.ts");
 const sample = await data.loadResumeTemplateData("allFields.ts");
 // 逐个模块比对该模块声明的字段是否都在 sample.data[模块] 中有非空取值
@@ -60,18 +60,18 @@ const sample = await data.loadResumeTemplateData("allFields.ts");
 
 ### 正文写作规则（唯一事实源）
 
-所有会生成或改写简历正文的链路，一律从 `ai/writingRules.ts` 取规则，禁止在各自提示词里另写一份，避免出现两套写法：
+所有会生成或改写简历正文的链路，一律从 `packages/resume-agent/writingRules.ts` 取规则，禁止在各自提示词里另写一份，避免出现两套写法：
 
 | 出口 | 形态 | 消费方 |
 | --- | --- | --- |
-| `getWritingRule(action, kindKey, moduleKey)` | 按操作与模块精确选一条 | 富文本框快捷处理（`ai/tasks/contentRewrite.ts`） |
+| `getWritingRule(action, kindKey, moduleKey)` | 按操作与模块精确选一条 | 富文本框快捷处理（`packages/resume-agent/tasks/contentRewrite.ts`） |
 | `ASSISTANT_WRITING_RULES_TEXT` | 纪律 + 各类型规则 + 经历起草规则全量注入 | 助手路由提示（`assistant/routing/defaultPrompt.ts`，覆盖一键调整/一键优化/从零生成等不读写入技能的流程）与 AI 写入技能 `resume_writing` |
 
 导入 / 解析（Markdown、PDF）只忠实转换原文，面试快答只生成口述答案，均不写简历正文，不注入写作规则。`resume_optimization` 是写作方法论知识库（STAR、量化维度、示例），按需读取，与规则冲突时以 `writingRules.ts` 为准。
 
 ### 当前功能入口
 
-简历 AI 能力位于 `ai/`，助手路由位于 `assistant/`，两个目录内的 `README.md` 说明各自职责。新增或调整现有 AI 能力时，须同步本节，避免入口、技能与实际行为出现迭代差异。
+简历 AI 能力位于 `packages/resume-agent/`，助手路由位于 `assistant/`，两处的 `README.md` 说明各自职责。新增或调整现有 AI 能力时，须同步本节，避免入口、技能与实际行为出现迭代差异。
 
 | 功能 | 当前行为 |
 | --- | --- |
@@ -86,11 +86,11 @@ const sample = await data.loadResumeTemplateData("allFields.ts");
 | 职业规划与人生总结 | 读取整份经历生成正文，不写入简历 |
 | 智能导入 | 支持 Markdown 与 PDF；PDF 在浏览器逐页转图片、Markdown 读取文本后直接调用解析模型；共用响应检查、字段兼容转换、待补充提示与预览确认后创建；个别字段转换失败仅提示，不拦截其他内容，完全无有效内容时不创建简历 |
 | 正文字段快捷处理 | 对当前字段生成、润色或精简，沿用编辑器历史撤销；保留请求期间的手动编辑 |
-| 面试辅助 | 由 `assistant/interview/` 维护流程与建议卡片，技能和请求位于 `ai/`，在简历助手中合并入口 |
+| 面试辅助 | 由 `assistant/interview/` 维护流程与建议卡片，技能和请求位于 `packages/resume-agent/`，在简历助手中合并入口 |
 
 ### 读取与写入约束
 
-- `useResumeAssistant.ts` 是工具与技能的唯一路由组装入口；常驻提示由 `routing/registry.ts` 注册，任务与行业技能从 `ai/skills/` 按需加载。
+- `useResumeAssistant.ts` 是工具与技能的唯一路由组装入口；常驻提示由 `routing/registry.ts` 注册，任务与行业技能从 `packages/resume-agent/skills/` 按需加载。
 - `flows.ts` 维护引导步骤和建议卡片；每次基于简历作答或修改均须重新读取真实数据，不复用上一轮的数据。
 - `resumeContext.ts` 默认读取所选模块，未选择时读取整份简历；字段快捷处理通过 `resumeModuleKeys`（本轮固定读取的模块标识列表）指定当前模块与求职方向；流程通过 `resumeScope`（本次请求的简历读取范围）设为 `all`（整份简历）固定本轮范围，请求结束后清除。
 - AI 读取仅返回 `title`（模块展示标题）与 `data`（模块业务数据），数组记录不携带编辑器状态；稳定模块键用于写操作，展示标题不能代替模块键。
@@ -102,7 +102,7 @@ const sample = await data.loadResumeTemplateData("allFields.ts");
 
 ### 迭代同步清单
 
-- 调整能力入口：核对 `assistant/flows.ts`、建议卡片、`assistant/routing/registry.ts`、`assistant/routing/defaultPrompt.ts` 中的任务分派与 `ai/skills/` 对应技能正文。
+- 调整能力入口：核对 `assistant/flows.ts`、建议卡片、`assistant/routing/registry.ts`、`assistant/routing/defaultPrompt.ts` 中的任务分派与 `packages/resume-agent/skills/` 对应技能正文。
 - 调整字段或格式：同步表单配置、生成的数据契约、AI 当前形态读取、写入校验、字段快捷处理与受影响范本；新增字段遵循本文件的全字段范本约定。上述 AI 链路未逐项核对时，不得视为字段修改完成。
 - 调整模块对象、记录数组或布局切换形态：通过表单配置声明形态关系，核对完成度、`read_resume_data` 返回结构、《简历数据规范》和写工具使用同一当前形态，禁止在任一 AI 技能中另写模块特例或静态字段表。
 - 调整读取范围、脱敏或媒体字段：核对 `resumeContext.ts`、请求生命周期与撤回逻辑，确认首次及重复读取不携带媒体、不修改源数据。

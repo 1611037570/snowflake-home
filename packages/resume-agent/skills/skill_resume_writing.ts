@@ -1,6 +1,6 @@
 // 技能：简历编写
 // 描述：指导 AI 如何通过 propose_resume_edits 把用户诉求转成简历写操作
-import { ASSISTANT_WRITING_RULES_TEXT } from "@/views/resume/ai/writingRules";
+import { ASSISTANT_WRITING_RULES_TEXT } from "../writingRules";
 export const resumeWriting = () => ({
   id: "resume_writing",
   name: "简历编写",

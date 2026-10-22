@@ -1,6 +1,6 @@
 // AI 助手宿主配置类型：技能与工具由调用方提供，chat 引擎不内置业务内容
 import type { ReactConfig, ReactTool } from "@/apis/llm/react";
-import type { Skill } from "@/views/resume/ai";
+import type { Skill } from "@snowflake/resume-agent";
 import type { Ref } from "vue";
 
 // 引导流程步骤：预设询问或自由输入；options 为函数时在步骤展示前求值（如按当前简历动态生成）

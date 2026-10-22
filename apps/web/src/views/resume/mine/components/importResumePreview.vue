@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import i18n, { $t } from "@/locales";
 import { translateResumeEditorText } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
-import { RESUME_SCHEMA } from "@/views/resume/ai";
+import { RESUME_SCHEMA } from "@snowflake/resume-agent";
 import type { normalizeResumeData } from "../resumeImportNormalizer";
 
 const props = defineProps<{

@@ -9,9 +9,9 @@ import {
   createSkillTools,
   RESUME_LANG_CODES,
   useResumeContext,
-} from "@/views/resume/ai";
+} from "@snowflake/resume-agent";
 import type { AssistantConfig } from "./types";
-import type { Skill } from "@/views/resume/ai";
+import type { Skill } from "@snowflake/resume-agent";
 import { collectResumeAdjustmentIssues, useProgress } from "../editor/hooks/useProgress";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
@@ -37,7 +37,7 @@ export const useResumeAssistant = () => {
   const resolveTools = async (onSkillActivated?: (skill: Skill) => void): Promise<ReactTool[]> => {
     const [skills, { createResumeTools }] = await Promise.all([
       Promise.all(onDemandSkills.map((load) => load())),
-      import("@/views/resume/ai"),
+      import("@snowflake/resume-agent"),
     ]);
     return [
       // 按需技能注册为只读工具，需要时由模型调用获取全文

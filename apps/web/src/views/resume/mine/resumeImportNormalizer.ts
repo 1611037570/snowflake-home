@@ -9,7 +9,7 @@ import {
   readResumeAiResponseText,
   type ResumeFieldSchema,
   type ResumeModuleSchema,
-} from "@/views/resume/ai";
+} from "@snowflake/resume-agent";
 import { isContentEmpty } from "../shared/validData";
 
 const MODULE_SCHEMA = new Map(

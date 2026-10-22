@@ -1,6 +1,6 @@
-import type { ResumeAiMessage, ResumeAiTask } from "@/views/resume/ai/request/types";
-import { RESUME_WRITING_DISCIPLINE, getWritingRule } from "@/views/resume/ai/writingRules";
-import { findResumeModuleSchema } from "@/views/resume/ai/schema/resumeSchemaRegistry";
+import type { ResumeAiMessage, ResumeAiTask } from "../request/types";
+import { RESUME_WRITING_DISCIPLINE, getWritingRule } from "../writingRules";
+import { findResumeModuleSchema } from "../schema/resumeSchemaRegistry";
 import type { ContentAiAction } from "../types";
 
 export type { ContentAiAction } from "../types";

@@ -1,5 +1,5 @@
 import { $t } from "@/locales";
-import type { ResumeAiProtocol, ResumeAiTask } from "@/views/resume/ai/request/types";
+import type { ResumeAiProtocol, ResumeAiTask } from "../request/types";
 import { resumeDataContract } from "../skills/skill_resume_data_contract";
 import { MAX_PDF_REQUEST_BYTES } from "./pdfLimits";
 

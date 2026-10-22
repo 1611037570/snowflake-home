@@ -1,4 +1,4 @@
-import { ASSISTANT_WRITING_RULES_TEXT } from "@/views/resume/ai/writingRules";
+import { ASSISTANT_WRITING_RULES_TEXT } from "../writingRules";
 
 // 一键调整技能：处理完成度检查发现的缺失、格式与时间线问题，不扩展到泛化内容优化。
 export const resumeOneKeyAdjust = () => ({

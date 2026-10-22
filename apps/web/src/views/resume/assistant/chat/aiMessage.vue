@@ -5,7 +5,7 @@ import { ElMessage } from "element-plus";
 import { storeToRefs } from "pinia";
 import ToggleButton from "./toggleButton.vue";
 import ReportPanel from "./reportPanel.vue";
-import { parseResumeReport, stripResumeReportBlock } from "@/views/resume/ai";
+import { parseResumeReport, stripResumeReportBlock } from "@snowflake/resume-agent";
 import { onBeforeUnmount, ref, watch } from "vue";
 
 const props = defineProps({

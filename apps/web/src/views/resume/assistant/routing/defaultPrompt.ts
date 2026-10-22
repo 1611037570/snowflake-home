@@ -1,4 +1,4 @@
-import { createDefaultAssistantPrompt } from "@/views/resume/ai";
+import { createDefaultAssistantPrompt } from "@snowflake/resume-agent";
 
 // 助手只维护任务分派与工具编排，角色、安全、写作和输出提示由 AI 层统一提供。
 const ASSISTANT_ROUTING_INSTRUCTIONS = `# 任务分派

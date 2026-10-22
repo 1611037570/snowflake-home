@@ -6,7 +6,7 @@ import {
   type DesensitizeField,
 } from "@/stores/modules/resume/config/desensitizeConfig";
 import { findResumeModuleSchema } from "../schema/resumeSchemaRegistry";
-import { isContentEmpty } from "../../shared/validData";
+import { isContentEmpty } from "@/views/resume/shared/validData";
 
 // 按字段路径读取模块当前生效的数据形态
 const getValueByPath = (source: any, path: string[]) =>

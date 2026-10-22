@@ -1,4 +1,4 @@
-import { ASSISTANT_WRITING_RULES_TEXT } from "@/views/resume/ai/writingRules";
+import { ASSISTANT_WRITING_RULES_TEXT } from "../writingRules";
 
 // 一键优化编排技能：按求职方向与身份，补齐缺失经历、综合优化并评分，最终产出结构化优化报告
 export const resumeOneKeyOptimize = () => ({

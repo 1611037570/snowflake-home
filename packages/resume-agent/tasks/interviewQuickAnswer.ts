@@ -1,8 +1,8 @@
-import type { ResumeAiMessage, ResumeAiTask } from "@/views/resume/ai/request";
+import type { ResumeAiMessage, ResumeAiTask } from "../request";
 import {
   assertResumeAiResponseComplete,
   runResumeAiTask,
-} from "@/views/resume/ai/request";
+} from "../request";
 import { useResumeContext } from "../context/resumeContext";
 
 // 固定提示只生成一个口述答案，不进入技能、工具或面试追问流程

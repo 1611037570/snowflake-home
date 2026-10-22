@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { flows } from "./flows";
 import { defaultPrompt } from "./routing/defaultPrompt";
-import { resumeOneKeyOptimize } from "@/views/resume/ai/skills/skill_resume_one_key_optimize";
-import { resumeOptimization } from "@/views/resume/ai/skills/skill_resume_optimization";
-import { resumeScore } from "@/views/resume/ai/skills/skill_resume_score";
-import { resumeWriting } from "@/views/resume/ai/skills/skill_resume_writing";
+import { resumeOneKeyOptimize } from "@snowflake/resume-agent/skills/skill_resume_one_key_optimize";
+import { resumeOptimization } from "@snowflake/resume-agent/skills/skill_resume_optimization";
+import { resumeScore } from "@snowflake/resume-agent/skills/skill_resume_score";
+import { resumeWriting } from "@snowflake/resume-agent/skills/skill_resume_writing";
 
 const resumeState = vi.hoisted(() => ({
   selectedModule: [] as Array<{ key: string; name: string }>,
