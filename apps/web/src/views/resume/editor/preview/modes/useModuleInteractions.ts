@@ -26,6 +26,8 @@ interface UseModuleInteractionsOptions {
   activeModuleKey: Ref<string | null>;
   /** 当前编辑模块标识，持续显示编辑边框且不触发滚动 */
   editingModuleKey?: Ref<string | null>;
+  /** 当前编辑子模块的记录下标，空值表示整个模块 */
+  editingItemIndex?: Ref<number | null>;
 }
 
 export const useModuleInteractions = ({
@@ -34,6 +36,7 @@ export const useModuleInteractions = ({
   selectedModule,
   activeModuleKey,
   editingModuleKey,
+  editingItemIndex,
   aiPanelActive,
   editorPanelActive,
   isPrinting,
@@ -56,6 +59,9 @@ export const useModuleInteractions = ({
   const visibleEditingModuleKey = computed(() =>
     showEditingFeedback.value ? (editingModuleKey?.value ?? null) : null,
   );
+  const visibleEditingItemIndex = computed(() =>
+    showEditingFeedback.value ? (editingItemIndex?.value ?? null) : null,
+  );
   const baseOutline = "resume-module-interaction outline-2 outline-offset-3 outline-dashed";
   const getModuleClass = (moduleKey: string) => {
     // 标语属于主题版头，不展示模块交互边框。
@@ -65,7 +71,8 @@ export const useModuleInteractions = ({
     // 普通编辑或搜索定位的模块显示主题边框，其他标签不沿用定位状态。
     if (
       showEditingFeedback.value &&
-      (visibleEditingModuleKey.value === moduleKey || activeModuleKey.value === moduleKey)
+      ((visibleEditingModuleKey.value === moduleKey && visibleEditingItemIndex.value === null) ||
+        activeModuleKey.value === moduleKey)
     )
       return `${baseOutline} outline-sf-theme`;
     // 其他模块仅在鼠标悬停时显示弱化轮廓。
@@ -87,5 +94,6 @@ export const useModuleInteractions = ({
     canSelectModules, // 是否提供智能助手模块选择。
     selectedModuleKeys, // 当前允许展示选中反馈的模块标识。
     visibleEditingModuleKey, // 当前允许展示编辑提示的模块标识。
+    visibleEditingItemIndex, // 当前允许展示编辑提示的子模块下标。
   };
 };

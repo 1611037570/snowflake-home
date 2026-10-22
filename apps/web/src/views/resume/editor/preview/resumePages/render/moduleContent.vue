@@ -12,6 +12,7 @@ const props = defineProps<{
   nodes: Map<string, LayoutNode>;
   showDebug?: boolean;
   isEdit?: boolean; // 是否编辑态预览，只读预览不显示条目悬停反馈
+  editingItemIndex?: number | null; // 当前编辑子模块下标，空值不显示子模块提示
 }>();
 const emit = defineEmits<{
   click: [payload: { moduleKey: string; itemIndex?: number }];
@@ -37,6 +38,20 @@ const hoverBackgroundClass = computed(() =>
     ? "hover:bg-sf-theme-3!"
     : "",
 );
+// 子模块可能跨页或拆成多个节点，每页只在首个命中分片上显示提示。
+const isEditingFragment = (fragment: FragmentPlan) =>
+  props.isEdit &&
+  props.editingItemIndex != null &&
+  getNode(fragment)?.sourceItemIndex === props.editingItemIndex;
+const editingLabelFragmentId = computed(
+  () => props.items.find(isEditingFragment)?.fragmentId ?? "",
+);
+const getFragmentClass = (fragment: FragmentPlan) => [
+  "resume-submodule-content relative",
+  hoverBackgroundClass.value,
+  isEditingFragment(fragment) &&
+    "resume-submodule-editing outline-2 outline-offset-3 outline-dashed outline-sf-theme",
+];
 </script>
 
 <template>
@@ -51,8 +66,28 @@ const hoverBackgroundClass = computed(() =>
       :decoration="fragment.decoration"
       :show-debug="showDebug"
       :leading-on-page="fragment.leadingOnPage"
-      :class="isTitleNode(getNode(fragment)!) || getNode(fragment)!.type === 'spacer' ? undefined : ['resume-submodule-content relative', hoverBackgroundClass]"
+      :class="isTitleNode(getNode(fragment)!) || getNode(fragment)!.type === 'spacer' ? undefined : getFragmentClass(fragment)"
+      :data-editing-label="fragment.fragmentId === editingLabelFragmentId ? $t('editingModule') : undefined"
       @click.stop="handleContentClick(getNode(fragment)!)"
     />
   </template>
 </template>
+
+<style scoped>
+/* 子模块提示贴近当前记录顶部，避免长模块只能在模块起点看到编辑状态。 */
+:global(.resume-submodule-editing[data-editing-label]::before) {
+  content: attr(data-editing-label);
+  position: absolute;
+  top: -3px;
+  left: -5px;
+  z-index: 10;
+  padding: 0 0.75rem;
+  border-radius: 0.75rem 0.75rem 0 0;
+  background: var(--color-sf-theme);
+  color: var(--color-sf-theme-text);
+  font-size: 0.75rem;
+  line-height: 1.5rem;
+  pointer-events: none;
+  transform: translateY(-100%);
+}
+</style>

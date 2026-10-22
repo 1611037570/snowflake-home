@@ -32,7 +32,7 @@ const {
   selectedModule,
   system,
 } = storeToRefs(resumeStore);
-const { editingModuleKey, isPrinting } = storeToRefs(resumeStore);
+const { editingModuleKey, editingItemIndex, isPrinting } = storeToRefs(resumeStore);
 // 标签状态由工作区提供，交互显示规则统一交给模块交互计算维护。
 const activeEditorTab = inject("resumeEditorTab", ref("edit"));
 // 智能助手标签允许选择模块，普通编辑标签允许显示编辑定位反馈。
@@ -110,12 +110,14 @@ const {
   canSelectModules,
   selectedModuleKeys,
   visibleEditingModuleKey,
+  visibleEditingItemIndex,
 } = useModuleInteractions({
   isEdit,
   moduleKeys,
   selectedModule,
   activeModuleKey: previewSelectedModule,
   editingModuleKey, // 当前编辑模块只参与提示与边框计算。
+  editingItemIndex, // 当前编辑子模块只参与提示与边框计算。
   aiPanelActive,
   editorPanelActive,
   isPrinting,
@@ -175,10 +177,15 @@ watch(
 );
 
 const handleModuleClick = ({ moduleKey }) => {
-  if (system.value.previewClickLocate) locateEditor(moduleKey);
+  if (!system.value.previewClickLocate) return;
+  resumeStore.editingModuleKey = moduleKey;
+  resumeStore.editingItemIndex = null;
+  locateEditor(moduleKey);
 };
 const handleModuleItemClick = ({ moduleKey, itemIndex }) => {
   if (!system.value.previewClickLocate) return;
+  resumeStore.editingModuleKey = moduleKey;
+  resumeStore.editingItemIndex = itemIndex ?? null;
   locateEditor(moduleKey, itemIndex == null ? undefined : { itemIndex });
 };
 const handleModuleMouseEnter = (moduleKey) => clearPreviewSelection(moduleKey);
@@ -273,6 +280,7 @@ useSmartOnePage({
     :module-class-map="moduleClassMap"
     :selected-module-keys="selectedModuleKeys"
     :editing-module-key="visibleEditingModuleKey"
+    :editing-item-index="visibleEditingItemIndex"
     :show-editor-interactions="showEditorInteractions"
     :move-directions-by-column="columnMoveContext.directions"
     @module-click="handleModuleClick"

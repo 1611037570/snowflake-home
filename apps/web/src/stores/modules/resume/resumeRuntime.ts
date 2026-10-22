@@ -9,6 +9,8 @@ export const createResumeRuntime = ({ clearSelectedModules }: ResumeRuntimeOptio
   const focusMode = ref(false);
   // 当前编辑模块仅用于预览提示，不随简历持久化。
   const editingModuleKey = ref<string | null>(null);
+  // 当前编辑子模块的记录下标，空值表示定位整个模块。
+  const editingItemIndex = ref<number | null>(null);
   const isPrinting = ref(false);
   let printController: AbortController | null = null;
   const beginPrinting = () => {
@@ -70,6 +72,7 @@ export const createResumeRuntime = ({ clearSelectedModules }: ResumeRuntimeOptio
   };
   const initResumeStatus = () => {
     editingModuleKey.value = null;
+    editingItemIndex.value = null;
     cancelPrinting();
     cancelFittingOnePage();
     isGenerating.value = false;
@@ -79,6 +82,7 @@ export const createResumeRuntime = ({ clearSelectedModules }: ResumeRuntimeOptio
   return {
     focusMode,
     editingModuleKey, // 当前编辑模块标识。
+    editingItemIndex, // 当前编辑子模块的记录下标。
     isPrinting,
     beginPrinting,
     cancelPrinting,

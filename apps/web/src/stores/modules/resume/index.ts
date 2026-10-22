@@ -103,6 +103,7 @@ export const useResumeStore = defineStore(
     const {
       focusMode,
       editingModuleKey,
+      editingItemIndex,
       isPrinting,
       beginPrinting,
       cancelPrinting,
@@ -313,6 +314,7 @@ export const useResumeStore = defineStore(
       editorWidth,
       focusMode,
       editingModuleKey, // 当前编辑模块标识，仅用于会话内预览提示。
+      editingItemIndex, // 当前编辑子模块下标，仅用于会话内预览提示。
       desensitizeMode,
       isGenerating,
       setGenerating,

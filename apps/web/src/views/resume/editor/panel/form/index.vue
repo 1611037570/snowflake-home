@@ -67,17 +67,25 @@ const AsyncCityPicker = defineAsyncComponent({
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
 let keyboardFocusPending = false;
-// 捕获点击及键盘焦点，逐层寻找所属顶层模块，不触发预览滚动。
+// 捕获点击及键盘焦点，定位所属模块与子记录，不触发预览滚动。
 const markEditingModule = (event) => {
-  let node = event.target instanceof Element ? event.target.closest("[data-module-key]") : null;
+  const target = event.target instanceof Element ? event.target : null;
+  const itemIndexValue = target?.closest("[data-item-index]")?.dataset.itemIndex;
+  const parsedItemIndex = itemIndexValue == null ? null : Number(itemIndexValue);
+  const itemIndex = Number.isInteger(parsedItemIndex) ? parsedItemIndex : null;
+  let node = target?.closest("[data-module-key]") ?? null;
   while (node && event.currentTarget.contains(node)) {
     const key = node.dataset.moduleKey;
     if (runtimeConfig.value?.fields?.some((field) => field.key === key)) {
       // 值未变化时直接退出，避免重复触发预览重渲染
-      if (resumeStore.editingModuleKey === key) return;
+      if (
+        resumeStore.editingModuleKey === key &&
+        resumeStore.editingItemIndex === itemIndex
+      ) return;
       // 延后一轮事件循环写入：移动端手指按下当帧触发预览重渲染会抢走输入框焦点
       window.setTimeout(() => {
         resumeStore.editingModuleKey = key;
+        resumeStore.editingItemIndex = itemIndex;
       }, 0);
       return;
     }
@@ -103,7 +111,10 @@ watch(
     return key && runtimeConfig.value?.fields?.some((field) => field.key === key);
   },
   (exists) => {
-    if (!exists) resumeStore.editingModuleKey = null;
+    if (!exists) {
+      resumeStore.editingModuleKey = null;
+      resumeStore.editingItemIndex = null;
+    }
   },
 );
 const localizedResumeOptions = computed(() => {
@@ -163,6 +174,7 @@ watch(
   (item) => {
     // 切换简历时丢弃上一份简历的编辑提示。
     resumeStore.editingModuleKey = null;
+    resumeStore.editingItemIndex = null;
     // 无选中简历：无需等待渲染，直接结束同步
     if (!item) {
       syncItem = null;
@@ -185,6 +197,7 @@ onActivated(() => {
 // 离开编辑标签后不再显示正在编辑提示。
 onDeactivated(() => {
   resumeStore.editingModuleKey = null;
+  resumeStore.editingItemIndex = null;
 });
 
 const handleDynamicFormReady = (data) => {
@@ -196,6 +209,7 @@ const handleDynamicFormReady = (data) => {
 
 onBeforeUnmount(() => {
   resumeStore.editingModuleKey = null;
+  resumeStore.editingItemIndex = null;
   if (dynamicFormTimer !== null) window.clearTimeout(dynamicFormTimer);
   // 失效待完成的同步，避免卸载后开启历史记录
   syncItem = null;

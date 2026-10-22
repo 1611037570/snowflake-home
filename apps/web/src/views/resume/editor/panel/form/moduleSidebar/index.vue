@@ -35,6 +35,7 @@ const shortName = (name) =>
 function handleModuleJump(key) {
   activeKey.value = key;
   resumeStore.editingModuleKey = key;
+  resumeStore.editingItemIndex = null;
   jumpEditor(key);
   jumpPreview(key);
 }

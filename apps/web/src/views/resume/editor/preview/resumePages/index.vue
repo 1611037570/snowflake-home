@@ -73,6 +73,11 @@ const props = defineProps({
     type: String, // 模块标识类型。
     default: null, // 无当前编辑模块时隐藏提示。
   },
+  // 当前编辑子模块下标，空值表示提示落在整个模块。
+  editingItemIndex: {
+    type: Number, // 子模块记录下标类型。
+    default: null, // 无具体子模块时使用模块级提示。
+  },
   moveDirectionsByColumn: {
     type: Object,
     default: () => ({}),
@@ -405,6 +410,7 @@ defineExpose({
                       :module-class-map="props.moduleClassMap"
                       :selected-module-keys="props.selectedModuleKeys"
                       :editing-module-key="props.editingModuleKey"
+                      :editing-item-index="props.editingItemIndex"
                       :gap="getColumnGap(column.columnId)"
                       :move-directions="props.moveDirectionsByColumn[column.columnId]"
                       :can-move-left="columnIndex > 0"
