@@ -368,7 +368,7 @@ const handleSend = (content: string) => {
     handleFlowAnswer(content.trim());
     return;
   }
-  // 普通聊天由常驻任务理解机制判断意图；这里只保留面试专用的续轮状态。
+  // 普通聊天由任务运行时结合历史状态判断意图；这里只保留面试专用的读取范围。
   const previousContext = [...currentMessages.value]
     .reverse()
     .find((message) => message.role === "user" && !message.skipContext)?.requestContext;

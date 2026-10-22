@@ -49,7 +49,7 @@ export type SuggestCard = {
 export type AssistantResources = {
   // ReAct 可调用的技能与简历工具。
   tools: ReactTool[];
-  // 本轮可供任务理解选择的技能元数据与正文。
+  // 本轮可供任务运行时选择的能力元数据与正文。
   skills: Skill[];
 };
 
@@ -57,7 +57,7 @@ export interface AssistantConfig {
   // 请求期间置为 true 的生成状态
   generating: Ref<boolean>;
   // ReAct 可用工具：首次请求时才解析，避免技能正文与工具实现进入 AI 面板首屏
-  resolveTools: (onSkillActivated?: (skill: Skill) => void) => Promise<AssistantResources>;
+  resolveTools: () => Promise<AssistantResources>;
   // 反思轮提示词：反思口径由宿主按业务提供，请求引擎不内置
   reflectPrompt: string;
   // 工具执行错误回调：由宿主决定恢复或中断，引擎只负责转交

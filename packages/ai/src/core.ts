@@ -392,7 +392,7 @@ class LLM {
           if (aborted) throw new AbortError();
           const result = await think(this, history, {
             tools: config.tools,
-            // 仅首轮启动明确任务的读取工具，后续交由 ReAct 决定。
+            // 仅首轮强制调用宿主指定的起始工具，后续交由 ReAct 决定。
             toolChoice: step === 0 ? config.initialTool : undefined,
             model: config.model,
             thinking: config.thinking,
@@ -414,6 +414,19 @@ class LLM {
           // 无工具调用时，若开启反思且尚未进入反思轮，则先注入候选答案并让下一轮审视定稿
           if (!result.toolCalls.length) {
             const finalAnswer = extractJson(result.finalAnswer);
+
+            // 业务运行时可依据工具证据拒绝过早收口，反馈仍留在同一个 ReAct 历史中继续处理。
+            if (!reflectRound && config.beforeFinal) {
+              const retryReason = await config.beforeFinal(finalAnswer);
+              if (retryReason) {
+                if (step >= maxSteps - 1) throw new Error("ReAct 未满足任务完成条件");
+                history.push({ role: "assistant", content: result.finalAnswer });
+                history.push({ role: "system", content: retryReason });
+                config.onFinalRetry?.(retryReason);
+                finishActiveRound();
+                continue;
+              }
+            }
 
             if (config.reflection && !reflectRound && step < maxSteps - 1) {
               console.log("[ReAct] 候选答案，下一轮反思定稿:", finalAnswer);

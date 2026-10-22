@@ -10,7 +10,6 @@ import {
   useResumeContext,
 } from "@snowflake/resume-agent";
 import type { AssistantConfig, AssistantResources } from "./types";
-import type { Skill } from "@snowflake/resume-agent";
 import { collectResumeAdjustmentIssues, useProgress } from "../editor/hooks/useProgress";
 
 // 简历助手唯一组装器：入口只消费本模块产出的 config 与创建对话方法
@@ -33,7 +32,7 @@ export const useResumeAssistant = () => {
     return true;
   };
   // 工具在首次请求时才组装：技能正文与简历工具（含表单结构）不进入 AI 面板首屏
-  const resolveTools = async (onSkillActivated?: (skill: Skill) => void): Promise<AssistantResources> => {
+  const resolveTools = async (): Promise<AssistantResources> => {
     const [skills, { createResumeTools }] = await Promise.all([
       Promise.all(onDemandSkills.map((load) => load())),
       import("@snowflake/resume-agent"),
@@ -42,7 +41,7 @@ export const useResumeAssistant = () => {
       skills,
       tools: [
         // 按需技能注册为只读工具，需要时由模型调用获取全文
-        ...createSkillTools(skills, onSkillActivated),
+        ...createSkillTools(skills),
         ...createResumeTools({
           getResumeData: resumeContext.getResumeData,
           applyResumeOperations: (operations) => {

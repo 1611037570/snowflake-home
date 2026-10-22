@@ -1,11 +1,9 @@
 // 导入LLM接口
 import { AbortError, isAbortError } from "@/apis";
 import {
-  buildAssistantTaskContext,
+  createResumeAgentTaskRuntime,
   createResumeAiReactRunner,
   isPersistentTaskSkillId,
-  understandAssistantTask,
-  type Skill,
 } from "@snowflake/resume-agent";
 import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
@@ -17,7 +15,7 @@ import { storeToRefs } from "pinia";
 import type { AssistantConfig } from "../types";
 // 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
 import { defaultPrompt } from "../routing/defaultPrompt";
-// 专用一键技能仅向对应按钮任务开放，普通聊天由任务理解选择通用技能。
+// 专用一键能力仅向对应按钮任务开放，普通聊天由任务运行时选择通用能力。
 const ONE_KEY_SKILLS = new Set(["resume_one_key_optimize", "resume_one_key_adjust"]);
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
@@ -101,6 +99,7 @@ export const useChatRequest = ({
 
   // 工具调用过程区展示用的中文名
   const TOOL_NAMES: Record<string, string> = {
+    set_resume_task: "理解本轮任务",
     read_resume_data: "读取简历数据",
     propose_resume_edits: "修改简历数据",
     resume_data_contract: "读取《简历数据规范》",
@@ -202,7 +201,7 @@ export const useChatRequest = ({
       currentRequestVersion === requestVersion &&
       resumeStore.currentItem?.id === requestResumeId &&
       chat.value?.id === requestChatId;
-    // 前置任务理解与 ReAct 共用当前请求的取消入口。
+    // 资源加载期间保留统一取消入口，ReAct 创建后由编排器接管中止。
     const taskAbortController = new AbortController();
     abortRequest = () => taskAbortController.abort();
     // 设置生成状态为true
@@ -229,10 +228,10 @@ export const useChatRequest = ({
       beforeRequest?.(requestMessage?.requestContext, requestTaskId);
       // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
       const defaultSkill = defaultPrompt();
-      // 历史任务技能只用于理解续轮，本轮实际技能由任务理解重新选择。
-      const activeTaskSkillMessage = [...currentMessages.value]
+      // 最近任务状态交给同一个 Agent 承接“继续”“再短一点”等省略表达。
+      const previousTask = [...currentMessages.value]
         .reverse()
-        .find((message) => isPersistentTaskSkillId(message.systemSkillId));
+        .find((message) => message.resumeTask)?.resumeTask;
       let messages = currentMessages.value
         .filter(
           (message) =>
@@ -254,7 +253,7 @@ export const useChatRequest = ({
       // 找到最后一个用户消息位置
       const lastUserIndex = messages.map((message) => message.role).lastIndexOf("user");
       if (lastUserIndex !== -1) {
-        // 默认规则紧邻本轮请求，任务理解在后续作为独立上下文补入。
+        // 默认规则紧邻本轮请求，任务运行上下文随后与本轮请求放在一起。
         messages.splice(
           lastUserIndex,
           0,
@@ -277,31 +276,8 @@ export const useChatRequest = ({
       // 请求开始即启动计时，避免首个模型事件返回前没有耗时
       state.onReasoning();
 
-      // 首次请求时才加载技能与简历工具清单。
-      const clearTaskSkill = () => {
-        for (let index = currentMessages.value.length - 1; index >= 0; index -= 1) {
-          if (isPersistentTaskSkillId(currentMessages.value[index]?.systemSkillId)) {
-            currentMessages.value.splice(index, 1);
-          }
-        }
-      };
-      const activateTaskSkill = (skill: Skill) => {
-        // 规范、行业与写入方法只在当轮使用，只有任务技能跨轮保留。
-        if (!isPersistentTaskSkillId(skill.id)) return;
-        const activeTaskSkill = [...currentMessages.value]
-          .reverse()
-          .find((message) => isPersistentTaskSkillId(message.systemSkillId));
-        if (activeTaskSkill?.systemSkillId === skill.id) return;
-        // 切换任务时移除旧任务技能，确保会话中始终只有一个当前任务。
-        clearTaskSkill();
-        addMessage({
-          role: "system",
-          content: `# 当前任务技能：${skill.name}\n\n${skill.instructions}`,
-          systemSkillId: skill.id,
-          typing: false,
-        });
-      };
-      const { tools: resolvedTools, skills } = await resolveTools(activateTaskSkill);
+      // 首次请求时才加载能力与简历工具清单，跨轮承接由任务状态负责。
+      const { tools: resolvedTools, skills } = await resolveTools();
       // 加载期间取消或切换会话时不再启动请求，工具执行前再次核对所属任务
       if (!isCurrentRequest()) return;
       const entrySkillId = entryFlow === "oneKeyOptimize"
@@ -309,37 +285,23 @@ export const useChatRequest = ({
         : entryFlow === "oneKeyAdjust"
           ? "resume_one_key_adjust"
           : null;
-      // 所有入口统一生成任务契约；一键入口仍保留明确技能，避免再次询问入口已提供的信息。
-      let taskUnderstanding: Awaited<ReturnType<typeof understandAssistantTask>> = null;
-      try {
-        taskUnderstanding = await understandAssistantTask({
-          messages: messages
-            .filter((message) => (message.role === "user" || message.role === "assistant") && !!message.content)
-            .slice(-8)
-            .map((message) => ({ role: message.role as "user" | "assistant", content: message.content.slice(0, 1500) })),
-          entryFlow: typeof entryFlow === "string" ? entryFlow : undefined,
-          previousSkillId: activeTaskSkillMessage?.systemSkillId,
-          skills: skills.filter((skill) => (isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing") &&
-            (!ONE_KEY_SKILLS.has(skill.id) || skill.id === entrySkillId))
-            .map(({ id, name, description }) => ({ id, name, description })),
-        }, taskAbortController.signal, addTokenUsage);
-      } catch (error) {
-        if (isAbortError(error)) throw error;
-        console.warn("[任务理解] 前置分析失败，交由 ReAct 根据原始请求判断:", error);
-      }
-      if (!isCurrentRequest()) return;
-      // 手动一键入口直接带入专用任务技能；聊天请求使用前置理解的技能建议。
-      const taskSkill = skills.find((skill) => skill.id === (entrySkillId ?? taskUnderstanding?.skillId));
-      // 新任务未选中可延续的技能时，清除旧任务记忆，避免下轮误承接。
-      if (taskUnderstanding && !isPersistentTaskSkillId(taskSkill?.id)) clearTaskSkill();
-      if (taskSkill) activateTaskSkill(taskSkill);
-      const taskContext = [
-        ...(taskUnderstanding ? [{ role: "system" as const, content: buildAssistantTaskContext(taskUnderstanding) }] : []),
-        ...(taskSkill ? [{ role: "system" as const, content: `# 当前任务技能：${taskSkill.name}\n\n${taskSkill.instructions}` }] : []),
-      ];
+      const capabilities = skills.filter((skill) =>
+        (isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing") &&
+        (!ONE_KEY_SKILLS.has(skill.id) || skill.id === entrySkillId),
+      );
+      const taskRuntime = createResumeAgentTaskRuntime({
+        taskId: requestTaskId,
+        source: typeof entryFlow === "string" ? entryFlow : "chat",
+        previousTask,
+        capabilities,
+        preferredCapabilityId: entrySkillId ?? undefined,
+        fixedExpectedResult: entrySkillId ? "resume_change" : undefined,
+      });
       const requestIndex = messages.map((message) => message.role).lastIndexOf("user");
-      if (requestIndex !== -1) messages.splice(requestIndex, 0, ...taskContext);
-      const tools = resolvedTools.filter((tool) => !ONE_KEY_SKILLS.has(tool.name) || tool.name === entrySkillId).map((tool) => ({
+      if (requestIndex !== -1) {
+        messages.splice(requestIndex, 0, { role: "system", content: taskRuntime.buildContext() });
+      }
+      const businessTools = resolvedTools.filter((tool) => !ONE_KEY_SKILLS.has(tool.name) || tool.name === entrySkillId).map((tool) => ({
         ...tool,
         // 失效请求不得读取或修改当前简历
         execute: (args: any) => {
@@ -347,16 +309,31 @@ export const useChatRequest = ({
           return tool.execute(args);
         },
       }));
-      // 所有请求统一走 React 编排，当前任务技能可由会话系统消息跨轮提供。
+      const taskTool = {
+        ...taskRuntime.taskTool,
+        execute: (args: any) => {
+          if (!isCurrentRequest()) throw new AbortError();
+          return taskRuntime.taskTool.execute(args);
+        },
+      };
+      const tools = [taskTool, ...taskRuntime.wrapTools(businessTools)];
+      // 所有请求统一由 ReAct 建立任务、执行工具并核对完成证据。
       reactRunner = createResumeAiReactRunner("xiaoZhou", {
         tools,
-        // 手动一键操作以读取简历启动 ReAct，避免首轮直接把执行任务当成回复。
-        initialTool: entrySkillId ? "read_resume_data" : undefined,
+        // 任务理解与后续执行由同一个 ReAct 连续完成。
+        initialTool: "set_resume_task",
         // 单次请求的最大 ReAct 轮次上限
         maxSteps: 99,
         reflection: true,
         reflectPrompt,
         onToolError,
+        beforeFinal: taskRuntime.beforeFinal,
+        onFinalRetry: () => {
+          if (!isCurrentRequest() || !lastMsg) return;
+          stepContent = "";
+          lastMsg.content = "";
+          lastMsg.stepLabel = "正在核对任务完成状态…";
+        },
         onReflectStart: () => {
           if (!isCurrentRequest() || !lastMsg) return;
           // 最终精炼轮开始：本轮 content 直接实时渲染为正文
@@ -424,6 +401,7 @@ export const useChatRequest = ({
           if (!isCurrentRequest() || !lastMsg) return;
           // ReAct 自行依据任务理解与工具结果收口，写入记录只供撤回使用。
           lastMsg.content = answer;
+          lastMsg.resumeTask = taskRuntime.getTask();
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";
           lastMsg.thoughtCollapsed = true;

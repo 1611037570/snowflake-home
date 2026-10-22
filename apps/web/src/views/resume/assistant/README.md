@@ -6,10 +6,10 @@
 editor/panel/index.vue（异步挂载助手）
   → chat/index.vue（会话与引导宿主）
        → flows / interview（建议卡片与交互流程）
-       → routing/registry（按需选择 AI 技能）
-       → useResumeAssistant（装配本轮工具、上下文与路由）
-       → chat/useChatRequest（任务理解接入、会话状态与撤回）
-            → packages/resume-agent（理解本轮任务，再由 ReAct 使用技能与简历工具）
+       → routing/registry（登记按需 AI 能力）
+       → useResumeAssistant（装配本轮工具与简历上下文）
+       → chat/useChatRequest（接入任务运行时、维护会话状态与撤回）
+            → packages/resume-agent（同一 ReAct 建立任务、执行工具并核对完成证据）
 ```
 
 目录职责：

@@ -6,6 +6,7 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import { useResumeStore } from "@/stores/modules/resume";
 import type { AiChatSummary } from "@/stores/modules/resume/resumeCatalog";
+import type { ResumeAgentTaskState } from "@snowflake/resume-agent";
 export type Chat = {
   // 对话记录id
   id: string;
@@ -56,6 +57,8 @@ export type Message = {
   skipContext?: boolean;
   // 本轮工具确认实际写入，用于重试保护；撤回仍依赖会话内存备份
   hasWriteChanges?: boolean;
+  // 本轮 Agent 任务状态，用于后续“继续”等承接表达恢复目标与范围。
+  resumeTask?: ResumeAgentTaskState;
   // 由业务宿主解释的请求上下文，重试与重新生成时保持一致
   requestContext?: Record<string, unknown>;
 };

@@ -209,7 +209,7 @@ export const flows: Record<string, Flow> = {
     build: (answers) => {
       // 优先采用本次输入的岗位；已有岗位由简历直接提供。
       const direction = answers[0] || useResumeStore().currentData?.user?.data?.position?.trim() || "";
-      // 按钮任务身份由 requestContext 记录，技能由前置任务机制装配。
+      // 按钮任务身份由 requestContext 记录，能力由任务运行时装配。
       return {
         userContent: `请对我的简历进行一键优化：求职岗位为「${direction}」。请结合简历中的职业阶段补齐有依据的内容、综合优化，并给出评分与优化报告。`,
         // 用户已处于整个简历模式或在流程中明确授权，本次请求固定读取整份简历
