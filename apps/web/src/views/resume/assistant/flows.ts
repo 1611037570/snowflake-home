@@ -185,7 +185,7 @@ export const flows: Record<string, Flow> = {
       };
     },
   },
-  // 一键优化：先收集求职方向（已填则确认、未填则输入）与身份，再发起完整优化并产出报告
+  // 一键优化：已有求职岗位直接执行，缺失时只收集岗位。
   oneKeyOptimize: {
     userContent: "帮我进行一键优化",
     steps: [
@@ -199,22 +199,19 @@ export const flows: Record<string, Flow> = {
         collectAnswer: false,
       },
       {
-        question: "请确认或填写你的求职方向（例如：金融分析师、后端开发）",
-        // 求职方向已在简历中填写时以该值作为确认选项；未填写时返回空选项回退为自由输入
-        options: () => {
-          const position = useResumeStore().currentData?.user?.data?.position?.trim();
-          return position ? [position] : [];
-        },
-      },
-      {
-        question: "请选择你的身份",
-        options: ["学生", "职场人"],
+        question: "请填写你的求职岗位（例如：金融分析师、后端开发）",
+        options: [],
+        input: true,
+        // 简历已有岗位时直接用于本轮优化，避免重复询问。
+        when: () => !useResumeStore().currentData?.user?.data?.position?.trim(),
       },
     ],
-    build: ([direction, identity]) => {
+    build: (answers) => {
+      // 优先采用本次输入的岗位；已有岗位由简历直接提供。
+      const direction = answers[0] || useResumeStore().currentData?.user?.data?.position?.trim() || "";
       // 按钮任务身份由 requestContext 记录，技能由前置任务机制装配。
       return {
-        userContent: `请对我的简历进行一键优化：求职方向为「${direction}」，身份为「${identity}」。请补齐缺失经历、综合优化内容，并给出评分与优化报告。`,
+        userContent: `请对我的简历进行一键优化：求职岗位为「${direction}」。请结合简历中的职业阶段补齐有依据的内容、综合优化，并给出评分与优化报告。`,
         // 用户已处于整个简历模式或在流程中明确授权，本次请求固定读取整份简历
         requestContext: {
           resumeScope: "all",
