@@ -19,7 +19,6 @@ import type { Flow, FlowStep, SuggestCard } from "../types";
 import { supportsInterviewEarlyEnd } from "../interview/flows";
 import { supportsQuickAnswer, useInterviewQuickAnswer } from "../interview/quickAnswer";
 import { useResumeAssistant } from "../useResumeAssistant";
-import { resolveResumeWriteIntent } from "../routing/writeIntent";
 
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput/index.vue";
@@ -369,31 +368,15 @@ const handleSend = (content: string) => {
     handleFlowAnswer(content.trim());
     return;
   }
-  // 面试与简历写入续轮继承原流程状态，明确分析或不修改时由路由关闭写入状态。
+  // 普通聊天由常驻任务理解机制判断意图；这里只保留面试专用的续轮状态。
   const previousContext = [...currentMessages.value]
     .reverse()
     .find((message) => message.role === "user" && !message.skipContext)?.requestContext;
-  const requireResumeWrite = resolveResumeWriteIntent(
-    content,
-    previousContext?.resumeWriteTask === true,
-  );
-  const requestContext = previousContext?.interviewFlow || requireResumeWrite
+  const requestContext = previousContext?.interviewFlow
     ? {
-        ...(previousContext?.interviewFlow ||
-        (requireResumeWrite && previousContext?.resumeWriteTask === true)
-          ? previousContext
-          : {}),
+        resumeScope: previousContext.resumeScope, // 面试续轮沿用原读取范围。
         // 面试结束时关闭专用流程标识，其余面试续轮保持原读取范围。
-        ...(previousContext?.interviewFlow
-          ? { interviewFlow: content.trim() === "提前结束" ? "" : previousContext.interviewFlow }
-          : {}),
-        // 明确修改与优化请求必须产生真实写入，禁止只返回建议或示例文本。
-        ...(requireResumeWrite
-          ? {
-              requireResumeWrite: true, // 本轮必须产生真实简历写入。
-              resumeWriteTask: true, // 后续明确续改时继续沿用写入任务。
-            }
-          : {}),
+        interviewFlow: content.trim() === "提前结束" ? "" : previousContext.interviewFlow,
       }
     : undefined;
   // 用户结束长时评估后关闭专用操作入口，后续仅保留普通对话输入
@@ -554,10 +537,12 @@ const handleSuggest = (payload: Pick<SuggestCard, "flow">) => {
       role: "user",
       content: userContent,
       typing: false,
-      // 逐题面试记录流程标识，续轮与历史恢复共用
-      requestContext: allowQuickAnswer
-        ? { ...requestContext, interviewFlow: payload.flow }
-        : requestContext,
+      // 功能入口身份只记录在按钮请求上，避免普通聊天误判为再次点击。
+      requestContext: {
+        ...requestContext,
+        entryFlow: payload.flow, // 用户点击的功能入口。
+        ...(allowQuickAnswer ? { interviewFlow: payload.flow } : {}),
+      },
     });
     // 无引导步骤的长时流程在真实请求开始后开放提前结束
     earlyEndEnabled.value = allowEarlyEnd;
@@ -681,10 +666,12 @@ const handleFlowAnswer = (answer: string) => {
     role: "user",
     content: userContent,
     typing: false,
-    // 逐题面试续轮保留整份读取范围与流程标识
-    requestContext: state.allowQuickAnswer
-      ? { ...requestContext, interviewFlow: state.flowKey }
-      : requestContext,
+    // 功能入口身份只记录在按钮请求上，避免普通聊天误判为再次点击。
+    requestContext: {
+      ...requestContext,
+      entryFlow: state.flowKey, // 用户点击的功能入口。
+      ...(state.allowQuickAnswer ? { interviewFlow: state.flowKey } : {}),
+    },
   });
   generating.value = true;
   scrollToBottom();

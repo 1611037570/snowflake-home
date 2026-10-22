@@ -25,8 +25,10 @@ export { MARKDOWN_IMPORT_TASK, PDF_IMPORT_TASK } from "./tasks/importResume";
 export { MAX_PDF_REQUEST_BYTES } from "./tasks/pdfLimits";
 export { GENERAL_CHAT_TASK, RESUME_CHAT_TASK } from "./tasks/chat";
 export type { ResumeChatInput } from "./tasks/chat";
+export { understandAssistantTask } from "./tasks/understandAssistantTask";
+export type { AssistantTaskInput, AssistantTaskUnderstanding } from "./tasks/understandAssistantTask";
 export { useInterviewQuickAnswer } from "./tasks/interviewQuickAnswer";
-export { ASSISTANT_REFLECT_PROMPT, REQUIRED_RESUME_WRITE_PROMPT } from "./prompts/assistant";
+export { ASSISTANT_REFLECT_PROMPT } from "./prompts/assistant";
 export { createDefaultAssistantPrompt } from "./prompts/defaultAssistant";
 export { createResumeTools, RESUME_LANG_CODES } from "./tools";
 export type { ResumeToolContext } from "./tools";
@@ -35,6 +37,5 @@ export { buildToolGuide } from "./tools/toolGuide";
 export { isPersistentTaskSkillId } from "./skills/taskSkillMemory";
 export {
   parseResumeReport,
-  reportClaimsChanges,
   stripResumeReportBlock,
 } from "./reports/resumeReport";

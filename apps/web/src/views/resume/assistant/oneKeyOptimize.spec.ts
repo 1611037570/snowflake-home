@@ -32,7 +32,6 @@ describe("oneKeyOptimize", () => {
   it("一键优化请求固定使用整份简历上下文", () => {
     expect(flows.oneKeyOptimize!.build(["后端开发", "职场人"]).requestContext).toEqual({
       resumeScope: "all",
-      verifyWriteReport: true,
     });
   });
 

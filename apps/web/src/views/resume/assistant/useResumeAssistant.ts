@@ -1,6 +1,5 @@
 import { useAiStore, useResumeStore } from "@/stores";
 import { ToolNotFoundError } from "@/apis";
-import type { ReactTool } from "@/apis/llm/react";
 import { storeToRefs } from "pinia";
 import { onDemandSkills, residentSkills } from "./routing/registry";
 import {
@@ -10,7 +9,7 @@ import {
   RESUME_LANG_CODES,
   useResumeContext,
 } from "@snowflake/resume-agent";
-import type { AssistantConfig } from "./types";
+import type { AssistantConfig, AssistantResources } from "./types";
 import type { Skill } from "@snowflake/resume-agent";
 import { collectResumeAdjustmentIssues, useProgress } from "../editor/hooks/useProgress";
 
@@ -34,38 +33,41 @@ export const useResumeAssistant = () => {
     return true;
   };
   // 工具在首次请求时才组装：技能正文与简历工具（含表单结构）不进入 AI 面板首屏
-  const resolveTools = async (onSkillActivated?: (skill: Skill) => void): Promise<ReactTool[]> => {
+  const resolveTools = async (onSkillActivated?: (skill: Skill) => void): Promise<AssistantResources> => {
     const [skills, { createResumeTools }] = await Promise.all([
       Promise.all(onDemandSkills.map((load) => load())),
       import("@snowflake/resume-agent"),
     ]);
-    return [
-      // 按需技能注册为只读工具，需要时由模型调用获取全文
-      ...createSkillTools(skills, onSkillActivated),
-      ...createResumeTools({
-        getResumeData: resumeContext.getResumeData,
-        applyResumeOperations: (operations) => {
-          const result = resumeStore.applyResumeOperations(operations);
-          if (result.applied && !result.failed.length) hasSuccessfulWrite = true;
-          return result;
-        },
-        // 复用左侧完成度检查口径，写入工具无需维护第二套验收规则
-        getResumeIssues: () =>
-          requiresResumeIssueClosure
-            ? collectResumeAdjustmentIssues(
-                useProgress(
-                  resumeStore.runtimeFields || [],
-                  resumeStore.currentData || {},
-                  resumeStore.currentUI || {},
-                ),
-              )
-            : [],
-        // 本轮每次写入尝试独立确认，后续失败时禁止复用早先凭据
-        resetSuccessfulWrite: () => { hasSuccessfulWrite = false; },
-        hasSuccessfulWrite: () => hasSuccessfulWrite,
-        updateLanguage: updateCurrentLang,
-      }),
-    ];
+    return {
+      skills,
+      tools: [
+        // 按需技能注册为只读工具，需要时由模型调用获取全文
+        ...createSkillTools(skills, onSkillActivated),
+        ...createResumeTools({
+          getResumeData: resumeContext.getResumeData,
+          applyResumeOperations: (operations) => {
+            const result = resumeStore.applyResumeOperations(operations);
+            if (result.applied && !result.failed.length) hasSuccessfulWrite = true;
+            return result;
+          },
+          // 复用左侧完成度检查口径，写入工具无需维护第二套验收规则
+          getResumeIssues: () =>
+            requiresResumeIssueClosure
+              ? collectResumeAdjustmentIssues(
+                  useProgress(
+                    resumeStore.runtimeFields || [],
+                    resumeStore.currentData || {},
+                    resumeStore.currentUI || {},
+                  ),
+                )
+              : [],
+          // 本轮每次写入尝试独立确认，后续失败时禁止复用早先凭据
+          resetSuccessfulWrite: () => { hasSuccessfulWrite = false; },
+          hasSuccessfulWrite: () => hasSuccessfulWrite,
+          updateLanguage: updateCurrentLang,
+        }),
+      ],
+    };
   };
   // 请求配置：技能工具、简历工具与请求上下文统一在此装配
   const config: AssistantConfig = {

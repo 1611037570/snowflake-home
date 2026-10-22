@@ -3,7 +3,7 @@ import { AbortError, isAbortError } from "@/apis";
 import {
   createResumeAiReactRunner,
   isPersistentTaskSkillId,
-  REQUIRED_RESUME_WRITE_PROMPT,
+  understandAssistantTask,
   type Skill,
 } from "@snowflake/resume-agent";
 import { useAiStore, useResumeStore } from "@/stores";
@@ -16,8 +16,8 @@ import { storeToRefs } from "pinia";
 import type { AssistantConfig } from "../types";
 // 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
 import { defaultPrompt } from "../routing/defaultPrompt";
-// 一键优化报告的改动声称检测，验收路径与真实写入比对
-import { reportClaimsChanges } from "@snowflake/resume-agent";
+// 专用一键技能仅向对应按钮任务开放，普通聊天由任务理解选择通用技能。
+const ONE_KEY_SKILLS = new Set(["resume_one_key_optimize", "resume_one_key_adjust"]);
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
   chat: Ref<Chat>; // 当前聊天会话
@@ -202,14 +202,15 @@ export const useChatRequest = ({
       currentRequestVersion === requestVersion &&
       resumeStore.currentItem?.id === requestResumeId &&
       chat.value?.id === requestChatId;
+    // 前置任务理解与 ReAct 共用当前请求的取消入口。
+    const taskAbortController = new AbortController();
+    abortRequest = () => taskAbortController.abort();
     // 设置生成状态为true
     generating.value = true;
     // 最后一条消息（即AI回复消息）的引用与状态处理器
     let lastMsg: Message | null = null;
     let state: ReturnType<typeof createChatState> | null = null;
     let totalTokenUsage = 0;
-    // 一键调整最近一次成功写入后仍未解决的问题
-    let remainingRequiredIssues: string[] | null = null;
     // 累加 ReAct 每一轮模型请求返回的 token 用量
     const addTokenUsage = (value: unknown) => {
       const tokens = typeof value === "number" ? value : Number(value);
@@ -224,17 +225,11 @@ export const useChatRequest = ({
       const requestMessage = [...currentMessages.value]
         .reverse()
         .find((message) => message.role === "user");
-      // 修改类任务必须产生真实写入，最终回复不能代替数据修改。
-      const requireResumeWrite = requestMessage?.requestContext?.requireResumeWrite === true;
-      // 只有一键调整需要同时关闭完成度问题，普通优化只验收真实写入。
-      const requireResumeIssueClosure =
-        requestMessage?.requestContext?.requireResumeIssueClosure === true;
-      // 一键优化的报告声称改动时同样必须存在真实写入，空改动为合法分支
-      const verifyWriteReport = requestMessage?.requestContext?.verifyWriteReport === true;
+      const entryFlow = requestMessage?.requestContext?.entryFlow;
       beforeRequest?.(requestMessage?.requestContext, requestTaskId);
       // 构建消息列表（只复制 role 和 content，跳过带上下文标记的引导对话）
       const defaultSkill = defaultPrompt();
-      // 历史会话可能保存过多个任务或辅助技能，只发送最近的任务技能，避免提示持续膨胀。
+      // 历史任务技能只用于理解续轮，本轮实际技能由任务理解重新选择。
       const activeTaskSkillMessage = [...currentMessages.value]
         .reverse()
         .find((message) => isPersistentTaskSkillId(message.systemSkillId));
@@ -243,7 +238,7 @@ export const useChatRequest = ({
           (message) =>
             !message.skipContext &&
             message.systemSkillId !== defaultSkill.id &&
-            (!message.systemSkillId || message === activeTaskSkillMessage) &&
+            !message.systemSkillId &&
             !(
               message.role === "system" &&
               message.content.includes("# 角色\n你是叫小舟AI助手") &&
@@ -259,19 +254,11 @@ export const useChatRequest = ({
       // 找到最后一个用户消息位置
       const lastUserIndex = messages.map((message) => message.role).lastIndexOf("user");
       if (lastUserIndex !== -1) {
-        // 插入到用户消息之前，完成默认规则与强制写入要求的提级。
+        // 默认规则紧邻本轮请求，任务理解在后续作为独立上下文补入。
         messages.splice(
           lastUserIndex,
           0,
           { role: "system", content: defaultSkill.instructions },
-          ...(requireResumeWrite
-            ? [
-                {
-                  role: "system" as const,
-                  content: REQUIRED_RESUME_WRITE_PROMPT,
-                },
-              ]
-            : []),
         );
       }
       const lastInput = messages.at(-1);
@@ -290,8 +277,15 @@ export const useChatRequest = ({
       // 请求开始即启动计时，避免首个模型事件返回前没有耗时
       state.onReasoning();
 
-      // 首次请求时才加载技能与简历工具清单
-      const resolvedTools = await resolveTools((skill: Skill) => {
+      // 首次请求时才加载技能与简历工具清单。
+      const clearTaskSkill = () => {
+        for (let index = currentMessages.value.length - 1; index >= 0; index -= 1) {
+          if (isPersistentTaskSkillId(currentMessages.value[index]?.systemSkillId)) {
+            currentMessages.value.splice(index, 1);
+          }
+        }
+      };
+      const activateTaskSkill = (skill: Skill) => {
         // 规范、行业与写入方法只在当轮使用，只有任务技能跨轮保留。
         if (!isPersistentTaskSkillId(skill.id)) return;
         const activeTaskSkill = [...currentMessages.value]
@@ -299,21 +293,53 @@ export const useChatRequest = ({
           .find((message) => isPersistentTaskSkillId(message.systemSkillId));
         if (activeTaskSkill?.systemSkillId === skill.id) return;
         // 切换任务时移除旧任务技能，确保会话中始终只有一个当前任务。
-        for (let index = currentMessages.value.length - 1; index >= 0; index -= 1) {
-          if (isPersistentTaskSkillId(currentMessages.value[index]?.systemSkillId)) {
-            currentMessages.value.splice(index, 1);
-          }
-        }
+        clearTaskSkill();
         addMessage({
           role: "system",
           content: `# 当前任务技能：${skill.name}\n\n${skill.instructions}`,
           systemSkillId: skill.id,
           typing: false,
         });
-      });
+      };
+      const { tools: resolvedTools, skills } = await resolveTools(activateTaskSkill);
       // 加载期间取消或切换会话时不再启动请求，工具执行前再次核对所属任务
       if (!isCurrentRequest()) return;
-      const tools = resolvedTools.map((tool) => ({
+      const entrySkillId = entryFlow === "oneKeyOptimize"
+        ? "resume_one_key_optimize"
+        : entryFlow === "oneKeyAdjust"
+          ? "resume_one_key_adjust"
+          : null;
+      // 每轮根据用户原话、近期上下文和入口来源理解任务，避免用动词表决定是否写入。
+      let taskUnderstanding: Awaited<ReturnType<typeof understandAssistantTask>> = null;
+      try {
+        taskUnderstanding = await understandAssistantTask({
+          messages: messages
+            .filter((message) => (message.role === "user" || message.role === "assistant") && !!message.content)
+            .slice(-8)
+            .map((message) => ({ role: message.role as "user" | "assistant", content: message.content.slice(0, 1500) })),
+          entryFlow: typeof entryFlow === "string" ? entryFlow : undefined,
+          previousSkillId: activeTaskSkillMessage?.systemSkillId,
+          skills: skills.filter((skill) => (isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing") &&
+            (!ONE_KEY_SKILLS.has(skill.id) || skill.id === entrySkillId))
+            .map(({ id, name, description }) => ({ id, name, description })),
+        }, taskAbortController.signal, addTokenUsage);
+      } catch (error) {
+        if (isAbortError(error)) throw error;
+        console.warn("[任务理解] 前置分析失败，交由 ReAct 根据原始请求判断:", error);
+      }
+      if (!isCurrentRequest()) return;
+      // 手动一键入口直接带入专用任务技能；聊天请求使用前置理解的技能建议。
+      const taskSkill = skills.find((skill) => skill.id === (entrySkillId ?? taskUnderstanding?.skillId));
+      // 新任务未选中可延续的技能时，清除旧任务记忆，避免下轮误承接。
+      if (taskUnderstanding && !isPersistentTaskSkillId(taskSkill?.id)) clearTaskSkill();
+      if (taskSkill) activateTaskSkill(taskSkill);
+      const taskContext = [
+        ...(taskUnderstanding ? [{ role: "system" as const, content: `# 本轮候选任务理解\n目标：${taskUnderstanding.objective}\n执行方向：${taskUnderstanding.approach}\n若与用户原话冲突，以用户原话为准；工具调用自行决定。` }] : []),
+        ...(taskSkill ? [{ role: "system" as const, content: `# 当前任务技能：${taskSkill.name}\n\n${taskSkill.instructions}` }] : []),
+      ];
+      const requestIndex = messages.map((message) => message.role).lastIndexOf("user");
+      if (requestIndex !== -1) messages.splice(requestIndex, 0, ...taskContext);
+      const tools = resolvedTools.filter((tool) => !ONE_KEY_SKILLS.has(tool.name) || tool.name === entrySkillId).map((tool) => ({
         ...tool,
         // 失效请求不得读取或修改当前简历
         execute: (args: any) => {
@@ -375,11 +401,6 @@ export const useChatRequest = ({
               if (result.applied && result.changed?.length) {
                 writeMessages.add(lastMsg);
                 lastMsg.hasWriteChanges = true;
-                if (Array.isArray(result.remainingIssues)) {
-                  remainingRequiredIssues = result.remainingIssues.filter(
-                    (issue: unknown): issue is string => typeof issue === "string",
-                  );
-                }
               }
             } catch (error) {
               // 解析失败时打印原始观察结果，避免静默吞掉导致验收误判无法排查
@@ -399,48 +420,7 @@ export const useChatRequest = ({
         },
         onFinal: (answer) => {
           if (!isCurrentRequest() || !lastMsg) return;
-          // 强制写入任务没有收到工具成功结果时作废文本结论，避免展示假成功。
-          if (requireResumeWrite && !writeMessages.has(lastMsg)) {
-            // 打印验收失败原因，便于排查最终阶段被判失败的问题
-            console.warn("[简历写入] 验收失败：未识别到成功的简历写入");
-            lastMsg.content = "本轮操作未能写入简历数据，修改说明已作废，请重新执行。";
-            lastMsg.requestStatus = "error";
-            lastMsg.stepLabel = "";
-            lastMsg.thoughtCollapsed = true;
-            stepContent = "";
-            streamFinalContent = false;
-            scrollToBottom();
-            return;
-          }
-          // 一键优化等报告型流程：报告声称存在改动却没有任何真实写入时，
-          // 说明模型把计划或未执行内容写成了 changes，与一键调整同等作废，杜绝假报告。
-          if (verifyWriteReport && reportClaimsChanges(answer) && !writeMessages.has(lastMsg)) {
-            // 打印验收失败原因，便于排查报告与写入不一致的问题
-            console.warn("[一键优化] 验收失败：报告声称存在改动但未识别到成功的简历写入");
-            lastMsg.content = "一键优化未能写入简历数据，本次优化报告已作废，请重新执行。";
-            lastMsg.requestStatus = "error";
-            lastMsg.stepLabel = "";
-            lastMsg.thoughtCollapsed = true;
-            stepContent = "";
-            streamFinalContent = false;
-            scrollToBottom();
-            return;
-          }
-          // 一键调整仍有完成度或时间线问题时禁止显示全部完成
-          if (requireResumeIssueClosure && remainingRequiredIssues?.length) {
-            // 打印验收失败原因与剩余问题清单，便于排查
-            console.warn("[一键调整] 验收失败：写入后仍有未解决问题", remainingRequiredIssues);
-            lastMsg.content = `一键调整已写入部分内容，但仍有以下问题未解决：\n\n${remainingRequiredIssues
-              .map((issue) => `- ${issue}`)
-              .join("\n")}`;
-            lastMsg.requestStatus = "error";
-            lastMsg.stepLabel = "";
-            lastMsg.thoughtCollapsed = true;
-            stepContent = "";
-            streamFinalContent = false;
-            scrollToBottom();
-            return;
-          }
+          // ReAct 自行依据任务理解与工具结果收口，写入记录只供撤回使用。
           lastMsg.content = answer;
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";
