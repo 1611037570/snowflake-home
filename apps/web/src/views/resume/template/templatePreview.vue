@@ -53,6 +53,11 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  // AI 生成操作文案，为空时不显示 AI 生成按钮。
+  aiActionText: {
+    type: String,
+    default: "",
+  },
   // 模板预览只展示第一页，草稿预览仍保留完整分页
   singlePage: {
     type: Boolean,
@@ -60,7 +65,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["close", "action"]);
+const emit = defineEmits(["close", "action", "ai-action"]);
 const { system } = storeToRefs(useResumeStore());
 // 标签彩虹配色：与卡片信息层同一套规则，亮色取浅色主题色、暗色取饱和主题色，按顺序循环取用
 const { isDark } = storeToRefs(useThemeStore());
@@ -197,6 +202,9 @@ onBeforeUnmount(() => {
           </div>
         </div>
         <div class="mt-3 flex flex-col gap-3">
+          <SfButton v-if="aiActionText" plain icon="lucide:wand-sparkles" class="w-full" @click="emit('ai-action')">
+            {{ aiActionText }}
+          </SfButton>
           <SfButton v-if="primaryActionText" type="theme" class="w-full" @click="emit('action')">
             {{ primaryActionText }}
           </SfButton>

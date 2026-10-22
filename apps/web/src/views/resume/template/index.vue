@@ -6,6 +6,7 @@ import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import RevealGrid from "@/views/resume/components/revealGrid.vue";
 import ResumePreviewSkeleton from "@/views/resume/components/resumePreviewSkeleton.vue";
 import ListScroll from "@/views/resume/components/listScroll.vue";
+import AiResumeGenerator from "@/views/resume/components/aiResumeGenerator.vue";
 import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplateData } from "./data/resumeData";
@@ -29,6 +30,7 @@ const PREVIEW_BASE_FILE = "xiaoZhou.ts";
 const recommendedTemplateIds = ["blueAngleHeader", "blueProfileBand", "default", "minimal"];
 
 const resumeStore = useResumeStore();
+const aiGenerator = ref(null);
 // 已加载的范本正文缓存：文件名到简历项的映射，切回旧分类不再重新加载。
 const templateItems = ref({});
 const templateLoading = ref(true);
@@ -212,10 +214,23 @@ const createStyleResumeItem = (card) => {
     ui: createResumeStyleUi(card.item.ui, moduleKeys), // 当前主题的完整界面配置
   };
 };
+// 使用模板与 AI 生成共用同一份模板数据，避免两个入口套用不同样式。
+const resolveTemplateResumeItem = (card) =>
+  card.type === "style" ? createStyleResumeItem(card) : deepClone(card.item);
 // 列表按钮与全屏预览按钮共用一次新建和埋点流程。
 const useTemplateCard = (card) => {
-  const item = card.type === "style" ? createStyleResumeItem(card) : deepClone(card.item);
+  const item = resolveTemplateResumeItem(card);
   if (item && resumeStore.addResume(item)) {
+    trackResumeAction({ eventType: "create", fileType: "none" });
+  }
+};
+// AI 生成器以当前卡片作为样式来源，生成内容后仍走模板页创建流程。
+const openAiGenerator = (card) => {
+  const item = resolveTemplateResumeItem(card);
+  if (item) aiGenerator.value?.open(item);
+};
+const handleAiGenerated = (item) => {
+  if (resumeStore.addResume(item)) {
     trackResumeAction({ eventType: "create", fileType: "none" });
   }
 };
@@ -232,6 +247,12 @@ const closeFullscreen = () => {
 const useFullscreenTemplate = () => {
   if (fullscreenCard.value) useTemplateCard(fullscreenCard.value);
   closeFullscreen();
+};
+// 全屏预览中的 AI 入口先退出预览，再打开共享生成组件。
+const useFullscreenAiGenerate = () => {
+  const card = fullscreenCard.value;
+  closeFullscreen();
+  if (card) nextTick(() => openAiGenerator(card));
 };
 
 const setPreviewSize = (size) => {
@@ -336,6 +357,9 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
                 <SfButton @click.stop="useTemplateCard(card)">
                   {{ $t("resumeTemplateUse") }}
                 </SfButton>
+                <SfButton plain icon="lucide:wand-sparkles" @click.stop="openAiGenerator(card)">
+                  {{ $t("resumeAiGenerateAction") }}
+                </SfButton>
               </div>
             </div>
             <!-- 信息层悬浮在卡片底部：纯色背景、高度随内容，标签默认显示 -->
@@ -380,9 +404,12 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
       :description="fullscreenCard?.description || ''"
       :tags="fullscreenCard?.tags || []"
       :primary-action-text="$t('resumeTemplateUseThis')"
+      :ai-action-text="$t('resumeAiGenerateAction')"
       :secondary-action-text="$t('resumeTemplateBackToList')"
       @close="closeFullscreen"
       @action="useFullscreenTemplate"
+      @ai-action="useFullscreenAiGenerate"
     />
+    <AiResumeGenerator ref="aiGenerator" @generated="handleAiGenerated" />
   </div>
 </template>

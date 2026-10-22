@@ -20,6 +20,12 @@ export { RESUME_SCHEMA, findResumeModuleSchema } from "./schema/resumeSchemaRegi
 export type { ResumeFieldSchema, ResumeModuleSchema } from "./schema/resumeSchema";
 export { CONTENT_REWRITE_TASK, LANGUAGE_NAMES } from "./tasks/contentRewrite";
 export type { ContentRewriteInput } from "./tasks/contentRewrite";
+export { runInitialResumeGeneration } from "./tasks/initialResumeGeneration";
+export type {
+  InitialResumeGenerationInput,
+  InitialResumeGenerationStage,
+  RunInitialResumeGenerationOptions,
+} from "./tasks/initialResumeGeneration";
 export type { ContentAiAction, Skill, SkillFactory, SkillLoader } from "./types";
 export { MARKDOWN_IMPORT_TASK, PDF_IMPORT_TASK } from "./tasks/importResume";
 export { MAX_PDF_REQUEST_BYTES } from "./tasks/pdfLimits";

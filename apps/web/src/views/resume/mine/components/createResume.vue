@@ -8,6 +8,7 @@ import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData"
 import { expandConfigModules, initializeDefaultAddedFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import ResumePreviewSkeleton from "@/views/resume/components/resumePreviewSkeleton.vue";
+import AiResumeGenerator from "@/views/resume/components/aiResumeGenerator.vue";
 import ResumeCardContainer from "./resumeCardContainer.vue";
 
 const resumeStore = useResumeStore();
@@ -20,6 +21,7 @@ const visible = ref(false);
 // 通用范本正文只用于展示缩略图，标记非响应式避免整份简历被深层代理。
 const baseItem = shallowRef(null);
 const baseLoading = ref(false);
+const aiGenerator = ref(null);
 
 // 弹窗打开后再取范本正文：草稿列表本身不依赖这份数据。
 const ensureBaseItem = async () => {
@@ -145,6 +147,25 @@ const confirmCreate = () => {
     trackResumeAction({ eventType: "create", fileType: "none" });
   }
   visible.value = false;
+};
+
+// AI 生成沿用当前所选版式，并把已填写的姓名与岗位带入用户信息步骤。
+const openAiGenerator = () => {
+  const item = blankContent.value ? buildBlank(styleCard.value) : buildFromCard(styleCard.value);
+  applyUserInfo(item);
+  const userFacts = [
+    formName.value.trim() ? `姓名：${formName.value.trim()}` : "",
+    formPosition.value.trim() ? `求职岗位：${formPosition.value.trim()}` : "",
+  ].filter(Boolean).join("\n");
+  visible.value = false;
+  nextTick(() => aiGenerator.value?.open(item, userFacts ? { user: userFacts } : {}));
+};
+
+// 共享生成器返回最终简历后，沿用新建入口的创建与统计流程。
+const handleAiGenerated = (item) => {
+  if (resumeStore.addResume(item)) {
+    trackResumeAction({ eventType: "create", fileType: "none" });
+  }
 };
 
 // 关闭弹窗时复位步骤、表单与选择，下次打开从第一步开始。
@@ -302,6 +323,9 @@ watch(visible, (value) => {
             </div>
           </label>
           <div class="mt-auto flex flex-col gap-3">
+            <SfButton size="large" icon="lucide:wand-sparkles" class="w-full" @click="openAiGenerator">
+              {{ $t("resumeAiGenerateAction") }}
+            </SfButton>
             <SfButton size="large" class="w-full" @click="confirmCreate">{{ $t("resumeCreateConfirmButton") }}</SfButton>
             <SfButton size="large" plain class="w-full" @click="step = 1">{{ $t("resumeCreateBackToStep1") }}</SfButton>
           </div>
@@ -309,4 +333,5 @@ watch(visible, (value) => {
       </div>
     </div>
   </SfModal>
+  <AiResumeGenerator ref="aiGenerator" @generated="handleAiGenerated" />
 </template>
