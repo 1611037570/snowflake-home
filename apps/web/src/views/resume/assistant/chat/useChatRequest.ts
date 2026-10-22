@@ -272,6 +272,8 @@ export const useChatRequest = ({
       agentSession = await createResumeAgentSession({
         taskId: requestTaskId,
         source: typeof entryFlow === "string" ? entryFlow : "chat",
+        // 规划缺省时用本轮用户原话回填任务目标
+        fallbackObjective: requestMessage?.content,
         previousTask,
         capabilities: resolvedCapabilities,
         tools: resolvedTools,

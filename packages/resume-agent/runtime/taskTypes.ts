@@ -110,6 +110,8 @@ export type CreateResumeAgentTaskRuntimeOptions = {
   taskId: string;
   // 任务入口来源。
   source: string;
+  // 规划缺省时用于回填目标的用户原始需求。
+  fallbackObjective?: string;
   // 上一轮未结束或可承接的任务状态。
   previousTask?: ResumeAgentTaskState;
   // 当前允许作为任务能力的技能。

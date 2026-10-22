@@ -11,6 +11,8 @@ export type ResumeAiMessageKey =
   | "serverError"
   | "network"
   | "unknown"
+  | "incompleteTask"
+  | "contextOverflow"
   | "markdownModelMissing"
   | "pdfModelUnset"
   | "requestTooLarge";
@@ -33,6 +35,8 @@ const DEFAULT_MESSAGES: Record<ResumeAiMessageKey, string> = {
   serverError: "AI 服务暂时不可用，请稍后重试",
   network: "网络连接异常，请检查网络后重试",
   unknown: "生成失败，请重试",
+  incompleteTask: "这轮没能按要求完成，可以把要求拆小一点再试一次",
+  contextOverflow: "本次对话内容过多，请新建对话后继续",
   markdownModelMissing: "请先配置简历导入模型",
   pdfModelUnset: "请先配置支持图片识别的简历解析模型",
   requestTooLarge: "简历文件过大，请压缩至 {size} MB 以内",

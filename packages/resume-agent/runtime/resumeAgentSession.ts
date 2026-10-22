@@ -16,6 +16,8 @@ export type CreateResumeAgentSessionOptions = {
   taskId: string;
   // 任务入口标识，普通对话使用 chat。
   source: string;
+  // 规划缺省时用于回填目标的用户原始需求。
+  fallbackObjective?: string;
   // 上一轮可供省略表达承接的任务状态。
   previousTask?: ResumeAgentTaskState;
   // 当前可供任务规划器选择的轻量能力目录。
@@ -63,6 +65,7 @@ export const createResumeAgentSession = async (
   const taskRuntime = createResumeAgentTaskRuntime({
     taskId: options.taskId,
     source: options.source,
+    fallbackObjective: options.fallbackObjective,
     previousTask: options.previousTask,
     capabilities: taskProfile ? [] : options.capabilities,
     preferredCapabilityId: options.preferredCapabilityId,

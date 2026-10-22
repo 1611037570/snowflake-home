@@ -37,6 +37,8 @@ export const registerResumeAgentHost = () => {
     serverError: "resumeAiServerError",
     network: "resumeAiNetwork",
     unknown: "resumeAiUnknown",
+    incompleteTask: "resumeAiIncompleteTask",
+    contextOverflow: "resumeAiContextOverflow",
     markdownModelMissing: "resumeImportMarkdownModelMissing",
     pdfModelUnset: "resumeImportPdfModelUnset",
     requestTooLarge: "resumeImportRequestTooLarge",

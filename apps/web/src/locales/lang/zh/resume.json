@@ -910,6 +910,8 @@
   "resumeAiServerError": "AI 服务暂时不可用，请稍后重试",
   "resumeAiNetwork": "网络连接异常，请检查网络后重试",
   "resumeAiUnknown": "生成失败，请重试",
+  "resumeAiIncompleteTask": "这轮没能按要求完成，可以把要求拆小一点再试一次",
+  "resumeAiContextOverflow": "本次对话内容过多，请新建对话后继续",
   "resumePrintOverflow": "简历内容超出页面可用区域",
   "resumePrintLayoutError": "简历页面布局配置有误",
   "resumePrintTimeout": "简历排版等待超时",

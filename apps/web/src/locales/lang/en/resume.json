@@ -910,6 +910,8 @@
   "resumeAiServerError": "The AI service is temporarily unavailable. Please try again later.",
   "resumeAiNetwork": "Network error. Check your connection and try again.",
   "resumeAiUnknown": "Generation failed. Please try again.",
+  "resumeAiIncompleteTask": "This round could not be completed. Simplify the request or split it into steps.",
+  "resumeAiContextOverflow": "This conversation is too long. Start a new chat to continue.",
   "resumePrintOverflow": "The resume content exceeds the available page area",
   "resumePrintLayoutError": "Invalid resume page layout configuration",
   "resumePrintTimeout": "Timed out waiting for the resume layout",

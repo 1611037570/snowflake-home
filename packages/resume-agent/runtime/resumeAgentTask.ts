@@ -3,6 +3,8 @@ import { loadSkillResource } from "../types";
 import type {
   ResumeAgentCompletionPolicy,
   ResumeAgentRequiredEffect,
+  ResumeAgentTool,
+  ResumeAgentToolEffect,
 } from "./types";
 import {
   evaluateResumeAgentCompletion,
@@ -18,6 +20,22 @@ import {
   type ResumeAgentTaskRelation,
   type ResumeAgentTaskState,
 } from "./taskTypes";
+
+// 工具效果对应的必需业务效果，用于规划缺失时建立隐式任务
+const TOOL_EFFECT_TARGETS: Record<ResumeAgentToolEffect, ResumeAgentRequiredEffect | undefined> = {
+  read: undefined,
+  mutation: "resume_change",
+  submit: "draft_submit",
+  sync: "language_update",
+};
+
+// 模型未声明完成条件时按任务效果生成可核对的默认条件
+const resolveDefaultSuccessCondition = (effects: ResumeAgentRequiredEffect[]) => {
+  if (effects.includes("resume_change")) return "当前简历已按用户要求完成写入";
+  if (effects.includes("draft_submit")) return "已提交符合用户要求的结构化草稿";
+  if (effects.includes("language_update")) return "简历展示语言已同步";
+  return "已向用户给出所需结果";
+};
 
 // 同一个 Agent 只负责规划与行动，任务阶段和完成结果由运行时依据工具事实维护。
 export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRuntimeOptions) => {
@@ -84,7 +102,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
           description: capabilityDescription,
         },
       },
-      required: ["relation", "objective", "scope", "requiredEffects", "successCondition", "capabilityIds"],
+      required: ["objective", "requiredEffects"],
       additionalProperties: false,
     },
     execute: async (args) => {
@@ -92,23 +110,31 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
         // 同一 ReAct 只建立一次任务，避免执行中重新规划后丢失已取得的证据。
         return { accepted: false, error: "本轮任务已经建立，请继续执行当前任务" };
       }
-      if (
-        !TASK_RELATIONS.includes(args?.relation) ||
-        typeof args?.objective !== "string" || !args.objective.trim() ||
-        typeof args?.scope !== "string" || !args.scope.trim() ||
-        !Array.isArray(args?.requiredEffects) ||
-        args.requiredEffects.some((effect: unknown) => !TASK_REQUIRED_EFFECTS.includes(effect as ResumeAgentRequiredEffect)) ||
-        typeof args?.successCondition !== "string" || !args.successCondition.trim() ||
-        !Array.isArray(args?.capabilityIds)
-      ) {
-        // 参数不完整时把原因留给 ReAct 自行修正，避免任务规划工具中断请求。
-        return { accepted: false, error: "任务契约参数不完整，请补全任务关系、目标、范围、必需效果、完成条件和能力后重试" };
+      // 效果枚举写错会直接改变验收口径，必须让模型改对而不是静默丢弃
+      const rawEffects: unknown[] = Array.isArray(args?.requiredEffects) ? args.requiredEffects : [];
+      const unknownEffect = rawEffects.find(
+        (effect) => !TASK_REQUIRED_EFFECTS.includes(effect as ResumeAgentRequiredEffect),
+      );
+      if (unknownEffect !== undefined) {
+        return {
+          accepted: false,
+          error: `未知的必需效果 ${String(unknownEffect)}，可选值：${TASK_REQUIRED_EFFECTS.join("、")}`,
+        };
       }
+      const effects = rawEffects as ResumeAgentRequiredEffect[];
+      // 缺省字段按用户原始需求和效果补齐，避免参数不全导致整轮请求无法建立任务
+      const objective =
+        typeof args?.objective === "string" && args.objective.trim()
+          ? args.objective.trim()
+          : options.fallbackObjective?.trim() || "处理用户本轮请求";
+      const scope =
+        typeof args?.scope === "string" && args.scope.trim() ? args.scope.trim() : "未明确指定";
       // 明确功能入口和没有上一任务的对话都从新任务开始，避免误承接历史目标。
-      const relation: ResumeAgentTaskRelation = options.source === "chat" && previousTask
-        ? args.relation as ResumeAgentTaskRelation
-        : "new";
-      const requestedCapabilityIds = args.capabilityIds.filter(
+      const relation: ResumeAgentTaskRelation =
+        options.source === "chat" && previousTask && TASK_RELATIONS.includes(args?.relation)
+          ? (args.relation as ResumeAgentTaskRelation)
+          : "new";
+      const requestedCapabilityIds = (Array.isArray(args?.capabilityIds) ? args.capabilityIds : []).filter(
         (id: unknown): id is string => typeof id === "string" && capabilityMap.has(id),
       );
       const continuedCapabilityIds = relation === "new" ? [] : previousTask?.capabilityIds ?? [];
@@ -125,7 +151,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
         options.fixedRequiredEffects ??
         (relation !== "new" && previousTask
           ? previousTask.requiredEffects
-          : args.requiredEffects as ResumeAgentRequiredEffect[]);
+          : effects);
       const policies = [
         options.taskProfile?.completionPolicy,
         ...selectedCapabilities.map((capability) => capability.completionPolicy),
@@ -135,12 +161,14 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
         id: options.taskId,
         source: options.source,
         relation,
-        objective: options.taskProfile?.objective ?? args.objective.trim(),
-        scope: args.scope.trim(),
+        objective: options.taskProfile?.objective ?? objective,
+        scope,
         requiredEffects: resolvedPolicy.requiredEffects,
         successCondition: options.taskProfile?.successCondition ??
           options.fixedSuccessCondition ??
-          args.successCondition.trim(),
+          (typeof args?.successCondition === "string" && args.successCondition.trim()
+            ? args.successCondition.trim()
+            : resolveDefaultSuccessCondition(resolvedPolicy.requiredEffects)),
         capabilityIds: selectedCapabilityIds,
         phase: "planned",
         evidence: [],
@@ -252,8 +280,49 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     },
   };
 
+  // 隐式任务标记：只有规划缺失时才允许按工具效果补齐验收口径
+  let implicitTask = false;
+  // 规划缺失时按首个业务工具建立隐式任务，保证证据、撤回与验收仍然生效
+  const ensureImplicitTask = (tool: ResumeAgentTool) => {
+    const target = tool.taskMeta ? TOOL_EFFECT_TARGETS[tool.taskMeta.effect] : undefined;
+    // 正式任务由规划结果决定验收口径，不再被工具效果覆盖
+    if (task && !implicitTask) return;
+    if (task && (!target || task.requiredEffects.includes(target))) return;
+    const effects = [
+      ...(task?.requiredEffects ?? []),
+      ...(target ? [target] : []),
+    ];
+    const resolvedPolicy = resolveResumeAgentCompletionPolicy(effects, []);
+    completionPolicy = resolvedPolicy;
+    task = {
+      id: options.taskId,
+      source: options.source,
+      relation: "new", // 隐式任务不承接历史目标。
+      objective: task?.objective ?? options.fallbackObjective?.trim() ?? "处理用户本轮请求",
+      scope: task?.scope ?? "未明确指定",
+      requiredEffects: resolvedPolicy.requiredEffects,
+      successCondition:
+        task?.successCondition ?? resolveDefaultSuccessCondition(resolvedPolicy.requiredEffects),
+      capabilityIds: task?.capabilityIds ?? [],
+      phase: task?.phase ?? "planned",
+      evidence: task?.evidence ?? [],
+    };
+    implicitTask = true;
+    console.warn("[简历助手] 未建立任务契约，已按工具效果建立隐式任务:", {
+      source: options.source,
+      tool: tool.name,
+      requiredEffects: resolvedPolicy.requiredEffects,
+    });
+  };
+
   const beforeFinal = () => {
-    if (!task) return "尚未建立本轮任务，请先调用 plan_resume_task。";
+    if (!task) {
+      // 规划始终缺失时放行回答，避免整轮请求因为契约缺失直接失败
+      console.warn("[简历助手] 本轮未建立任务契约，跳过完成校验放行回答:", {
+        source: options.source,
+      });
+      return null;
+    }
     if (task.phase === "waiting" || task.phase === "blocked") return null;
     const result = evaluateResumeAgentCompletion(
       task.evidence,
@@ -302,8 +371,20 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     controlTools: options.allowTaskPause === false
       ? [planTaskTool]
       : [planTaskTool, requestInputTool, reportBlockerTool],
-    // 包装业务工具并记录真实执行证据。
-    wrapTools: toolExecution.wrapTools,
+    // 包装业务工具并记录真实执行证据；执行前补齐隐式任务。
+    wrapTools: (tools: ReactTool[]) => {
+      const wrapped = toolExecution.wrapTools(tools);
+      return wrapped.map((tool, index) => {
+        const source = tools[index] as ResumeAgentTool;
+        return {
+          ...tool,
+          execute: (args: unknown) => {
+            ensureImplicitTask(source);
+            return tool.execute(args);
+          },
+        };
+      });
+    },
     // 最终答案提交前的通用完成检查。
     beforeFinal,
     // 提供给同一 Agent 的任务运行上下文。
