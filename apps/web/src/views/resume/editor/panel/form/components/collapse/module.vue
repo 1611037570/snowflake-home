@@ -108,7 +108,7 @@ function handleAdd() {
 </script>
 
 <template>
-  <SfCollapse v-model="collapsed" :border="false" class="rounded-3xl! bg-sf-primary!">
+  <SfCollapse v-model="collapsed" :border="false" class="bg-sf-primary!">
     <SfCollapseItem
       name="1"
       lazy
@@ -196,9 +196,9 @@ function handleAdd() {
 <style scoped>
 @reference "@/styles/tailwind.css";
 
-/* 模块外框包裹头部与内容，统一圆角边界 */
+/* 模块外框包裹头部与内容，统一方角边界 */
 .resume-module-box {
-  @apply overflow-hidden rounded-3xl border border-sf-b transition-colors;
+  @apply overflow-hidden border border-sf-b transition-colors;
 }
 /* 悬停与当前编辑状态只强化边框，不增加背景色。 */
 .resume-module-box:hover,
@@ -215,11 +215,11 @@ function handleAdd() {
 }
 /* 模块头部背景跟随明暗主题，并覆盖全局透明背景 */
 .resume-module-box > :deep(.el-collapse-item__header) {
-  @apply rounded-3xl  px-3;
+  @apply px-3;
 }
 
-/* 展开时去掉头部下圆角，并在底边添加分隔线 */
+/* 展开时在底边添加分隔线 */
 .resume-module-box > :deep(.el-collapse-item__header.is-active) {
-  @apply rounded-b-none border-b!  border-sf-b!;
+  @apply border-b!  border-sf-b!;
 }
 </style>
