@@ -1,15 +1,27 @@
+import type { Skill } from "../types";
+
 // 简历翻译技能：用户要求翻译所选范围或整份简历时按需加载，规范翻译方式与结构保留
-export const resumeTranslate = () => ({
+export const resumeTranslate = (): Skill => ({
   id: "resume_translate",
   name: "简历翻译",
   description: `指导 AI 翻译当前所选简历范围或整份简历：保持结构对应、不增删、不改写原意。`,
+  completionPolicy: {
+    outcome: "resume_change", // 只约束需要写入简历的翻译任务。
+    requiredEvidence: ["resume_change", "language_update"], // 内容写入与展示语言同步都必须成功。
+    evidenceOrder: [
+      {
+        evidence: "language_update", // 展示语言同步必须后执行。
+        after: "resume_change", // 翻译内容写入必须先成功。
+      },
+    ],
+  },
   instructions: `# 翻译范围
 先确认目标语言；翻译简历时读取本轮可访问的真实数据，只处理读取范围。用户要求整份而当前仅能读取局部时，先取得整份读取范围。仅需译文文本时直接输出，不写入。
 
 # 写入翻译
 - 保持模块、记录顺序和原意；只翻译自然语言正文与展示标题，不改日期、数字、网址、媒体或结构化取值。空字段和脱敏字段不写入。
 - 字段格式不明确时读取 resume_data_contract；需要写入时按 resume_writing 的流程组织操作。展示标题通过 updateModuleTitle 修改，module 始终使用稳定 key。
-- 将本次范围的翻译操作提交给 propose_resume_edits，确认已成功写入后再调用 update_resume_language 同步界面语言。后者不能代替内容翻译；写入失败时只处理失败项，不声称翻译完成。
+- 将本次范围的翻译操作提交给 propose_resume_edits，写入完成后调用 update_resume_language 同步界面语言。
 
 # 输出
 写入后概括已翻译的范围与仍需核对的内容，不复述整份译文；纯文本翻译按模块组织。`,

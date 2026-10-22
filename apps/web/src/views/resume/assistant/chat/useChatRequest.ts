@@ -15,8 +15,6 @@ import { storeToRefs } from "pinia";
 import type { AssistantConfig } from "../types";
 // 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
 import { defaultPrompt } from "../routing/defaultPrompt";
-// 专用一键能力仅向对应按钮任务开放，普通聊天由任务运行时选择通用能力。
-const ONE_KEY_SKILLS = new Set(["resume_one_key_optimize", "resume_one_key_adjust"]);
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
   chat: Ref<Chat>; // 当前聊天会话
@@ -116,8 +114,6 @@ export const useChatRequest = ({
     aptitude_hr_interview: "读取《行测与 HR 面试》",
     resume_interview: "读取《AI 简历面试》",
     resume_score: "读取《AI 简历评估》",
-    resume_one_key_adjust: "读取《一键调整》",
-    resume_one_key_optimize: "读取《一键优化》",
     update_resume_language: "更新简历语言",
   };
 
@@ -282,28 +278,27 @@ export const useChatRequest = ({
       const { tools: resolvedTools, skills } = await resolveTools();
       // 加载期间取消或切换会话时不再启动请求，工具执行前再次核对所属任务
       if (!isCurrentRequest()) return;
-      const entrySkillId = entryFlow === "oneKeyOptimize"
-        ? "resume_one_key_optimize"
-        : entryFlow === "oneKeyAdjust"
-          ? "resume_one_key_adjust"
-          : null;
-      const capabilities = skills.filter((skill) =>
-        (isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing") &&
-        (!ONE_KEY_SKILLS.has(skill.id) || skill.id === entrySkillId),
-      );
+      // 一键按钮直接取得任务配置，普通聊天仍由运行时选择通用能力。
+      const taskProfile = entryFlow === "oneKeyOptimize" || entryFlow === "oneKeyAdjust"
+        ? await import("@snowflake/resume-agent/tasks/oneKey")
+          .then((module) => module.getOneKeyResumeTaskProfile(entryFlow))
+        : undefined;
+      if (!isCurrentRequest()) return;
+      const capabilities = taskProfile
+        ? []
+        : skills.filter((skill) => isPersistentTaskSkillId(skill.id) || skill.id === "resume_writing");
       const taskRuntime = createResumeAgentTaskRuntime({
         taskId: requestTaskId,
         source: typeof entryFlow === "string" ? entryFlow : "chat",
         previousTask,
         capabilities,
-        preferredCapabilityId: entrySkillId ?? undefined,
-        fixedOutcome: entrySkillId ? "resume_change" : undefined,
+        taskProfile,
       });
       const requestIndex = messages.map((message) => message.role).lastIndexOf("user");
       if (requestIndex !== -1) {
         messages.splice(requestIndex, 0, { role: "system", content: taskRuntime.buildContext() });
       }
-      const businessTools = resolvedTools.filter((tool) => !ONE_KEY_SKILLS.has(tool.name) || tool.name === entrySkillId).map((tool) => ({
+      const businessTools = resolvedTools.map((tool) => ({
         ...tool,
         // 失效请求不得读取或修改当前简历
         execute: (args: any) => {

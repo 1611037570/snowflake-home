@@ -20,7 +20,7 @@ export interface ReportChange {
   summary: string;
 }
 
-// 一键优化产出的结构化报告，字段与 skill_resume_one_key_optimize 的输出约定保持一致
+// 一键优化产出的结构化报告，字段与按钮任务配置的输出约定保持一致
 export interface ResumeReport {
   // 有效维度得分均值，无可评分维度时为空
   totalScore: number | null;

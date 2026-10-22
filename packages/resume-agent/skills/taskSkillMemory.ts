@@ -10,8 +10,6 @@ const PERSISTENT_TASK_SKILL_IDS = new Set([
   "resume_optimization",
   "resume_interview",
   "resume_score",
-  "resume_one_key_adjust",
-  "resume_one_key_optimize",
   "career_planning",
   "life_summary",
 ]);

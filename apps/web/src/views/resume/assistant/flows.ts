@@ -177,7 +177,8 @@ export const flows: Record<string, Flow> = {
     build: () => { // 根据点击时的最新检查结果构造真实请求。
       const issues = getResumeAdjustmentIssues();
       return {
-        userContent: `请对整份简历执行一键调整，只处理当前检查发现的缺失、格式和时间线问题。直接完成所有修改，不得在执行前向我提问；缺少真实依据时允许结合现有简历生成合理的临时内容，但必须在修改完成后用“待确认内容”集中列出所有生成或无法核实的值。\n\n当前检查问题：\n${issues.map((issue) => `- ${issue}`).join("\n")}`,
+        // 用户消息只携带本次检查事实，执行规则由按钮任务配置提供。
+        userContent: `请执行一键调整。\n\n当前检查问题：\n${issues.map((issue) => `- ${issue}`).join("\n")}`,
         requestContext: {
           resumeScope: "all", // 完成度检查覆盖整份简历，本轮固定读取全部模块。
           requireResumeIssueClosure: true, // 一键调整还必须关闭完成度检查中的剩余问题。
@@ -209,9 +210,10 @@ export const flows: Record<string, Flow> = {
     build: (answers) => {
       // 优先采用本次输入的岗位；已有岗位由简历直接提供。
       const direction = answers[0] || useResumeStore().currentData?.user?.data?.position?.trim() || "";
-      // 按钮任务身份由 requestContext 记录，能力由任务运行时装配。
+      // 按钮任务身份由 requestContext 记录，运行时据此装配专用任务配置。
       return {
-        userContent: `请对我的简历进行一键优化：求职岗位为「${direction}」。请结合简历中的职业阶段补齐有依据的内容、综合优化，并给出评分与优化报告。`,
+        // 用户消息只携带本次岗位事实，执行与报告规则由按钮任务配置提供。
+        userContent: `请执行一键优化。求职岗位为「${direction}」。`,
         // 用户已处于整个简历模式或在流程中明确授权，本次请求固定读取整份简历
         requestContext: {
           resumeScope: "all",

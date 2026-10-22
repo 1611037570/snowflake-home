@@ -40,6 +40,7 @@ export { createSkillTools } from "./tools/skillLoader";
 export { buildToolGuide } from "./tools/toolGuide";
 export { isPersistentTaskSkillId } from "./skills/taskSkillMemory";
 export { createResumeAgentTaskRuntime } from "./runtime/resumeAgentTask";
+export { RESUME_AGENT_FACTS } from "./runtime/types";
 export type {
   CreateResumeAgentTaskRuntimeOptions,
   ResumeAgentPendingInput,
@@ -47,9 +48,21 @@ export type {
   ResumeAgentTaskEvidence,
   ResumeAgentTaskOutcome,
   ResumeAgentTaskPhase,
+  ResumeAgentTaskProfile,
   ResumeAgentTaskRelation,
   ResumeAgentTaskState,
 } from "./runtime/resumeAgentTask";
+export type {
+  ResumeAgentCompletionPolicy,
+  ResumeAgentEvidenceKind,
+  ResumeAgentEvidenceOrder,
+  ResumeAgentTool,
+  ResumeAgentToolEffect,
+  ResumeAgentToolEvaluation,
+  ResumeAgentToolResultStatus,
+  ResumeAgentToolReplayScope,
+  ResumeAgentToolRuntimeMeta,
+} from "./runtime/types";
 export {
   parseResumeReport,
   stripResumeReportBlock,

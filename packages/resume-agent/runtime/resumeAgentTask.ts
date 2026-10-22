@@ -1,5 +1,12 @@
 import type { ReactTool } from "@/apis/llm/react";
 import type { Skill } from "../types";
+import type {
+  ResumeAgentCompletionPolicy,
+  ResumeAgentEvidenceKind,
+  ResumeAgentEvidenceOrder,
+  ResumeAgentTool,
+  ResumeAgentToolResultStatus,
+} from "./types";
 
 export type ResumeAgentTaskRelation =
   // 用户开始了与上一轮无关的新任务。
@@ -34,12 +41,31 @@ export type ResumeAgentTaskPhase =
   | "completed";
 
 export type ResumeAgentTaskEvidence = {
+  // 本条结果对应的首次真实工具执行顺序。
+  sequence: number;
   // 产生证据的工具名称。
   tool: string;
-  // 证据类型，用于区分读取、现有简历变更与草稿提交。
-  kind: "read" | "resume_change" | "draft_submit";
+  // 证据类型，用于区分读取、简历变更、草稿提交与语言同步。
+  kind: ResumeAgentEvidenceKind;
+  // 工具本次执行是完整成功、部分成功还是失败。
+  status: ResumeAgentToolResultStatus;
   // 工具结果的简短事实摘要。
   summary: string;
+  // 工具结果额外证明的业务事实。
+  facts?: string[];
+  // 是否复用了同一参数首次执行的结果。
+  replayed?: boolean;
+};
+
+type ResumeAgentToolAttempt = {
+  // 相同参数的工具执行状态。
+  status: ResumeAgentToolResultStatus;
+  // 第一次真实执行返回的结果。
+  result: unknown;
+  // 执行时的简历数据版本，用于区分状态变化后的再次尝试。
+  stateVersion: number;
+  // 首次真实执行对应的证据顺序。
+  sequence: number;
 };
 
 export type ResumeAgentPendingInput = {
@@ -79,8 +105,21 @@ export type ResumeAgentTaskState = {
   pendingInput?: ResumeAgentPendingInput;
   // 当前任务无法继续时保存的阻塞信息。
   blocker?: ResumeAgentTaskBlocker;
-  // 已成功取得的工具执行证据。
+  // 本轮工具执行产生的成功、部分成功与失败证据。
   evidence: ResumeAgentTaskEvidence[];
+};
+
+export type ResumeAgentTaskProfile = {
+  // 按钮任务的稳定标识。
+  id: string;
+  // 按钮已经明确的任务目标。
+  objective: string;
+  // 按钮任务必须产生的结果类型。
+  outcome: ResumeAgentTaskOutcome;
+  // 仅在该按钮任务中注入的执行要求。
+  instructions: string;
+  // 由运行时核对的按钮任务完成条件。
+  completionPolicy: ResumeAgentCompletionPolicy;
 };
 
 export type CreateResumeAgentTaskRuntimeOptions = {
@@ -98,16 +137,28 @@ export type CreateResumeAgentTaskRuntimeOptions = {
   fixedOutcome?: ResumeAgentTaskOutcome;
   // 当前入口是否允许以等待补充或阻塞状态暂停任务。
   allowTaskPause?: boolean;
+  // 按钮入口直接指定的任务配置，不参与通用技能选择。
+  taskProfile?: ResumeAgentTaskProfile;
 };
 
 const TASK_RELATIONS: ResumeAgentTaskRelation[] = ["new", "continue", "revise"];
 const TASK_OUTCOMES: ResumeAgentTaskOutcome[] = ["answer", "resume_change", "draft"];
 
-const isObject = (value: unknown): value is Record<string, any> =>
-  value !== null && typeof value === "object" && !Array.isArray(value);
-
 const cloneTask = (task?: ResumeAgentTaskState): ResumeAgentTaskState | undefined =>
   task ? JSON.parse(JSON.stringify(task)) : undefined;
+
+const DEFAULT_REQUIRED_EVIDENCE: Record<ResumeAgentTaskOutcome, ResumeAgentEvidenceKind[]> = {
+  answer: [], // 文字回答不要求业务写入证据。
+  resume_change: ["resume_change"], // 修改任务要求简历写入成功。
+  draft: ["draft_submit"], // 草稿任务要求草稿提交成功。
+};
+
+const EVIDENCE_NAMES: Record<ResumeAgentEvidenceKind, string> = {
+  read: "资料读取", // 资料读取证据的用户可读名称。
+  resume_change: "简历写入", // 简历写入证据的用户可读名称。
+  draft_submit: "草稿提交", // 草稿提交证据的用户可读名称。
+  language_update: "展示语言同步", // 展示语言同步证据的用户可读名称。
+};
 
 // 同一个 Agent 只负责规划与行动，任务阶段和完成结果由运行时依据工具事实维护。
 export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRuntimeOptions) => {
@@ -115,7 +166,73 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
   const previousTask = cloneTask(options.previousTask);
   const capabilityMap = new Map((options.capabilities ?? []).map((skill) => [skill.id, skill]));
   const capabilityIds = [...capabilityMap.keys()];
-  const successfulMutations = new Map<string, unknown>();
+  const toolAttempts = new Map<string, ResumeAgentToolAttempt>();
+  let toolSequence = 0;
+  let lastReadInvalidationSequence = 0;
+  let stateVersion = 0;
+  let completionPolicy: ResumeAgentCompletionPolicy = {
+    requiredEvidence: [], // 建立任务后再按结果类型和能力填充。
+  };
+
+  const resolveCompletionPolicy = (
+    outcome: ResumeAgentTaskOutcome,
+    selectedCapabilityIds: string[],
+  ): ResumeAgentCompletionPolicy => {
+    const requiredEvidence = new Set(DEFAULT_REQUIRED_EVIDENCE[outcome]);
+    const readAfterEvidence = new Set<ResumeAgentEvidenceKind>();
+    const requiredFacts = new Set<string>();
+    const evidenceOrder: ResumeAgentEvidenceOrder[] = [];
+    const policies = [
+      options.taskProfile?.completionPolicy,
+      ...selectedCapabilityIds.map((id) => capabilityMap.get(id)?.completionPolicy),
+    ];
+    policies.forEach((policy) => {
+      if (!policy || (policy.outcome && policy.outcome !== outcome)) return;
+      policy.requiredEvidence.forEach((kind) => requiredEvidence.add(kind));
+      policy.readAfterEvidence?.forEach((kind) => readAfterEvidence.add(kind));
+      policy.requiredFacts?.forEach((fact) => requiredFacts.add(fact));
+      policy.evidenceOrder?.forEach((order) => {
+        if (!evidenceOrder.some((item) => item.evidence === order.evidence && item.after === order.after)) {
+          evidenceOrder.push(order);
+        }
+      });
+    });
+    return {
+      outcome, // 当前合并策略对应的任务结果类型。
+      requiredEvidence: [...requiredEvidence], // 默认要求与能力要求合并后的完成证据。
+      readAfterEvidence: [...readAfterEvidence], // 必须在操作后重新读取的证据类型。
+      requiredFacts: [...requiredFacts], // 特定能力要求工具证明的业务事实。
+      evidenceOrder, // 特定能力要求的工具成功顺序。
+    };
+  };
+
+  const getLatestEvidence = (kind: ResumeAgentEvidenceKind) => {
+    const evidence = task?.evidence ?? [];
+    for (let index = evidence.length - 1; index >= 0; index -= 1) {
+      const item = evidence[index];
+      if (item?.kind === kind) return item;
+    }
+    return undefined;
+  };
+
+  const getLatestSuccessfulEvidence = (kind: ResumeAgentEvidenceKind) => {
+    const evidence = getLatestEvidence(kind);
+    return evidence?.status === "success" ? evidence : undefined;
+  };
+
+  const getLatestActualChangeEvidence = (kind: ResumeAgentEvidenceKind) => {
+    const evidence = task?.evidence ?? [];
+    for (let index = evidence.length - 1; index >= 0; index -= 1) {
+      const item = evidence[index];
+      if (item?.kind === kind && !item.replayed && item.status !== "failed") return item;
+    }
+    return undefined;
+  };
+
+  const hasFreshRead = () => {
+    const readEvidence = getLatestSuccessfulEvidence("read");
+    return Boolean(readEvidence && readEvidence.sequence > lastReadInvalidationSequence);
+  };
 
   const planTaskTool: ReactTool = {
     name: "plan_resume_task",
@@ -157,6 +274,10 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       additionalProperties: false,
     },
     execute: (args) => {
+      if (task) {
+        // 同一 ReAct 只建立一次任务，避免执行中重新规划后丢失已取得的证据。
+        return { accepted: false, error: "本轮任务已经建立，请继续执行当前任务" };
+      }
       if (
         !TASK_RELATIONS.includes(args?.relation) ||
         typeof args?.objective !== "string" || !args.objective.trim() ||
@@ -180,18 +301,22 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
         ...requestedCapabilityIds,
         ...(requestedCapabilityIds.length ? [] : continuedCapabilityIds),
       ].filter((id, index, list) => capabilityMap.has(id) && list.indexOf(id) === index).slice(0, 3);
-      const outcome = options.fixedOutcome ?? (args.outcome as ResumeAgentTaskOutcome);
+      const outcome = options.taskProfile?.outcome ??
+        options.fixedOutcome ??
+        (args.outcome as ResumeAgentTaskOutcome);
       task = {
         id: options.taskId,
         source: options.source,
         relation,
-        objective: args.objective.trim(),
+        objective: options.taskProfile?.objective ?? args.objective.trim(),
         outcome,
         scope: args.scope.trim(),
         capabilityIds: selectedCapabilityIds,
         phase: "planned",
         evidence: [],
       };
+      // 完成条件由入口结果类型与本轮选中的能力共同决定，不依赖模型自行声明完成。
+      completionPolicy = resolveCompletionPolicy(outcome, selectedCapabilityIds);
       return {
         accepted: true,
         task,
@@ -242,8 +367,8 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       ) {
         return { accepted: false, error: "缺失事实、问题和原因不能为空" };
       }
-      if (task.outcome !== "answer" && !task.evidence.some((item) => item.kind === "read")) {
-        return { accepted: false, error: "请先读取当前可用的简历或入口资料，再判断需要用户补充什么" };
+      if (task.outcome !== "answer" && !hasFreshRead()) {
+        return { accepted: false, error: "请先读取当前最新的简历或入口资料，再判断需要用户补充什么" };
       }
       task.phase = "waiting";
       task.pendingInput = {
@@ -283,8 +408,8 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       if (typeof args?.reason !== "string" || !args.reason.trim()) {
         return { accepted: false, error: "阻塞原因不能为空" };
       }
-      if (task.outcome !== "answer" && !task.evidence.some((item) => item.kind === "read")) {
-        return { accepted: false, error: "请先读取当前可用的简历或入口资料，再判断任务是否无法继续" };
+      if (task.outcome !== "answer" && !hasFreshRead()) {
+        return { accepted: false, error: "请先读取当前最新的简历或入口资料，再判断任务是否无法继续" };
       }
       task.phase = "blocked";
       task.blocker = {
@@ -298,97 +423,139 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     },
   };
 
-  const recordToolResult = (tool: string, result: unknown) => {
-    if (!task || !isObject(result)) return;
-    if (["read_resume_data", "read_resume_generation_input"].includes(tool) &&
-      ("data" in result || "sections" in result)) {
-      if (!task.evidence.some((item) => item.kind === "read")) {
-        task.evidence.push({
-          tool,
-          kind: "read",
-          summary: tool === "read_resume_data" ? "已读取当前简历数据" : "已读取入口资料",
-        });
-      }
+  const recordToolResult = (
+    tool: ResumeAgentTool,
+    result: unknown,
+    sequence: number,
+    replayed = false,
+  ) => {
+    if (!task || !tool.taskMeta) return;
+    const evaluation = tool.taskMeta.evaluate(result);
+    task.evidence.push({
+      sequence,
+      tool: tool.name,
+      kind: tool.taskMeta.evidenceKind,
+      status: evaluation.status,
+      summary: evaluation.summary,
+      facts: evaluation.facts,
+      replayed,
+    });
+    if (!replayed && tool.taskMeta.invalidatesRead && evaluation.status !== "failed") {
+      // 数据已经变化或部分变化时，后续判断必须基于重新读取的最新数据。
+      lastReadInvalidationSequence = sequence;
+      stateVersion += 1;
+    }
+    if (tool.taskMeta.effect === "read" && evaluation.status === "success") {
       task.phase = "reading";
-      return;
+      return evaluation.status;
     }
-    if (
-      tool === "propose_resume_edits" &&
-      result.applied === true &&
-      Array.isArray(result.changed) &&
-      result.changed.length > 0 &&
-      (!Array.isArray(result.failed) || result.failed.length === 0) &&
-      (!Array.isArray(result.validationIssues) || result.validationIssues.length === 0) &&
-      (!Array.isArray(result.executionIssues) || result.executionIssues.length === 0) &&
-      (!Array.isArray(result.remainingIssues) || result.remainingIssues.length === 0)
-    ) {
-      // 只有完整成功且没有剩余问题的写入，才能作为本轮任务完成证据。
-      task.evidence.push({
-        tool,
-        kind: "resume_change",
-        summary: `已成功执行 ${result.changed.length} 项简历修改`,
-      });
-      task.phase = "verifying";
-      return;
-    }
-    if (tool === "submit_generated_resume" && result.accepted === true) {
-      task.evidence.push({ tool, kind: "draft_submit", summary: "已成功提交结构化简历草稿" });
-      task.phase = "verifying";
-    }
+    task.phase = evaluation.status === "failed" ? "acting" : "verifying";
+    return evaluation.status;
   };
 
   const wrapTools = (tools: ReactTool[]): ReactTool[] =>
-    tools.map((tool) => ({
-      ...tool,
-      // 业务工具返回后立即记录事实证据，任务阶段不依赖模型自述。
-      execute: async (args) => {
-        const isMutation = ["propose_resume_edits", "submit_generated_resume"].includes(tool.name);
-        const mutationKey = isMutation ? `${tool.name}:${JSON.stringify(args)}` : "";
-        // 同一任务内完全相同的成功操作直接复用结果，避免 ReAct 重试造成重复写入。
-        if (mutationKey && successfulMutations.has(mutationKey)) {
-          return successfulMutations.get(mutationKey);
-        }
-        if (task && isMutation) {
-          task.phase = "acting";
-          task.pendingInput = undefined;
-          task.blocker = undefined;
-        }
-        const result = await tool.execute(args);
-        recordToolResult(tool.name, result);
-        if (
-          mutationKey && isObject(result) &&
-          ((tool.name === "propose_resume_edits" && result.applied === true) ||
-            (tool.name === "submit_generated_resume" && result.accepted === true))
-        ) {
-          successfulMutations.set(mutationKey, result);
-        }
-        return result;
-      },
-    }));
+    tools.map((sourceTool) => {
+      const tool = sourceTool as ResumeAgentTool;
+      return {
+        name: tool.name,
+        description: tool.description,
+        parameters: tool.parameters,
+        // 业务工具返回后立即记录事实证据，任务阶段不依赖模型自述。
+        execute: async (args) => {
+          const isStateChanging = tool.taskMeta && tool.taskMeta.effect !== "read";
+          const replayScope = tool.taskMeta?.replayScope ?? "none";
+          const attemptKey = replayScope === "none" ? "" : `${tool.name}:${JSON.stringify(args)}`;
+          const previousAttempt = attemptKey ? toolAttempts.get(attemptKey) : undefined;
+          const canReuseFailure = previousAttempt?.status === "failed" &&
+            previousAttempt.stateVersion === stateVersion;
+          const canReuseResult = previousAttempt && previousAttempt.status !== "failed" && (
+            replayScope === "task" || previousAttempt.stateVersion === stateVersion
+          );
+          if (canReuseFailure) {
+            // 数据未变化时相同失败参数不会再次执行，模型需要根据上次结果修正参数。
+            return {
+              accepted: false, // 本次没有再次执行工具。
+              duplicateFailure: true, // 拒绝原因是相同失败参数被重复提交。
+              error: "相同参数的工具调用已经失败，请根据上次结果修改参数后再试", // 提供给模型的修正方向。
+            };
+          }
+          if (canReuseResult && previousAttempt) {
+            // 完整或部分成功的相同操作直接复用首次结果，避免重复写入。
+            recordToolResult(tool, previousAttempt.result, previousAttempt.sequence, true);
+            return previousAttempt.result;
+          }
+          if (task && isStateChanging) {
+            task.phase = "acting";
+            task.pendingInput = undefined;
+            task.blocker = undefined;
+          }
+          const result = await tool.execute(args);
+          if (tool.taskMeta) {
+            const sequence = ++toolSequence;
+            const status = recordToolResult(tool, result, sequence);
+            if (attemptKey && status) {
+              toolAttempts.set(attemptKey, { status, result, stateVersion, sequence });
+            }
+          }
+          return result;
+        },
+      };
+    });
 
   const beforeFinal = () => {
     if (!task) return "尚未建立本轮任务，请先调用 plan_resume_task。";
-    const requiredKind = task.outcome === "resume_change"
-      ? "resume_change"
-      : task.outcome === "draft"
-        ? "draft_submit"
-        : null;
-    // 成功工具证据优先于旧阶段，避免已经完成的任务被再次拦截。
-    if (requiredKind && task.evidence.some((item) => item.kind === requiredKind)) {
-      task.phase = "completed";
-      task.pendingInput = undefined;
-      task.blocker = undefined;
-      return null;
-    }
     if (task.phase === "waiting" || task.phase === "blocked") return null;
-    if (task.outcome === "answer") {
-      task.phase = "completed";
-      return null;
+    const missingEvidence = completionPolicy.requiredEvidence.filter(
+      (kind) => !getLatestSuccessfulEvidence(kind),
+    );
+    const latestEvidenceByKind = new Map<ResumeAgentEvidenceKind, ResumeAgentTaskEvidence>();
+    task.evidence
+      .filter((item) => !item.replayed)
+      .forEach((item) => latestEvidenceByKind.set(item.kind, item));
+    const successfulFacts = new Set(
+      [...latestEvidenceByKind.values()]
+        .filter((item) => item.status === "success")
+        .flatMap((item) => item.facts ?? []),
+    );
+    const missingFacts = (completionPolicy.requiredFacts ?? []).filter(
+      (fact) => !successfulFacts.has(fact),
+    );
+    const invalidEvidenceOrder = (completionPolicy.evidenceOrder ?? []).find((order) => {
+      const earlierEvidence = getLatestActualChangeEvidence(order.after);
+      const laterEvidence = getLatestSuccessfulEvidence(order.evidence);
+      return earlierEvidence && laterEvidence && laterEvidence.sequence <= earlierEvidence.sequence;
+    });
+    if (!missingEvidence.length && !missingFacts.length && !invalidEvidenceOrder) {
+      const staleReadAfter = (completionPolicy.readAfterEvidence ?? []).find((kind) => {
+        const operationEvidence = getLatestActualChangeEvidence(kind);
+        const readEvidence = getLatestSuccessfulEvidence("read");
+        return operationEvidence && (!readEvidence || readEvidence.sequence <= operationEvidence.sequence);
+      });
+      if (!staleReadAfter) {
+        task.phase = "completed";
+        task.pendingInput = undefined;
+        task.blocker = undefined;
+        return null;
+      }
+      task.phase = "verifying";
+      return `已完成${EVIDENCE_NAMES[staleReadAfter]}，请重新读取最新简历数据后再生成最终结果。`;
     }
     task.phase = "verifying";
-    return options.allowTaskPause === false
-      ? "本轮任务尚未取得所需的工具完成证据。请继续使用已有资料和可用工具完成任务，不要编造事实。"
-      : "本轮任务尚未取得所需的工具完成证据。请继续使用可用工具完成任务；确实缺少必要事实时调用 request_resume_input，确认无法安全执行时调用 report_resume_blocker。";
+    if (invalidEvidenceOrder) {
+      return `请在${EVIDENCE_NAMES[invalidEvidenceOrder.after]}成功后重新完成${EVIDENCE_NAMES[invalidEvidenceOrder.evidence]}。`;
+    }
+    if (missingEvidence.length) {
+      const missingNames = missingEvidence.map((kind) => EVIDENCE_NAMES[kind]).join("、");
+      return options.allowTaskPause === false
+        ? `本轮任务还缺少${missingNames}的成功证据。请继续使用已有资料和可用工具完成任务，不要编造事实。`
+        : `本轮任务还缺少${missingNames}的成功证据。请继续使用可用工具完成任务；确实缺少必要事实时调用 request_resume_input，确认无法安全执行时调用 report_resume_blocker。`;
+    }
+    if (missingFacts.length) {
+      return options.allowTaskPause === false
+        ? "本轮任务尚未取得完整处理结果，请继续根据工具返回的未完成项执行。"
+        : "本轮任务尚未取得完整处理结果，请继续根据工具返回的未完成项执行；确实无法继续时再记录缺失信息或阻塞原因。";
+    }
+    return "本轮任务尚未满足完成条件，请继续核对工具结果。";
   };
 
   const buildContext = () => {
@@ -411,7 +578,10 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     const pauseRule = options.allowTaskPause === false
       ? "当前入口不支持追问或阻塞结束，缺少字段时使用已有事实继续完成，不要编造。"
       : "需要补充时使用 request_resume_input，确认无法安全执行时使用 report_resume_blocker。";
-    return `# 任务运行规则\n当前入口：${options.source}。先调用 plan_resume_task，根据用户原始消息、入口、近期对话和上一轮任务判断新任务、继续或修正。任务阶段与完成结果由运行时依据工具事实维护。${pauseRule}${previous}`;
+    const taskProfile = options.taskProfile
+      ? `\n# 当前按钮任务\n目标：${options.taskProfile.objective}\n${options.taskProfile.instructions}`
+      : "";
+    return `# 任务运行规则\n当前入口：${options.source}。先调用 plan_resume_task，根据用户原始消息、入口、近期对话和上一轮任务判断新任务、继续或修正。任务阶段与完成结果由运行时依据工具事实维护。${pauseRule}${taskProfile}${previous}`;
   };
 
   return {

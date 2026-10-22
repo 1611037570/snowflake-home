@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { flows } from "./flows";
 import { defaultPrompt } from "./routing/defaultPrompt";
-import { resumeOneKeyOptimize } from "@snowflake/resume-agent/skills/skill_resume_one_key_optimize";
+import { ONE_KEY_OPTIMIZE_TASK } from "@snowflake/resume-agent/tasks/oneKeyOptimize";
 import { resumeOptimization } from "@snowflake/resume-agent/skills/skill_resume_optimization";
 import { resumeScore } from "@snowflake/resume-agent/skills/skill_resume_score";
 import { resumeWriting } from "@snowflake/resume-agent/skills/skill_resume_writing";
@@ -36,7 +36,7 @@ describe("oneKeyOptimize", () => {
   });
 
   it("一键优化仅执行有依据的必要增删且不受普通优化默认限制", () => {
-    const oneKeyInstructions = resumeOneKeyOptimize().instructions;
+    const oneKeyInstructions = ONE_KEY_OPTIMIZE_TASK.instructions;
     const optimizationInstructions = resumeOptimization().instructions;
 
     expect(oneKeyInstructions).toContain("必要的新增、修改、删除与排序操作");
@@ -49,7 +49,7 @@ describe("oneKeyOptimize", () => {
   });
 
   it("一键优化报告统一使用六大评估维度", () => {
-    const instructions = resumeOneKeyOptimize().instructions;
+    const instructions = ONE_KEY_OPTIMIZE_TASK.instructions;
 
     expect(instructions).toContain(
       "信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性",
@@ -78,14 +78,14 @@ describe("oneKeyOptimize", () => {
   it("按求职现状形成精准建议与高效润色闭环", () => {
     expect(resumeScore().instructions).toContain("问题—求职影响—具体行动—预期改善");
     expect(resumeOptimization().instructions).toContain("用最少改动提升信息密度和专业度");
-    expect(resumeOneKeyOptimize().instructions).toContain(
+    expect(ONE_KEY_OPTIMIZE_TASK.instructions).toContain(
       "优先级｜问题｜具体行动｜预期改善",
     );
-    expect(resumeOneKeyOptimize().instructions).toContain("均以“【维度名称】”开头");
-    expect(resumeOneKeyOptimize().instructions).toContain(
+    expect(ONE_KEY_OPTIMIZE_TASK.instructions).toContain("均以“【维度名称】”开头");
+    expect(ONE_KEY_OPTIMIZE_TASK.instructions).toContain(
       '"message": "【信息完整度】目标岗位所需的联系方式未填写完整"',
     );
-    expect(resumeOneKeyOptimize().instructions).toContain(
+    expect(ONE_KEY_OPTIMIZE_TASK.instructions).toContain(
       '"highlights": ["【职业契合度】目标岗位相关成果已前置，岗位主线更清晰"]',
     );
   });
@@ -93,7 +93,7 @@ describe("oneKeyOptimize", () => {
   it("写入后基于最新数据验证并避免重复提交", () => {
     expect(defaultPrompt().instructions).toContain("只重新构造未成功的操作");
     expect(resumeWriting().instructions).toContain("禁止重放已成功操作");
-    expect(resumeOneKeyOptimize().instructions).toContain(
+    expect(ONE_KEY_OPTIMIZE_TASK.instructions).toContain(
       "写入完成后必须再次调用 read_resume_data 读取整份简历",
     );
   });

@@ -1,11 +1,11 @@
-import type { ReactTool } from "@/apis/llm/react";
 import type { ResumeWriteOp } from "@/stores/modules/resume/resumeOperations";
+import { RESUME_AGENT_FACTS, type ResumeAgentTool } from "../runtime/types";
 import { getResumeEditValidationIssues, normalizeResumeEdits } from "./resumeEdits";
 import { PROPOSE_RESUME_EDITS_RULE, TOOL_ARGUMENT_RULE } from "./promptRules";
 import type { ResumeToolContext } from "./tool_types";
 
 // 创建简历修改工具：校验后立即写入简历数据
-export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool => ({
+export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgentTool => ({
   name: "propose_resume_edits",
   description: `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，调用后立即写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段；updateModuleTitle 修改模块展示标题；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验；validationIssues 与 executionIssues 通过 operationIndex 标明失败操作，只修正对应项后重新提交。`,
   parameters: {
@@ -107,5 +107,30 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ReactTool 
       // 写入后立即返回剩余问题，一键调整据此继续处理而不是自行猜测完成状态
       remainingIssues: ctx.getResumeIssues?.() ?? [],
     };
+  },
+  taskMeta: {
+    effect: "mutation", // 该工具会修改当前简历数据。
+    evidenceKind: "resume_change", // 执行结果生成简历写入证据。
+    invalidatesRead: true, // 产生实际修改后旧读取数据失效。
+    replayScope: "task", // 相同写入参数在本轮任务内只执行一次。
+    // 写入结果统一区分完整成功、部分成功和未产生修改。
+    evaluate: (result) => {
+      const value = result && typeof result === "object" ? result as Record<string, any> : {};
+      const changed = Array.isArray(value.changed) ? value.changed.length : 0;
+      const hasWriteIssues = ["failed", "validationIssues", "executionIssues"]
+        .some((key) => Array.isArray(value[key]) && value[key].length > 0);
+      const remainingIssues = Array.isArray(value.remainingIssues) ? value.remainingIssues.length : 0;
+      if (value.applied === true && changed > 0 && !hasWriteIssues) {
+        return {
+          status: "success",
+          summary: `已完整执行 ${changed} 项简历修改`,
+          facts: remainingIssues === 0 ? [RESUME_AGENT_FACTS.resumeIssuesResolved] : [],
+        };
+      }
+      if (value.applied === true && changed > 0) {
+        return { status: "partial", summary: `已执行 ${changed} 项简历修改，仍有未完成项` };
+      }
+      return { status: "failed", summary: "本次写入未产生简历修改" };
+    },
   },
 });

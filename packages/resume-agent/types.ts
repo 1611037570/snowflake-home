@@ -1,9 +1,12 @@
+import type { ResumeAgentCompletionPolicy } from "./runtime/types";
+
 // AI 技能定义：能力正文由 AI 层维护，助手仅负责选择和装配。
 export interface Skill {
   id: string; // 技能稳定标识。
   name: string; // 技能展示名称。
   description: string; // 技能用途说明。
   instructions: string; // 提供给模型的技能正文。
+  completionPolicy?: ResumeAgentCompletionPolicy; // 由运行时执行的任务完成策略。
 }
 
 // 技能工厂：按需生成技能内容。

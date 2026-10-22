@@ -10,8 +10,6 @@ export const onDemandSkills: SkillLoader[] = [
   () => import("@snowflake/resume-agent/skills/skill_resume_data_contract").then((module) => module.resumeDataContract()),
   () => import("@snowflake/resume-agent/skills/skill_resume_writing").then((module) => module.resumeWriting()),
   () => import("@snowflake/resume-agent/skills/skill_resume_optimization").then((module) => module.resumeOptimization()),
-  () => import("@snowflake/resume-agent/skills/skill_resume_one_key_adjust").then((module) => module.resumeOneKeyAdjust()),
-  () => import("@snowflake/resume-agent/skills/skill_resume_one_key_optimize").then((module) => module.resumeOneKeyOptimize()),
   () => import("@snowflake/resume-agent/skills/skill_job_match").then((module) => module.jobMatch()),
   () => import("@snowflake/resume-agent/skills/skill_greeting").then((module) => module.greeting()),
   // 面试域技能通过独立清单整体注入，注册器不再感知单项实现
