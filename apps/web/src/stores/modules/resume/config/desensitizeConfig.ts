@@ -22,6 +22,7 @@ export const DESENSITIZE_FIELD_GROUP_OPTIONS: DesensitizeFieldGroupOption[] = [
 
 export const DESENSITIZE_FIELD_OPTIONS = [
   { key: "name", name: "姓名", description: "隐藏姓名及正文中的相同内容", group: "personal" },
+  { key: "avatar", name: "头像", description: "隐藏个人头像", group: "personal" },
   { key: "phone", name: "电话", description: "隐藏联系电话及正文中的手机号", group: "personal" },
   { key: "email", name: "邮箱", description: "隐藏邮箱及正文中的邮箱地址", group: "personal" },
   { key: "wechat", name: "微信", description: "隐藏微信账号及正文中的相同内容", group: "personal" },
@@ -153,6 +154,13 @@ export const createDesensitizedResumeItem = (
   const user = clone.data.user;
   PERSONAL_DESENSITIZE_FIELDS.forEach((field) => {
     if (!selectedFields.has(field) || !user?.data || user.data[field] == null || user.data[field] === "") return;
+    // 头像脱敏时同时清空图片与隐藏字段，避免导出图片或生成姓名首字占位。
+    if (field === "avatar") {
+      user.data.avatar = "";
+      user.ui = user.ui || {};
+      user.ui.avatar = { ...user.ui.avatar, hidden: true };
+      return;
+    }
     user.data[field] = maskFieldValue(user.data[field]);
     if (field === "birthday") {
       user.ui = user.ui || {};
