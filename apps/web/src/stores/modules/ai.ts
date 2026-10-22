@@ -57,6 +57,8 @@ export type Message = {
   skipContext?: boolean;
   // 本轮工具确认实际写入，用于重试保护；撤回仍依赖会话内存备份
   hasWriteChanges?: boolean;
+  // 本轮写入结果摘要，用于完成后向用户说明实际改动
+  writeSummary?: string;
   // 本轮 Agent 任务契约，用于后续“继续”等承接表达恢复目标、范围与必需效果。
   resumeTask?: ResumeAgentTaskState;
   // 由业务宿主解释的请求上下文，重试与重新生成时保持一致

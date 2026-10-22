@@ -73,8 +73,6 @@ export const useChatRequest = ({
   let streamFinalContent = false;
   // 最终回复正文是否已开始输出：执行过程完成标记与自动折叠只在首个正文分片触发一次
   let finalContentStarted = false;
-  // 最近一次执行的工具名：用于标记过程状态与识别写入观察结果
-  let lastToolName = "";
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // 当前简历 Agent 会话引用，用于中止统一执行链。
@@ -98,14 +96,15 @@ export const useChatRequest = ({
   };
 
   // 工具调用过程区展示用的中文名
+  // 工具动作面向用户描述，避免把内部工具名直接展示给用户
   const TOOL_NAMES: Record<string, string> = {
-    plan_resume_task: "规划本轮任务",
-    request_resume_input: "确认缺失信息",
-    report_resume_blocker: "记录任务阻塞",
-    read_resume_data: "读取简历数据",
-    propose_resume_edits: "修改简历数据",
-    read_resume_guidance: "读取简历参考知识",
-    update_resume_language: "更新简历语言",
+    plan_resume_task: "理解需求",
+    request_resume_input: "确认补充信息",
+    report_resume_blocker: "记录阻塞原因",
+    read_resume_data: "读取简历",
+    propose_resume_edits: "写入简历",
+    read_resume_guidance: "查阅写作知识",
+    update_resume_language: "同步简历语言",
   };
 
   // 独立处理思考、正文和令牌回调，维护请求状态与耗时计数。
@@ -183,7 +182,6 @@ export const useChatRequest = ({
     stepContent = "";
     streamFinalContent = false;
     finalContentStarted = false;
-    lastToolName = "";
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
     const isCurrentRequest = () =>
       !isUnmounted &&
@@ -281,16 +279,14 @@ export const useChatRequest = ({
           if (!isCurrentRequest()) throw new AbortError();
         },
         onEvidence: (evidence) => {
-          if (
-            !isCurrentRequest() ||
-            !lastMsg ||
-            evidence.kind !== "resume_change" ||
-            evidence.status === "failed" ||
-            evidence.replayed
-          ) return;
-          // 运行时确认真实写入后开放撤回，不再解析 ReAct 观察文本。
+          if (!isCurrentRequest() || !lastMsg || evidence.replayed) return;
+          // 证据摘要本身是用户可读的结果，直接作为阶段提示
+          lastMsg.stepLabel = evidence.summary;
+          if (evidence.kind !== "resume_change" || evidence.status === "failed") return;
+          // 运行时确认真实写入后开放撤回，并留下本轮改动说明
           writeMessages.add(lastMsg);
           lastMsg.hasWriteChanges = true;
+          lastMsg.writeSummary = evidence.summary;
         },
         reactConfig: {
           // 单次请求的最大 ReAct 轮次上限
@@ -327,21 +323,18 @@ export const useChatRequest = ({
           },
           onAct: (toolCall) => {
             if (!isCurrentRequest() || !lastMsg) return;
-            lastToolName = toolCall.function.name;
             const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
             // 工具开始只记录执行动作，不写入参数与数据
             stepContent = "";
             streamFinalContent = false;
-            lastMsg.thought += `\n\n正在执行：${displayName}\n`;
-            lastMsg.stepLabel = `正在执行：${displayName}`;
+            lastMsg.thought += `\n\n正在${displayName}…\n`;
+            lastMsg.stepLabel = `正在${displayName}…`;
             scrollToBottom();
           },
           onObserve: (_observation, round) => {
             if (!isCurrentRequest() || !lastMsg) return;
-            const displayName = TOOL_NAMES[lastToolName] || lastToolName;
-            // 工具完成时标注当前 ReAct 轮次，观察数据不写入思考区
-            lastMsg.thought += `\n第 ${round} 轮观测完成：${displayName}`;
-            lastMsg.stepLabel = `第 ${round} 轮观测完成，正在处理结果…`;
+            // 阶段提示由结构化证据给出，观测只补轮次记录，避免覆盖写入结果
+            lastMsg.thought += `\n第 ${round} 轮观测完成`;
             scrollToBottom();
           },
           onReflect: () => {
@@ -422,10 +415,13 @@ export const useChatRequest = ({
     currentMessages.value.forEach((message) => {
       if (message.typing) {
         message.typing = false;
-        // 中止后保留实际写入的撤回入口，空回复可重新发起
-        message.requestStatus = message.hasWriteChanges ? "success" : "error";
+        // 用户主动停止不是失败：保留已生成内容与撤回入口，只标记为已停止
+        message.requestStatus = "stopped";
         message.stepLabel = "";
-        message.content ||= "已停止生成";
+        // 已输出正文时补一句停止说明，避免用户误以为回答没写完
+        message.content = message.content?.trim()
+          ? `${message.content}\n\n（以上为已生成的内容，已停止继续输出。）`
+          : "已停止生成，可以重新发起或补充要求后继续。";
       }
     });
     generating.value = false;
@@ -459,6 +455,8 @@ export const useChatRequest = ({
     requestBackups.delete(msg);
     writeMessages.delete(msg);
     msg.hasWriteChanges = false;
+    // 撤回后本轮改动已回滚，改动说明不能再保留
+    msg.writeSummary = undefined;
     return true;
   }
 

@@ -93,13 +93,16 @@ watch([content, () => props.msg.typing], ([value]) => scheduleContentParse(value
 onBeforeUnmount(() => {
   if (parseTimer) clearTimeout(parseTimer);
 });
-const resumeShow = computed(() => props.msg.requestStatus === "success");
+const resumeShow = computed(
+  () => props.msg.requestStatus === "success" || props.msg.requestStatus === "stopped",
+);
 const isThinking = computed(() => props.msg.typing && props.msg.requestStatus === "thinking");
 const isGenerating = computed(() => props.msg.typing && props.msg.requestStatus === "generating");
 // 失败时同样渲染正文：展示验收失败或请求出错的具体原因，避免只显示通用重试文案
 const showContent = computed(
   () =>
     (props.msg.requestStatus === "success" ||
+      props.msg.requestStatus === "stopped" ||
       props.msg.requestStatus === "error" ||
       isGenerating.value) &&
     !props.msg.contentCollapsed &&
@@ -118,7 +121,11 @@ const statusText = computed(() => {
 });
 const totalTime = computed(() => (props.msg.thoughtTime || 0) + (props.msg.contentTime || 0));
 const showTotalTime = computed(
-  () => (props.msg.typing || props.msg.requestStatus === "success") && totalTime.value > 0,
+  () =>
+    (props.msg.typing ||
+      props.msg.requestStatus === "success" ||
+      props.msg.requestStatus === "stopped") &&
+    totalTime.value > 0,
 );
 // token 数变化时使用过渡动画平滑展示
 const animatedTokens = useTransition(
@@ -202,6 +209,13 @@ const animatedTokens = useTransition(
       class="inline-block max-w-full min-w-0 overflow-hidden bg-transparent! p-0! align-bottom text-[14px] leading-relaxed text-sf-text"
       :class="{ 'typing-active': msg.typing }"
     />
+    <!-- 本轮写入结果由运行时证据给出，避免只靠撤回按钮暗示成功 -->
+    <div
+      v-if="msg.writeSummary && !withdrawn && msg.requestStatus !== 'error'"
+      class="mt-1 text-[12px] text-sf-text-2"
+    >
+      {{ msg.writeSummary }}
+    </div>
     <!-- 错误状态：具体原因已在正文展示，此处只保留重试入口 -->
     <div
       v-if="msg.requestStatus === 'error'"
