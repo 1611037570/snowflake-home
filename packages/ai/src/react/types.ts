@@ -75,14 +75,6 @@ export interface ReactConfig {
   beforeFinal?: (answer: string) => string | null | undefined | Promise<string | null | undefined>;
   // 候选答案未通过完成检查时通知宿主清理本轮临时展示。
   onFinalRetry?: (reason: string) => void;
-  // 是否在候选答案后追加反思轮，由反思轮输出决定最终答案
-  reflection?: boolean;
-  // 反思轮注入给模型的提示词：由使用方按业务提供，开启反思时必须传入
-  reflectPrompt?: string;
-  // 反思回调：反思后的最终答案
-  onReflect?: (answer: string) => void;
-  // 反思轮开始回调：用于前端把该轮 content 作为最终正文实时渲染
-  onReflectStart?: () => void;
   // 思考、正文和总令牌数的流式增量分别回调，避免调用方解析事件类型
   onReasoning?: (delta: string) => void;
   onContent?: (delta: string) => void;

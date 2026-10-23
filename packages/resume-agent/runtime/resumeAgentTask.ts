@@ -262,7 +262,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
   const reportBlockerTool: ReactTool = {
     name: "report_resume_blocker",
     description:
-      "读取当前可用资料后，确认任务无法安全继续时记录阻塞原因。仅在继续执行会编造事实、破坏数据或没有可安全操作内容时使用。",
+      "读取当前可用资料后，确认任务无法安全继续时记录阻塞原因。仅在继续执行会把未核实候选冒充事实、破坏数据或没有可操作内容时使用。",
     parameters: {
       type: "object",
       properties: {
@@ -340,7 +340,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     options.onTrace?.({ type: "implicit", task: cloneResumeAgentTask(task)!, tool: tool?.name ?? "入口任务" });
   };
 
-  const beforeFinal = () => {
+  const beforeFinal = (answer: string) => {
     // 明确入口即使模型跳过规划，也必须执行入口约定的真实业务效果。
     if (!task && (options.taskProfile || options.fixedRequiredEffects?.length)) ensureImplicitTask();
     if (!task || (implicitTask && !task.requiredEffects.length)) {
@@ -349,6 +349,9 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       options.onTrace?.({ type: "verdict", completed: false, reason });
       return reason;
     }
+    // 按钮任务可在最终输出前核对其专用结果契约。
+    const finalIssue = options.taskProfile?.validateFinal?.(answer, task.evidence);
+    if (finalIssue) return finalIssue;
     if (task.phase === "waiting" || task.phase === "blocked") return null;
     const result = evaluateResumeAgentCompletion(
       task.evidence,
@@ -388,7 +391,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       ? `\n上一轮任务状态（仅作为承接判断资料）：${JSON.stringify(previousContext)}`
       : "";
     const pauseRule = options.allowTaskPause === false
-      ? "当前入口不支持追问或阻塞结束，缺少字段时使用已有事实继续完成，不要编造。"
+      ? "当前入口不支持追问或阻塞结束，缺少字段时依据已有资料继续完成；生成候选内容须标明待核实，不得冒充已确认事实。"
       : "需要补充时使用 request_resume_input，确认无法安全执行时使用 report_resume_blocker。";
     const taskProfile = options.taskProfile
       ? `\n# 当前按钮任务\n目标：${options.taskProfile.objective}\n完成条件：${options.taskProfile.successCondition}\n${options.taskProfile.instructions}`

@@ -3,7 +3,6 @@ import { ToolNotFoundError } from "@/apis";
 import { storeToRefs } from "pinia";
 import { referenceSkills, residentSkills, taskCapabilities } from "./routing/registry";
 import {
-  ASSISTANT_REFLECT_PROMPT,
   buildToolGuide,
   createSkillReferenceTool,
   RESUME_LANG_CODES,
@@ -64,8 +63,6 @@ export const useResumeAssistant = () => {
   const config: AssistantConfig = {
     generating: isGenerating,
     resolveTools,
-    // 反思口径由简历域提供：仅检查冲突与格式，不做扩写，避免把提问等交互内容当成答案精炼
-    reflectPrompt: ASSISTANT_REFLECT_PROMPT,
     // 工具名未注册属可恢复错误：返回错误与可用工具清单让模型重调；其它执行错误保持中断
     onToolError: ({ error, tools }) => {
       if (error instanceof ToolNotFoundError) {

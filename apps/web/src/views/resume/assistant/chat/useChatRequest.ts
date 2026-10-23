@@ -37,7 +37,7 @@ export const useChatRequest = ({
   const aiStore = useAiStore();
   const resumeStore = useResumeStore();
   const { thinkMode } = storeToRefs(aiStore);
-  const { generating, beforeRequest, afterRequest, resolveTools, reflectPrompt, onToolError } =
+  const { generating, beforeRequest, afterRequest, resolveTools, onToolError } =
     config;
   // 简历来自响应式 Store，使用可序列化副本备份并保留媒体以支持删除、排序撤回
   const captureBackup = () => {
@@ -67,12 +67,6 @@ export const useChatRequest = ({
   const requestBackups = new WeakMap<object, unknown>();
   // 真实产生过写入的消息（用于控制“撤回修改”按钮显隐）
   const writeMessages = new WeakSet<object>();
-  // 当前 think 轮次流式输出的正文缓冲：未确认是最终输出轮前不直接展示为正文
-  let stepContent = "";
-  // 是否进入反思轮：反思轮的 content 直接实时渲染为正文
-  let streamFinalContent = false;
-  // 最终回复正文是否已开始输出：执行过程完成标记与自动折叠只在首个正文分片触发一次
-  let finalContentStarted = false;
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // 当前简历 Agent 会话引用，用于中止统一执行链。
@@ -127,25 +121,11 @@ export const useChatRequest = ({
       }
     };
 
-    const onContent = (data: string) => {
+    const onContent = () => {
       if (!isCurrent() || !lastMsg) return;
       lastMsg.requestStatus = "generating";
       lastMsg.stepLabel = "正在生成回复…";
-      if (data) {
-        if (streamFinalContent) {
-          // 最终回复正文开始输出：执行过程视为已结束，折叠执行过程并切换完成标记
-          if (!finalContentStarted) {
-            finalContentStarted = true;
-            lastMsg.thoughtCollapsed = true;
-          }
-          // 反思轮（最终输出）：实时写入正文，边生成边渲染
-          lastMsg.content = `${lastMsg.content || ""}${data}`;
-          scrollToBottom();
-        } else {
-          // 未确认是最终输出轮前只缓冲，不写入思考区也不写入正文
-          stepContent += data;
-        }
-      }
+      // 候选答案须经完成条件校验，正文只在 onFinal 中展示。
       if (!timers.reply) {
         if (timers.thinking) clearInterval(timers.thinking);
         timers.thinking = null;
@@ -179,9 +159,6 @@ export const useChatRequest = ({
     const requestTaskId = `${requestResumeId}:${currentRequestVersion}`;
     // 请求前备份简历，撤回修改时恢复
     const backup = captureBackup?.();
-    stepContent = "";
-    streamFinalContent = false;
-    finalContentStarted = false;
     // 辅助函数：检查当前请求是否仍为最新且组件未卸载
     const isCurrentRequest = () =>
       !isUnmounted &&
@@ -332,25 +309,15 @@ export const useChatRequest = ({
           });
         },
         reactConfig: {
-          // 单次请求的最大 ReAct 轮次上限
-          maxSteps: 99,
+          // 为工具修正和报告复核保留轮次，同时限制异常循环。
+          maxSteps: 24,
           // 超出输入预算时压缩较早的历史，避免长对话溢出与指令失效
           context: resumeContextCompaction,
-          reflection: true,
-          reflectPrompt,
           onToolError,
           onFinalRetry: () => {
             if (!isCurrentRequest() || !lastMsg) return;
-            stepContent = "";
             lastMsg.content = "";
             lastMsg.stepLabel = "正在核对任务完成状态…";
-          },
-          onReflectStart: () => {
-            if (!isCurrentRequest() || !lastMsg) return;
-            // 最终精炼轮开始：本轮 content 直接实时渲染为正文
-            stepContent = "";
-            streamFinalContent = true;
-            lastMsg.stepLabel = "正在审视并生成最终回复…";
           },
           thinking: {
             type: thinkMode.value ? "enabled" : "disabled",
@@ -368,8 +335,6 @@ export const useChatRequest = ({
             if (!isCurrentRequest() || !lastMsg) return;
             const displayName = TOOL_NAMES[toolCall.function.name] || toolCall.function.name;
             // 工具开始只记录执行动作，不写入参数与数据
-            stepContent = "";
-            streamFinalContent = false;
             lastMsg.thought += `\n\n正在${displayName}…\n`;
             lastMsg.stepLabel = `正在${displayName}…`;
             scrollToBottom();
@@ -378,11 +343,6 @@ export const useChatRequest = ({
             if (!isCurrentRequest() || !lastMsg) return;
             // 阶段提示由结构化证据给出，观测只补轮次记录，避免覆盖写入结果
             lastMsg.thought += `\n第 ${round} 轮观测完成`;
-            scrollToBottom();
-          },
-          onReflect: () => {
-            if (!isCurrentRequest() || !lastMsg) return;
-            lastMsg.stepLabel = "正在输出最终答案…";
             scrollToBottom();
           },
         },
@@ -394,8 +354,6 @@ export const useChatRequest = ({
           lastMsg.requestStatus = "success";
           lastMsg.stepLabel = "";
           lastMsg.thoughtCollapsed = true;
-          stepContent = "";
-          streamFinalContent = false;
           scrollToBottom();
           setTimeout(() => {
             if (isCurrentRequest()) scrollToBottom();
@@ -405,8 +363,6 @@ export const useChatRequest = ({
       // 会话内部注入任务上下文并执行完整工具循环。
       await agentSession.run(messages);
     } catch (error: any) {
-      stepContent = "";
-      streamFinalContent = false;
       // 若已卸载则忽略
       if (!isCurrentRequest()) return;
       // 主动中止不视为错误

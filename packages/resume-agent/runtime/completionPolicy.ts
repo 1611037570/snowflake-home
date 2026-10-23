@@ -126,7 +126,7 @@ export const evaluateResumeAgentCompletion = (
       completed: false,
       retryMessage: allowTaskPause
         ? `本轮任务还缺少${missingNames}的成功证据。请继续使用可用工具完成任务；确实缺少必要事实时调用 request_resume_input，确认无法安全执行时调用 report_resume_blocker。`
-        : `本轮任务还缺少${missingNames}的成功证据。请继续使用已有资料和可用工具完成任务，不要编造事实。`,
+        : `本轮任务还缺少${missingNames}的成功证据。请继续使用已有资料和可用工具完成任务；生成候选内容须标明待核实，不得冒充已确认事实。`,
     };
   }
   if (missingFacts.length) {

@@ -1,4 +1,5 @@
 // 一键优化报告数据结构与解析工具：协调编排技能输出与前端面板渲染
+import type { ResumeAgentTaskEvidence } from "../runtime/taskTypes";
 export interface ReportDimension {
   // 固定评分维度名称
   name: string;
@@ -103,6 +104,25 @@ export const parseResumeReport = (content: string): ResumeReport | null => {
     if (report) return report;
   }
   return parseReportJson(content);
+};
+
+// 报告改动条目必须逐项匹配真实写入证据，避免把计划或失败操作列为成果。
+export const validateResumeReportChanges = (
+  content: string,
+  evidence: ResumeAgentTaskEvidence[],
+): string | null => {
+  const report = parseResumeReport(content);
+  if (!report) return "请按规定输出完整且有效的简历评分报告。";
+  const verifiedChanges = evidence
+    .filter((item) => item.kind === "resume_change" && !item.replayed &&
+      item.changed === true && item.status !== "failed")
+    .flatMap((item) => item.verifiedChanges ?? []);
+  if (report.changes.length !== verifiedChanges.length ||
+    report.changes.some((change, index) => change.module !== verifiedChanges[index]?.module ||
+      change.summary !== verifiedChanges[index]?.summary)) {
+    return `报告 changes 必须逐项使用工具确认的实际改动：${JSON.stringify(verifiedChanges)}。`;
+  }
+  return null;
 };
 
 // 仅移除有效报告，保留普通 JSON、无效报告与未完成的流式内容

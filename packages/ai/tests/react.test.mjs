@@ -136,3 +136,25 @@ test("工具结果过大时继续 ReAct", async () => {
   assert.equal(sent[1].length, 2);
   assert.equal(sent[1][1].content, "此前对话摘要：\n摘要");
 });
+
+// 候选答案未通过最终验收时，在同一轮执行中修正。
+test("最终答案未通过验收后继续修正", async () => {
+  const llm = new LLM({ url: "https://example.com/chat", provider: "openai", apiKey: "key", model: "test-model" });
+  const answers = ["未经核对的答案", "修正后的答案"];
+  const checked = [];
+  llm.request = async (config) => ({
+    abortFn: () => {},
+    sendFn: async () => config.onContent(answers.shift()),
+  });
+  const runner = llm.react({
+    tools: [],
+    maxSteps: 2,
+    beforeFinal: (answer) => {
+      checked.push(answer);
+      return answer === "未经核对的答案" ? "请修正" : null;
+    },
+  });
+
+  assert.equal(await runner.run([{ role: "user", content: "开始" }]), "修正后的答案");
+  assert.deepEqual(checked, ["未经核对的答案", "修正后的答案"]);
+});

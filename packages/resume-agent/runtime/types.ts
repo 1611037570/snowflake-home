@@ -24,6 +24,13 @@ export type ResumeAgentToolResultStatus =
   // 工具没有完成任何有效操作。
   | "failed";
 
+export type ResumeAgentVerifiedChange = {
+  // 实际写入模块的展示名称。
+  module: string;
+  // 根据成功操作生成的改动摘要。
+  summary: string;
+};
+
 export type ResumeAgentToolEvaluation = {
   // 工具本次执行的完成状态。
   status: ResumeAgentToolResultStatus;
@@ -33,6 +40,8 @@ export type ResumeAgentToolEvaluation = {
   changed?: boolean;
   // 本次结果额外证明的业务事实，由特定能力按需要求。
   facts?: string[];
+  // 本次真实写入生成的报告改动条目。
+  verifiedChanges?: ResumeAgentVerifiedChange[];
 };
 
 export type ResumeAgentToolEffect =

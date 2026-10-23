@@ -20,7 +20,7 @@ export const interviewSuggestions: SuggestCard[] = [
       features: [
         "智能分析岗位 JD，精准匹配技能要求",
         "覆盖技术、项目、行为等多维度题型",
-        "附带高分参考答案与 STAR 回答框架",
+        "附带高分参考答案与 CAR 回答框架",
       ],
       scene: "面试前快速准备",
       action: "开始面试押题",

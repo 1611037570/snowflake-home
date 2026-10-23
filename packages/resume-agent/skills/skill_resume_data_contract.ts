@@ -21,8 +21,8 @@ const formatOptions = (options: unknown[]) =>
 
 const getFieldNotes = (field: ResumeFieldSchema, moduleKey: string) => {
   const notes: string[] = [];
-  // 填写口径：必填项缺失需要补；可选字段为空时不得主动补写
-  notes.push(field.required ? "必填" : "可选，空值不主动补写");
+  // 经历正文允许生成与优化补写，其他可选空字段仍保持原有边界。
+  notes.push(field.required ? "必填" : "可选；生成或优化正文可补写，其他空值不主动补写");
   if (isResumeMediaField(moduleKey, field.key)) notes.push("媒体字段，不向 AI 提供内容，禁止写入");
   if (field.component === "measurements") notes.push("对象：bust（胸围）、waist（腰围）、hip（臀围）为数值文本");
   if (field.component === "sizes") notes.push("对象：top（上装尺码）、bottom（下装尺码）、shoes（鞋码）为文本");
@@ -110,7 +110,7 @@ ${moduleRows}
 - 数组模块通过 \`updateRecord\`、\`addRecord\`、\`deleteRecord\`、\`moveRecord\` 修改记录。
 - 同一模块存在多种数据形态时，\`read_resume_data\` 只返回当前界面布局生效的形态；必须按本次返回的对象或数组选择写操作，不得读取或修改未生效形态。
 - 字段表标记为“可添加字段”时，即使当前数据缺失，也允许 \`updateModule\` 首次写入。
-- 当前简历可能只包含模块清单的一部分，不得写入当前数据中不存在的模块。
+- 修改现有简历时，当前数据可能只包含模块清单的一部分，不得写入当前数据中不存在的模块；生成新草稿时仅创建本轮入口提供资料的模块。
 
 # 字段契约
 

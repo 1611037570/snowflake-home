@@ -330,10 +330,6 @@ class LLM {
    * @returns {{ abort: Function, run: Function }} 中止函数与执行函数
    */
   react(config: ReactConfig) {
-    // 反思文案属于使用方策略：开启反思但未提供提示词时直接报错，避免带空文案进入模型
-    if (config.reflection && !config.reflectPrompt) {
-      throw new Error("启用反思时必须提供 reflectPrompt");
-    }
     let aborted = false;
     const contextAbort = new AbortController();
     const abortRef: { current: (() => void) | null } = { current: null };
@@ -354,8 +350,6 @@ class LLM {
         model: config.model || this.model,
         input: initialMessages,
       });
-      // 标记候选答案后是否已进入反思轮，反思轮输出作为最终结果
-      let reflectRound = false;
       let activeRound: { round: number; startTime: number } | null = null;
 
       // 统一记录每轮结束时间与耗时，异常和取消同样保留本轮数据
@@ -412,12 +406,12 @@ class LLM {
 
           config.onThink?.(result.reasoning);
 
-          // 无工具调用时，若开启反思且尚未进入反思轮，则先注入候选答案并让下一轮审视定稿
+          // 无工具调用时，校验任务完成条件后直接返回最终答案。
           if (!result.toolCalls.length) {
             const finalAnswer = extractJson(result.finalAnswer);
 
             // 业务运行时可依据工具证据拒绝过早收口，反馈仍留在同一个 ReAct 历史中继续处理。
-            if (!reflectRound && config.beforeFinal) {
+            if (config.beforeFinal) {
               const retryReason = await config.beforeFinal(finalAnswer);
               if (retryReason) {
                 if (step >= maxSteps - 1) throw new Error("ReAct 未满足任务完成条件");
@@ -429,23 +423,7 @@ class LLM {
               }
             }
 
-            if (config.reflection && !reflectRound && step < maxSteps - 1) {
-              console.log("[ReAct] 候选答案，下一轮反思定稿:", finalAnswer);
-              // 通知前端进入反思轮，便于实时渲染最终正文
-              config.onReflectStart?.();
-              // 候选答案回填历史，反思轮携带完整执行过程审视并输出最终答案
-              history.push({ role: "assistant", content: result.finalAnswer });
-              history.push({
-                role: "user",
-                content: config.reflectPrompt ?? "",
-              });
-              reflectRound = true;
-              finishActiveRound();
-              continue;
-            }
-
             console.log("[ReAct] 最终答案:", finalAnswer);
-            if (reflectRound) config.onReflect?.(finalAnswer);
             config.onFinal?.(finalAnswer);
             finishActiveRound();
             this.observer.finishLlmTrace(traceId, "success");

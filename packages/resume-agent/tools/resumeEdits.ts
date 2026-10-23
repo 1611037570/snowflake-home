@@ -14,7 +14,7 @@ export type ResumeEditValidationIssue = {
 };
 
 // 校验单个字段值的时间、枚举与 HTML 格式
-const validateFieldValue = (
+export const validateFieldValue = (
   module: string,
   field: string,
   value: unknown,

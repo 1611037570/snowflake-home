@@ -1,5 +1,6 @@
 import type { ResumeWriteOp } from "./resumeOperations";
-import { RESUME_AGENT_FACTS, type ResumeAgentTool } from "../runtime/types";
+import { RESUME_AGENT_FACTS, type ResumeAgentTool, type ResumeAgentVerifiedChange } from "../runtime/types";
+import { findResumeModuleSchema } from "../schema/resumeSchemaRegistry";
 import { defineTool } from "./defineTool";
 import { getResumeEditValidationIssues, normalizeResumeEdits } from "./resumeEdits";
 import { PROPOSE_RESUME_EDITS_RULE, TOOL_ARGUMENT_RULE } from "./promptRules";
@@ -149,6 +150,21 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
       if (hasDataChange && signature && result.changed.includes(index)) appliedSignatures.add(signature);
     });
     const toOriginalIndex = (index: number) => pending[index]?.index ?? index;
+    // 仅根据宿主确认成功的操作生成报告条目，失败操作不会进入改动清单。
+    const verifiedChanges: ResumeAgentVerifiedChange[] = hasDataChange ? result.changed.flatMap((index) => {
+      const operation = pending[index]?.operation;
+      if (!operation) return [];
+      const module = dataView[operation.module]?.title || operation.module;
+      const field = "field" in operation
+        ? findResumeModuleSchema(operation.module, dataView[operation.module]?.data)
+          ?.fields.find((item) => item.key === operation.field)?.label || operation.field
+        : "";
+      const summary = operation.op === "updateModuleTitle" ? "更新模块标题"
+        : operation.op === "updateModule" || operation.op === "updateRecord" ? `调整${field}`
+          : operation.op === "addRecord" ? "新增记录"
+            : operation.op === "deleteRecord" ? "删除记录" : "调整记录顺序";
+      return [{ module, summary }];
+    }) : [];
     const executionIssues = result.failed.map((index) => ({
       // 原始写操作下标，从零开始
       operationIndex: toOriginalIndex(index),
@@ -165,6 +181,7 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
       noChange,
       // 回报时统一换算回模型提交的操作下标
       changed: hasDataChange ? result.changed.map(toOriginalIndex) : [],
+      verifiedChanges,
       failed: result.failed.map(toOriginalIndex),
       errors: executionIssues.map((issue) => issue.message),
       // 字段与格式校验已通过
@@ -179,6 +196,8 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
   },
   // 该工具会修改当前简历数据。
   effect: "mutation",
+  // 写入前必须已读取当前数据，前次写入后需重新读取。
+  requiresEvidence: ["read"],
   // 相同写入参数在本轮任务内只执行一次。
   replayScope: "task",
   // 写入结果统一区分完整成功、部分成功和未产生修改。
@@ -190,16 +209,18 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
     // 未启用完成度检查时不生成“问题已全部解决”的业务事实。
     const remainingIssues = Array.isArray(value.remainingIssues) ? value.remainingIssues.length : null;
     const duplicated = typeof value.duplicated === "number" ? value.duplicated : 0;
+    const verifiedChanges = Array.isArray(value.verifiedChanges) ? value.verifiedChanges : [];
     if (value.applied === true && changed > 0 && !hasWriteIssues) {
       return {
         status: "success",
         summary: `已完整执行 ${changed} 项简历修改`,
         changed: true,
+        verifiedChanges,
         facts: remainingIssues === 0 ? [RESUME_AGENT_FACTS.resumeIssuesResolved] : [],
       };
     }
     if (value.applied === true && changed > 0) {
-      return { status: "partial", summary: `已执行 ${changed} 项简历修改，仍有未完成项`, changed: true };
+      return { status: "partial", summary: `已执行 ${changed} 项简历修改，仍有未完成项`, changed: true, verifiedChanges };
     }
     // 已接受的同值提交不覆盖此前成功证据，但不能单独满足写入要求。
     if (value.noChange === true) {

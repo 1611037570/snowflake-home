@@ -4,6 +4,7 @@ import type {
   ResumeAgentEvidenceKind,
   ResumeAgentRequiredEffect,
   ResumeAgentToolResultStatus,
+  ResumeAgentVerifiedChange,
 } from "./types";
 
 export type ResumeAgentTaskRelation =
@@ -45,6 +46,8 @@ export type ResumeAgentTaskEvidence = {
   changed?: boolean;
   // 工具结果额外证明的业务事实。
   facts?: string[];
+  // 工具实际写入生成的报告改动条目。
+  verifiedChanges?: ResumeAgentVerifiedChange[];
   // 是否复用了同一参数首次执行的结果。
   replayed?: boolean;
 };
@@ -116,6 +119,8 @@ export type ResumeAgentTaskProfile = {
   instructions: string;
   // 由运行时核对的按钮任务完成条件。
   completionPolicy: ResumeAgentCompletionPolicy;
+  // 最终正文的专用校验，返回原因时要求模型修正。
+  validateFinal?: (answer: string, evidence: ResumeAgentTaskEvidence[]) => string | null;
 };
 
 export type CreateResumeAgentTaskRuntimeOptions = {

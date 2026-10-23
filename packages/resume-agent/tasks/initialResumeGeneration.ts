@@ -5,6 +5,10 @@ import type { ResumeAgentTool } from "../runtime/types";
 import { resumeDataContract } from "../skills/skill_resume_data_contract";
 import { resumeWriting } from "../skills/skill_resume_writing";
 import { createSkillReferenceTool } from "../tools/skillLoader";
+import { isResumeMediaField } from "../schema/resumeMedia";
+import { getResumeModuleSchema, resolveResumeModuleSchema } from "../schema/resumeSchema";
+import { RESUME_SCHEMA } from "../schema/resumeSchemaRegistry";
+import { validateFieldValue } from "../tools/resumeEdits";
 
 // AI 初始简历生成输入：每个字段对应用户主动填写且未跳过的模块事实。
 export type InitialResumeGenerationInput = {
@@ -35,6 +39,42 @@ export type RunInitialResumeGenerationOptions = {
   signal?: AbortSignal;
   // 阶段变化回调，用于展示当前生成进度。
   onStage?: (stage: InitialResumeGenerationStage) => void;
+};
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  Boolean(value) && typeof value === "object" && !Array.isArray(value);
+
+// 草稿提交前核对模块形态与字段契约，避免仅凭提示词接收任意对象。
+export const validateGeneratedResume = (value: unknown): string | null => {
+  if (!isRecord(value) || !Object.keys(value).length) return "简历草稿必须包含模块数据";
+  if (!RESUME_SCHEMA.length) return "简历字段契约尚未就绪";
+  for (const [moduleKey, moduleValue] of Object.entries(value)) {
+    const moduleSchema = getResumeModuleSchema(RESUME_SCHEMA, moduleKey);
+    if (!moduleSchema || moduleSchema.kind === "custom" || !isRecord(moduleValue) || !("data" in moduleValue)) {
+      return `简历草稿模块 ${moduleKey} 不符合字段契约`;
+    }
+    const data = moduleValue.data;
+    const activeSchema = resolveResumeModuleSchema(moduleSchema, data);
+    const records = activeSchema?.kind === "object" && isRecord(data)
+      ? [data]
+      : activeSchema?.kind === "array" && Array.isArray(data) && data.every(isRecord)
+        ? data
+        : null;
+    if (!records || !activeSchema) return `简历草稿模块 ${moduleKey} 的数据形态无效`;
+    const fields = new Map(activeSchema.fields.map((field) => [field.key, field]));
+    for (const record of records) {
+      for (const [fieldKey, fieldValue] of Object.entries(record)) {
+        const field = fields.get(fieldKey);
+        if (!field || isResumeMediaField(moduleKey, fieldKey)) {
+          return `简历草稿模块 ${moduleKey} 包含未声明或不可写字段 ${fieldKey}`;
+        }
+        const errors: string[] = [];
+        validateFieldValue(moduleKey, fieldKey, fieldValue, field, errors);
+        if (errors.length) return errors[0]!;
+      }
+    }
+  }
+  return null;
 };
 
 const createInputTool = (input: InitialResumeGenerationInput): ResumeAgentTool => ({
@@ -76,11 +116,12 @@ const createSubmitTool = (onSubmit: (resume: Record<string, unknown>) => void): 
     additionalProperties: false,
   },
   execute: (args) => {
-    if (!args?.resume || typeof args.resume !== "object" || Array.isArray(args.resume)) {
+    const validationError = validateGeneratedResume(args?.resume);
+    if (validationError) {
       // 格式错误作为工具结果返回，让同一 ReAct 能调整草稿后继续提交。
       return {
         accepted: false, // 本次草稿没有被入口接收。
-        error: "提交的简历草稿格式无效", // 提供给模型的修正原因。
+        error: validationError, // 提供给模型的修正原因。
       };
     }
     // 只有提交工具接收的数据会成为页面预览，聊天正文不参与数据写入。
@@ -90,6 +131,7 @@ const createSubmitTool = (onSubmit: (resume: Record<string, unknown>) => void): 
   taskMeta: {
     effect: "submit", // 该工具提交独立简历草稿。
     evidenceKind: "draft_submit", // 成功后生成草稿提交证据。
+    requiresEvidence: ["read"], // 草稿提交前必须读取本轮入口资料。
     replayScope: "task", // 相同草稿在本轮生成任务内只提交一次。
     // 只有提交工具明确接收草稿后才生成草稿完成证据。
     evaluate: (result) => {

@@ -59,7 +59,6 @@ export { GENERAL_CHAT_TASK, RESUME_CHAT_TASK } from "./tasks/chat";
 export type { ResumeChatInput } from "./tasks/chat";
 export { useInterviewQuickAnswer } from "./tasks/interviewQuickAnswer";
 export { resolveResumeAgentTaskProfile } from "./tasks/registry";
-export { ASSISTANT_REFLECT_PROMPT } from "./prompts/assistant";
 export { createDefaultAssistantPrompt } from "./prompts/defaultAssistant";
 export { createResumeTools, RESUME_LANG_CODES } from "./tools";
 export type {

@@ -60,8 +60,6 @@ export interface AssistantConfig {
   generating: Ref<boolean>;
   // 首次请求时解析任务能力、参考知识与简历工具，避免进入 AI 面板时提前加载。
   resolveTools: (context?: Record<string, unknown>) => Promise<AssistantResources>;
-  // 反思轮提示词：反思口径由宿主按业务提供，请求引擎不内置
-  reflectPrompt: string;
   // 工具执行错误回调：由宿主决定恢复或中断，引擎只负责转交
   onToolError?: ReactConfig["onToolError"];
   // 请求前准备本轮读取范围，与 afterRequest 成对使用

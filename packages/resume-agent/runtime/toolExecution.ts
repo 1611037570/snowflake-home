@@ -53,6 +53,7 @@ export const createResumeAgentToolExecution = (
       summary: evaluation.summary,
       changed: evaluation.changed,
       facts: evaluation.facts,
+      verifiedChanges: evaluation.verifiedChanges,
       replayed,
     };
     task.evidence.push(evidence);
@@ -88,7 +89,8 @@ export const createResumeAgentToolExecution = (
           const task = getTask();
           const missingRequiredEvidence = tool.taskMeta?.requiresEvidence?.filter(
             // 写入类前置条件必须有真实效果，同值提交不能解锁后续工具。
-            (kind) => !findLatestSuccessfulEvidence(task?.evidence ?? [], kind) ||
+            (kind) => (kind === "read" && !hasFreshRead()) ||
+              !findLatestSuccessfulEvidence(task?.evidence ?? [], kind) ||
               (kind !== "read" && !findLatestSuccessfulActualEvidence(task?.evidence ?? [], kind)),
           ) ?? [];
           if (missingRequiredEvidence.length) {
