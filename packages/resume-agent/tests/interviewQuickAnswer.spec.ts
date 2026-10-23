@@ -3,7 +3,7 @@ import { getResumeAiModel } from "../request/client";
 import {
   buildQuickAnswerMessages,
   useInterviewQuickAnswer,
-} from "./interviewQuickAnswer";
+} from "../tasks/interviewQuickAnswer";
 
 vi.mock("../request/client", () => ({ getResumeAiModel: vi.fn() }));
 

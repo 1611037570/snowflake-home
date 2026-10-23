@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "test": "pnpm --filter @snowflake/ai build && vitest run"
+  },
   "exports": {
     ".": "./index.ts",
     "./request": "./request/index.ts",
@@ -12,5 +15,8 @@
   "dependencies": {
     "@snowflake/ai": "workspace:*",
     "dompurify": "3.4.13"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.14"
   }
 }
