@@ -1,42 +1,21 @@
 <script setup>
 import { computed } from "vue";
-import SfEcharts from "@/components/business/echarts";
 
 const props = defineProps({
   report: { type: Object, required: true },
 });
 
-// 雷达图配置：按六个固定维度绘制能力雷达
-const radarOptions = computed(() => {
-  // 雷达图只绘制有可靠分数的维度，不适用项保留在明细中展示
-  const dims = (props.report.dimensions || []).filter((d) => typeof d.score === "number");
-  return {
-    title: { show: false },
-    legend: { show: false },
-    radar: {
-      indicator: dims.map((d) => ({ name: d.name, max: 100 })),
-      radius: "65%",
-      center: ["50%", "55%"],
-      axisName: { color: "#8a8f98", fontSize: 12 },
-      splitArea: { areaStyle: { color: ["transparent"] } },
-      splitLine: { lineStyle: { color: "rgba(0,0,0,0.06)" } },
-      axisLine: { lineStyle: { color: "rgba(0,0,0,0.06)" } },
-    },
-    series: [
-      {
-        type: "radar",
-        symbol: "circle",
-        symbolSize: 4,
-        data: [
-          {
-            value: dims.map((d) => d.score),
-            areaStyle: { opacity: 0.2 },
-            lineStyle: { width: 2 },
-          },
-        ],
-      },
-    ],
-  };
+// 本轮改动按模块合并：同一模块的多次写入只占一行
+const changeRows = computed(() => {
+  const rows = new Map();
+  (props.report.changes || []).forEach((item) => {
+    const module = item?.module;
+    if (!module) return;
+    const summaries = rows.get(module) || [];
+    if (item.summary && !summaries.includes(item.summary)) summaries.push(item.summary);
+    rows.set(module, summaries);
+  });
+  return [...rows].map(([module, summaries]) => ({ module, summary: summaries.join("；") }));
 });
 
 // 总分评级
@@ -58,13 +37,10 @@ const level = computed(() => {
       <h2 class="text-lg font-bold text-sf-text">全方位综合评估</h2>
       <p class="mt-3 text-[13px] text-sf-text-2">六大维度深度剖析简历质量</p>
     </div>
-    <!-- 综合评分与雷达图 -->
-    <div class="mt-3 flex items-center gap-3">
-      <SfEcharts v-if="report.dimensions.some((d) => typeof d.score === 'number')" :options="radarOptions" class="h-52 w-2/3!" />
-      <div class="flex w-1/3 flex-col items-center justify-center gap-3">
-        <span class="text-[40px] font-black leading-none text-sf-theme">{{ report.totalScore ?? "—" }}</span>
-        <span class="text-[13px] text-sf-text-2">综合评分 · {{ level }}</span>
-      </div>
+    <!-- 综合评分 -->
+    <div class="mt-3 flex flex-col items-center justify-center gap-3 py-3">
+      <span class="text-[40px] font-black leading-none text-sf-theme">{{ report.totalScore ?? "—" }}</span>
+      <span class="text-[13px] text-sf-text-2">综合评分 · {{ level }}</span>
     </div>
 
     <!-- 分维度得分 -->
@@ -97,37 +73,23 @@ const level = computed(() => {
       </div>
     </div>
 
-    <!-- 改动清单 -->
-    <div v-if="report.changes?.length" class="mt-6">
+    <!-- 本次改动：按模块汇总成一张表，同一模块只出现一次 -->
+    <div v-if="changeRows.length" class="mt-6">
       <div class="mb-3 text-[14px] font-medium text-sf-text">本次改动</div>
-      <div class="flex flex-col gap-3">
-        <div v-for="(c, i) in report.changes" :key="i" class="flex items-center gap-3">
-          <span class="shrink-0 rounded-md bg-sf-bg-2 px-3 text-[12px] text-sf-text-2">{{ c.module }}</span>
-          <span class="text-[13px] leading-relaxed text-sf-text">{{ c.summary }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 待补充清单 -->
-    <div v-if="report.todo?.length" class="mt-6">
-      <div class="mb-3 text-[14px] font-medium text-sf-text">待补充</div>
-      <div class="flex flex-col gap-3">
-        <div v-for="(t, i) in report.todo" :key="i" class="flex items-start gap-3">
-          <span class="text-[13px] leading-relaxed text-sf-theme">{{ i + 1 }}.</span>
-          <span class="text-[13px] leading-relaxed text-sf-text">{{ t }}</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- 优化亮点 -->
-    <div v-if="report.highlights?.length" class="mt-6">
-      <div class="mb-3 text-[14px] font-medium text-sf-text">优化亮点</div>
-      <div class="flex flex-col gap-3">
-        <div v-for="(h, i) in report.highlights" :key="i" class="flex items-start gap-3">
-          <span class="text-[13px] leading-relaxed text-sf-theme">✓</span>
-          <span class="text-[13px] leading-relaxed text-sf-text">{{ h }}</span>
-        </div>
-      </div>
+      <table class="w-full table-fixed border-collapse text-[13px]">
+        <thead>
+          <tr class="text-sf-text-2">
+            <th class="w-24 border-b border-sf-b py-3 text-left font-normal">模块</th>
+            <th class="border-b border-sf-b py-3 text-left font-normal">修改范围</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="row in changeRows" :key="row.module">
+            <td class="border-b border-sf-b py-3 pr-3 align-top text-sf-text-2">{{ row.module }}</td>
+            <td class="border-b border-sf-b py-3 align-top leading-relaxed text-sf-text">{{ row.summary }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
     <!-- 下一步建议 -->

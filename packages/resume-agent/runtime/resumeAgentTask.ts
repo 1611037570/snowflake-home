@@ -67,6 +67,9 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
   const capabilityDescription = capabilityCatalog
     ? `只选择直接帮助完成本轮目标的任务能力；没有合适能力时传空数组。可选能力：\n${capabilityCatalog}`
     : "当前入口没有可选任务能力，传空数组。";
+  // 当前入口是否允许把缺失信息抛回给用户：一次性修复入口必须自行补齐。
+  const allowRequestInput = options.allowTaskPause !== false &&
+    options.taskProfile?.allowRequestInput !== false;
   let completionPolicy: ResolvedResumeAgentCompletionPolicy = {
     requiredEffects: [], // 建立任务后写入最终任务效果。
     requiredEvidence: [], // 建立任务后再按必需效果和能力填充。
@@ -257,6 +260,10 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       if (!task) return { accepted: false, error: "请先调用 plan_resume_task 建立本轮任务" };
       if (options.allowTaskPause === false) {
         return { accepted: false, error: "当前入口不能暂停等待补充，请使用已有资料继续完成任务" };
+      }
+      // 一次性修复入口不允许把缺失信息抛回给用户，必须先用已有资料和占位补齐
+      if (options.taskProfile?.allowRequestInput === false) {
+        return { accepted: false, error: "当前入口不向用户追问，请使用已有资料或 XX 占位继续完成任务" };
       }
       if (
         !Array.isArray(args?.missingFacts) || !args.missingFacts.length ||
@@ -500,7 +507,9 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       : "";
     const pauseRule = options.allowTaskPause === false
       ? "当前入口不支持追问或阻塞结束，缺少字段时依据已有资料继续完成；未知细节使用 XX 占位，不得冒充已确认事实。"
-      : "需要补充时使用 request_resume_input，确认无法安全执行时使用 report_resume_blocker。";
+      : allowRequestInput
+        ? "需要补充时使用 request_resume_input，确认无法安全执行时使用 report_resume_blocker。"
+        : "当前入口不向用户追问：缺少事实时按共用写作规则使用 XX 占位补齐，只能取固定选项的字段保留原值；确实无法继续时使用 report_resume_blocker 说明剩余项。";
     const taskProfile = options.taskProfile
       ? `\n# 当前按钮任务\n目标：${options.taskProfile.objective}\n完成条件：${options.taskProfile.successCondition}\n${options.taskProfile.instructions}`
       : "";
@@ -514,10 +523,12 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
   };
 
   return {
-    // 任务控制工具用于规划、等待补充和记录阻塞。
+    // 任务控制工具用于规划、等待补充和记录阻塞；关闭追问时只保留规划与阻塞。
     controlTools: options.allowTaskPause === false
       ? [planTaskTool]
-      : [planTaskTool, requestInputTool, reportBlockerTool],
+      : allowRequestInput
+        ? [planTaskTool, requestInputTool, reportBlockerTool]
+        : [planTaskTool, reportBlockerTool],
     // 包装业务工具并记录真实执行证据；执行前补齐隐式任务。
     wrapTools: (tools: ReactTool[]) => {
       // 包装阶段补登记：创建后才加入的工具同样参与验收推导。

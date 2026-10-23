@@ -142,6 +142,8 @@ export type ResumeAgentTaskProfile = {
   preferredCapabilityId?: string;
   // 当前按钮任务是否允许修改模块展示标题。
   allowModuleTitleEdit?: boolean;
+  // 当前按钮任务是否允许向用户追问缺失信息；省略时允许，一次性修复类任务应关闭。
+  allowRequestInput?: boolean;
   // 按钮已经明确的任务目标。
   objective: string;
   // 按钮任务固定要求产生的业务效果。

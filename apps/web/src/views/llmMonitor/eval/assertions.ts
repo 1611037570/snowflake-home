@@ -173,16 +173,17 @@ const evaluateOne = (assertion: EvalAssertion, context: EvalAssertionContext): E
       if (!report) {
         return { label: assertion.label, passed: false, detail: "最终回答里没有可解析的评分报告" };
       }
-      const expected = collectVerifiedChanges(context).map((item) => `${item.module}｜${item.summary}`);
-      const actual = report.changes.map((item) => `${item.module}｜${item.summary}`);
-      const missing = expected.filter((item) => !actual.includes(item));
-      const extra = actual.filter((item) => !expected.includes(item));
+      // 报告按模块汇总，比对模块集合即可：同一模块的多次写入允许合并成一条
+      const expected = [...new Set(collectVerifiedChanges(context).map((item) => item.module))];
+      const actual = report.changes.map((item) => item.module);
+      const missing = expected.filter((module) => !actual.includes(module));
+      const extra = actual.filter((module) => !expected.includes(module));
       return {
         label: assertion.label,
         passed: !missing.length && !extra.length,
         detail:
           missing.length || extra.length
-            ? `报告缺少：${missing.join("、") || "无"}；报告多出：${extra.join("、") || "无"}`
+            ? `报告缺少模块：${missing.join("、") || "无"}；报告多出模块：${extra.join("、") || "无"}`
             : undefined,
       };
     }

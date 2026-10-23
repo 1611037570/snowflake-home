@@ -106,7 +106,8 @@ export const parseResumeReport = (content: string): ResumeReport | null => {
   return parseReportJson(content);
 };
 
-// 报告改动条目必须逐项匹配真实写入证据，避免把计划或失败操作列为成果。
+// 报告改动条目必须覆盖真实写入的模块，避免把计划或失败操作列为成果。
+// 按模块比对而不是逐条比对：同一模块的多条操作允许合并成一条说明改动范围。
 export const validateResumeReportChanges = (
   content: string,
   evidence: ResumeAgentTaskEvidence[],
@@ -119,13 +120,15 @@ export const validateResumeReportChanges = (
     .filter((item) => item.kind === "resume_change" && !item.replayed &&
       item.changed === true && item.status !== "failed")
     .flatMap((item) => item.verifiedChanges ?? []);
-  if (report.changes.length !== verifiedChanges.length ||
-    report.changes.some((change, index) => change.module !== verifiedChanges[index]?.module ||
-      change.summary !== verifiedChanges[index]?.summary)) {
+  const verifiedModules = [...new Set(verifiedChanges.map((item) => item.module))];
+  const reportModules = report.changes.map((item) => item.module);
+  const missing = verifiedModules.filter((module) => !reportModules.includes(module));
+  const extra = reportModules.filter((module) => !verifiedModules.includes(module));
+  if (missing.length || extra.length) {
     return {
       code: "report_mismatch",
       // 回给模型的具体差异，便于逐项对齐
-      text: `报告 changes 必须逐项使用工具确认的实际改动：${JSON.stringify(verifiedChanges)}。`,
+      text: `报告 changes 必须覆盖实际写入的模块，不得多列未改动的模块：应包含 ${JSON.stringify(verifiedModules)}，当前为 ${JSON.stringify(reportModules)}。`,
     };
   }
   return null;

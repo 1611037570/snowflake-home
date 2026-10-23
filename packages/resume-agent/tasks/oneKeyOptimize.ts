@@ -31,7 +31,7 @@ export const ONE_KEY_OPTIMIZE_TASK: ResumeAgentTaskProfile = {
 - totalScore：总分或 null。
 - dimensions：按上述固定顺序列出六个 { name, score }，名称不得变更。
 - checks：优化后仍存在的问题，每项 { level, message }；level 只能是 error 或 warning，message 写明对应维度与简历依据。
-- changes：汇总本轮每次真实写入返回的 verifiedChanges，按原顺序逐项原样列出，每项 { module, summary }；跳过复用结果与失败操作，未成功写入时为空数组，不合并、重排或改写摘要。
-- todo：仍需用户补充的事实；highlights：有证据的改善；suggestions：尚未解决的问题和具体行动。这三项均为字符串数组，没有内容时返回空数组。
-输出前核对 JSON 可解析、六维顺序和名称固定、changes 与实际写入逐项一致；不得把计划、失败操作或纯占位内容写进 changes。分数与结论必须对应最终简历，不能照搬示例。`, // 该按钮任务独有的执行、评分与输出规则。
+- changes：本轮真实写入的改动，按模块汇总，每个模块只列一条 { module, summary }；summary 概括该模块的改动范围，不逐条罗列字段；未成功写入时为空数组，跳过失败与复用结果。
+- suggestions：尚未解决的问题与具体行动，字符串数组，没有内容时返回空数组。不需要输出 todo 与 highlights。
+输出前核对 JSON 可解析、六维顺序和名称固定、changes 覆盖了实际写入的全部模块且没有多列；不得把计划、失败操作或纯占位内容写进 changes。分数与结论必须对应最终简历，不能照搬示例。`, // 该按钮任务独有的执行、评分与输出规则。
 };

@@ -71,7 +71,8 @@ describe("简历智能体执行边界", () => {
     }] as ResumeAgentTaskState["evidence"];
 
     expect(validateResumeReportChanges(report("项目经历"), evidence)?.text).toContain("工作经历");
-    expect(validateResumeReportChanges(report("工作经历", "新增记录"), evidence)?.text).toContain("调整工作内容");
+    // 同一模块允许改写成概括性的改动范围，不再逐字比对摘要
+    expect(validateResumeReportChanges(report("工作经历", "补充量化成果与组件化细节"), evidence)).toBeNull();
     expect(validateResumeReportChanges(report("工作经历"), evidence)).toBeNull();
   });
 
