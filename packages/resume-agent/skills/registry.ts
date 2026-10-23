@@ -22,7 +22,7 @@ export const resumeSkillRegistry: SkillRegistration[] = [
     "resume_writing",
     "task",
     "简历编写",
-    "指导 AI 根据本轮资料编写、修改、重命名、新增、删除或排序简历内容。",
+    "根据求职目标和已有资料编写或改进简历内容，兼顾结构、事实与表达。",
     () => import("./skill_resume_writing").then((module) => module.resumeWriting()),
   ),
   registerSkill(

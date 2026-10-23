@@ -19,7 +19,7 @@ editor/panel/index.vue（异步挂载助手）
 - `interview/`：维护面试流程、入口判断和建议卡片，不保存面试技能正文。
 - `context/`：适配 Web 表单、Store 与简历 Agent；生成字段契约并在请求周期内冻结模块选择、脱敏和读取范围。
 - `routing/registry.ts`：登记常驻提示，并复用简历智能体包提供的轻量任务能力与参考知识目录。
-- `routing/defaultPrompt.ts`：维护助手共用的读取、写入与事实边界。
+- `routing/defaultPrompt.ts`：装配助手身份、事实边界与默认输出提示；通用操作规则由简历 Agent 运行时维护。
 - `useResumeAssistant.ts`：根据当前简历状态装配 Web 数据上下文、简历 Agent 工具与错误引导。
 
 依赖约定：

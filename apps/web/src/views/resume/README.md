@@ -65,7 +65,7 @@ const sample = await data.loadResumeTemplateData("allFields.ts");
 | 出口 | 形态 | 消费方 |
 | --- | --- | --- |
 | `getWritingRule(action, kindKey, moduleKey)` | 按操作与模块精确选一条 | 富文本框快捷处理（`packages/resume-agent/tasks/contentRewrite.ts`） |
-| `ASSISTANT_WRITING_RULES_TEXT` | 通用原则 + 各类型要点 + 经历起草规则 | 按需注入 AI 写入技能 `resume_writing` 与一键按钮任务配置 |
+| `ASSISTANT_WRITING_RULES_TEXT` | 通用原则 + 各类型要点 + 经历起草规则 | 按需注入简历编写与优化技能；一键按钮按需选用对应技能 |
 
 导入 / 解析（Markdown、PDF）只忠实转换原文，面试快答只生成口述答案，均不写简历正文，不注入写作规则。`resume_optimization` 按需提供问题定位和基于证据的改写方法，与规则冲突时以 `writingRules.ts` 为准。
 
@@ -112,6 +112,7 @@ const sample = await data.loadResumeTemplateData("allFields.ts");
 
 ### 本轮迭代记录
 
+- 简历 Agent 运行时统一处理读取、生成、优化、删除、提交及工具失败后的续做；新建草稿入口只传本轮要求，一键任务选用通用技能并保留目标与验收规则，简历编写和优化技能聚焦内容判断与写作方法；按执行规范未运行验证脚本。
 - 新建简历入口复用表单的默认添加字段初始化个人信息，并由入口写入姓名与求职岗位；通用草稿任务接收模块范围和补充要求，调用简历编写能力生成工作、项目、教育、技能内容；模块树一键添加依赖已打开的简历，未直接复用于新建前的草稿；按执行规范未运行验证脚本。
 - AI 生成简历按所选模板的技能布局输出富文本或技能列表；移除草稿对经历可选字段的统一删减，仅保留个人信息的事实限制；优化按当前布局与任务目标处理可选字段；按执行规范未运行验证脚本。
 - AI 生成简历的技能正文固定切换富文本布局，草稿只保留必填字段及用户明确给出的字段；生成与优化写作统一在未知细节处使用 XX 占位，移除段尾核实标记及预览计数；按执行规范未运行验证脚本。

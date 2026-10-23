@@ -110,6 +110,8 @@ export type ResumeAgentTaskState = {
 export type ResumeAgentTaskProfile = {
   // 按钮任务的稳定标识。
   id: string;
+  // 按钮任务需要优先加载的通用内容技能。
+  preferredCapabilityId?: string;
   // 当前按钮任务是否允许修改模块展示标题。
   allowModuleTitleEdit?: boolean;
   // 按钮已经明确的任务目标。
@@ -118,7 +120,7 @@ export type ResumeAgentTaskProfile = {
   requiredEffects: ResumeAgentRequiredEffect[];
   // 按钮任务固定的用户可核对完成条件。
   successCondition: string;
-  // 仅在该按钮任务中注入的执行要求。
+  // 仅在该按钮任务中注入的目标范围与输出要求。
   instructions: string;
   // 由运行时核对的按钮任务完成条件。
   completionPolicy: ResumeAgentCompletionPolicy;
@@ -147,7 +149,7 @@ export type CreateResumeAgentTaskRuntimeOptions = {
   fixedSuccessCondition?: string;
   // 当前入口是否允许以等待补充或阻塞状态暂停任务。
   allowTaskPause?: boolean;
-  // 按钮入口直接指定的任务配置，不参与通用技能选择。
+  // 按钮入口直接指定的任务配置，可优先选择其声明的通用技能。
   taskProfile?: ResumeAgentTaskProfile;
   // 每次业务工具形成证据后通知宿主，用于展示和撤回等交互状态。
   onEvidence?: (evidence: ResumeAgentTaskEvidence) => void;
