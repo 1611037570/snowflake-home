@@ -15,6 +15,8 @@ export const resumeTranslate = (): Skill => ({
         after: "resume_change", // 翻译内容写入必须先成功。
       },
     ],
+    // 本轮读取涉及的模块都必须真实改写，一次局部写入不能代表整份翻译完成。
+    scopeCoverage: "read_scope",
   },
   instructions: `# 翻译范围
 先确认目标语言；翻译简历时读取本轮可访问的真实数据，只处理读取范围。用户要求整份而当前仅能读取局部时，先取得整份读取范围。仅需译文文本时直接输出，不写入。

@@ -1,6 +1,9 @@
+import type { Skill } from "../types";
+
 // 打招呼语技能：根据用户真实简历生成开场打招呼语，可带风格要求
-export const greeting = () => ({
+export const greeting = (): Skill => ({
   id: "greeting",
+  completionPolicy: { requiredEvidence: ["read"] }, // 开场语必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "打招呼语",
   description: `根据用户简历生成开场打招呼语（投递、沟通开场），可指定正式、亲切、幽默等风格。`,

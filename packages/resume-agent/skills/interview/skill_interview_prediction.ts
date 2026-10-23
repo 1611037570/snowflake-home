@@ -1,6 +1,9 @@
+import type { Skill } from "../../types";
+
 // 面试押题技能：结合岗位 JD 与整份简历生成高频问题、参考答案和准备反馈
-export const interviewPrediction = () => ({
+export const interviewPrediction = (): Skill => ({
   id: "interview_prediction",
+  completionPolicy: { requiredEvidence: ["read"] }, // 押题必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "面试押题",
   description: `基于目标岗位 JD 与个人简历预测高频面试题，提供参考答案、回答技巧与准备反馈。`,

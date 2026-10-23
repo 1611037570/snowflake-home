@@ -1,6 +1,9 @@
+import type { Skill } from "../../types";
+
 // 行测与 HR 面试技能：按阶段完成限时题目、软技能问答与综合评估
-export const aptitudeHrInterview = () => ({
+export const aptitudeHrInterview = (): Skill => ({
   id: "aptitude_hr_interview",
+  completionPolicy: { requiredEvidence: ["read"] }, // 面试评估必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "行测与 HR 面试",
   description: `通过行测模拟与 HR 软技能面试双重维度，评估综合能力并给出针对性反馈。`,

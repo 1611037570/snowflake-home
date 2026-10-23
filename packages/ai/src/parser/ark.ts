@@ -32,6 +32,30 @@ export const arkStreamParser = (line: string, { onEvent, isDebug }: any) => {
     onEvent?.("content", currentOutputContent);
   }
 
+  // 工具调用声明（response.output_item.added）：调用项标识与函数名只在这里出现一次
+  if (type === "response.output_item.added" && data.item?.type === "function_call") {
+    onEvent?.("tool_call_delta", {
+      item_id: data.item.id,
+      id: data.item.call_id || data.item.id,
+      name: data.item.name,
+      arguments: data.item.arguments || "",
+    });
+  }
+  // 工具参数增量（response.function_call_arguments.delta）：按调用项标识拼接
+  if (type === "response.function_call_arguments.delta" && data.delta) {
+    onEvent?.("tool_call_delta", {
+      item_id: data.item_id,
+      arguments: data.delta,
+    });
+  }
+  // 工具调用完成（response.output_item.done）：补正回填时需要的 call_id，参数已由增量拼好
+  if (type === "response.output_item.done" && data.item?.type === "function_call") {
+    onEvent?.("tool_call_delta", {
+      item_id: data.item.id,
+      id: data.item.call_id,
+    });
+  }
+
   // 处理 Token 消耗 (response.completed)
   if (type === "response.completed" && data.response?.usage) {
     totalTokens = readTotalTokens(data.response.usage) ?? 0;

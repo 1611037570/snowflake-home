@@ -1,6 +1,9 @@
+import type { Skill } from "../types";
+
 // 人生总结技能：基于整份简历梳理可验证的经历脉络，不扩展未提供的人生信息
-export const lifeSummary = () => ({
+export const lifeSummary = (): Skill => ({
   id: "life_summary",
+  completionPolicy: { requiredEvidence: ["read"] }, // 总结必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "人生总结",
   description: `根据整份简历梳理经历脉络、关键成果与成长主题，生成有事实依据的阶段总结。`,

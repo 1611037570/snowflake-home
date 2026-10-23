@@ -1,6 +1,9 @@
+import type { Skill } from "../types";
+
 // AI 简历评估技能：体检（格式/一致性问题）+ 多维度打分
-export const resumeScore = () => ({
+export const resumeScore = (): Skill => ({
   id: "resume_score",
+  completionPolicy: { requiredEvidence: ["read"] }, // 评分必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "AI 简历评估",
   description: `对简历做全方位综合评估：先体检，再从信息完整度、阅读效率、职业契合度、职业成就、发展潜力与职业稳定性六个维度打分并给出改进建议。`,

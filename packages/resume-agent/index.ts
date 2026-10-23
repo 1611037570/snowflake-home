@@ -73,6 +73,7 @@ export { createResumeAgentSession } from "./runtime/resumeAgentSession";
 export { RESUME_AGENT_FACTS } from "./runtime/types";
 export type {
   ResumeAgentPendingInput,
+  ResumeAgentIncompleteReason,
   ResumeAgentTaskBlocker,
   ResumeAgentTaskEvidence,
   ResumeAgentTaskPhase,

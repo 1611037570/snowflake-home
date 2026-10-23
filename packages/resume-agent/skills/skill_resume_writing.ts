@@ -1,8 +1,10 @@
 // 技能：简历编写
 // 描述：提供生成、修改与优化简历内容时共用的写作方法
+import type { Skill } from "../types";
 import { ASSISTANT_WRITING_RULES_TEXT } from "../writingRules";
-export const resumeWriting = () => ({
+export const resumeWriting = (): Skill => ({
   id: "resume_writing",
+  completionPolicy: { requiredEvidence: ["read"] }, // 编写建议必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "简历编写",
   description: `根据求职目标和已有资料编写或改进简历内容，兼顾结构、事实与表达。`,

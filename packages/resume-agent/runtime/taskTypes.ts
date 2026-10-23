@@ -107,6 +107,34 @@ export type ResumeAgentTaskState = {
   evidence: ResumeAgentTaskEvidence[];
 };
 
+// 任务未完成原因：code 供宿主映射用户话术，text 回给模型继续修正。
+export type ResumeAgentIncompleteReason = {
+  // 稳定原因编码，宿主据此选择用户可读话术。
+  code:
+    // 尚未建立本轮任务计划。
+    | "no_plan"
+    // 缺少必需的成功证据。
+    | "missing_evidence"
+    // 工具结果仍显示未完成项。
+    | "missing_facts"
+    // 写入后没有重新读取数据。
+    | "stale_read"
+    // 证据先后顺序不满足。
+    | "evidence_order"
+    // 读取范围内的模块没有全部改动。
+    | "scope_uncovered"
+    // 专用报告未按契约输出。
+    | "report_invalid"
+    // 报告改动与实际写入不一致。
+    | "report_mismatch"
+    // 其他未满足完成条件的情况。
+    | "unresolved";
+  // 回给模型继续修正的具体说明。
+  text: string;
+  // 用户可读的补充信息，例如未覆盖的模块名称或缺少的证据类型。
+  detail?: string;
+};
+
 export type ResumeAgentTaskProfile = {
   // 按钮任务的稳定标识。
   id: string;
@@ -125,7 +153,7 @@ export type ResumeAgentTaskProfile = {
   // 由运行时核对的按钮任务完成条件。
   completionPolicy: ResumeAgentCompletionPolicy;
   // 最终正文的专用校验，返回原因时要求模型修正。
-  validateFinal?: (answer: string, evidence: ResumeAgentTaskEvidence[]) => string | null;
+  validateFinal?: (answer: string, evidence: ResumeAgentTaskEvidence[]) => ResumeAgentIncompleteReason | null;
 };
 
 export type CreateResumeAgentTaskRuntimeOptions = {

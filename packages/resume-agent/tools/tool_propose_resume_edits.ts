@@ -139,19 +139,18 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
       };
     }
     // 工具只提交完整操作列表，具体执行语义由简历领域统一处理
-    const beforeData = JSON.stringify(dataView);
     const result = ctx.applyResumeOperations(pending.map((item) => item.operation));
-    // 宿主接受操作不等于数据真的变化，任务证据以写入前后数据为准。
-    const hasDataChange = beforeData !== JSON.stringify(ctx.getResumeData());
-    const noChange = result.applied && !hasDataChange && result.failed.length === 0;
+    // 逐项结果已经区分真实改动与同值提交，同批中有一项改动不会让其他同值赋值进入改动清单
+    const changedIndexes = result.changed;
+    const noChange = result.applied && !changedIndexes.length && result.failed.length === 0;
     // 成功新增的记录记入签名表，其他操作不按字段名或下标误判为重复。
     pending.forEach((item, index) => {
       const signature = getOperationSignature(item.operation);
-      if (hasDataChange && signature && result.changed.includes(index)) appliedSignatures.add(signature);
+      if (signature && changedIndexes.includes(index)) appliedSignatures.add(signature);
     });
     const toOriginalIndex = (index: number) => pending[index]?.index ?? index;
-    // 仅根据宿主确认成功的操作生成报告条目，失败操作不会进入改动清单。
-    const verifiedChanges: ResumeAgentVerifiedChange[] = hasDataChange ? result.changed.flatMap((index) => {
+    // 仅根据宿主确认真实变化的操作生成报告条目，失败与同值操作不会进入改动清单。
+    const verifiedChanges: ResumeAgentVerifiedChange[] = changedIndexes.flatMap((index) => {
       const operation = pending[index]?.operation;
       if (!operation) return [];
       const module = dataView[operation.module]?.title || operation.module;
@@ -164,24 +163,40 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
           : operation.op === "addRecord" ? "新增记录"
             : operation.op === "deleteRecord" ? "删除记录" : "调整记录顺序";
       return [{ module, summary }];
-    }) : [];
-    const executionIssues = result.failed.map((index) => ({
-      // 原始写操作下标，从零开始
-      operationIndex: toOriginalIndex(index),
-      // 领域执行阶段失败的稳定错误类别
-      code: "EXECUTION_FAILED",
-      // 面向模型的具体错误说明
-      message: `第 ${toOriginalIndex(index) + 1} 条操作未执行成功`,
-    }));
+    });
+    // 真实改动涉及的模块，供任务验收判断读取范围是否全部处理
+    const changedModuleKeys = [...new Set(changedIndexes.map((index) => pending[index]?.operation.module))]
+      .filter((key): key is string => typeof key === "string");
+    // 执行失败与字段写入失败分开上报：后者记录已创建，只需补填字段而不必整条重提
+    const executionIssues = [
+      ...result.failed.map((index) => ({
+        // 原始写操作下标，从零开始
+        operationIndex: toOriginalIndex(index),
+        // 领域执行阶段失败的稳定错误类别
+        code: "EXECUTION_FAILED",
+        // 面向模型的具体错误说明
+        message: `第 ${toOriginalIndex(index) + 1} 条操作未执行成功`,
+      })),
+      ...(result.fieldFailures ?? []).map((item) => ({
+        // 对应新增记录在模型提交列表中的下标
+        operationIndex: toOriginalIndex(item.operationIndex),
+        // 记录已创建、仅字段未写入的稳定错误类别
+        code: "FIELD_WRITE_FAILED",
+        // 明确指出需要补填的字段与补救方式
+        message: `第 ${toOriginalIndex(item.operationIndex) + 1} 条操作已创建记录，但字段 ${item.field} 写入失败，请用 updateRecord 补填`,
+      })),
+    ];
     return {
       ...result,
-      // 没有实际数据差异时，不把宿主接受的操作计为本轮写入。
-      applied: result.applied && hasDataChange,
+      // 宿主已接受本批操作；是否真的产生改动由 changed 逐项说明。
+      applied: result.applied,
       // 同值提交属于已处理但未产生新效果，完成校验仍需此前真实写入证据。
       noChange,
       // 回报时统一换算回模型提交的操作下标
-      changed: hasDataChange ? result.changed.map(toOriginalIndex) : [],
+      changed: changedIndexes.map(toOriginalIndex),
       verifiedChanges,
+      // 真实改动涉及的模块 key，用于读取范围覆盖校验
+      changedModuleKeys,
       failed: result.failed.map(toOriginalIndex),
       errors: executionIssues.map((issue) => issue.message),
       // 字段与格式校验已通过
@@ -210,17 +225,27 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
     const remainingIssues = Array.isArray(value.remainingIssues) ? value.remainingIssues.length : null;
     const duplicated = typeof value.duplicated === "number" ? value.duplicated : 0;
     const verifiedChanges = Array.isArray(value.verifiedChanges) ? value.verifiedChanges : [];
+    // 真实改动涉及的模块事实，供读取范围覆盖校验使用
+    const moduleFacts = (Array.isArray(value.changedModuleKeys) ? value.changedModuleKeys : [])
+      .filter((key: unknown): key is string => typeof key === "string")
+      .map((key: string) => `module:${key}`);
     if (value.applied === true && changed > 0 && !hasWriteIssues) {
       return {
         status: "success",
         summary: `已完整执行 ${changed} 项简历修改`,
         changed: true,
         verifiedChanges,
-        facts: remainingIssues === 0 ? [RESUME_AGENT_FACTS.resumeIssuesResolved] : [],
+        facts: [...moduleFacts, ...(remainingIssues === 0 ? [RESUME_AGENT_FACTS.resumeIssuesResolved] : [])],
       };
     }
     if (value.applied === true && changed > 0) {
-      return { status: "partial", summary: `已执行 ${changed} 项简历修改，仍有未完成项`, changed: true, verifiedChanges };
+      return {
+        status: "partial",
+        summary: `已执行 ${changed} 项简历修改，仍有未完成项`,
+        changed: true,
+        verifiedChanges,
+        facts: moduleFacts,
+      };
     }
     // 已接受的同值提交不覆盖此前成功证据，但不能单独满足写入要求。
     if (value.noChange === true) {

@@ -4,7 +4,7 @@ import type { ResumeAgentTaskState } from "../runtime/taskTypes";
 import type { ResumeAgentTool } from "../runtime/types";
 import { validateResumeReportChanges } from "../reports/resumeReport";
 import { configureResumeSchema, RESUME_SCHEMA } from "../schema/resumeSchemaRegistry";
-import { validateGeneratedResume } from "../tasks/initialResumeGeneration";
+import { validateGeneratedResume } from "../tasks/resumeDraftGeneration";
 
 describe("简历智能体执行边界", () => {
   it("写入前必须读取且前次写入会使读取失效", async () => {
@@ -70,8 +70,8 @@ describe("简历智能体执行边界", () => {
       verifiedChanges: [{ module: "工作经历", summary: "调整工作内容" }],
     }] as ResumeAgentTaskState["evidence"];
 
-    expect(validateResumeReportChanges(report("项目经历"), evidence)).toContain("工作经历");
-    expect(validateResumeReportChanges(report("工作经历", "新增记录"), evidence)).toContain("调整工作内容");
+    expect(validateResumeReportChanges(report("项目经历"), evidence)?.text).toContain("工作经历");
+    expect(validateResumeReportChanges(report("工作经历", "新增记录"), evidence)?.text).toContain("调整工作内容");
     expect(validateResumeReportChanges(report("工作经历"), evidence)).toBeNull();
   });
 

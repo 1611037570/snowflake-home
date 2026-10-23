@@ -252,10 +252,28 @@ export const createResumeEditor = ({
   ): boolean {
     const records = resolveModuleRecords(currentData.value?.[moduleKey]);
     const record = records?.[index];
-    if (!record?.data || typeof record.data !== "object" || !(field in record.data)) return false;
+    if (!record?.data || typeof record.data !== "object") return false;
+    // 读取副本会裁掉空的可选字段，字段契约声明可添加时允许首次补填
+    if (
+      !(field in record.data) &&
+      !findAddableModuleField(runtimeConfig.value?.fields, moduleKey, field)
+    ) {
+      return false;
+    }
     record.data[field] = value;
     return true;
   }
+  // 逐项校验写操作是否真的改变数据，供执行结果区分成功与同值提交
+  const readModuleField = (moduleKey: string, field: string) => {
+    const data = currentData.value?.[moduleKey]?.data;
+    if (!data || typeof data !== "object" || Array.isArray(data)) return undefined;
+    return data[field];
+  };
+  const readRecordField = (moduleKey: string, index: number, field: string) => {
+    const records = resolveModuleRecords(currentData.value?.[moduleKey]);
+    return records?.[index]?.data?.[field];
+  };
+  const readModuleTitle = (moduleKey: string) => currentData.value?.[moduleKey]?.ui?.title;
   function applyResumeOperations(operations: ResumeWriteOp[]) {
     return executeResumeOperations(operations, {
       addDataRecord,
@@ -264,6 +282,9 @@ export const createResumeEditor = ({
       updateModuleField,
       updateModuleTitle,
       updateRecordField,
+      readModuleField,
+      readRecordField,
+      readModuleTitle,
     });
   }
 

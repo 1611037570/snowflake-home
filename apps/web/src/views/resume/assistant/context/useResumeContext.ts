@@ -156,8 +156,11 @@ export const useResumeContext = (): ResumeDataContext => {
       result[key] = {
         // 模块标题也可能含有用户姓名或组织名称
         title: shouldDesensitize ? sanitizeSensitiveText(title, sensitiveValues, selectedFieldSet) : title,
-        // 已裁剪媒体、脱敏并去掉空可选字段的业务数据
-        data: omitEmptyOptionalFields(sanitized, activeSchema?.fields),
+        // 数组记录的字段集合即真实字段集合，保留空值以保证读取与补填口径一致；
+        // 对象模块仍裁剪空的可选字段，避免 AI 把未填字段当成已填写。
+        data: Array.isArray(sanitized)
+          ? sanitized
+          : omitEmptyOptionalFields(sanitized, activeSchema?.fields),
       };
     });
     return result;

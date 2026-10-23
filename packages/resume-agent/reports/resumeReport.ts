@@ -1,5 +1,5 @@
 // 一键优化报告数据结构与解析工具：协调编排技能输出与前端面板渲染
-import type { ResumeAgentTaskEvidence } from "../runtime/taskTypes";
+import type { ResumeAgentIncompleteReason, ResumeAgentTaskEvidence } from "../runtime/taskTypes";
 export interface ReportDimension {
   // 固定评分维度名称
   name: string;
@@ -110,9 +110,11 @@ export const parseResumeReport = (content: string): ResumeReport | null => {
 export const validateResumeReportChanges = (
   content: string,
   evidence: ResumeAgentTaskEvidence[],
-): string | null => {
+): ResumeAgentIncompleteReason | null => {
   const report = parseResumeReport(content);
-  if (!report) return "请按规定输出完整且有效的简历评分报告。";
+  if (!report) {
+    return { code: "report_invalid", text: "请按规定输出完整且有效的简历评分报告。" };
+  }
   const verifiedChanges = evidence
     .filter((item) => item.kind === "resume_change" && !item.replayed &&
       item.changed === true && item.status !== "failed")
@@ -120,7 +122,11 @@ export const validateResumeReportChanges = (
   if (report.changes.length !== verifiedChanges.length ||
     report.changes.some((change, index) => change.module !== verifiedChanges[index]?.module ||
       change.summary !== verifiedChanges[index]?.summary)) {
-    return `报告 changes 必须逐项使用工具确认的实际改动：${JSON.stringify(verifiedChanges)}。`;
+    return {
+      code: "report_mismatch",
+      // 回给模型的具体差异，便于逐项对齐
+      text: `报告 changes 必须逐项使用工具确认的实际改动：${JSON.stringify(verifiedChanges)}。`,
+    };
   }
   return null;
 };

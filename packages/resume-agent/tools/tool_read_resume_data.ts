@@ -20,10 +20,13 @@ export const createReadResumeDataTool = (ctx: ResumeToolContext): ResumeAgentToo
   effect: "read",
   // 返回数据对象即表示本次授权范围已经完成读取。
   evaluate: (result) => {
-    const success = Boolean(result && typeof result === "object" && "data" in result);
+    const data = result && typeof result === "object" ? (result as { data?: unknown }).data : undefined;
+    const success = Boolean(data && typeof data === "object");
     return {
       status: success ? "success" : "failed",
       summary: success ? "已读取当前简历数据" : "未能读取当前简历数据",
+      // 记录本次读取涉及的模块，供读取范围覆盖校验比对
+      facts: success ? Object.keys(data as Record<string, unknown>).map((key) => `module:${key}`) : [],
     };
   },
 });

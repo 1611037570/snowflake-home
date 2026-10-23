@@ -303,7 +303,8 @@ export const validateResumeEdits = (
         );
         return;
       }
-      if (!(op.field in record)) {
+      // 读取副本会裁掉空的可选字段，字段契约声明可添加时允许在记录内补填
+      if (!(op.field in record) && rule?.addable !== true) {
         errors.push(`${order}：模块 ${op.module} 下标 ${op.index} 的记录不存在字段 ${op.field}`);
         return;
       }

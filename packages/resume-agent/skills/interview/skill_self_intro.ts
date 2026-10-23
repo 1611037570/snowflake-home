@@ -1,6 +1,9 @@
+import type { Skill } from "../../types";
+
 // 面试自我介绍技能：根据用户真实简历生成可直接朗读的第一人称口头稿
-export const selfIntro = () => ({
+export const selfIntro = (): Skill => ({
   id: "self_intro",
+  completionPolicy: { requiredEvidence: ["read"] }, // 自我介绍必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "面试自我介绍",
   description: `根据用户简历生成面试自我介绍口头稿，突出核心优势、关键经历与求职意向。`,

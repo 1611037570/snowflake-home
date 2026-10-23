@@ -102,4 +102,6 @@ export type ResumeAgentCompletionPolicy = {
   requiredFacts?: string[];
   // 任务完成前必须满足的成功证据先后关系。
   evidenceOrder?: ResumeAgentEvidenceOrder[];
+  // 读取范围覆盖要求：read_scope 表示本轮读取涉及的模块必须全部出现在真实改动中。
+  scopeCoverage?: "read_scope";
 };

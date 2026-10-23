@@ -107,7 +107,8 @@ export const createResumeAgentToolExecution = (
           const previousAttempt = attemptKey ? toolAttempts.get(attemptKey) : undefined;
           const canReuseFailure = previousAttempt?.status === "failed" &&
             previousAttempt.stateVersion === stateVersion;
-          const canReuseResult = previousAttempt && previousAttempt.status !== "failed" && (
+          // 只有完整成功才复用结果：部分成功必须真实重跑，否则失败项永远补不上
+          const canReuseResult = previousAttempt?.status === "success" && (
             (replayScope === "task" && previousAttempt.changed !== false) ||
             previousAttempt.stateVersion === stateVersion
           );

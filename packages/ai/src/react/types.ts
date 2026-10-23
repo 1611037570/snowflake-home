@@ -73,6 +73,8 @@ export interface ReactConfig {
   }) => unknown;
   // 最终答案提交前检查任务是否完成；返回文字时把原因送回同一循环继续执行，返回空值时允许结束。
   beforeFinal?: (answer: string) => string | null | undefined | Promise<string | null | undefined>;
+  // 完成校验打回的重试次数上限，省略时按三次；超过后直接按未完成收口，不占用工具轮次。
+  finalRetryLimit?: number;
   // 候选答案未通过完成检查时通知宿主清理本轮临时展示。
   onFinalRetry?: (reason: string) => void;
   // 执行轮次耗尽时由业务层生成真实的未完成说明，省略时保持抛错行为。

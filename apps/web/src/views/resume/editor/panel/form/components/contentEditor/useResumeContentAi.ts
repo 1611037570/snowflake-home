@@ -224,6 +224,8 @@ export const useResumeContentAi = (
       } catch (error) {
         if (taskVersion === version && !isAbortError(error)) {
           candidate.error = error instanceof Error ? error.message : "内容处理失败";
+          // 失败的候选不能保留已收到的残片，否则会被当作正常结果采用
+          candidate.html = "";
         }
       } finally {
         clearTimer();
@@ -243,6 +245,11 @@ export const useResumeContentAi = (
   const applyResult = () => {
     const candidate = candidates.value[activeIndex.value];
     if (loading.value || !candidate?.html) return;
+    // 生成失败的候选不允许写入，避免把失败请求的残片当成结果
+    if (candidate.error) {
+      ElMessage.warning("该候选生成失败，请重新生成");
+      return;
+    }
     if (String(content.value ?? "") !== original) {
       ElMessage.warning("正文已改动，请重新生成");
       return;

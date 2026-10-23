@@ -51,7 +51,7 @@ describe("executeResumeOperations", () => {
       { ui: {}, data: { name: "丙公司" } },
       { ui: {}, data: { name: "乙公司" } },
     ]);
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       applied: true,
       changed: [0, 1, 2, 3, 4, 5],
       added: [{ module: "work", index: 2 }],
@@ -74,6 +74,6 @@ describe("executeResumeOperations", () => {
         [{ op: "updateModule", module: "user", field: "name", value: "李四" }],
         target,
       ),
-    ).toEqual({ applied: false, changed: [], added: [], failed: [0] });
+    ).toMatchObject({ applied: false, changed: [], added: [], failed: [0] });
   });
 });

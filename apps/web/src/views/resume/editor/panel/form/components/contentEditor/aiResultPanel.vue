@@ -93,7 +93,7 @@ const hasMultiple = computed(() => props.candidates.length > 1);
       <template v-else>
         <SfButton
           class="shrink-0 whitespace-nowrap"
-          :disabled="!activeCandidate?.html"
+          :disabled="!activeCandidate?.html || !!activeCandidate?.error"
           @click="emit('apply')"
         >
           {{ $t("resumeContentApply") }}

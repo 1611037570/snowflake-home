@@ -18,6 +18,8 @@ import {
   TASK_RELATIONS,
   TASK_REQUIRED_EFFECTS,
   type CreateResumeAgentTaskRuntimeOptions,
+  type ResumeAgentIncompleteReason,
+  type ResumeAgentTaskEvidence,
   type ResumeAgentTaskRelation,
   type ResumeAgentTaskState,
 } from "./taskTypes";
@@ -43,6 +45,8 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
   let task: ResumeAgentTaskState | undefined;
   // 规划缺失时的任务仍可由正式规划接管，已有工具证据必须保留。
   let implicitTask = false;
+  // 最后一次被完成校验拒绝的结构化原因，用于收口时生成用户可读结果。
+  let incompleteReason: ResumeAgentIncompleteReason | undefined;
   // 本轮注册工具的执行元数据，创建与包装两个时点都会登记，验收策略据此翻译成验收要求。
   const toolMetaByName = new Map<string, ResumeAgentToolRuntimeMeta>();
   const registerToolMetas = (tools: ReactTool[]) => {
@@ -69,6 +73,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     readAfterEvidence: [], // 建立任务后再合并写后读取要求。
     requiredFacts: [], // 建立任务后再合并业务事实要求。
     evidenceOrder: [], // 建立任务后再合并工具执行顺序。
+    scopeCoverage: null, // 建立任务后再按能力声明读取范围覆盖要求。
   };
   // 验收策略的输入快照：工具可能晚于规划才登记，收口前据此按最新工具约束重算。
   let policyInputs: {
@@ -366,6 +371,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     if (!task || (implicitTask && !task.requiredEffects.length)) {
       // 只读降级仍需确认用户究竟要求回复还是写入，不凭已读取就判完成。
       const reason = "尚未理解本轮任务，请调用 plan_resume_task 明确目标与必需业务效果。";
+      incompleteReason = { code: "no_plan", text: reason };
       options.onTrace?.({ type: "verdict", completed: false, reason });
       return reason;
     }
@@ -379,12 +385,16 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       );
     }
     // 已明确等待补充或阻塞时直接交付原因，报告格式不再阻止任务收口。
-    if (task.phase === "waiting" || task.phase === "blocked") return null;
+    if (task.phase === "waiting" || task.phase === "blocked") {
+      incompleteReason = undefined;
+      return null;
+    }
     const finalIssue = options.taskProfile?.validateFinal?.(answer, task.evidence);
     if (finalIssue) {
+      incompleteReason = finalIssue;
       // 报告校验的拦截原因也进入运行轨迹，供最后的未完成结果定位。
-      options.onTrace?.({ type: "verdict", completed: false, reason: finalIssue });
-      return finalIssue;
+      options.onTrace?.({ type: "verdict", completed: false, reason: finalIssue.text });
+      return finalIssue.text;
     }
     const result = evaluateResumeAgentCompletion(
       task.evidence,
@@ -395,25 +405,65 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       task.phase = "completed";
       task.pendingInput = undefined;
       task.blocker = undefined;
+      incompleteReason = undefined;
       // 观测：放行最终回答时记录结论。
       options.onTrace?.({ type: "verdict", completed: true, reason: null });
       return null;
     }
     task.phase = "verifying";
+    // 保留结构化原因：回给模型的是具体说明，交给用户的是按编码映射的话术。
+    incompleteReason = result.reason ?? {
+      code: "unresolved",
+      text: "本轮任务尚未满足完成条件，请继续核对工具结果。",
+    };
     // 观测：拦截过早收口时记录拦截原因，排障依赖这条信号。
-    options.onTrace?.({ type: "verdict", completed: false, reason: result.retryMessage });
-    return result.retryMessage;
+    options.onTrace?.({ type: "verdict", completed: false, reason: incompleteReason.text });
+    return incompleteReason.text;
+  };
+
+  // 未完成原因映射为用户话术：内部校验细节只回给模型，不直接展示给用户
+  const describeIncompleteReason = (issue: ResumeAgentIncompleteReason) => {
+    switch (issue.code) {
+      case "no_plan":
+        return "尚未确认本轮要做什么。";
+      case "missing_evidence":
+        return `还差${issue.detail ?? "必要步骤"}没有完成。`;
+      case "missing_facts":
+        return "工具结果里还有未完成的项。";
+      case "stale_read":
+        return `已完成${issue.detail ?? "修改"}，但还需要基于最新数据重新核对。`;
+      case "evidence_order":
+        return "操作顺序不符合要求，结果没有生效。";
+      case "scope_uncovered":
+        return `这些内容还没有实际改动：${issue.detail ?? "部分模块"}。`;
+      case "report_invalid":
+        return "评分报告没有按约定格式生成。";
+      case "report_mismatch":
+        return "报告里列出的改动与实际写入不一致。";
+      default: {
+        // 未归类原因去掉给模型的续做指令，避免术语直接出现在结果里
+        const text = issue.text.replace(/[，。]\s*请继续[\s\S]*$/, "。");
+        return /执行轮次|通过校验/.test(text) ? "这轮没能按要求完成，可以把要求拆小一点再试。" : text;
+      }
+    }
+  };
+
+  // 汇总本轮真实写入的改动，让用户在未完成时也能看到已经生效的部分
+  const summarizeCompletedChanges = (evidence: ResumeAgentTaskEvidence[]) => {
+    const items = evidence.flatMap((item) => item.verifiedChanges ?? []);
+    if (!items.length) return "";
+    const shown = items.slice(0, 5).map((item) => `${item.module}·${item.summary}`).join("；");
+    const rest = items.length > 5 ? `等 ${items.length} 项` : "";
+    return `本轮已完成的改动：${shown}${rest}。`;
   };
 
   const onIncomplete = (reason: string) => {
     // 轮次耗尽时保留已发生的业务事实，并明确标记任务未完成。
-    const finalReason = reason.startsWith("报告 changes 必须逐项使用工具确认的实际改动")
-      ? "评分报告中的改动与实际写入不一致。"
-      : reason === "请按规定输出完整且有效的简历评分报告。"
-        ? "评分报告未能生成完整有效的内容。"
-        : reason.startsWith("尚未理解本轮任务，请调用 plan_resume_task")
-          ? "尚未建立明确的任务计划。"
-          : reason.replace(/。请继续[\s\S]*$/, "。");
+    const issue: ResumeAgentIncompleteReason = incompleteReason ?? {
+      code: "unresolved",
+      text: reason,
+    };
+    incompleteReason = undefined;
     const completedChanges = task?.evidence.filter((item) =>
       item.kind === "resume_change" && !item.replayed && item.changed === true && item.status !== "failed"
     ) ?? [];
@@ -423,8 +473,10 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     }
     const detail = task?.phase === "waiting" && task.pendingInput
       ? task.pendingInput.question
-      : task?.blocker?.reason ?? finalReason;
-    const changeNotice = completedChanges.length ? "本轮已写入的修改仍保留在简历中，可使用撤回修改。\n\n" : "";
+      : task?.blocker?.reason ?? describeIncompleteReason(issue);
+    const changeNotice = completedChanges.length
+      ? `${summarizeCompletedChanges(completedChanges)}\n\n已写入的修改仍保留在简历中，可使用撤回修改。\n\n`
+      : "";
     return `${changeNotice}本轮任务尚未完成：${detail}`;
   };
 

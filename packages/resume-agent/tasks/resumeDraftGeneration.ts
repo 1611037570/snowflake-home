@@ -162,7 +162,9 @@ const createSubmitTool = (
       const schema = resolveResumeModuleSchema(getResumeModuleSchema(RESUME_SCHEMA, key), data);
       if (!schema?.fields.some((field) => field.key === "content" && field.required)) return false;
       const records = Array.isArray(data) ? data : [data];
-      return !records.some((record) => isRecord(record) && typeof record.content === "string" && record.content.trim());
+      // 每条记录都必须有正文，不能由其中一条合格代表整批完成
+      return !records.every((record) => isRecord(record) &&
+        typeof record.content === "string" && Boolean(record.content.trim()));
     });
     if (missingContent) return { accepted: false, error: `简历草稿模块 ${missingContent} 缺少正文` };
     // 只有提交工具接收的数据会成为页面预览，聊天正文不参与数据写入。

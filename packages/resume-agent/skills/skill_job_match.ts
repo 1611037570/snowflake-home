@@ -1,6 +1,9 @@
+import type { Skill } from "../types";
+
 // 岗位匹配与 ATS 优化技能：用户提供 JD 时按需读取，指导简历与目标岗位对标分析
-export const jobMatch = () => ({
+export const jobMatch = (): Skill => ({
   id: "job_match",
+  completionPolicy: { requiredEvidence: ["read"] }, // 匹配结论必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "岗位匹配与 ATS 优化",
   description: `分析目标岗位 JD 与当前简历的匹配度，并给出对标改写与补强方向。`,

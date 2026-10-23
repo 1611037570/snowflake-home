@@ -1,7 +1,9 @@
+import type { Skill } from "../types";
 import { ASSISTANT_WRITING_RULES_TEXT } from "../writingRules";
 
-export const resumeOptimization = () => ({
+export const resumeOptimization = (): Skill => ({
   id: "resume_optimization",
+  completionPolicy: { requiredEvidence: ["read"] }, // 优化结论必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "简历写作方法论",
   description: `简历写作方法：按求职目标定位问题，基于真实证据改进表达，优化或编写简历时按需读取。`,

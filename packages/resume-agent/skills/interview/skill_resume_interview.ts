@@ -1,6 +1,9 @@
+import type { Skill } from "../../types";
+
 // AI 简历面试技能：按八股文或项目深挖方向，基于真实简历开展一问一答式模拟面试
-export const resumeInterview = () => ({
+export const resumeInterview = (): Skill => ({
   id: "resume_interview",
+  completionPolicy: { requiredEvidence: ["read"] }, // 模拟面试必须基于真实读取的简历。
   role: "task" as const, // 参与任务契约规划的任务能力。
   name: "AI 简历面试",
   description: `基于用户简历开展模拟面试，按考察方向（八股文 / 项目深挖）出题、反馈与点评。`,

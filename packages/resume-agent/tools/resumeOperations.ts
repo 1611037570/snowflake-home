@@ -67,12 +67,16 @@ export interface ResumeAddedRecord {
 
 // 宿主执行一批简历操作后的结构化结果。
 export interface ResumeOperationResult {
-  // 是否至少有一条操作已实际写入。
+  // 是否至少有一条操作已执行成功，包含执行成功但值未变化的情况。
   applied: boolean;
-  // 已成功执行的原始操作下标。
+  // 真正改变了数据的原始操作下标。
   changed: number[];
+  // 执行成功但值与原来相同的操作下标。
+  unchanged?: number[];
   // 本批操作新增记录的实际落点。
   added: ResumeAddedRecord[];
   // 执行失败的原始操作下标。
   failed: number[];
+  // 新增记录中未能写入的字段，供调用方定位补填目标。
+  fieldFailures?: Array<{ operationIndex: number; field: string }>;
 }

@@ -53,11 +53,25 @@ const createMemoryTarget = (view: EvalResumeView): ResumeOperationTarget => {
     },
     updateRecordField: (moduleKey, index, field, value) => {
       const record = getRecords(moduleKey)?.[index];
-      // 新记录只允许写入字段契约里声明过的字段
-      if (!record || !(field in record)) return false;
+      if (!record) return false;
+      // 快照可能缺少空的可选字段，字段契约声明过即允许补填
+      if (
+        !(field in record) &&
+        !findResumeModuleSchema(moduleKey, [])?.fields.some((item) => item.key === field)
+      ) {
+        return false;
+      }
       record[field] = value;
       return true;
     },
+    // 逐项比较写入前后的值，区分真实改动与同值提交
+    readModuleField: (moduleKey, field) => {
+      const data = view[moduleKey]?.data;
+      if (!data || typeof data !== "object" || Array.isArray(data)) return undefined;
+      return (data as Record<string, unknown>)[field];
+    },
+    readRecordField: (moduleKey, index, field) => getRecords(moduleKey)?.[index]?.[field],
+    readModuleTitle: (moduleKey) => view[moduleKey]?.title,
     addDataRecord: (moduleKey) => {
       const records = getRecords(moduleKey);
       if (!records) return -1;

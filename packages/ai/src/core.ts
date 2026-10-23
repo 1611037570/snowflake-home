@@ -9,18 +9,6 @@ import { think } from "./react/thinker.js";
 import { ToolRegistry } from "./react/tools.js";
 import type { ChatMessage, ReactConfig } from "./react/types.js";
 
-// 从模型输出中提取 JSON 对象，忽略 JSON 前后的自然语言；json_object 模式已保证输出 JSON
-function extractJson(text: string): string {
-  if (!text) return text;
-  const trimmed = text.trim();
-  const start = trimmed.indexOf("{");
-  const end = trimmed.lastIndexOf("}");
-  if (start !== -1 && end > start) {
-    return trimmed.slice(start, end + 1);
-  }
-  return trimmed;
-}
-
 // 组装请求体：强制开启流式响应
 function processOption({ options }: any) {
   return JSON.stringify({
@@ -113,6 +101,8 @@ class LLM {
       isStream: true,
       isJson: false,
       isDebug: false,
+      // 连接测试允许重试：不累积流内容，重试不会造成拼接
+      retryCount: 3,
     });
     return sendFn();
   }
@@ -163,7 +153,7 @@ class LLM {
    * @param {boolean} [config.isDebug=true] - 是否开启调试模式，开启后会打印请求日志
    * @param {boolean} [config.isJson=true] - 接口返回数据是否为 JSON 格式
    * @param {string} [config.method="POST"] - 请求方法，默认为 POST
-   * @param {number} [config.retryCount=3] - 请求失败时的重试次数
+   * @param {number} [config.retryCount=3] - 请求失败时的重试次数；流式请求默认不重试
    * @param {number} [config.timeout=300000] - 请求超时时间，默认 5 分钟
    * @param {boolean} [config.isStream=true] - 是否开启流式响应
    * @returns {Promise<any>} 返回请求结果的 Promise，包含 abortFn 和 sendFn
@@ -181,12 +171,14 @@ class LLM {
       isDebug = true,
       isJson = true,
       method = "POST",
-      retryCount = 3,
+      retryCount,
       isStream = true,
       timeout = 300000,
       traceId: parentTraceId,
       deferTraceFinish = false,
     } = config;
+    // 流式增量无法回滚，重试会把上一轮的正文与工具参数重复拼进调用方累积器
+    const retryAttempts = retryCount ?? (isStream ? 0 : 3);
     const token = this.apiKey || "";
     if (isDebug) {
       console.log("请求配置 :>> ", config);
@@ -287,14 +279,14 @@ class LLM {
             const status = e?.status;
             const retryable = !(status && status >= 400 && status < 500 && status !== 429);
             // 尝试次数耗尽或不可重试时，跳出循环按最终失败处理
-            if (attempt > retryCount || !retryable) {
+            if (attempt > retryAttempts || !retryable) {
               throw e;
             }
             const delay = 500 * attempt;
             this.observer.recordLlmTraceEvent(traceId, "retry", { attempt, delay });
             if (isDebug) {
               console.warn(
-                `请求失败，准备在 ${delay}ms 后进行第 ${attempt}/${retryCount} 次重试...`,
+                `请求失败，准备在 ${delay}ms 后进行第 ${attempt}/${retryAttempts} 次重试...`,
               );
             }
             // 等待指定时间后进入下一次尝试
@@ -344,6 +336,8 @@ class LLM {
 
     const run = async (initialMessages: ChatMessage[]): Promise<string> => {
       const maxSteps = config.maxSteps ?? 6;
+      // 完成校验打回上限：单独计量，不与工具轮次共用预算
+      const finalRetryLimit = config.finalRetryLimit ?? 3;
       let history: ChatMessage[] = [...initialMessages];
       const traceId = this.observer.createLlmTrace({
         provider: this.provider,
@@ -352,6 +346,7 @@ class LLM {
       });
       let activeRound: { round: number; startTime: number } | null = null;
       let lastIncompleteReason = "";
+      let finalRetries = 0;
 
       // 统一记录每轮结束时间与耗时，异常和取消同样保留本轮数据
       const finishActiveRound = (status: "success" | "error" | "aborted" = "success") => {
@@ -409,14 +404,17 @@ class LLM {
 
           // 无工具调用时，校验任务完成条件后直接返回最终答案。
           if (!result.toolCalls.length) {
-            const finalAnswer = extractJson(result.finalAnswer);
+            // 最终回答原样交给业务校验：裁切花括号之间的内容会截断含 JSON 片段的普通回答
+            const finalAnswer = result.finalAnswer;
 
             // 业务运行时可依据工具证据拒绝过早收口，反馈仍留在同一个 ReAct 历史中继续处理。
             if (config.beforeFinal) {
               const retryReason = await config.beforeFinal(finalAnswer);
               if (retryReason) {
                 lastIncompleteReason = retryReason;
-                if (step >= maxSteps - 1) {
+                // 收口重试单独计数，避免格式问题反复打回把工具轮次耗光
+                finalRetries += 1;
+                if (step >= maxSteps - 1 || finalRetries > finalRetryLimit) {
                   if (!config.onIncomplete) throw new Error("ReAct 未满足任务完成条件");
                   const incompleteAnswer = await config.onIncomplete(retryReason);
                   config.onFinal?.(incompleteAnswer);

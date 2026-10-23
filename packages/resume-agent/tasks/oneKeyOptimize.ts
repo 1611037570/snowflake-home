@@ -7,10 +7,13 @@ export const ONE_KEY_OPTIMIZE_TASK: ResumeAgentTaskProfile = {
   preferredCapabilityId: "resume_optimization", // 优先加载通用简历优化方法。
   allowModuleTitleEdit: false, // 岗位优化只修改实际简历内容。
   objective: "结合入口提供的求职岗位优化整份简历并输出评分报告", // 按钮已经明确的任务目标。
-  requiredEffects: ["resume_change"], // 本任务必须实际修改当前简历。
-  successCondition: "当前简历已完成有事实依据的岗位优化，并基于写入后的数据生成评分报告", // 用户可核对的完成条件。
+  // 检查后确认没有安全改动也是正常结果，因此不强制本轮产生写入。
+  requiredEffects: [],
+  // 用户可核对的完成条件。
+  successCondition: "当前简历已完成有事实依据的岗位优化并生成评分报告；没有安全改动时说明无需修改的原因",
   completionPolicy: {
-    readAfterEvidence: ["resume_change"], // 评分报告必须依据写入后重新读取的数据。
+    requiredEvidence: ["read"], // 必须基于真实读取的简历给出结论。
+    readAfterEvidence: ["resume_change"], // 只有真的写入后才要求基于写入后的数据重新读取。
   },
   validateFinal: validateResumeReportChanges, // 报告改动条目必须与实际写入证据一致。
   instructions: `# 任务范围
