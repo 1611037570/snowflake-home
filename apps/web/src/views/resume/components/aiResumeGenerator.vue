@@ -6,6 +6,7 @@ import { normalizeResumeData } from "@/views/resume/mine/resumeImportNormalizer"
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import {
   runInitialResumeGeneration,
+  type InitialResumeDraftModule,
   type InitialResumeGenerationInput,
   type InitialResumeGenerationStage,
 } from "@snowflake/resume-agent";
@@ -44,6 +45,8 @@ const sourceItem = ref<Record<string, any> | null>(null);
 const pendingItem = ref<Record<string, any> | null>(null);
 const controller = ref<AbortController | null>(null);
 const sections = reactive<InitialResumeGenerationInput>({});
+const draftModules = ref<InitialResumeDraftModule[]>([]);
+const generationWarnings = ref<string[]>([]);
 
 const steps = computed<GenerationStep[]>(() => [
   {
@@ -87,10 +90,17 @@ const currentStep = computed(() => steps.value[currentIndex.value]!);
 const isLastStep = computed(() => currentIndex.value === steps.value.length - 1);
 const modalWidth = computed(() => pendingItem.value ? "min(90vw, 1200px)" : "min(90vw, 720px)");
 const generationStatus = computed(() => $t(`resumeAiGenerateStage_${generationStage.value}`));
+const canDraftCurrent = computed(() => ["skill", "work", "project"].includes(currentStep.value.key));
+const isDraftCurrent = computed(() => draftModules.value.includes(currentStep.value.key as InitialResumeDraftModule));
+const pendingCandidateCount = computed(() =>
+  (JSON.stringify(pendingItem.value?.data ?? "").match(/【待核实】/g) || []).length,
+);
 const currentContent = computed({
   get: () => sections[currentStep.value.key] || "",
   set: (value: string) => {
     sections[currentStep.value.key] = value;
+    // 用户改为填写事实时，取消该模块的纯 AI 起草选择。
+    if (value.trim()) draftModules.value = draftModules.value.filter((key) => key !== currentStep.value.key);
   },
 });
 
@@ -112,6 +122,8 @@ const open = (
   if (!ensureAiAvailable(configureModel)) return;
   Object.keys(sections).forEach((key) => delete sections[key as keyof InitialResumeGenerationInput]);
   Object.assign(sections, initialSections);
+  draftModules.value = [];
+  generationWarnings.value = [];
   sourceItem.value = JSON.parse(JSON.stringify(item || {}));
   pendingItem.value = null;
   currentIndex.value = 0;
@@ -120,7 +132,7 @@ const open = (
 
 // 下一步只接受当前模块的有效内容，空模块通过明确的跳过操作推进。
 const goNext = () => {
-  if (!currentContent.value.trim()) {
+  if (!currentContent.value.trim() && !isDraftCurrent.value) {
     ElMessage.warning($t("resumeAiGenerateFillOrSkip"));
     return;
   }
@@ -135,10 +147,24 @@ const goBack = () => {
   if (currentIndex.value > 0) currentIndex.value -= 1;
 };
 
+// 无资料模块由用户明确选择起草，保留与跳过模块不同的请求意图。
+const draftCurrent = () => {
+  if (!canDraftCurrent.value) return;
+  const key = currentStep.value.key as InitialResumeDraftModule;
+  delete sections[key];
+  if (!draftModules.value.includes(key)) draftModules.value.push(key);
+  if (isLastStep.value) {
+    void generate();
+    return;
+  }
+  currentIndex.value += 1;
+};
+
 // 跳过后不向模型发送该模块；最后一步跳过时直接生成已填写模块。
 const skipCurrent = () => {
   const key = currentStep.value.key;
   delete sections[key];
+  draftModules.value = draftModules.value.filter((module) => module !== key);
   if (isLastStep.value) {
     void generate();
     return;
@@ -159,18 +185,21 @@ const generate = async () => {
   const requestController = new AbortController();
   controller.value = requestController;
   generationStage.value = "analyzing";
+  generationWarnings.value = [];
   generating.value = true;
   try {
     const result = await runInitialResumeGeneration(input, {
       signal: requestController.signal,
+      draftModules: draftModules.value,
       onStage: (stage) => {
         generationStage.value = stage;
       },
     });
     if (requestController.signal.aborted || controller.value !== requestController) return;
     const generated = normalizeResumeData(result);
-    const requestedKeys = new Set(Object.keys(input));
-    // 即使模型额外返回模块，也只保留用户实际填写的范围，确保跳过操作生效。
+    generationWarnings.value = generated.warnings;
+    const requestedKeys = new Set([...Object.keys(input), ...draftModules.value]);
+    // 只保留填写资料或明确选择 AI 起草的模块，确保跳过操作生效。
     const generatedData = Object.fromEntries(
       Object.entries(generated.data).filter(([key]) => requestedKeys.has(key)),
     );
@@ -257,6 +286,15 @@ defineExpose({ open });
           <p class="mt-3 text-sm leading-7 text-sf-text-2">
             {{ $t("resumeAiGenerateResultDescription") }}
           </p>
+          <p v-if="pendingCandidateCount" class="mt-3 text-sm leading-6 text-sf-warning">
+            {{ $t("resumeAiGenerateReviewCandidates", { count: pendingCandidateCount }) }}
+          </p>
+          <p v-if="generationWarnings.length" class="mt-3 text-sm leading-6 text-sf-warning">
+            {{ $t("resumeAiGenerateConversionWarnings", { count: generationWarnings.length }) }}
+          </p>
+          <ul v-if="generationWarnings.length" class="mt-3 max-h-24 list-disc overflow-auto pl-3 text-xs leading-6 text-sf-warning">
+            <li v-for="(warning, index) in generationWarnings" :key="index">{{ warning }}</li>
+          </ul>
         </div>
         <div class="mt-auto flex flex-col gap-3">
           <SfButton size="large" icon="lucide:check" :disabled="generating" @click="confirmGenerated">
@@ -306,12 +344,20 @@ defineExpose({ open });
           :placeholder="currentStep.placeholder"
           class="min-h-0 flex-1 border border-sf-b bg-sf-bg"
         />
+        <p v-if="isDraftCurrent" class="text-sm text-sf-theme">
+          {{ $t("resumeAiGenerateDraftSelected") }}
+        </p>
       </div>
 
       <div class="flex flex-wrap items-center justify-between gap-3">
-        <SfButton plain :disabled="generating" @click="skipCurrent">
-          {{ isLastStep ? $t("resumeAiGenerateSkipAndGenerate") : $t("resumeAiGenerateSkipModule") }}
-        </SfButton>
+        <div class="flex items-center gap-3">
+          <SfButton plain :disabled="generating" @click="skipCurrent">
+            {{ isLastStep ? $t("resumeAiGenerateSkipAndGenerate") : $t("resumeAiGenerateSkipModule") }}
+          </SfButton>
+          <SfButton v-if="canDraftCurrent && !currentContent.trim()" plain :disabled="generating" @click="draftCurrent">
+            {{ $t("resumeAiGenerateDraftModule") }}
+          </SfButton>
+        </div>
         <div class="flex items-center gap-3">
           <SfButton v-if="currentIndex > 0" type="bg" :disabled="generating" @click="goBack">
             {{ $t("resumeAiGeneratePrevious") }}
