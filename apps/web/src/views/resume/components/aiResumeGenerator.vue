@@ -3,16 +3,25 @@ import { useAiStore, useResumeStore } from "@/stores";
 import { $t } from "@/locales";
 import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
 import { normalizeResumeData } from "@/views/resume/mine/resumeImportNormalizer";
+import { initializeDefaultAddedFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import {
-  runInitialResumeGeneration,
-  type InitialResumeGenerationInput,
-  type InitialResumeGenerationStage,
+  runResumeDraftGeneration,
+  type ResumeDraftGenerationStage,
 } from "@snowflake/resume-agent";
 import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 
 defineOptions({ name: "AiResumeGenerator" });
+
+type GenerationInput = {
+  // 用户填写的求职岗位。
+  position: string;
+  // 用户填写的工作年限或职业阶段。
+  workYears: string;
+  // 用户自愿提供的更多真实资料。
+  supplement: string;
+};
 
 const emit = defineEmits<{
   // 用户确认预览结果后返回已经套用所选模板的简历数据。
@@ -25,15 +34,16 @@ const resumeStore = useResumeStore();
 const { ensureAiAvailable } = useResumeAiAvailability();
 const visible = ref(false);
 const generating = ref(false);
-const generationStage = ref<InitialResumeGenerationStage>("analyzing");
+const generationStage = ref<ResumeDraftGenerationStage>("analyzing");
 const sourceItem = ref<Record<string, any> | null>(null);
 const pendingItem = ref<Record<string, any> | null>(null);
 const controller = ref<AbortController | null>(null);
-const generationInput = reactive<InitialResumeGenerationInput>({
+const generationInput = reactive<GenerationInput>({
   position: "", // 用户填写的求职岗位。
   workYears: "", // 用户填写的工作年限或职业阶段。
   supplement: "", // 用户自愿提供的更多真实资料。
 });
+const knownName = ref("");
 const generationWarnings = ref<string[]>([]);
 
 const modalWidth = computed(() => pendingItem.value ? "min(90vw, 1200px)" : "min(90vw, 720px)");
@@ -47,7 +57,8 @@ const configureModel = () => {
 // 每次打开都清理旧填写，并允许入口预填岗位与补充资料。
 const open = (
   item: Record<string, any>,
-  initialInput: Partial<InitialResumeGenerationInput> = {},
+  initialInput: Partial<GenerationInput> = {},
+  initialName = "",
 ) => {
   if (resumeStore.resumeList.length >= resumeStore.maxCount) {
     ElMessage.warning($t("resumeCreateMaxLimit", { max: resumeStore.maxCount }));
@@ -57,6 +68,7 @@ const open = (
   generationInput.position = initialInput.position?.trim() || "";
   generationInput.workYears = initialInput.workYears?.trim() || "";
   generationInput.supplement = initialInput.supplement?.trim() || "";
+  knownName.value = initialName.trim();
   generationWarnings.value = [];
   sourceItem.value = JSON.parse(JSON.stringify(item || {}));
   pendingItem.value = null;
@@ -65,7 +77,7 @@ const open = (
 
 // AI 只生成业务数据，模板主题与布局继续沿用入口传入的数据。
 const generate = async () => {
-  const input: InitialResumeGenerationInput = {
+  const input: GenerationInput = {
     position: generationInput.position.trim(), // 本次生成采用的目标岗位。
     workYears: generationInput.workYears.trim(), // 本次生成采用的职业阶段。
     supplement: generationInput.supplement.trim(), // 本次生成采用的补充事实。
@@ -81,15 +93,28 @@ const generate = async () => {
   generationWarnings.value = [];
   generating.value = true;
   try {
-    const result = await runInitialResumeGeneration(input, {
+    const skillLayout = sourceItem.value?.ui?.skill?.layout === "text" ? "text" : "proficiency";
+    // 新建入口只组合通用写作能力所需的资料、目标模块与补充要求。
+    const result = await runResumeDraftGeneration({
+      brief: `只生成工作经历、项目经历、教育经历和专业技能四个模块，每个模块都要有实际内容。专业技能遵循当前模板的${skillLayout === "text" ? "富文本正文" : "技能列表"}布局；富文本字段使用合法 HTML。根据岗位与职业阶段组织内容，用户提供的事实准确保留，未知具体信息在原位置使用 XX，未知月份留空。可选字段仅在补充资料有依据且有助于岗位表达时填写，不批量创建。`, // 新建简历对通用写作能力的补充要求。
+      facts: `求职岗位：${input.position}\n工作年限：${input.workYears}\n更多补充：${input.supplement || "无"}`, // 用户提供的原始资料只通过读取工具传递。
+      requiredModules: ["work", "project", "education", "skill"], // 本入口交由通用能力生成的业务模块。
+      skillLayout, // 所选模板当前的专业技能布局。
+    }, {
       signal: requestController.signal,
-      skillLayout: sourceItem.value?.ui?.skill?.layout === "text" ? "text" : "proficiency", // 按所选模板的技能布局生成对应数据。
       onStage: (stage) => {
         generationStage.value = stage;
       },
     });
     if (requestController.signal.aborted || controller.value !== requestController) return;
     const generated = normalizeResumeData(result);
+    // 个人信息由表单配置初始化推荐字段，姓名与岗位由入口填写，不交给 AI 编造。
+    initializeDefaultAddedFields(generated.data);
+    const supplementedName = input.supplement.match(/(?:姓名|名字)\s*[：:]\s*([^\s，,。；;]+)/)?.[1];
+    generated.data.user ||= { data: {} };
+    generated.data.user.data ||= {};
+    generated.data.user.data.name = knownName.value || supplementedName || "XX";
+    generated.data.user.data.position = input.position;
     generationWarnings.value = generated.warnings;
     // 三项输入驱动整份草稿，保留模型实际生成的全部合法模块。
     const source = JSON.parse(JSON.stringify(sourceItem.value || {}));

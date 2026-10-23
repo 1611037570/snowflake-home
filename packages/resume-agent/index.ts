@@ -33,12 +33,12 @@ export type {
 } from "./schema/resumeSchema";
 export { CONTENT_REWRITE_TASK, LANGUAGE_NAMES } from "./tasks/contentRewrite";
 export type { ContentRewriteInput } from "./tasks/contentRewrite";
-export { runInitialResumeGeneration } from "./tasks/initialResumeGeneration";
+export { runResumeDraftGeneration } from "./tasks/resumeDraftGeneration";
 export type {
-  InitialResumeGenerationInput,
-  InitialResumeGenerationStage,
-  RunInitialResumeGenerationOptions,
-} from "./tasks/initialResumeGeneration";
+  ResumeDraftGenerationInput,
+  ResumeDraftGenerationStage,
+  RunResumeDraftGenerationOptions,
+} from "./tasks/resumeDraftGeneration";
 export type {
   ContentAiAction,
   Skill,

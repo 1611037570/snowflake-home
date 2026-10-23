@@ -157,7 +157,7 @@ const openAiGenerator = () => {
   nextTick(() => aiGenerator.value?.open(item, {
     position: formPosition.value.trim(), // 已填写的求职岗位。
     supplement: formName.value.trim() ? `姓名：${formName.value.trim()}` : "", // 已填写的真实姓名。
-  }));
+  }, formName.value.trim()));
 };
 
 // 共享生成器返回最终简历后，沿用新建入口的创建与统计流程。
