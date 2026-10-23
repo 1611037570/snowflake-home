@@ -29,7 +29,19 @@ export const findLatestActualChangeEvidence = (
 ) => {
   for (let index = evidence.length - 1; index >= 0; index -= 1) {
     const item = evidence[index];
-    if (item?.kind === kind && !item.replayed && item.status !== "failed") return item;
+    if (item?.kind === kind && !item.replayed && item.changed !== false && item.status !== "failed") return item;
+  }
+  return undefined;
+};
+
+// 返回最近一次真实执行且完整成功的业务效果，不把复用或同值提交当作新效果。
+export const findLatestSuccessfulActualEvidence = (
+  evidence: ResumeAgentTaskEvidence[],
+  kind: ResumeAgentEvidenceKind,
+) => {
+  for (let index = evidence.length - 1; index >= 0; index -= 1) {
+    const item = evidence[index];
+    if (item?.kind === kind && !item.replayed && item.changed !== false && item.status === "success") return item;
   }
   return undefined;
 };

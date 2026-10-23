@@ -41,6 +41,8 @@ export type ResumeAgentTaskEvidence = {
   status: ResumeAgentToolResultStatus;
   // 工具结果的简短事实摘要。
   summary: string;
+  // 本次真实执行是否改变了业务数据；未标记时不参与无写入判断。
+  changed?: boolean;
   // 工具结果额外证明的业务事实。
   facts?: string[];
   // 是否复用了同一参数首次执行的结果。
@@ -102,6 +104,8 @@ export type ResumeAgentTaskState = {
 export type ResumeAgentTaskProfile = {
   // 按钮任务的稳定标识。
   id: string;
+  // 当前按钮任务是否允许修改模块展示标题。
+  allowModuleTitleEdit?: boolean;
   // 按钮已经明确的任务目标。
   objective: string;
   // 按钮任务固定要求产生的业务效果。

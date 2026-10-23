@@ -3,12 +3,14 @@ import type {
   ResumeAgentTool,
   ResumeAgentToolResultStatus,
 } from "./types";
-import { findLatestSuccessfulEvidence } from "./taskEvidence";
+import { findLatestSuccessfulActualEvidence, findLatestSuccessfulEvidence } from "./taskEvidence";
 import type { ResumeAgentTaskState } from "./taskTypes";
 
 type ResumeAgentToolAttempt = {
   // 相同参数的工具执行状态。
   status: ResumeAgentToolResultStatus;
+  // 首次执行是否真实改变了业务数据。
+  changed?: boolean;
   // 第一次真实执行返回的结果。
   result: unknown;
   // 执行时的简历数据版本，用于区分状态变化后的再次尝试。
@@ -49,23 +51,24 @@ export const createResumeAgentToolExecution = (
       kind: tool.taskMeta.evidenceKind,
       status: evaluation.status,
       summary: evaluation.summary,
+      changed: evaluation.changed,
       facts: evaluation.facts,
       replayed,
     };
     task.evidence.push(evidence);
     // 宿主只消费结构化执行事实，不再解析面向模型的观察文本。
     onEvidence?.(evidence);
-    if (!replayed && tool.taskMeta.invalidatesRead && evaluation.status !== "failed") {
+    if (!replayed && tool.taskMeta.invalidatesRead && evaluation.status !== "failed" && evaluation.changed !== false) {
       // 数据已经变化或部分变化时，后续判断必须基于重新读取的最新数据。
       lastReadInvalidationSequence = sequence;
       stateVersion += 1;
     }
     if (tool.taskMeta.effect === "read" && evaluation.status === "success") {
       task.phase = "reading";
-      return evaluation.status;
+      return evaluation;
     }
     task.phase = evaluation.status === "failed" ? "acting" : "verifying";
-    return evaluation.status;
+    return evaluation;
   };
 
   const hasFreshRead = () => {
@@ -84,7 +87,9 @@ export const createResumeAgentToolExecution = (
         execute: async (args) => {
           const task = getTask();
           const missingRequiredEvidence = tool.taskMeta?.requiresEvidence?.filter(
-            (kind) => !findLatestSuccessfulEvidence(task?.evidence ?? [], kind),
+            // 写入类前置条件必须有真实效果，同值提交不能解锁后续工具。
+            (kind) => !findLatestSuccessfulEvidence(task?.evidence ?? [], kind) ||
+              (kind !== "read" && !findLatestSuccessfulActualEvidence(task?.evidence ?? [], kind)),
           ) ?? [];
           if (missingRequiredEvidence.length) {
             // 工具前置条件由执行内核依据真实证据检查，业务适配器无需维护请求级布尔状态。
@@ -101,7 +106,8 @@ export const createResumeAgentToolExecution = (
           const canReuseFailure = previousAttempt?.status === "failed" &&
             previousAttempt.stateVersion === stateVersion;
           const canReuseResult = previousAttempt && previousAttempt.status !== "failed" && (
-            replayScope === "task" || previousAttempt.stateVersion === stateVersion
+            (replayScope === "task" && previousAttempt.changed !== false) ||
+            previousAttempt.stateVersion === stateVersion
           );
           if (canReuseFailure) {
             // 数据未变化时相同失败参数不会再次执行，模型需要根据上次结果修正参数。
@@ -124,9 +130,15 @@ export const createResumeAgentToolExecution = (
           const result = await tool.execute(args);
           if (tool.taskMeta) {
             const sequence = ++toolSequence;
-            const status = recordToolResult(tool, result, sequence);
-            if (attemptKey && status) {
-              toolAttempts.set(attemptKey, { status, result, stateVersion, sequence });
+            const evaluation = recordToolResult(tool, result, sequence);
+            if (attemptKey && evaluation) {
+              toolAttempts.set(attemptKey, {
+                status: evaluation.status,
+                changed: evaluation.changed,
+                result,
+                stateVersion,
+                sequence,
+              });
             }
           }
           return result;

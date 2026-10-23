@@ -1,13 +1,13 @@
 // 流解析通用原语：清洗与收尾，供各 provider 行解析器与传输层复用
 
-// 清洗并解析单条 SSE 数据：移除 data: 前缀，校验为标准 JSON 对象后解析
+// 清洗并解析单条 SSE 数据：流结束标记不属于 JSON 消息。
 export function processJson(jsonStr: string, isDebug: boolean) {
   // 入参终极防护：处理 null/undefined/非字符串，统一转为安全字符串
   let rawStr = String(jsonStr ?? "");
   // 统一清洗：移除 data: 前缀 + 去除首尾空格
   rawStr = rawStr.replace(/^data:/i, "").trim();
-  // 检查是否为空字符串
-  if (!rawStr) return "";
+  // 空行与流结束标记不需要进入 JSON 校验。
+  if (!rawStr || rawStr === "[DONE]") return "";
 
   // 校验标准JSON对象格式（必须{}包裹）
   if (!rawStr.startsWith("{") || !rawStr.endsWith("}")) {
@@ -20,6 +20,19 @@ export function processJson(jsonStr: string, isDebug: boolean) {
     if (isDebug) console.warn(`解析失败: ${rawStr}`, error);
     throw new Error("解析失败！");
   }
+}
+
+// 统一读取服务端用量；总量缺失时仅由完整的输入、输出用量相加。
+export function readTotalTokens(usage: unknown): number | undefined {
+  if (!usage || typeof usage !== "object") return undefined;
+  const value = usage as Record<string, unknown>;
+  if (typeof value.total_tokens === "number" && Number.isFinite(value.total_tokens)) return value.total_tokens;
+  const input = value.input_tokens ?? value.prompt_tokens;
+  const output = value.output_tokens ?? value.completion_tokens;
+  if (typeof input === "number" && Number.isFinite(input) && typeof output === "number" && Number.isFinite(output)) {
+    return input + output;
+  }
+  return undefined;
 }
 
 // 解析最终结果：优先直接解析，失败时尝试补全右括号

@@ -29,6 +29,8 @@ export type ResumeAgentToolEvaluation = {
   status: ResumeAgentToolResultStatus;
   // 提供给任务记录和模型观察的简短结果摘要。
   summary: string;
+  // 本次调用是否真的改变业务数据；复用或跳过操作时为 false。
+  changed?: boolean;
   // 本次结果额外证明的业务事实，由特定能力按需要求。
   facts?: string[];
 };

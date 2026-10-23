@@ -8,6 +8,7 @@ import type { ResumeAgentTaskEvidence } from "./taskTypes";
 import {
   collectLatestSuccessfulFacts,
   findLatestActualChangeEvidence,
+  findLatestSuccessfulActualEvidence,
   findLatestSuccessfulEvidence,
 } from "./taskEvidence";
 
@@ -87,14 +88,18 @@ export const evaluateResumeAgentCompletion = (
   allowTaskPause: boolean,
 ): ResumeAgentCompletionResult => {
   const missingEvidence = policy.requiredEvidence.filter(
-    (kind) => !findLatestSuccessfulEvidence(evidence, kind),
+    // 业务效果既要最近一次尝试成功，也要本轮真实执行过，跳过写入不能单独充数。
+    (kind) => !findLatestSuccessfulEvidence(evidence, kind) ||
+      (kind !== "read" && !findLatestSuccessfulActualEvidence(evidence, kind)),
   );
   const successfulFacts = collectLatestSuccessfulFacts(evidence);
   const missingFacts = policy.requiredFacts.filter((fact) => !successfulFacts.has(fact));
   const invalidEvidenceOrder = policy.evidenceOrder.find((order) => {
-    const earlierEvidence = findLatestActualChangeEvidence(evidence, order.after);
-    const laterEvidence = findLatestSuccessfulEvidence(evidence, order.evidence);
-    return earlierEvidence && laterEvidence && laterEvidence.sequence <= earlierEvidence.sequence;
+    // 写后重新读取不应推翻写入前已有的读取证据。
+    const laterEvidence = findLatestSuccessfulActualEvidence(evidence, order.evidence);
+    return laterEvidence && !evidence.some((item) =>
+      item.kind === order.after && item.status === "success" && item.sequence < laterEvidence.sequence
+    );
   });
 
   if (!missingEvidence.length && !missingFacts.length && !invalidEvidenceOrder) {

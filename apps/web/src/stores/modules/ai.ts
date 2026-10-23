@@ -32,6 +32,8 @@ export type ResumeAgentRunStep = {
   status: string;
   // 面向用户的结果摘要
   summary: string;
+  // 本次工具执行是否真实改变业务数据。
+  changed?: boolean;
   // 结果额外证明的业务事实
   facts?: string[];
   // 是否复用了首次执行结果

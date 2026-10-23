@@ -19,9 +19,6 @@ export const useResumeAssistant = () => {
   const { isGenerating } = storeToRefs(resumeStore);
   const { createDefaultChat, createDefaultMessage } = aiStore;
   const resumeContext = useResumeContext();
-  let activeTaskId = "";
-  // 当前请求是否需要用完成度问题作为写后验收条件
-  let requiresResumeIssueClosure = false;
 
   const updateCurrentLang = (language: string): boolean => {
     const ui = resumeStore.currentUI;
@@ -30,29 +27,34 @@ export const useResumeAssistant = () => {
     return true;
   };
   // 能力与工具在首次请求时才组装，避免进入 AI 面板时提前加载。
-  const resolveTools = async (): Promise<AssistantResources> => {
-    const { createResumeTools } = await import("@snowflake/resume-agent");
+  const resolveTools = async (context?: Record<string, unknown>): Promise<AssistantResources> => {
+    // 入口与验收范围从本轮请求读取，异步加载期间不依赖共享可变状态。
+    const entryFlow = context?.entryFlow;
+    const requiresResumeIssueClosure = context?.requireResumeIssueClosure === true;
+    const { createResumeTools, resolveResumeAgentTaskProfile } = await import("@snowflake/resume-agent");
+    const taskProfile = await resolveResumeAgentTaskProfile(entryFlow);
     return {
       capabilities: taskCapabilities,
+      taskProfile,
       tools: [
         // 参考知识通过单一工具按需读取，任务能力由首轮任务契约直接返回正文。
         createSkillReferenceTool(referenceSkills),
         ...createResumeTools({
           getResumeData: resumeContext.getResumeData,
+          allowModuleTitleEdit: taskProfile?.allowModuleTitleEdit !== false,
           applyResumeOperations: (operations) => {
             return resumeStore.applyResumeOperations(operations);
           },
           // 复用左侧完成度检查口径，写入工具无需维护第二套验收规则
-          getResumeIssues: () =>
-            requiresResumeIssueClosure
-              ? collectResumeAdjustmentIssues(
-                  useProgress(
-                    resumeStore.runtimeFields || [],
-                    resumeStore.currentData || {},
-                    resumeStore.currentUI || {},
-                  ),
-                )
-              : [],
+          getResumeIssues: requiresResumeIssueClosure
+            ? () => collectResumeAdjustmentIssues(
+                useProgress(
+                  resumeStore.runtimeFields || [],
+                  resumeStore.currentData || {},
+                  resumeStore.currentUI || {},
+                ),
+              )
+            : undefined,
           updateLanguage: updateCurrentLang,
         }),
       ],
@@ -72,16 +74,10 @@ export const useResumeAssistant = () => {
       return undefined;
     },
     beforeRequest: (options, taskId) => {
-      requiresResumeIssueClosure = options?.requireResumeIssueClosure === true;
-      activeTaskId = taskId || "";
       resumeContext.beforeRequest(options, taskId);
     },
     afterRequest: (taskId) => {
       resumeContext.afterRequest(taskId);
-      if (!taskId || taskId === activeTaskId) {
-        requiresResumeIssueClosure = false;
-        activeTaskId = "";
-      }
     },
   };
 

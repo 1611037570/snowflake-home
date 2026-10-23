@@ -40,6 +40,8 @@ const resolveDefaultSuccessCondition = (effects: ResumeAgentRequiredEffect[]) =>
 // 同一个 Agent 只负责规划与行动，任务阶段和完成结果由运行时依据工具事实维护。
 export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRuntimeOptions) => {
   let task: ResumeAgentTaskState | undefined;
+  // 规划缺失时的任务仍可由正式规划接管，已有工具证据必须保留。
+  let implicitTask = false;
   const toolExecution = createResumeAgentToolExecution(() => task, options.onEvidence);
   const previousTask = cloneResumeAgentTask(options.previousTask);
   const capabilityMap = new Map((options.capabilities ?? []).map((skill) => [skill.id, skill]));
@@ -102,16 +104,22 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
           description: capabilityDescription,
         },
       },
-      required: ["objective", "requiredEffects"],
+      required: options.source === "chat" && previousTask
+        ? ["relation", "objective", "requiredEffects"]
+        : ["objective", "requiredEffects"],
       additionalProperties: false,
     },
     execute: async (args) => {
-      if (task) {
-        // 同一 ReAct 只建立一次任务，避免执行中重新规划后丢失已取得的证据。
+      if (task && !implicitTask) {
+        // 正式任务只建立一次，避免执行中重新规划后丢失已取得的证据。
         return { accepted: false, error: "本轮任务已经建立，请继续执行当前任务" };
       }
-      // 效果枚举写错会直接改变验收口径，必须让模型改对而不是静默丢弃
-      const rawEffects: unknown[] = Array.isArray(args?.requiredEffects) ? args.requiredEffects : [];
+      // 缺少效果数组不能默认为纯回复任务，否则修改诉求会被误判为已完成。
+      if (!Array.isArray(args?.requiredEffects)) {
+        return { accepted: false, error: "请明确提供 requiredEffects；仅需文字回复时传空数组" };
+      }
+      // 效果枚举写错会直接改变验收口径，必须让模型改对而不是静默丢弃。
+      const rawEffects: unknown[] = args.requiredEffects;
       const unknownEffect = rawEffects.find(
         (effect) => !TASK_REQUIRED_EFFECTS.includes(effect as ResumeAgentRequiredEffect),
       );
@@ -129,6 +137,10 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
           : options.fallbackObjective?.trim() || "处理用户本轮请求";
       const scope =
         typeof args?.scope === "string" && args.scope.trim() ? args.scope.trim() : "未明确指定";
+      // 有上一任务时必须明确新任务、继续或修正，不能把省略表达静默当成新任务。
+      if (options.source === "chat" && previousTask && !TASK_RELATIONS.includes(args?.relation)) {
+        return { accepted: false, error: "请明确 relation 为 new、continue 或 revise" };
+      }
       // 明确功能入口和没有上一任务的对话都从新任务开始，避免误承接历史目标。
       const relation: ResumeAgentTaskRelation =
         options.source === "chat" && previousTask && TASK_RELATIONS.includes(args?.relation)
@@ -156,7 +168,13 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
         options.taskProfile?.completionPolicy,
         ...selectedCapabilities.map((capability) => capability.completionPolicy),
       ].filter((policy): policy is ResumeAgentCompletionPolicy => Boolean(policy));
-      const resolvedPolicy = resolveResumeAgentCompletionPolicy(plannedEffects ?? [], policies);
+      // 正式规划接管隐式任务时保留实际执行过的业务效果和工具证据。
+      const effectiveEffects = [...new Set([
+        ...plannedEffects,
+        ...(implicitTask ? task?.requiredEffects ?? [] : []),
+      ])];
+      const existingEvidence = implicitTask ? task?.evidence ?? [] : [];
+      const resolvedPolicy = resolveResumeAgentCompletionPolicy(effectiveEffects, policies);
       task = {
         id: options.taskId,
         source: options.source,
@@ -171,8 +189,9 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
             : resolveDefaultSuccessCondition(resolvedPolicy.requiredEffects)),
         capabilityIds: selectedCapabilityIds,
         phase: "planned",
-        evidence: [],
+        evidence: existingEvidence,
       };
+      implicitTask = false;
       // 完成条件由任务效果与本轮选中的能力共同决定，不依赖模型自行声明完成。
       completionPolicy = resolvedPolicy;
       // 观测：记录本轮任务契约，便于宿主还原验收口径。
@@ -282,28 +301,30 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     },
   };
 
-  // 隐式任务标记：只有规划缺失时才允许按工具效果补齐验收口径
-  let implicitTask = false;
-  // 规划缺失时按首个业务工具建立隐式任务，保证证据、撤回与验收仍然生效
-  const ensureImplicitTask = (tool: ResumeAgentTool) => {
-    const target = tool.taskMeta ? TOOL_EFFECT_TARGETS[tool.taskMeta.effect] : undefined;
+  // 规划缺失时按入口契约和实际工具效果建立隐式任务，保留按钮的验收策略。
+  const ensureImplicitTask = (tool?: ResumeAgentTool) => {
+    const target = tool?.taskMeta ? TOOL_EFFECT_TARGETS[tool.taskMeta.effect] : undefined;
     // 正式任务由规划结果决定验收口径，不再被工具效果覆盖
     if (task && !implicitTask) return;
     if (task && (!target || task.requiredEffects.includes(target))) return;
     const effects = [
+      ...(options.taskProfile?.requiredEffects ?? options.fixedRequiredEffects ?? []),
       ...(task?.requiredEffects ?? []),
       ...(target ? [target] : []),
     ];
-    const resolvedPolicy = resolveResumeAgentCompletionPolicy(effects, []);
+    const resolvedPolicy = resolveResumeAgentCompletionPolicy(
+      [...new Set(effects)],
+      options.taskProfile ? [options.taskProfile.completionPolicy] : [],
+    );
     completionPolicy = resolvedPolicy;
     task = {
       id: options.taskId,
       source: options.source,
       relation: "new", // 隐式任务不承接历史目标。
-      objective: task?.objective ?? options.fallbackObjective?.trim() ?? "处理用户本轮请求",
+      objective: options.taskProfile?.objective ?? task?.objective ?? options.fallbackObjective?.trim() ?? "处理用户本轮请求",
       scope: task?.scope ?? "未明确指定",
       requiredEffects: resolvedPolicy.requiredEffects,
-      successCondition:
+      successCondition: options.taskProfile?.successCondition ?? options.fixedSuccessCondition ??
         task?.successCondition ?? resolveDefaultSuccessCondition(resolvedPolicy.requiredEffects),
       capabilityIds: task?.capabilityIds ?? [],
       phase: task?.phase ?? "planned",
@@ -312,26 +333,21 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     implicitTask = true;
     console.warn("[简历助手] 未建立任务契约，已按工具效果建立隐式任务:", {
       source: options.source,
-      tool: tool.name,
+      tool: tool?.name ?? "入口任务",
       requiredEffects: resolvedPolicy.requiredEffects,
     });
     // 观测：降级建任务必须可见，否则无法解释验收口径为何放宽。
-    options.onTrace?.({ type: "implicit", task: cloneResumeAgentTask(task)!, tool: tool.name });
+    options.onTrace?.({ type: "implicit", task: cloneResumeAgentTask(task)!, tool: tool?.name ?? "入口任务" });
   };
 
   const beforeFinal = () => {
-    if (!task) {
-      // 规划始终缺失时放行回答，避免整轮请求因为契约缺失直接失败
-      console.warn("[简历助手] 本轮未建立任务契约，跳过完成校验放行回答:", {
-        source: options.source,
-      });
-      // 观测：跳过校验属于降级路径，必须留下记录。
-      options.onTrace?.({
-        type: "verdict",
-        completed: true,
-        reason: "本轮未建立任务契约，已跳过完成校验",
-      });
-      return null;
+    // 明确入口即使模型跳过规划，也必须执行入口约定的真实业务效果。
+    if (!task && (options.taskProfile || options.fixedRequiredEffects?.length)) ensureImplicitTask();
+    if (!task || (implicitTask && !task.requiredEffects.length)) {
+      // 只读降级仍需确认用户究竟要求回复还是写入，不凭已读取就判完成。
+      const reason = "尚未理解本轮任务，请调用 plan_resume_task 明确目标与必需业务效果。";
+      options.onTrace?.({ type: "verdict", completed: false, reason });
+      return reason;
     }
     if (task.phase === "waiting" || task.phase === "blocked") return null;
     const result = evaluateResumeAgentCompletion(

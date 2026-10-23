@@ -71,7 +71,7 @@ export function createStreamParser({ onEvent, isDebug, provider, protocol }: any
     return parser(line, options);
   };
 
-  return function (chunk: string) {
+  const parseChunk = (chunk: string, finish = false) => {
     let currentBatchContent = "";
     let currentBatchUsage = null;
 
@@ -82,12 +82,15 @@ export function createStreamParser({ onEvent, isDebug, provider, protocol }: any
     const normalizedBuffer = buffer.replace(/\r\n/g, "\n");
     const lines = normalizedBuffer.split("\n");
 
-    // 保留最后一部分（可能是不完整的行）到下一次处理
-    buffer = lines.pop() || "";
+    // 普通分片保留未结束的行；传输结束时处理剩余内容。
+    buffer = finish ? "" : lines.pop() || "";
 
     // 处理完整的行
     for (const line of lines) {
-      const res = params(line);
+      // SSE 心跳、元数据和结束标记不是 JSON 数据事件。
+      const trimmed = line.trim();
+      if (!trimmed || trimmed.startsWith(":") || /^(event|id|retry):/i.test(trimmed) || /^data:\s*\[DONE\]$/i.test(trimmed)) continue;
+      const res = params(trimmed);
       if (typeof res === "string") {
         currentBatchContent += res;
       } else if (res && typeof res === "object") {
@@ -102,5 +105,12 @@ export function createStreamParser({ onEvent, isDebug, provider, protocol }: any
       content: currentBatchContent,
       usage: currentBatchUsage,
     };
+  };
+
+  return {
+    // 追加网络分片并解析其中完整的数据行。
+    push: (chunk: string) => parseChunk(chunk),
+    // 流结束时解析解码器和行缓冲区的剩余内容。
+    finish: (tail: string) => parseChunk(tail, true),
   };
 }

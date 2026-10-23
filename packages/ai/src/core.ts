@@ -196,7 +196,8 @@ class LLM {
     const requestOptions = {
       ...options,
       model: this.model,
-      ...(isStream && this.provider === "openai"
+      // 已配置的聊天补全服务商共用流式用量参数，其他协议不附加该参数。
+      ...(isStream && this.protocol === "chatCompletions" && ["openai", "deepseek", "ark"].includes(this.provider)
         ? {
             stream_options: {
               ...options.stream_options,

@@ -148,6 +148,10 @@ export function createRequest(token: string, isStream = true, observer: RequestO
         while (true) {
           const { done, value } = await reader.read();
           if (done) {
+            // 正式结束解析器，处理末尾未带换行的 SSE 数据行。
+            const tail = parser.finish(decoder.decode());
+            currentContent += tail.content;
+            if (tail.usage) finalUsage = tail.usage;
             const result = processResult({
               text: currentContent,
               isJson,
@@ -166,7 +170,7 @@ export function createRequest(token: string, isStream = true, observer: RequestO
 
           // 解码二进制数据
           const chunk = decoder.decode(value, { stream: true });
-          const { content, usage } = parser(chunk);
+          const { content, usage } = parser.push(chunk);
           currentContent += content;
           if (usage) {
             finalUsage = usage;

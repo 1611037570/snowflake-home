@@ -1,4 +1,4 @@
-import { processJson } from "./stream.js";
+import { processJson, readTotalTokens } from "./stream.js";
 
 /**
  * OpenAI 兼容接口非流式解析逻辑
@@ -32,7 +32,9 @@ export const openaiStreamParser = (line: string, { onEvent, isDebug }: any) => {
       : typeof delta.reasoning === "string"
         ? delta.reasoning
         : "";
-  const totalTokens = data.usage?.total_tokens;
+  // 兼容顶层用量事件及带 response 包装的完成事件。
+  const usage = data.usage ?? data.response?.usage ?? (readTotalTokens(data) !== undefined ? data : undefined);
+  const totalTokens = readTotalTokens(usage);
 
   if (reasoning) onEvent?.("reasoning", reasoning);
   if (content) onEvent?.("content", content);
@@ -40,7 +42,7 @@ export const openaiStreamParser = (line: string, { onEvent, isDebug }: any) => {
     toolCalls.forEach((tc: any) => onEvent?.("tool_call_delta", tc));
   }
   if (typeof totalTokens === "number") onEvent?.("total_tokens", totalTokens);
-  if (data.usage && typeof data.usage === "object") onEvent?.("usage", data.usage);
+  if (usage && typeof usage === "object") onEvent?.("usage", usage);
 
   return {
     content,

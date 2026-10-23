@@ -8,6 +8,8 @@ export interface ResumeToolContext {
   applyResumeOperations: (operations: ResumeWriteOp[]) => ResumeOperationResult;
   // 读取写入后的完成度与时间线问题，用于确认一键调整是否闭环
   getResumeIssues?: () => string[];
+  // 当前入口是否允许修改模块展示标题，默认允许用户明确要求的重命名与翻译。
+  allowModuleTitleEdit?: boolean;
   // 更新简历展示语言（翻译完成后同步标题等界面文案语言）
   updateLanguage?: (language: string) => boolean;
 }

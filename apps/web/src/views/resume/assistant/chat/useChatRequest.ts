@@ -275,7 +275,7 @@ export const useChatRequest = ({
       state.onReasoning();
 
       // 首次请求时才加载能力与简历工具清单，跨轮承接由任务状态负责。
-      const { tools: resolvedTools, capabilities: resolvedCapabilities } = await resolveTools();
+      const { tools: resolvedTools, capabilities: resolvedCapabilities, taskProfile } = await resolveTools(requestMessage?.requestContext);
       // 加载期间取消或切换会话时不再启动请求，工具执行前再次核对所属任务
       if (!isCurrentRequest()) return;
       // 简历 Agent 会话统一解析入口任务、装配工具并启动 ReAct。
@@ -287,6 +287,7 @@ export const useChatRequest = ({
         previousTask,
         capabilities: resolvedCapabilities,
         tools: resolvedTools,
+        taskProfile,
         assertActive: () => {
           if (!isCurrentRequest()) throw new AbortError();
         },
@@ -298,6 +299,7 @@ export const useChatRequest = ({
             tool: evidence.tool,
             status: evidence.status,
             summary: evidence.summary,
+            changed: evidence.changed,
             facts: evidence.facts,
             replayed: evidence.replayed,
             at: Date.now(),
@@ -305,7 +307,7 @@ export const useChatRequest = ({
           if (evidence.replayed) return;
           // 证据摘要本身是用户可读的结果，直接作为阶段提示
           lastMsg.stepLabel = evidence.summary;
-          if (evidence.kind !== "resume_change" || evidence.status === "failed") return;
+          if (evidence.kind !== "resume_change" || evidence.status === "failed" || evidence.changed === false) return;
           // 运行时确认真实写入后开放撤回，并留下本轮改动说明
           writeMessages.add(lastMsg);
           lastMsg.hasWriteChanges = true;

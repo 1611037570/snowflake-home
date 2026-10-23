@@ -1,4 +1,4 @@
-import { processJson } from "./stream.js";
+import { processJson, readTotalTokens } from "./stream.js";
 
 /**
  * Ark 供应商非流式解析逻辑
@@ -34,8 +34,8 @@ export const arkStreamParser = (line: string, { onEvent, isDebug }: any) => {
 
   // 处理 Token 消耗 (response.completed)
   if (type === "response.completed" && data.response?.usage) {
-    totalTokens = data.response.usage.total_tokens;
-    onEvent?.("total_tokens", totalTokens);
+    totalTokens = readTotalTokens(data.response.usage) ?? 0;
+    if (totalTokens > 0) onEvent?.("total_tokens", totalTokens);
     onEvent?.("usage", data.response.usage);
   }
 

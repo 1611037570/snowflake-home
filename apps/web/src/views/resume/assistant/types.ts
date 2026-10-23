@@ -1,6 +1,6 @@
 // AI 助手宿主配置类型：技能与工具由调用方提供，chat 引擎不内置业务内容
 import type { ReactConfig, ReactTool } from "@/apis/llm/react";
-import type { SkillResource } from "@snowflake/resume-agent";
+import type { ResumeAgentTaskProfile, SkillResource } from "@snowflake/resume-agent";
 import type { Ref } from "vue";
 
 // 引导流程步骤：预设询问或自由输入；options 为函数时在步骤展示前求值（如按当前简历动态生成）
@@ -51,13 +51,15 @@ export type AssistantResources = {
   tools: ReactTool[];
   // 本轮可供任务契约规划器选择的任务能力。
   capabilities: SkillResource[];
+  // 当前按钮入口解析后的任务配置，供工具和会话共用。
+  taskProfile?: ResumeAgentTaskProfile;
 };
 
 export interface AssistantConfig {
   // 请求期间置为 true 的生成状态
   generating: Ref<boolean>;
   // 首次请求时解析任务能力、参考知识与简历工具，避免进入 AI 面板时提前加载。
-  resolveTools: () => Promise<AssistantResources>;
+  resolveTools: (context?: Record<string, unknown>) => Promise<AssistantResources>;
   // 反思轮提示词：反思口径由宿主按业务提供，请求引擎不内置
   reflectPrompt: string;
   // 工具执行错误回调：由宿主决定恢复或中断，引擎只负责转交

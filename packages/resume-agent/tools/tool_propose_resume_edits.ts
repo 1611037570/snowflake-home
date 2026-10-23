@@ -5,23 +5,13 @@ import { getResumeEditValidationIssues, normalizeResumeEdits } from "./resumeEdi
 import { PROPOSE_RESUME_EDITS_RULE, TOOL_ARGUMENT_RULE } from "./promptRules";
 import type { ResumeToolContext } from "./tool_types";
 
-// 写入意图签名：同一次请求内据此识别重提的相同操作，避免重复新增
-const getOperationSignature = (operation: ResumeWriteOp): string => {
+// 只对新增记录跨调用去重；字段赋值可再次修正，下标操作的目标会随数据变化。
+const getOperationSignature = (operation: ResumeWriteOp): string | undefined => {
   switch (operation.op) {
-    case "updateModule":
-      return `updateModule|${operation.module}|${operation.field}`;
-    case "updateModuleTitle":
-      return `updateModuleTitle|${operation.module}`;
-    case "updateRecord":
-      return `updateRecord|${operation.module}|${operation.index}|${operation.field}`;
     case "addRecord":
       return `addRecord|${operation.module}|${JSON.stringify(operation.record ?? null)}`;
-    case "deleteRecord":
-      return `deleteRecord|${operation.module}|${operation.index}`;
-    case "moveRecord":
-      return `moveRecord|${operation.module}|${operation.from}|${operation.to}`;
     default:
-      return "";
+      return undefined;
   }
 };
 
@@ -31,7 +21,7 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
   const appliedSignatures = new Set<string>();
   return defineTool({
   name: "propose_resume_edits",
-  description: `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，调用后立即写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段；updateModuleTitle 修改模块展示标题；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验；validationIssues 与 executionIssues 通过 operationIndex 标明失败操作，只修正对应项后重新提交。`,
+  description: `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，调用后立即写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段；updateModuleTitle 仅在用户明确要求重命名模块或翻译展示标题时使用，普通内容优化保持标题不变；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验；validationIssues 与 executionIssues 通过 operationIndex 标明失败操作，只修正对应项后重新提交。`,
   parameters: {
     type: "object",
     properties: {
@@ -65,7 +55,7 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
             },
             title: {
               type: "string",
-              description: "模块展示标题，updateModuleTitle 使用；module 仍必须传稳定 key",
+              description: "模块展示标题，仅在明确重命名或翻译标题时使用；module 仍必须传稳定 key",
             },
             record: {
               type: "object",
@@ -95,6 +85,18 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
     const validationIssues = operations.length
       ? getResumeEditValidationIssues(operations, dataView)
       : [{ operationIndex: null, code: "INVALID_OPERATION", message: "operations 必须是非空的写操作数组" }];
+    // 按钮入口的内容调整不能借模块标题承载岗位说明，违规操作由模型移除后重提。
+    if (ctx.allowModuleTitleEdit === false) {
+      operations.forEach((operation, operationIndex) => {
+        if (operation?.op === "updateModuleTitle") {
+          validationIssues.push({
+            operationIndex,
+            code: "INVALID_OPERATION",
+            message: `第 ${operationIndex + 1} 条操作：当前任务保持模块展示标题不变，请修改实际简历内容`,
+          });
+        }
+      });
+    }
     if (validationIssues.length) {
       const errors = validationIssues.map((issue) => issue.message);
       console.log("[ReAct] propose_resume_edits 校验未通过:", errors);
@@ -109,10 +111,13 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
         executionIssues: [],
       };
     }
-    // 先剔除本次请求内已经写入成功的相同操作，避免部分成功后重提全量导致重复新增
+    // 只剔除已经成功新增的相同记录，字段修正与变化中的记录下标必须继续执行。
     const pending = operations
       .map((operation, index) => ({ operation, index }))
-      .filter((item) => !appliedSignatures.has(getOperationSignature(item.operation)));
+      .filter((item) => {
+        const signature = getOperationSignature(item.operation);
+        return !signature || !appliedSignatures.has(signature);
+      });
     const duplicated = operations.length - pending.length;
     if (!pending.length) {
       // 全部操作都已在本次请求内写入成功，直接回报跳过，避免模型反复重提
@@ -127,16 +132,21 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
         // 领域执行失败项为空
         executionIssues: [],
         // 写入后立即返回剩余问题，一键调整据此继续处理而不是自行猜测完成状态
-        remainingIssues: ctx.getResumeIssues?.() ?? [],
+        remainingIssues: ctx.getResumeIssues?.(),
         // 本轮被跳过的重复操作数量
         duplicated,
       };
     }
     // 工具只提交完整操作列表，具体执行语义由简历领域统一处理
+    const beforeData = JSON.stringify(dataView);
     const result = ctx.applyResumeOperations(pending.map((item) => item.operation));
-    // 成功落库的操作记入签名表，供后续重提时跳过
+    // 宿主接受操作不等于数据真的变化，任务证据以写入前后数据为准。
+    const hasDataChange = beforeData !== JSON.stringify(ctx.getResumeData());
+    const noChange = result.applied && !hasDataChange && result.failed.length === 0;
+    // 成功新增的记录记入签名表，其他操作不按字段名或下标误判为重复。
     pending.forEach((item, index) => {
-      if (result.changed.includes(index)) appliedSignatures.add(getOperationSignature(item.operation));
+      const signature = getOperationSignature(item.operation);
+      if (hasDataChange && signature && result.changed.includes(index)) appliedSignatures.add(signature);
     });
     const toOriginalIndex = (index: number) => pending[index]?.index ?? index;
     const executionIssues = result.failed.map((index) => ({
@@ -149,8 +159,12 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
     }));
     return {
       ...result,
+      // 没有实际数据差异时，不把宿主接受的操作计为本轮写入。
+      applied: result.applied && hasDataChange,
+      // 同值提交属于已处理但未产生新效果，完成校验仍需此前真实写入证据。
+      noChange,
       // 回报时统一换算回模型提交的操作下标
-      changed: result.changed.map(toOriginalIndex),
+      changed: hasDataChange ? result.changed.map(toOriginalIndex) : [],
       failed: result.failed.map(toOriginalIndex),
       errors: executionIssues.map((issue) => issue.message),
       // 字段与格式校验已通过
@@ -158,7 +172,7 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
       // 领域执行失败项
       executionIssues,
       // 写入后立即返回剩余问题，一键调整据此继续处理而不是自行猜测完成状态
-      remainingIssues: ctx.getResumeIssues?.() ?? [],
+      remainingIssues: ctx.getResumeIssues?.(),
       // 本轮被跳过的重复操作数量
       duplicated,
     };
@@ -173,27 +187,39 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
     const changed = Array.isArray(value.changed) ? value.changed.length : 0;
     const hasWriteIssues = ["failed", "validationIssues", "executionIssues"]
       .some((key) => Array.isArray(value[key]) && value[key].length > 0);
-    const remainingIssues = Array.isArray(value.remainingIssues) ? value.remainingIssues.length : 0;
+    // 未启用完成度检查时不生成“问题已全部解决”的业务事实。
+    const remainingIssues = Array.isArray(value.remainingIssues) ? value.remainingIssues.length : null;
     const duplicated = typeof value.duplicated === "number" ? value.duplicated : 0;
     if (value.applied === true && changed > 0 && !hasWriteIssues) {
       return {
         status: "success",
         summary: `已完整执行 ${changed} 项简历修改`,
+        changed: true,
         facts: remainingIssues === 0 ? [RESUME_AGENT_FACTS.resumeIssuesResolved] : [],
       };
     }
     if (value.applied === true && changed > 0) {
-      return { status: "partial", summary: `已执行 ${changed} 项简历修改，仍有未完成项` };
+      return { status: "partial", summary: `已执行 ${changed} 项简历修改，仍有未完成项`, changed: true };
+    }
+    // 已接受的同值提交不覆盖此前成功证据，但不能单独满足写入要求。
+    if (value.noChange === true) {
+      return {
+        status: "success",
+        summary: "提交内容与当前简历相同，未产生改动",
+        changed: false,
+        facts: remainingIssues === 0 ? [RESUME_AGENT_FACTS.resumeIssuesResolved] : [],
+      };
     }
     // 重复提交已经写入过的操作按成功处理，避免模型反复重提同一批修改
     if (value.applied === true && duplicated > 0 && !hasWriteIssues) {
       return {
         status: "success",
         summary: `这 ${duplicated} 项修改本轮已经写入，未重复执行`,
+        changed: false,
         facts: remainingIssues === 0 ? [RESUME_AGENT_FACTS.resumeIssuesResolved] : [],
       };
     }
-    return { status: "failed", summary: "本次写入未产生简历修改" };
+    return { status: "failed", summary: "本次写入未产生简历修改", changed: false };
   },
   });
 };
