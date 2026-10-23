@@ -21,8 +21,8 @@ const formatOptions = (options: unknown[]) =>
 
 const getFieldNotes = (field: ResumeFieldSchema, moduleKey: string) => {
   const notes: string[] = [];
-  // 经历正文允许生成与优化补写，其他可选空字段仍保持原有边界。
-  notes.push(field.required ? "必填" : "可选；生成或优化正文可补写，其他空值不主动补写");
+  // 可选字段依据任务目标和已有资料判断，不按固定清单填充。
+  notes.push(field.required ? "必填" : "可选；仅在资料支持且任务目标需要时填写");
   if (isResumeMediaField(moduleKey, field.key)) notes.push("媒体字段，不向 AI 提供内容，禁止写入");
   if (field.component === "measurements") notes.push("对象：bust（胸围）、waist（腰围）、hip（臀围）为数值文本");
   if (field.component === "sizes") notes.push("对象：top（上装尺码）、bottom（下装尺码）、shoes（鞋码）为文本");

@@ -83,6 +83,7 @@ const generate = async () => {
   try {
     const result = await runInitialResumeGeneration(input, {
       signal: requestController.signal,
+      skillLayout: sourceItem.value?.ui?.skill?.layout === "text" ? "text" : "proficiency", // 按所选模板的技能布局生成对应数据。
       onStage: (stage) => {
         generationStage.value = stage;
       },
@@ -95,10 +96,6 @@ const generate = async () => {
     pendingItem.value = {
       ...source,
       data: generated.data,
-      ui: { // 生成草稿使用的界面配置。
-        ...(source.ui || {}),
-        skill: { ...(source.ui?.skill || {}), layout: "text" }, // 技能模块采用富文本正文布局。
-      },
       config: {
         ...(source.config || {}),
         modules: generated.config.modules,
