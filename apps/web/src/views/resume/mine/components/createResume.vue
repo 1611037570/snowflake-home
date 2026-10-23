@@ -149,16 +149,15 @@ const confirmCreate = () => {
   visible.value = false;
 };
 
-// AI 生成沿用当前所选版式，并把已填写的姓名与岗位带入用户信息步骤。
+// AI 生成沿用当前所选版式，并把已填写的岗位与姓名带入三项输入。
 const openAiGenerator = () => {
   const item = blankContent.value ? buildBlank(styleCard.value) : buildFromCard(styleCard.value);
   applyUserInfo(item);
-  const userFacts = [
-    formName.value.trim() ? `姓名：${formName.value.trim()}` : "",
-    formPosition.value.trim() ? `求职岗位：${formPosition.value.trim()}` : "",
-  ].filter(Boolean).join("\n");
   visible.value = false;
-  nextTick(() => aiGenerator.value?.open(item, userFacts ? { user: userFacts } : {}));
+  nextTick(() => aiGenerator.value?.open(item, {
+    position: formPosition.value.trim(), // 已填写的求职岗位。
+    supplement: formName.value.trim() ? `姓名：${formName.value.trim()}` : "", // 已填写的真实姓名。
+  }));
 };
 
 // 共享生成器返回最终简历后，沿用新建入口的创建与统计流程。

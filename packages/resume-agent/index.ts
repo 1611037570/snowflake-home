@@ -35,7 +35,6 @@ export { CONTENT_REWRITE_TASK, LANGUAGE_NAMES } from "./tasks/contentRewrite";
 export type { ContentRewriteInput } from "./tasks/contentRewrite";
 export { runInitialResumeGeneration } from "./tasks/initialResumeGeneration";
 export type {
-  InitialResumeDraftModule,
   InitialResumeGenerationInput,
   InitialResumeGenerationStage,
   RunInitialResumeGenerationOptions,
