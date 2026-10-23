@@ -788,7 +788,6 @@
   "resumeAiGenerateFailed": "AI generation failed. Please try again later.",
   "resumeAiGenerateResultTitle": "Preview Generated Resume",
   "resumeAiGenerateResultDescription": "Review the resume first. You can edit your details or regenerate it if needed. The resume is created and opened only after confirmation.",
-  "resumeAiGenerateReviewCandidates": "The draft contains {count} verification markers. Check those entries against your experience before using it.",
   "resumeAiGenerateConversionWarnings": "{count} generated items could not be mapped to resume fields. Review the details before regenerating.",
   "resumeAiGenerateUseResult": "Use This Resume",
   "resumeAiGenerateAgain": "Generate Again",

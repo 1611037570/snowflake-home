@@ -38,9 +38,6 @@ const generationWarnings = ref<string[]>([]);
 
 const modalWidth = computed(() => pendingItem.value ? "min(90vw, 1200px)" : "min(90vw, 720px)");
 const generationStatus = computed(() => $t(`resumeAiGenerateStage_${generationStage.value}`));
-const pendingCandidateCount = computed(() =>
-  (JSON.stringify(pendingItem.value?.data ?? "").match(/【待核实】/g) || []).length,
-);
 // 列表页没有编辑器内模型弹窗，缺少模型时前往统一配置页。
 const configureModel = () => {
   aiStore.modelManagerTab = "added";
@@ -98,6 +95,10 @@ const generate = async () => {
     pendingItem.value = {
       ...source,
       data: generated.data,
+      ui: { // 生成草稿使用的界面配置。
+        ...(source.ui || {}),
+        skill: { ...(source.ui?.skill || {}), layout: "text" }, // 技能模块采用富文本正文布局。
+      },
       config: {
         ...(source.config || {}),
         modules: generated.config.modules,
@@ -173,9 +174,6 @@ defineExpose({ open });
           <h3 class="text-xl font-black text-sf-text">{{ $t("resumeAiGenerateResultTitle") }}</h3>
           <p class="mt-3 text-sm leading-7 text-sf-text-2">
             {{ $t("resumeAiGenerateResultDescription") }}
-          </p>
-          <p v-if="pendingCandidateCount" class="mt-3 text-sm leading-6 text-sf-warning">
-            {{ $t("resumeAiGenerateReviewCandidates", { count: pendingCandidateCount }) }}
           </p>
           <p v-if="generationWarnings.length" class="mt-3 text-sm leading-6 text-sf-warning">
             {{ $t("resumeAiGenerateConversionWarnings", { count: generationWarnings.length }) }}

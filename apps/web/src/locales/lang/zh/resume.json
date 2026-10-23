@@ -788,7 +788,6 @@
   "resumeAiGenerateFailed": "AI生成失败，请稍后重试",
   "resumeAiGenerateResultTitle": "生成结果预览",
   "resumeAiGenerateResultDescription": "请先检查简历内容。效果不合适时，可以返回修改资料或让 AI 重新生成；确认后才会创建简历并进入编辑器。",
-  "resumeAiGenerateReviewCandidates": "草稿中有 {count} 处待核实标记，请按实际经历确认或修改。",
   "resumeAiGenerateConversionWarnings": "有 {count} 项生成内容未能转换到简历字段，请查看详情后决定是否重新生成。",
   "resumeAiGenerateUseResult": "使用此简历",
   "resumeAiGenerateAgain": "重新生成",

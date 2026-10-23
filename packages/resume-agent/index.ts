@@ -21,7 +21,7 @@ export {
   RESUME_SCHEMA,
   findResumeModuleSchema,
 } from "./schema/resumeSchemaRegistry";
-export { getResumeModuleSchema } from "./schema/resumeSchema";
+export { getResumeModuleSchema, resolveResumeModuleSchema } from "./schema/resumeSchema";
 export { isResumeMediaField } from "./schema/resumeMedia";
 export type {
   ResumeFieldFormat,

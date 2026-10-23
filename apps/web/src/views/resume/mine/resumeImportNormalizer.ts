@@ -7,6 +7,7 @@ import {
   assertResumeAiResponseComplete,
   normalizeRichTextHtml,
   readResumeAiResponseText,
+  resolveResumeModuleSchema,
   type ResumeFieldSchema,
   type ResumeModuleSchema,
 } from "@snowflake/resume-agent";
@@ -184,8 +185,12 @@ export const normalizeResumeData = (parsed: Record<string, any>) => {
     // 相同语义的模块别名均参与提取，避免模型混用命名时遗漏记录。
     sources.forEach((name) => {
       consumed.add(name);
-      const normalized = normalizeModuleData(source[name], module, warnings);
-      if (module.kind === "array") {
+      // 同一模块按草稿数据选择当前形态，技能正文不能按评分列表字段转换。
+      const sourceData = unwrapModuleData(source[name]);
+      const variantData = isRecord(sourceData) && Array.isArray(sourceData.list) ? sourceData.list : sourceData;
+      const activeModule = resolveResumeModuleSchema(module, variantData) ?? module;
+      const normalized = normalizeModuleData(source[name], activeModule, warnings);
+      if (activeModule.kind === "array") {
         if (normalized.length) {
           const records = normalized.map((record: Record<string, any>) => ({
             // 提取并转换后的业务字段

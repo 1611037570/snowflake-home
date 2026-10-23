@@ -448,7 +448,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       ? `\n上一轮任务状态（仅作为承接判断资料）：${JSON.stringify(previousContext)}`
       : "";
     const pauseRule = options.allowTaskPause === false
-      ? "当前入口不支持追问或阻塞结束，缺少字段时依据已有资料继续完成；生成候选内容须标明待核实，不得冒充已确认事实。"
+      ? "当前入口不支持追问或阻塞结束，缺少字段时依据已有资料继续完成；未知细节使用 XX 占位，不得冒充已确认事实。"
       : "需要补充时使用 request_resume_input，确认无法安全执行时使用 report_resume_blocker。";
     const taskProfile = options.taskProfile
       ? `\n# 当前按钮任务\n目标：${options.taskProfile.objective}\n完成条件：${options.taskProfile.successCondition}\n${options.taskProfile.instructions}`
@@ -458,7 +458,7 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
 先调用 plan_resume_task：用用户本轮原话确定目标和范围；结合上一任务判断 new、continue 或 revise。仅需分析或文字结果时 requiredEffects 传空数组；要求修改当前简历、提交草稿或同步展示语言时，声明对应真实效果。继续或修正上一任务沿用其效果，需要不同效果时建立新任务。
 规划后按“读取现状 → 执行必要操作 → 核对工具结果 → 回答”推进。写入前确认目标模块、记录和字段；部分失败时依据失败项与最新数据修正，不重放已成功操作。写入后如需继续判断、再次写入或任务要求写后复核，就重新读取；只有工具证据满足本轮条件才说明已完成。不要为满足条件制造无关改动或重复提交相同参数。
 缺少会改变结果的关键事实时先核对已有资料；确实无法继续时按当前入口的暂停规则处理，不消耗轮次反复生成最终回答。${pauseRule}
-最终回答只区分实际完成的结果、仍待核实的内容和未完成原因，不暴露内部任务字段或工具过程。${taskProfile}${previous}`;
+最终回答只区分实际完成的结果、带 XX 占位的内容和未完成原因，不暴露内部任务字段或工具过程。${taskProfile}${previous}`;
   };
 
   return {
