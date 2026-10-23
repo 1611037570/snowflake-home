@@ -80,10 +80,8 @@ export const createResumeAgentSession = async (
     source: options.source,
     fallbackObjective: options.fallbackObjective,
     previousTask: options.previousTask,
-    // 按钮只加载自身需要的内容技能，执行与验收仍由统一运行时负责。
-    capabilities: taskProfile
-      ? options.capabilities.filter((capability) => capability.id === taskProfile.preferredCapabilityId)
-      : options.capabilities,
+    // 按钮优先使用指定技能，同时保留按实际任务选择其他能力的空间。
+    capabilities: options.capabilities,
     preferredCapabilityId: taskProfile?.preferredCapabilityId ?? options.preferredCapabilityId,
     fixedRequiredEffects: options.fixedRequiredEffects,
     fixedSuccessCondition: options.fixedSuccessCondition,

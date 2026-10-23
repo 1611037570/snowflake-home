@@ -215,7 +215,8 @@ export const runResumeDraftGeneration = async (
     fixedSuccessCondition: "按本轮目标模块提交完整可编辑的结构化简历草稿",
     allowTaskPause: false,
     reactConfig: {
-      maxSteps: 12,
+      // 为字段校验退回后的修正保留与普通助手相同的工具轮次。
+      maxSteps: 24,
       // 新建草稿需要综合稀疏资料与模块取舍，允许模型使用推理能力。
       thinking: { type: "enabled" },
       onThink: () => {
