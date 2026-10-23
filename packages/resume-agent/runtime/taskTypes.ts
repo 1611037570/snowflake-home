@@ -1,3 +1,4 @@
+import type { ReactTool } from "@snowflake/ai";
 import type { SkillResource } from "../types";
 import type {
   ResumeAgentCompletionPolicy,
@@ -128,6 +129,8 @@ export type CreateResumeAgentTaskRuntimeOptions = {
   taskId: string;
   // 任务入口来源。
   source: string;
+  // 本轮注册的业务工具，运行时据此把工具约束翻译成验收要求。
+  tools?: ReactTool[];
   // 规划缺省时用于回填目标的用户原始需求。
   fallbackObjective?: string;
   // 上一轮未结束或可承接的任务状态。

@@ -65,6 +65,16 @@ export const createResumeAgentSession = async (
   options.assertActive?.();
   const taskProfile = options.taskProfile ?? await resolveResumeAgentTaskProfile(options.source);
   options.assertActive?.();
+  const guardTool = (tool: ReactTool): ReactTool => ({
+    ...tool,
+    // 失效请求不得继续读取或修改当前业务状态。
+    execute: (args) => {
+      options.assertActive?.();
+      return tool.execute(args);
+    },
+  });
+  // 业务工具先于任务运行时准备好，规划阶段即可读到工具约束并据此推导验收要求。
+  const businessTools = options.tools.map(guardTool);
   const taskRuntime = createResumeAgentTaskRuntime({
     taskId: options.taskId,
     source: options.source,
@@ -76,20 +86,13 @@ export const createResumeAgentSession = async (
     fixedSuccessCondition: options.fixedSuccessCondition,
     allowTaskPause: options.allowTaskPause,
     taskProfile,
+    tools: businessTools,
     onEvidence: options.onEvidence,
     onTrace: options.onTrace,
   });
-  const guardTool = (tool: ReactTool): ReactTool => ({
-    ...tool,
-    // 失效请求不得继续读取或修改当前业务状态。
-    execute: (args) => {
-      options.assertActive?.();
-      return tool.execute(args);
-    },
-  });
   const tools = [
     ...taskRuntime.controlTools.map(guardTool),
-    ...taskRuntime.wrapTools(options.tools.map(guardTool)),
+    ...taskRuntime.wrapTools(businessTools),
   ];
   const runner = createResumeAiReactRunner(options.agent ?? "xiaoZhou", {
     ...options.reactConfig,

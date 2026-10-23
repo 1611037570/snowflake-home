@@ -49,7 +49,9 @@ export const defineTool = (definition: ResumeToolDefinition): ResumeAgentTool =>
     // 写入类工具默认让之前的读取结果失效，漏写会导致后续判断基于过期数据
     invalidatesRead: definition.invalidatesRead ?? definition.effect === "mutation",
     replayScope: definition.replayScope ?? "none",
-    requiresEvidence: definition.requiresEvidence,
+    // 写入与草稿提交默认要求先读取本轮资料：验收策略据此推导，漏声明会让写前读取失去约束
+    requiresEvidence: definition.requiresEvidence ??
+      (definition.effect === "mutation" || definition.effect === "submit" ? ["read"] : undefined),
     evaluate: definition.evaluate,
   },
 });

@@ -48,15 +48,16 @@ describe("任务运行验收", () => {
     const runtime = createRuntime();
     await plan(runtime, { objective: "改简历", requiredEffects: ["resume_change"] });
     const [write] = runtime.wrapTools([createWriteTool()]);
-    await write!.execute({});
 
-    // 只有写入证据，缺少写前读取，必须继续执行而不是直接回答
+    // 缺少写前读取时写入被工具层拒绝，本轮不产生写入证据，收口继续拦截
+    await write!.execute({});
     expect(runtime.beforeFinal()).toContain("资料读取");
 
     const [read] = runtime.wrapTools([createReadTool()]);
     await read!.execute({});
-    // 读取发生在写入之后，顺序不满足，仍然拦截
-    expect(runtime.beforeFinal()).toContain("重新完成");
+    // 补齐读取后同一写入工具才被允许执行，读写闭环后放行
+    await write!.execute({});
+    expect(runtime.beforeFinal()).toBeNull();
   });
 
   it("缺少前置证据的工具不执行并返回原因", async () => {

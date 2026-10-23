@@ -3,6 +3,7 @@ import type {
   ResumeAgentEvidenceKind,
   ResumeAgentEvidenceOrder,
   ResumeAgentRequiredEffect,
+  ResumeAgentToolRuntimeMeta,
 } from "./types";
 import type { ResumeAgentTaskEvidence } from "./taskTypes";
 import {
@@ -40,9 +41,11 @@ const EVIDENCE_NAMES: Record<ResumeAgentEvidenceKind, string> = {
 };
 
 // 合并模型规划、按钮任务和任务能力的完成要求，生成唯一验收策略。
+// 策略只描述本轮必须产生的业务后果；执行前置与顺序由工具元数据声明，这里翻译而非重写。
 export const resolveResumeAgentCompletionPolicy = (
   plannedEffects: ResumeAgentRequiredEffect[],
   policies: ResumeAgentCompletionPolicy[],
+  tools: ResumeAgentToolRuntimeMeta[] = [],
 ): ResolvedResumeAgentCompletionPolicy => {
   const requiredEffects = new Set(plannedEffects);
   const activePolicies = policies.filter(
@@ -52,15 +55,21 @@ export const resolveResumeAgentCompletionPolicy = (
     policy.requiredEffects?.forEach((effect) => requiredEffects.add(effect));
   });
 
+  // 执行前置约束只有一处真相源：工具元数据。验收层只把它翻译成本轮的验收要求，
+  // 不再按效果硬编码一遍，避免新增工具时两处口径漂移。
   const requiredEvidence = new Set<ResumeAgentEvidenceKind>(requiredEffects);
   const readAfterEvidence = new Set<ResumeAgentEvidenceKind>();
   const requiredFacts = new Set<string>();
   const evidenceOrder: ResumeAgentEvidenceOrder[] = [];
-  ["resume_change", "draft_submit"].forEach((effect) => {
-    if (!requiredEffects.has(effect as ResumeAgentRequiredEffect)) return;
-    // 写入当前简历或提交草稿前必须先取得本轮授权范围内的真实资料。
-    requiredEvidence.add("read");
-    evidenceOrder.push({ evidence: effect as ResumeAgentRequiredEffect, after: "read" });
+  // 只为本轮真正要求产生效果的工具有效，纯读取工具不参与验收。
+  tools.forEach((meta) => {
+    if (meta.evidenceKind === "read" || !requiredEffects.has(meta.evidenceKind)) return;
+    (meta.requiresEvidence ?? []).forEach((kind) => {
+      requiredEvidence.add(kind);
+      if (!evidenceOrder.some((item) => item.evidence === meta.evidenceKind && item.after === kind)) {
+        evidenceOrder.push({ evidence: meta.evidenceKind, after: kind });
+      }
+    });
   });
   activePolicies.forEach((policy) => {
     policy.requiredEvidence?.forEach((kind) => requiredEvidence.add(kind));
@@ -90,7 +99,7 @@ export const evaluateResumeAgentCompletion = (
   const missingEvidence = policy.requiredEvidence.filter(
     // 业务效果既要最近一次尝试成功，也要本轮真实执行过，跳过写入不能单独充数。
     (kind) => !findLatestSuccessfulEvidence(evidence, kind) ||
-      (kind !== "read" && !findLatestSuccessfulActualEvidence(evidence, kind)),
+      !findLatestSuccessfulActualEvidence(evidence, kind),
   );
   const successfulFacts = collectLatestSuccessfulFacts(evidence);
   const missingFacts = policy.requiredFacts.filter((fact) => !successfulFacts.has(fact));

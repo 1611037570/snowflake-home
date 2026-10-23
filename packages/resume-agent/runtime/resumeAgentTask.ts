@@ -5,6 +5,7 @@ import type {
   ResumeAgentRequiredEffect,
   ResumeAgentTool,
   ResumeAgentToolEffect,
+  ResumeAgentToolRuntimeMeta,
 } from "./types";
 import {
   evaluateResumeAgentCompletion,
@@ -42,6 +43,16 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
   let task: ResumeAgentTaskState | undefined;
   // 规划缺失时的任务仍可由正式规划接管，已有工具证据必须保留。
   let implicitTask = false;
+  // 本轮注册工具的执行元数据，创建与包装两个时点都会登记，验收策略据此翻译成验收要求。
+  const toolMetaByName = new Map<string, ResumeAgentToolRuntimeMeta>();
+  const registerToolMetas = (tools: ReactTool[]) => {
+    tools.forEach((tool) => {
+      const meta = (tool as ResumeAgentTool).taskMeta;
+      if (meta) toolMetaByName.set(tool.name, meta);
+    });
+  };
+  const getToolMetas = () => [...toolMetaByName.values()];
+  registerToolMetas(options.tools ?? []);
   const toolExecution = createResumeAgentToolExecution(() => task, options.onEvidence);
   const previousTask = cloneResumeAgentTask(options.previousTask);
   const capabilityMap = new Map((options.capabilities ?? []).map((skill) => [skill.id, skill]));
@@ -59,6 +70,11 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     requiredFacts: [], // 建立任务后再合并业务事实要求。
     evidenceOrder: [], // 建立任务后再合并工具执行顺序。
   };
+  // 验收策略的输入快照：工具可能晚于规划才登记，收口前据此按最新工具约束重算。
+  let policyInputs: {
+    planned: ResumeAgentRequiredEffect[];
+    policies: ResumeAgentCompletionPolicy[];
+  } | undefined;
 
   const planTaskTool: ReactTool = {
     name: "plan_resume_task",
@@ -174,7 +190,8 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
         ...(implicitTask ? task?.requiredEffects ?? [] : []),
       ])];
       const existingEvidence = implicitTask ? task?.evidence ?? [] : [];
-      const resolvedPolicy = resolveResumeAgentCompletionPolicy(effectiveEffects, policies);
+      policyInputs = { planned: effectiveEffects, policies };
+      const resolvedPolicy = resolveResumeAgentCompletionPolicy(effectiveEffects, policies, getToolMetas());
       task = {
         id: options.taskId,
         source: options.source,
@@ -312,9 +329,13 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       ...(task?.requiredEffects ?? []),
       ...(target ? [target] : []),
     ];
+    const implicitPlanned = [...new Set(effects)];
+    const implicitPolicies = options.taskProfile ? [options.taskProfile.completionPolicy] : [];
+    policyInputs = { planned: implicitPlanned, policies: implicitPolicies };
     const resolvedPolicy = resolveResumeAgentCompletionPolicy(
-      [...new Set(effects)],
-      options.taskProfile ? [options.taskProfile.completionPolicy] : [],
+      implicitPlanned,
+      implicitPolicies,
+      getToolMetas(),
     );
     completionPolicy = resolvedPolicy;
     task = {
@@ -350,6 +371,14 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       return reason;
     }
     // 按钮任务可在最终输出前核对其专用结果契约。
+    // 工具可能晚于规划才登记，收口前按最新工具约束重算一次，避免验收遗漏写入前置。
+    if (policyInputs) {
+      completionPolicy = resolveResumeAgentCompletionPolicy(
+        policyInputs.planned,
+        policyInputs.policies,
+        getToolMetas(),
+      );
+    }
     const finalIssue = options.taskProfile?.validateFinal?.(answer, task.evidence);
     if (finalIssue) return finalIssue;
     if (task.phase === "waiting" || task.phase === "blocked") return null;
@@ -406,6 +435,8 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
       : [planTaskTool, requestInputTool, reportBlockerTool],
     // 包装业务工具并记录真实执行证据；执行前补齐隐式任务。
     wrapTools: (tools: ReactTool[]) => {
+      // 包装阶段补登记：创建后才加入的工具同样参与验收推导。
+      registerToolMetas(tools);
       const wrapped = toolExecution.wrapTools(tools);
       return wrapped.map((tool, index) => {
         const source = tools[index] as ResumeAgentTool;
