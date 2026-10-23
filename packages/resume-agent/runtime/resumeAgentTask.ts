@@ -379,9 +379,14 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
         getToolMetas(),
       );
     }
-    const finalIssue = options.taskProfile?.validateFinal?.(answer, task.evidence);
-    if (finalIssue) return finalIssue;
+    // 已明确等待补充或阻塞时直接交付原因，报告格式不再阻止任务收口。
     if (task.phase === "waiting" || task.phase === "blocked") return null;
+    const finalIssue = options.taskProfile?.validateFinal?.(answer, task.evidence);
+    if (finalIssue) {
+      // 报告校验的拦截原因也进入运行轨迹，供最后的未完成结果定位。
+      options.onTrace?.({ type: "verdict", completed: false, reason: finalIssue });
+      return finalIssue;
+    }
     const result = evaluateResumeAgentCompletion(
       task.evidence,
       completionPolicy,
@@ -399,6 +404,29 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     // 观测：拦截过早收口时记录拦截原因，排障依赖这条信号。
     options.onTrace?.({ type: "verdict", completed: false, reason: result.retryMessage });
     return result.retryMessage;
+  };
+
+  const onIncomplete = (reason: string) => {
+    // 轮次耗尽时保留已发生的业务事实，并明确标记任务未完成。
+    const finalReason = reason.startsWith("报告 changes 必须逐项使用工具确认的实际改动")
+      ? "评分报告中的改动与实际写入不一致。"
+      : reason === "请按规定输出完整且有效的简历评分报告。"
+        ? "评分报告未能生成完整有效的内容。"
+        : reason.startsWith("尚未理解本轮任务，请调用 plan_resume_task")
+          ? "尚未建立明确的任务计划。"
+          : reason.replace(/。请继续[\s\S]*$/, "。");
+    const completedChanges = task?.evidence.filter((item) =>
+      item.kind === "resume_change" && !item.replayed && item.changed === true && item.status !== "failed"
+    ) ?? [];
+    if (task && task.phase !== "waiting" && task.phase !== "blocked") {
+      task.phase = "incomplete";
+      task.pendingInput = undefined;
+    }
+    const detail = task?.phase === "waiting" && task.pendingInput
+      ? task.pendingInput.question
+      : task?.blocker?.reason ?? finalReason;
+    const changeNotice = completedChanges.length ? "本轮已写入的修改仍保留在简历中，可使用撤回修改。\n\n" : "";
+    return `${changeNotice}本轮任务尚未完成：${detail}`;
   };
 
   const buildContext = () => {
@@ -425,7 +453,12 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     const taskProfile = options.taskProfile
       ? `\n# 当前按钮任务\n目标：${options.taskProfile.objective}\n完成条件：${options.taskProfile.successCondition}\n${options.taskProfile.instructions}`
       : "";
-    return `# 任务运行规则\n当前入口：${options.source}。先调用 plan_resume_task，根据用户原始消息、入口、近期对话和上一轮任务建立任务契约。文字回复不能代替 requiredEffects 声明的真实业务效果；继续或修正上一任务时沿用上一任务效果，需要不同效果时建立 new 任务。任务阶段与完成结果由运行时依据工具事实维护。${pauseRule}${taskProfile}${previous}`;
+    return `# 任务运行规则
+当前入口：${options.source}。
+先调用 plan_resume_task：用用户本轮原话确定目标和范围；结合上一任务判断 new、continue 或 revise。仅需分析或文字结果时 requiredEffects 传空数组；要求修改当前简历、提交草稿或同步展示语言时，声明对应真实效果。继续或修正上一任务沿用其效果，需要不同效果时建立新任务。
+规划后按“读取现状 → 执行必要操作 → 核对工具结果 → 回答”推进。写入前确认目标模块、记录和字段；部分失败时依据失败项与最新数据修正，不重放已成功操作。写入后如需继续判断、再次写入或任务要求写后复核，就重新读取；只有工具证据满足本轮条件才说明已完成。不要为满足条件制造无关改动或重复提交相同参数。
+缺少会改变结果的关键事实时先核对已有资料；确实无法继续时按当前入口的暂停规则处理，不消耗轮次反复生成最终回答。${pauseRule}
+最终回答只区分实际完成的结果、仍待核实的内容和未完成原因，不暴露内部任务字段或工具过程。${taskProfile}${previous}`;
   };
 
   return {
@@ -451,6 +484,8 @@ export const createResumeAgentTaskRuntime = (options: CreateResumeAgentTaskRunti
     },
     // 最终答案提交前的通用完成检查。
     beforeFinal,
+    // 达到执行上限时由任务运行时生成未完成结果，避免丢失真实状态。
+    onIncomplete,
     // 提供给同一 Agent 的任务运行上下文。
     buildContext,
     // 返回可持久化的当前任务快照。

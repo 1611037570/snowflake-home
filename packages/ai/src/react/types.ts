@@ -75,6 +75,8 @@ export interface ReactConfig {
   beforeFinal?: (answer: string) => string | null | undefined | Promise<string | null | undefined>;
   // 候选答案未通过完成检查时通知宿主清理本轮临时展示。
   onFinalRetry?: (reason: string) => void;
+  // 执行轮次耗尽时由业务层生成真实的未完成说明，省略时保持抛错行为。
+  onIncomplete?: (reason: string) => string | Promise<string>;
   // 思考、正文和总令牌数的流式增量分别回调，避免调用方解析事件类型
   onReasoning?: (delta: string) => void;
   onContent?: (delta: string) => void;

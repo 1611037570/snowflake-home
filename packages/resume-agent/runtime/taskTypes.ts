@@ -29,6 +29,8 @@ export type ResumeAgentTaskPhase =
   | "waiting"
   // 当前条件下无法继续安全执行。
   | "blocked"
+  // 执行轮次耗尽，任务尚未通过完成校验。
+  | "incomplete"
   // 运行时已经确认任务完成。
   | "completed";
 

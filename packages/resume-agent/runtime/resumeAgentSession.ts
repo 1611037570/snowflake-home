@@ -38,7 +38,7 @@ export type CreateResumeAgentSessionOptions = {
   // 使用的模型角色，省略时使用简历助手模型。
   agent?: ResumeAiAgent;
   // 宿主提供的 ReAct 展示和流式回调，工具与任务验收由会话统一注入。
-  reactConfig: Omit<ReactConfig, "tools" | "initialTool" | "beforeFinal" | "onFinal">;
+  reactConfig: Omit<ReactConfig, "tools" | "initialTool" | "beforeFinal" | "onIncomplete" | "onFinal">;
   // 每次业务工具形成证据后通知宿主。
   onEvidence?: (evidence: ResumeAgentTaskEvidence) => void;
   // 任务建立、降级与完成校验时通知宿主，用于运行观测。
@@ -99,6 +99,7 @@ export const createResumeAgentSession = async (
     tools,
     initialTool: "plan_resume_task",
     beforeFinal: taskRuntime.beforeFinal,
+    onIncomplete: taskRuntime.onIncomplete,
     onFinal: (answer) => options.onFinal?.(answer, taskRuntime.getTask()),
   });
 

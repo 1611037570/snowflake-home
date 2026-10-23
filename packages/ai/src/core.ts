@@ -351,6 +351,7 @@ class LLM {
         input: initialMessages,
       });
       let activeRound: { round: number; startTime: number } | null = null;
+      let lastIncompleteReason = "";
 
       // 统一记录每轮结束时间与耗时，异常和取消同样保留本轮数据
       const finishActiveRound = (status: "success" | "error" | "aborted" = "success") => {
@@ -414,7 +415,15 @@ class LLM {
             if (config.beforeFinal) {
               const retryReason = await config.beforeFinal(finalAnswer);
               if (retryReason) {
-                if (step >= maxSteps - 1) throw new Error("ReAct 未满足任务完成条件");
+                lastIncompleteReason = retryReason;
+                if (step >= maxSteps - 1) {
+                  if (!config.onIncomplete) throw new Error("ReAct 未满足任务完成条件");
+                  const incompleteAnswer = await config.onIncomplete(retryReason);
+                  config.onFinal?.(incompleteAnswer);
+                  finishActiveRound();
+                  this.observer.finishLlmTrace(traceId, "success");
+                  return incompleteAnswer;
+                }
                 history.push({ role: "assistant", content: result.finalAnswer });
                 history.push({ role: "system", content: retryReason });
                 config.onFinalRetry?.(retryReason);
@@ -482,6 +491,14 @@ class LLM {
         }
 
         console.warn("[ReAct] 超出最大步数");
+        if (config.onIncomplete) {
+          const incompleteAnswer = await config.onIncomplete(
+            lastIncompleteReason || "执行轮次已用完，尚未生成通过校验的最终回答。",
+          );
+          config.onFinal?.(incompleteAnswer);
+          this.observer.finishLlmTrace(traceId, "success");
+          return incompleteAnswer;
+        }
         throw new Error("ReAct 超出最大步数");
       } catch (error) {
         const message = String((error as any)?.message || "ReAct 执行失败");
