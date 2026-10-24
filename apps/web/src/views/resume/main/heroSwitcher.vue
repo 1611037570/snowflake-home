@@ -167,25 +167,25 @@ const layers = computed(() => {
   return list;
 });
 
-// 各动画阶段每张卡片的目标层位：前后卡同时位移，形成联动翻页
+// 各动画阶段每张卡片的目标层位：左右各一张待命卡，两侧层级始终低于中间主位
 const PHASE_CLASS = {
-  idle: { prev: "p-front-under", current: "p-front", next: "p-back", stale: "p-back", future: "p-back" },
+  idle: { prev: "p-side-left", current: "p-front", next: "p-side-right", stale: "p-side-right", future: "p-side-right" },
   "next-setup": {
-    prev: "p-front-under",
+    prev: "p-side-left",
     current: "p-front",
-    next: "p-enter-right",
-    stale: "p-back",
-    future: "p-back",
+    next: "p-side-right",
+    stale: "p-side-right",
+    future: "p-side-right",
   },
   next: {
-    prev: "p-front-under",
-    current: "p-throw-right",
+    prev: "p-side-left",
+    current: "p-exit-left",
     next: "p-front",
     stale: "p-fade-out",
-    future: "p-back",
+    future: "p-side-right",
   },
-  "prev-setup": { prev: "p-enter-right", current: "p-front", next: "p-back" },
-  prev: { prev: "p-front", current: "p-back", next: "p-sink" },
+  "prev-setup": { prev: "p-side-left", current: "p-front", next: "p-side-right" },
+  prev: { prev: "p-front", current: "p-exit-right", next: "p-side-right" },
 };
 
 // 当前阶段下卡片的层位类名
@@ -278,12 +278,15 @@ async function turn(stepSize, target) {
   phase.value = step > 0 ? "next" : "prev";
   await new Promise((resolve) => window.setTimeout(resolve, TURN_DURATION));
   if (token !== turnToken) return;
-  // 归位重排：关闭过渡后提交下标，层位与动画结束位置一致，不会出现回弹
-  animating.value = false;
+  // 归位重排：保留过渡，让退场卡滑回待命位而不是瞬移回原位
   activeIndex.value = targetIndex;
   pendingIndex.value = null;
   phase.value = "idle";
   turning.value = false;
+  // 归位过渡结束后再关闭，避免下一次翻页起手失去动画
+  window.setTimeout(() => {
+    if (token === turnToken) animating.value = false;
+  }, TURN_DURATION);
   // 动画期间被点下的下一次翻页在这里立即执行，避免点击看起来没反应
   const pendingTurn = queued.value;
   queued.value = null;
@@ -333,51 +336,65 @@ onMounted(async () => {
   }
 }
 
-/* 主位（前卡） */
+/* 主位（前卡）：层级最高，两侧卡都压在它下面 */
 .p-front {
   transform: translate(0, 0) rotate(0deg) scale(1);
   opacity: 1;
-  z-index: 2;
+  z-index: 3;
 }
 
-/* 被前卡完全遮住的位置：用于上一份卡片的待命 */
-.p-front-under {
-  transform: translate(0, 0) rotate(0deg) scale(1);
-  opacity: 0;
-  z-index: 0;
-}
-
-/* 后卡：左上倾斜叠放，露出下一份简历 */
-.p-back {
+/* 两侧待命卡：窄屏先按左上叠放，桌面端再分列到左右两侧 */
+.p-side-left,
+.p-side-right {
   transform: translate(var(--hero-stack-shift-x), calc(var(--hero-stack-shift-y) + var(--hero-stack-back-offset-y))) rotate(-10deg) scale(0.85);
   opacity: 1;
   z-index: 1;
 }
 
-/* 首屏入场：后卡从水平位置过渡到倾斜位置 */
-.hero-switcher__stack:not(.is-tilted) .p-back {
-  transform: translate(0, 0) rotate(0deg) scale(1);
-}
-
-/* 下一份的退场位：前卡向右抛出 */
-.p-throw-right {
-  transform: translate(62%, -4%) rotate(7deg) scale(0.92);
-  opacity: 0;
-  z-index: 3;
-}
-
-/* 上一份的退场位：露出的后卡向左下沉回牌堆并淡出，不再横穿主卡 */
-.p-sink {
-  transform: translate(calc(var(--hero-stack-shift-x) * 1.8), calc(var(--hero-stack-shift-y) * 1.8)) rotate(-18deg) scale(0.68);
+/* 窄屏横向空间不足，上一份收起，只保留左右两张 */
+.p-side-left {
   opacity: 0;
   z-index: 0;
 }
 
-/* 翻页入场位：上一份与直达跳转的新卡片都从右侧滑回主位 */
-.p-enter-right {
-  transform: translate(26%, -3%) rotate(4deg) scale(0.9);
+@media (min-width: 640px) {
+  .p-side-left {
+    opacity: 1;
+    z-index: 1;
+  }
+
+  /* 桌面端下一份翻到右侧，与左侧待命卡对称，都不盖住中间主卡 */
+  .p-side-right {
+    transform: translate(calc(var(--hero-stack-shift-x) * -1), calc(var(--hero-stack-shift-y) + var(--hero-stack-back-offset-y))) rotate(10deg) scale(0.85);
+  }
+}
+
+/* 首屏入场：两侧卡从水平位置过渡到倾斜位置 */
+.hero-switcher__stack:not(.is-tilted) .p-side-left,
+.hero-switcher__stack:not(.is-tilted) .p-side-right {
+  transform: translate(0, 0) rotate(0deg) scale(1);
+}
+
+/* 下一份上桌：当前卡缩回左侧待命位并淡出，右侧待命卡滑入主位。
+   终点与 .p-side-left 一致，归位时只需淡入，不会出现第二次位移 */
+.p-exit-left {
+  transform: translate(var(--hero-stack-shift-x), calc(var(--hero-stack-shift-y) + var(--hero-stack-back-offset-y))) rotate(-10deg) scale(0.85);
   opacity: 0;
-  z-index: 1;
+  z-index: 2;
+}
+
+/* 上一份上桌：当前卡缩回右侧待命位并淡出，左侧待命卡滑入主位 */
+.p-exit-right {
+  transform: translate(calc(var(--hero-stack-shift-x) * -1), calc(var(--hero-stack-shift-y) + var(--hero-stack-back-offset-y))) rotate(10deg) scale(0.85);
+  opacity: 0;
+  z-index: 2;
+}
+
+/* 窄屏右侧待命位收在左上，退场终点跟着一起收，避免归位后二次位移 */
+@media (max-width: 639px) {
+  .p-exit-right {
+    transform: translate(var(--hero-stack-shift-x), calc(var(--hero-stack-shift-y) + var(--hero-stack-back-offset-y))) rotate(10deg) scale(0.85);
+  }
 }
 
 /* 新补入叠放位的卡片：挂载即从箭卡背后浮出并落位 */
@@ -387,7 +404,8 @@ onMounted(async () => {
 
 @keyframes hero-stack-enter {
   from {
-    transform: translate(-4%, -2%) rotate(-2deg) scale(0.96);
+    /* 起点贴着右侧待命位外沿，新卡从牌堆外侧浮入而不是横穿主卡 */
+    transform: translate(calc(var(--hero-stack-shift-x) * -1.35), calc(var(--hero-stack-shift-y) + var(--hero-stack-back-offset-y))) rotate(16deg) scale(0.76);
     opacity: 0;
   }
 }
@@ -399,8 +417,9 @@ onMounted(async () => {
   z-index: 0;
 }
 
-/* 首屏入场：后卡从水平位置过渡到倾斜位置 */
-.hero-switcher__stack:not(.is-animating) .p-back {
+/* 非翻页期间给待命卡加慢过渡：首屏倾斜入场与翻页归位都走这条 */
+.hero-switcher__stack:not(.is-animating) .p-side-left,
+.hero-switcher__stack:not(.is-animating) .p-side-right {
   transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
