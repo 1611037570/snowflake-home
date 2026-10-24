@@ -5,18 +5,28 @@
         class="resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-x-12 gap-y-9 px-6 pt-24 pb-9 lg:grid-cols-2 lg:px-12"
       >
         <article class="relative z-10 mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
-          <!-- 功能主标题：承载免费、免注册、一键导出等检索词，提升抓取权重 -->
+          <!-- 功能主标题：用开源、免费、AI 生成简历等检索词，兼顾抓取与转化 -->
           <h1
             class="animate-rise animate-rise--delay-one text-4xl leading-[1.15] font-black tracking-[-0.04em] sm:text-5xl lg:text-6xl"
           >
             {{ $t("resumeHomeHeroTitle") }}
           </h1>
-          <!-- 品牌副标题：以轻舟意象呼应产品名，弱化为小字陪衬主标题 -->
+          <!-- 副标题：直接说明 AI 承担什么，替换原来的品牌意象句 -->
           <p class="animate-rise animate-rise--delay-two mt-6 text-base font-medium text-sf-text-2">
-            {{ $t("resumeHomeHeroSubtitleStart")
-            }}<span class="resume-home__highlight">{{ $t("resumeHomeHeroSubtitleHighlight") }}</span
-            >，{{ $t("resumeHomeHeroSubtitleEnd") }}
+            {{ $t("resumeHomeHeroSubtitle") }}
           </p>
+          <!-- 首屏关键点：把用户最先关心的能力直接摊开 -->
+          <ul
+            class="animate-rise animate-rise--delay-three mt-6 flex flex-wrap justify-center gap-3 lg:justify-start"
+          >
+            <li
+              v-for="point in keyPoints"
+              :key="point"
+              class="rounded-full border border-sf-b bg-sf-primary px-3 py-1 text-xs font-medium text-sf-text-2"
+            >
+              {{ point }}
+            </li>
+          </ul>
           <!-- 首屏指标：数字在上、标签在下，内容水平垂直居中 -->
           <dl
             class="animate-rise animate-rise--delay-three mt-9 grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-5"
@@ -48,13 +58,15 @@
                 class="transition-transform duration-300 group-hover:translate-x-1"
               />
             </router-link>
-            <a
-              class="inline-flex items-center justify-center gap-3 rounded-full border border-sf-b bg-sf-primary px-6 py-3 font-semibold transition-colors duration-300 hover:bg-sf-bg"
-              href="#journey"
+            <!-- 页面滚动发生在内部滚动容器里，原生锚点无效，改为主动滚动到 AI 卡片 -->
+            <button
+              type="button"
+              class="inline-flex cursor-pointer items-center justify-center gap-3 rounded-full border border-sf-b bg-sf-primary px-6 py-3 font-semibold transition-colors duration-300 hover:bg-sf-bg"
+              @click="scrollToAi"
             >
-              {{ $t("resumeHomeExploreFeatures") }}
+              {{ $t("resumeHomeAiCta") }}
               <SfIcon icon="mingcute:arrow-down-line" size="4" />
-            </a>
+            </button>
           </div>
         </article>
 
@@ -289,6 +301,23 @@ useIntersectionObserver(
   { threshold: 0.1 },
 );
 
+// 页面滚动由内部滚动容器承载，原生 hash 定位不生效，改为按目标元素主动滚动
+function scrollToAi() {
+  const target = document.getElementById("ai");
+  if (!target) return;
+  // 居中滚动，避免固定页头遮住卡片标题
+  target.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+// 首屏关键点：对应产品真实能力，不写做不到的承诺
+const keyPoints = computed(() => [
+  $t("resumeHomeKeyPointGenerate"),
+  $t("resumeHomeKeyPointEvaluate"),
+  $t("resumeHomeKeyPointPolish"),
+  $t("resumeHomeKeyPointInterview"),
+  $t("resumeHomeKeyPointExport"),
+]);
+
 const featureGroups = computed(() => [
   {
     icon: "ph:file-md-duotone",
@@ -334,10 +363,6 @@ const featureGroups = computed(() => [
 </script>
 
 <style scoped>
-.resume-home__highlight {
-  color: var(--sf-theme);
-}
-
 .resume-home__closing {
   background-image: linear-gradient(135deg, var(--sf-primary), var(--sf-transparent));
 }
