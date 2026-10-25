@@ -1,5 +1,7 @@
 packages:
-  - 'apps/*'
+  # 应用工作区仅包含服务端与网页端，独立工具不参与根命令
+  - 'apps/server'
+  - 'apps/web'
   - 'packages/*'
 catalog:
   # 语言/工具链

@@ -3,7 +3,7 @@
   "private": true,
   "packageManager": "pnpm@10.34.5",
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --filter=@snowflake/web --filter=@snowflake/server",
     "dev:web": "pnpm --filter @snowflake/web dev",
     "dev:server": "pnpm --filter @snowflake/server dev",
     "build": "turbo run build",
