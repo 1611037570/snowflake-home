@@ -1,10 +1,35 @@
 <script setup lang="ts">
+import { useIntersectionObserver } from "@vueuse/core";
+import type { ComponentPublicInstance } from "vue";
 import { ref } from "vue";
 
 import { jobGuideList } from "./data";
 
 const activeGuideIndex = ref(0);
 const mobileDirectory = ref<HTMLDetailsElement | null>(null);
+const guideSectionList = ref<HTMLElement[]>([]);
+
+// 记录分类节点，供滚动观察同步左侧高亮。
+function setGuideSection(element: Element | ComponentPublicInstance | null, index: number) {
+  if (element instanceof HTMLElement) guideSectionList.value[index] = element;
+}
+
+// 分类进入页面上方阅读区域时更新目录选中项。
+useIntersectionObserver(
+  guideSectionList,
+  (entries) => {
+    const currentEntry = entries
+      .filter((entry) => entry.isIntersecting)
+      .sort((first, second) => first.boundingClientRect.top - second.boundingClientRect.top)[0];
+    if (!currentEntry) return;
+
+    const currentIndex = guideSectionList.value.indexOf(currentEntry.target as HTMLElement);
+    if (currentIndex >= 0) activeGuideIndex.value = currentIndex;
+  },
+  {
+    rootMargin: "-12px 0px -75% 0px", // 只以页面上方阅读区域判断当前分类。
+  },
+);
 
 // 切换目录时定位到对应分类，并收起移动端目录。
 function scrollToGuide(index: number) {
@@ -45,7 +70,7 @@ function scrollToGuide(index: number) {
               >
                 {{ jobGuideList[activeGuideIndex]?.name }}
               </summary>
-              <ul class="mt-3 max-h-screen space-y-3 overflow-y-auto">
+              <ul class="mt-3 max-h-screen overflow-y-auto">
                 <li v-for="(guide, guideIndex) in jobGuideList" :key="guide.name">
                   <button
                     type="button"
@@ -65,7 +90,7 @@ function scrollToGuide(index: number) {
             </details>
 
             <div class="hidden lg:block">
-              <ul class="space-y-3">
+              <ul>
                 <li v-for="(guide, guideIndex) in jobGuideList" :key="guide.name">
                   <button
                     type="button"
@@ -90,22 +115,37 @@ function scrollToGuide(index: number) {
           <section
             v-for="(guide, guideIndex) in jobGuideList"
             :id="`guide-section-${guideIndex}`"
+            :ref="(element) => setGuideSection(element, guideIndex)"
             :key="guide.name"
             class="scroll-mt-3 pb-3"
             :aria-labelledby="`guide-heading-${guideIndex}`"
           >
             <h2
               :id="`guide-heading-${guideIndex}`"
-              class="text-3xl font-black text-sf-theme"
+              class="flex items-center gap-3 text-3xl font-black text-sf-theme"
             >
-              {{ guide.name }}
+              <span>{{ guide.name }}</span>
+              <span class="rounded-full bg-sf-theme-3 px-3 text-sm font-semibold">
+                {{ guide.list.length }}条
+              </span>
             </h2>
             <ol class="mt-3 grid gap-3 md:grid-cols-2">
-              <li v-for="item in guide.list" :key="item.title" class="h-full">
+              <li
+                v-for="(item, itemIndex) in guide.list"
+                :key="item.title"
+                class="h-full"
+              >
                 <section
                   class="h-full rounded-3xl border border-sf-b bg-sf-primary p-3 transition-colors hover:border-sf-theme hover:bg-sf-bg"
                 >
-                  <h3 class="pb-1 text-lg font-bold text-sf-text">{{ item.title }}</h3>
+                  <h3
+                    class="flex items-center justify-between gap-3 pb-1 text-lg font-bold text-sf-text"
+                  >
+                    <span>{{ item.title }}</span>
+                    <span class="shrink-0 text-sm font-semibold text-sf-text-2">
+                      {{ itemIndex + 1 }}
+                    </span>
+                  </h3>
                   <p class="leading-normal text-sf-text-2">{{ item.content }}</p>
                 </section>
               </li>
