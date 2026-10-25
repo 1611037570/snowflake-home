@@ -175,6 +175,25 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
+    route: "/resume/guide/offer-comparison",
+    changefreq: "monthly",
+    priority: 0.8,
+    locales: {
+      zh: {
+        title: "Offer 对比决策器 - 收入休假与用工条件综合比较 | 轻舟简历",
+        description:
+          "逐项比较多份 Offer 的确定性现金总包、休息休假、加班补偿、五险一金、公司性质、通勤、岗位匹配、晋升、试用期与补充福利，生成综合排序与优劣对比。",
+        keywords: "Offer对比,工作选择,薪资对比,休假制度,五险一金,Offer怎么选,求职决策",
+      },
+      en: {
+        title: "Job Offer Comparison Tool - Compare Pay, Leave and Employment Terms | Skiff Resume",
+        description:
+          "Compare multiple job offers across guaranteed pay, leave, overtime compensation, benefits, company stability, commute, role fit, promotion and probation terms.",
+        keywords: "job offer comparison,compare job offers,salary comparison,leave policy,employment terms,career decision",
+      },
+    },
+  },
+  {
     route: "/resume/editor",
     noindex: true,
     locales: {

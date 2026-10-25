@@ -56,19 +56,35 @@ function scrollToGuide(index: number) {
         </p>
       </header>
 
-      <RouterLink
-        to="/resume/guide/resignation-score"
-        class="group mt-3 grid gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3 transition-colors hover:border-sf-theme hover:bg-sf-bg md:grid-cols-[minmax(0,1fr)_auto] md:items-center"
-      >
-        <article>
-          <p class="text-sm font-semibold text-sf-text-2">离职决策工具</p>
-          <h2 class="mt-3 text-2xl font-black text-sf-text">离职决策 10 项快速评分表</h2>
-          <p class="mt-3 leading-normal text-sf-text-2">
-            从收入、福利、通勤、加班、发展与健康等方面各选一档，1 分钟算出当前工作的综合得分。
-          </p>
-        </article>
-        <strong class="text-sf-text transition-colors group-hover:text-sf-theme">开始评分 →</strong>
-      </RouterLink>
+      <section class="mt-3 grid gap-3 xl:grid-cols-2" aria-label="求职决策工具">
+        <RouterLink
+          to="/resume/guide/resignation-score"
+          class="group grid gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3 transition-colors hover:border-sf-theme hover:bg-sf-bg md:grid-cols-[minmax(0,1fr)_auto] md:items-center"
+        >
+          <article>
+            <p class="text-sm font-semibold text-sf-text-2">离职决策工具</p>
+            <h2 class="mt-3 text-2xl font-black text-sf-text">离职决策 10 项快速评分表</h2>
+            <p class="mt-3 leading-normal text-sf-text-2">
+              从收入、福利、通勤、加班、发展与健康等方面各选一档，1 分钟算出当前工作的综合得分。
+            </p>
+          </article>
+          <strong class="text-sf-text transition-colors group-hover:text-sf-theme">开始评分 →</strong>
+        </RouterLink>
+
+        <RouterLink
+          to="/resume/guide/offer-comparison"
+          class="group grid gap-3 rounded-3xl border border-sf-b bg-sf-primary p-3 transition-colors hover:border-sf-theme hover:bg-sf-bg md:grid-cols-[minmax(0,1fr)_auto] md:items-center"
+        >
+          <article>
+            <p class="text-sm font-semibold text-sf-text-2">选 Offer 工具</p>
+            <h2 class="mt-3 text-2xl font-black text-sf-text">Offer 对比决策器</h2>
+            <p class="mt-3 leading-normal text-sf-text-2">
+              对比多份工作的收入、福利、时间成本、稳定性和成长条件，看清各自的综合优势与短板。
+            </p>
+          </article>
+          <strong class="text-sf-text transition-colors group-hover:text-sf-theme">开始对比 →</strong>
+        </RouterLink>
+      </section>
 
       <section
         class="mt-3 grid items-start gap-3 lg:grid-cols-[9rem_minmax(0,1fr)]"
