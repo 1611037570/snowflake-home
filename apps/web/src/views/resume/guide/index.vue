@@ -140,6 +140,15 @@ function scrollToGuide(index: number) {
               </li>
             </ol>
           </section>
+
+          <footer
+            class="rounded-3xl border border-sf-b bg-sf-primary p-3 text-xs leading-normal text-sf-text-2"
+          >
+            <p class="font-semibold text-sf-text">
+              {{ $t("resumeGuideDisclaimerTitle") }}
+            </p>
+            <p class="mt-3">{{ $t("resumeGuideDisclaimer") }}</p>
+          </footer>
         </article>
       </section>
     </main>
