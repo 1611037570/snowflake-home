@@ -43,7 +43,7 @@ function scrollToGuide(index: number) {
 
 <template>
   <SfScrollbar class="h-full bg-sf-page" flush>
-    <main class="mx-auto w-full max-w-screen-xl px-3 text-sf-text sm:px-3">
+    <main class="mx-auto w-full max-w-screen-xl px-3 pt-3 text-sf-text sm:px-3">
       <header>
         <p class="text-sm font-semibold text-sf-theme">
           {{ $t("resumeGuideEyebrow") }}

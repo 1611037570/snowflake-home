@@ -53,9 +53,10 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
   <router-view v-else-if="route.meta.hideResumeLayout" class="h-screen w-full" />
   <main v-else class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <ResumeHeader />
+    <!-- 公共布局只补偿固定导航高度，各页面自行控制内容间距。 -->
     <div
       class="flex h-full w-full flex-1 flex-col overflow-hidden bg-sf-page text-sf-text"
-      :class="{ 'pt-16': route.path !== '/resume' }"
+      :class="{ 'pt-12': route.path !== '/resume' }"
     >
       <router-view class="flex-1 overflow-hidden" />
       <!-- <SfFooter /> -->

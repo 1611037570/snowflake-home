@@ -1,4 +1,4 @@
-/** 单条制作指南内容。 */
+/** 单条求职指南内容。 */
 export interface JobGuideItem {
   /** 条目标题。 */
   title: string;
@@ -6,7 +6,7 @@ export interface JobGuideItem {
   content: string;
 }
 
-/** 制作指南分组。 */
+/** 求职指南分组。 */
 export interface JobGuideGroup {
   /** 分组名称。 */
   name: string;
@@ -14,7 +14,7 @@ export interface JobGuideGroup {
   list: JobGuideItem[];
 }
 
-/** 制作指南页面的全部分组与条目。 */
+/** 求职指南页面的全部分组与条目。 */
 export const jobGuideList: JobGuideGroup[] = [
   {
     name: "精选",

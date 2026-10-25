@@ -142,16 +142,16 @@ export const SITE_CONFIGS: SiteConfig[] = [
     priority: 0.8,
     locales: {
       zh: {
-        title: "简历制作指南 - 求职、面试与应届生避坑 | 轻舟简历",
+        title: "求职指南 - 简历制作、面试与入职避坑 | 轻舟简历",
         description:
-          "轻舟简历制作指南汇总简历写作、应届生求职避坑、三方协议、离职交接与面试问答等实用内容，帮助求职者做好投递和面试准备。",
-        keywords: "简历制作指南,简历怎么写,应届生简历,求职避坑,面试技巧,面试问题,三方协议,离职注意事项",
+          "轻舟简历求职指南汇总简历制作、岗位投递、选岗谈薪、面试准备、入职与离职避坑等关键内容，帮助求职者高效完成求职流程。",
+        keywords: "求职指南,简历怎么写,应届生求职,投递简历,选岗技巧,谈薪技巧,面试技巧,入职注意事项,离职注意事项",
       },
       en: {
-        title: "Resume Writing Guide - Job Search and Interview Advice | Skiff Resume",
+        title: "Job Search Guide - Resume, Interview and Offer Advice | Skiff Resume",
         description:
-          "Practical guidance on resume writing, graduate job searches, employment agreements, resignations, interview preparation and common interview questions.",
-        keywords: "resume writing guide,graduate job search,interview tips,interview questions,employment agreement,resignation advice",
+          "Practical guidance on resumes, applications, job selection, salary discussions, interviews, onboarding and resignations.",
+        keywords: "job search guide,resume writing,job applications,offer comparison,salary negotiation,interview tips,onboarding,resignation advice",
       },
     },
   },
