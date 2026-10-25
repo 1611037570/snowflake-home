@@ -47,7 +47,8 @@ watch([() => route.path, isMobile], () => {
 
 <template>
   <header
-    class="fixed top-0 right-0 left-0 z-50 h-12 w-full rounded-b-3xl border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
+    class="fixed top-0 right-0 left-0 z-50 h-12 w-full border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
+    x
   >
     <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-3 px-3">
       <!-- 移动端左侧显示三横线导航入口，右侧保留功能按钮。 -->
@@ -73,7 +74,11 @@ watch([() => route.path, isMobile], () => {
           :to="item.path"
           class="shrink-0"
         >
-          <SfSpan class="h-9 cursor-pointer text-[16px]" :active="index === activeNavIndex" :underline-height="1">
+          <SfSpan
+            class="h-9 cursor-pointer text-[16px]"
+            :active="index === activeNavIndex"
+            :underline-height="1"
+          >
             {{ $t(item.key) }}
           </SfSpan>
         </router-link>
@@ -103,7 +108,7 @@ watch([() => route.path, isMobile], () => {
         v-for="(item, index) in navList"
         :key="item.path"
         :to="item.path"
-        class="cursor-pointer rounded-xl px-3 py-3 text-left font-bold hover:bg-sf-bg-hover"
+        class="hover:bg-sf-bg-hover cursor-pointer rounded-xl px-3 py-3 text-left font-bold"
         :class="index === activeNavIndex ? 'bg-sf-theme-3 text-sf-theme' : ''"
         :aria-current="index === activeNavIndex ? 'page' : undefined"
         @click="drawerVisible = false"
