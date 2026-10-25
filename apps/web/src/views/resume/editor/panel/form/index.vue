@@ -68,7 +68,9 @@ const AsyncCityPicker = defineAsyncComponent({
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
 let keyboardFocusPending = false;
-// 捕获点击及键盘焦点，定位所属模块与子记录，不触发预览滚动。
+// 捕获点击与键盘焦点，定位所属模块与子记录，不触发预览滚动。
+// 用 click 而非 pointerdown：移动端事件顺序里只有 click 确定发生在输入框聚焦之后，
+// pointerdown 时写状态会先触发重渲染，导致首次点击丢失、输入框要点两次。
 const markEditingModule = (event) => {
   const target = event.target instanceof Element ? event.target : null;
   const itemIndexValue = target?.closest("[data-item-index]")?.dataset.itemIndex;
@@ -83,7 +85,7 @@ const markEditingModule = (event) => {
         resumeStore.editingModuleKey === key &&
         resumeStore.editingItemIndex === itemIndex
       ) return;
-      // 延后一轮事件循环写入：移动端手指按下当帧触发预览重渲染会抢走输入框焦点
+      // 再延后一轮事件循环，避开点击本身触发的输入框聚焦与光标定位
       window.setTimeout(() => {
         resumeStore.editingModuleKey = key;
         resumeStore.editingItemIndex = itemIndex;
@@ -222,7 +224,7 @@ onBeforeUnmount(() => {
 <template>
   <div
     class="relative h-full"
-    @pointerdown.capture="markEditingModule"
+    @click.capture="markEditingModule"
     @keydown.capture="prepareKeyboardModuleFocus"
     @focusin.capture="markKeyboardEditingModule"
   >

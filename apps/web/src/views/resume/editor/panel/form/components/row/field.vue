@@ -125,7 +125,8 @@ const clearField = () => {
 <template>
   <div v-if="renderable" class="flex w-full flex-col gap-1">
     <div class="flex w-full items-center gap-1">
-      <div v-if="label" class="flex shrink-0 items-center" @click.stop.prevent="">
+      <!-- 保留图标选择等子控件的默认点击行为，移动端无需再次点击。 -->
+      <div v-if="label" class="flex shrink-0 items-center" @click.stop="">
         <Icon v-if="draggable" icon="icon-park-outline:drag" class="item-drag cursor-move!" />
         <SfIconPicker
           v-if="icon !== undefined"

@@ -12,7 +12,8 @@
     >
       <!-- 无标签的字段不提供标签插槽，避免渲染出空白标签行 -->
       <template v-if="currentForm.label" #label>
-        <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop.prevent="">
+        <!-- 只隔离点击冒泡，避免移动端首次点击的默认行为被取消。 -->
+        <div class="mb-1 flex h-5 w-full items-center text-sf-base" @click.stop="">
           <div class="flex flex-1 items-center">
             <SfIcon
               v-if="draggable"
