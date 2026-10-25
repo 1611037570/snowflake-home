@@ -357,9 +357,6 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
                 <SfButton @click.stop="useTemplateCard(card)">
                   {{ $t("resumeTemplateUse") }}
                 </SfButton>
-                <SfButton plain icon="lucide:wand-sparkles" @click.stop="openAiGenerator(card)">
-                  {{ $t("resumeAiGenerateAction") }}
-                </SfButton>
               </div>
             </div>
             <!-- 信息层悬浮在卡片底部：纯色背景、高度随内容，标签默认显示 -->

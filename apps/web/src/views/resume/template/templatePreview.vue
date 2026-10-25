@@ -202,7 +202,14 @@ onBeforeUnmount(() => {
           </div>
         </div>
         <div class="mt-3 flex flex-col gap-3">
-          <SfButton v-if="aiActionText" plain icon="lucide:wand-sparkles" class="w-full" @click="emit('ai-action')">
+          <!-- AI 生成入口默认与返回列表同为中性色，仅 hover 变为主题色，避免抢主操作的视觉 -->
+          <SfButton
+            v-if="aiActionText"
+            type="bg"
+            icon="lucide:wand-sparkles"
+            class="w-full hover:bg-sf-theme hover:text-white"
+            @click="emit('ai-action')"
+          >
             {{ aiActionText }}
           </SfButton>
           <SfButton v-if="primaryActionText" type="theme" class="w-full" @click="emit('action')">
