@@ -96,8 +96,8 @@ const templates = computed(() =>
 );
 
 const templateFilters = ref({});
-// 一级分类：example 展示简历范本，template 展示简历模板
-const currentTopCategory = ref("example");
+// 一级分类：example 展示简历范本，template 展示简历模板；默认停在简历模板
+const currentTopCategory = ref("template");
 const currentBatchSize = computed(() =>
   currentTopCategory.value === "template" ? STYLE_BATCH_SIZE : TEMPLATE_BATCH_SIZE,
 );

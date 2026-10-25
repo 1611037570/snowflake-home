@@ -32,7 +32,7 @@ const topCategoryCards = computed(() =>
 
 const emit = defineEmits(["change", "category-change", "size-change"]);
 
-// 一级分类：简历范本与简历模板，默认展示简历范本
+// 一级分类：简历模板与简历范本，默认展示简历模板
 const currentTopCategory = ref(resumeTemplateTopCategories[0].key);
 // 二级分类：当前一级分类下的筛选维度，默认取该分类的第一个维度
 const currentCategoryKey = ref(resumeTemplateTopCategories[0].categories[0].key);

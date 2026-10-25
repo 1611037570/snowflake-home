@@ -145,21 +145,21 @@ export const resumeTemplateTierOptions: ResumeTemplateOption[] = [
 // 一级分类只有简历范本与简历模板两类，各自的二级筛选维度互不通用于另一类。
 export const resumeTemplateTopCategories: ResumeTemplateTopCategory[] = [
   {
-    key: "example",
-    icon: "lucide:file-text",
-    categories: [
-      { key: "scene", options: resumeTemplateSceneOptions },
-      { key: "industry", options: resumeTemplateIndustryOptions },
-      { key: "position", options: resumeTemplatePositionOptions },
-    ],
-  },
-  {
     key: "template",
     icon: "lucide:layout-template",
     // 布局与类型独立筛选，选项值均对应主题 design 标签。
     categories: [
       { key: "layout" /* 布局筛选编号 */, options: resumeTemplateLayoutOptions /* 布局选项 */ },
       { key: "tier" /* 类型筛选编号 */, options: resumeTemplateTierOptions /* 类型选项 */ },
+    ],
+  },
+  {
+    key: "example",
+    icon: "lucide:file-text",
+    categories: [
+      { key: "scene", options: resumeTemplateSceneOptions },
+      { key: "industry", options: resumeTemplateIndustryOptions },
+      { key: "position", options: resumeTemplatePositionOptions },
     ],
   },
 ];
