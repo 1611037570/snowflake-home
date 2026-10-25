@@ -100,7 +100,9 @@ export const createResumeLifecycle = (options: ResumeLifecycleOptions) => {
   };
   const deleteResume = () => {
     if (currentIndex.value === -1) return;
-    if (trashList.value.length >= maxTrashCount) {
+    // 上限按目录里的软删除条目统计：回收站正文是懒加载的，用 trashList 会在刷新后漏算导致突破上限
+    const trashCount = list.value.filter((item) => item.deletedAt !== null).length;
+    if (trashCount >= maxTrashCount) {
       onTrashLimit();
       return;
     }
