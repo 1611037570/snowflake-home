@@ -101,6 +101,20 @@
             description: page.description, // 页面描述。
             url, // 当前页面地址。
           });
+        } else if (route === "/resume/ai") {
+          const schema = document.querySelector('script[type="application/ld+json"]');
+          if (schema) schema.textContent = JSON.stringify({
+            "@context": "https://schema.org", // 结构化数据词汇表。
+            "@type": "WebPage", // AI 简历优化的公开功能页面类型。
+            name: page.title, // 页面标题。
+            description: page.description, // 页面描述。
+            url, // 当前页面地址。
+            about: {
+              "@type": "SoftwareApplication", // 页面介绍的软件应用类型。
+              name: "轻舟简历", // 软件应用名称。
+              applicationCategory: "BusinessApplication", // 软件应用所属类别。
+            },
+          });
         }
       })();
     </script>

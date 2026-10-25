@@ -64,18 +64,18 @@ export const SITE_CONFIGS: SiteConfig[] = [
     priority: 1.0,
     locales: {
       zh: {
-        title: "轻舟简历 - 免费在线简历制作与导出、免注册、多款简历范本与模板",
+        title: "免费在线简历制作 - 简历模板与 PDF 下载 | 轻舟简历",
         description:
-          "轻舟简历提供 {exampleCount} 份简历范本与 {templateCount} 种排版模板，支持在线编辑、AI 优化和 PDF 导出；可选择适合 ATS 投递的简洁排版，无需注册。",
+          "使用轻舟简历免费在线创建与编辑简历，支持简历模板、AI 生成、内容优化以及 PDF、图片和 Markdown 下载；无需注册，导出无水印。",
         keywords:
-          "轻舟简历,Skiff Resume,简历范本,简历模板,ATS简历模板,在线简历制作,免费简历,AI简历,导出PDF简历",
+          "在线简历制作,免费简历制作,简历模板,PDF简历下载,在线简历生成器,无水印简历,轻舟简历,Skiff Resume",
       },
       en: {
-        title: "Skiff Resume - Free Online Resume Builder, Examples and Templates",
+        title: "Free Online Resume Builder - Resume Templates and PDF Download | Skiff Resume",
         description:
-          "Skiff Resume offers {exampleCount} resume examples and {templateCount} layout templates. Edit online, improve with AI, export to PDF, and choose clear layouts for ATS applications without signing up.",
+          "Create and edit a resume online for free with resume templates, AI drafting and content improvement, then download it as PDF, images or Markdown without signing up or adding a watermark.",
         keywords:
-          "Skiff Resume,轻舟简历,resume examples,resume templates,ATS resume templates,free resume builder,AI resume,export resume PDF",
+          "free online resume builder,resume templates,PDF resume download,online resume maker,no watermark resume,Skiff Resume,轻舟简历",
       },
     },
   },
@@ -85,13 +85,13 @@ export const SITE_CONFIGS: SiteConfig[] = [
     priority: 0.9,
     locales: {
       zh: {
-        title: "简历范本与模板 - ATS 投递排版、在线制作 | 轻舟简历",
+        title: "免费简历模板与范本 - 在线编辑与 ATS 排版 | 轻舟简历",
         description:
           "浏览 {exampleCount} 份简历范本和 {templateCount} 种排版模板，按岗位与场景挑选内容范本，或选择适合 ATS 投递的简洁单栏样式；在线编辑并导出 PDF。",
         keywords: "简历范本,简历模板,ATS简历模板,免费简历模板,简历模板下载,校招简历范本,实习简历范本",
       },
       en: {
-        title: "Resume Examples and Templates - ATS-Friendly Layouts | Skiff Resume",
+        title: "Free Resume Templates and Examples - ATS-Friendly Layouts | Skiff Resume",
         description:
           "Browse {exampleCount} resume examples and {templateCount} layout templates. Pick a role-based example or a clear single-column layout for ATS applications, edit online and export to PDF.",
         keywords:
@@ -105,16 +105,16 @@ export const SITE_CONFIGS: SiteConfig[] = [
     priority: 0.8,
     locales: {
       zh: {
-        title: "AI 简历优化 - 智能润色与模拟面试 | 轻舟简历",
+        title: "AI 简历优化 - 简历润色、生成与岗位匹配 | 轻舟简历",
         description:
-          "小舟 AI 助手可一键润色简历表达、生成经历描述、对标目标岗位 JD 做匹配分析，并提供自我介绍与逐轮模拟面试练习。",
-        keywords: "AI简历,AI简历优化,简历润色,简历生成,JD对标,模拟面试",
+          "使用轻舟 AI 生成和优化简历内容，支持经历润色、简历评估、目标岗位匹配、多语言翻译与模拟面试，可结合当前简历直接修改。",
+        keywords: "AI简历优化,简历润色,AI简历生成,简历修改,岗位匹配,简历评分,模拟面试,轻舟简历",
       },
       en: {
-        title: "AI Resume Optimization - Rewrite and Mock Interviews | Skiff Resume",
+        title: "AI Resume Optimization - Rewrite, Generate and Match Jobs | Skiff Resume",
         description:
-          "Skiff AI polishes your resume wording, drafts experience bullet points, matches the resume against a target job description, and runs mock interview practice.",
-        keywords: "AI resume,resume optimization,resume rewriter,job description match,mock interview",
+          "Generate and improve resume content with Skiff AI, including experience rewrites, resume reviews, job matching, translation and mock interview practice.",
+        keywords: "AI resume optimization,resume rewriter,AI resume generator,resume review,job matching,mock interview,Skiff Resume",
       },
     },
   },

@@ -5,13 +5,13 @@
         class="resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-x-12 gap-y-9 px-6 pt-24 pb-9 lg:grid-cols-2 lg:px-12"
       >
         <article class="relative z-10 mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
-          <!-- 功能主标题：用开源、免费、AI 生成简历等检索词，兼顾抓取与转化 -->
+          <!-- 首页主标题聚焦在线简历制作，模板与 AI 分别由独立页面承接。 -->
           <h1
             class="animate-rise animate-rise--delay-one text-4xl leading-[1.15] font-black tracking-[-0.04em] sm:text-5xl lg:text-6xl"
           >
             {{ $t("resumeHomeHeroTitle") }}
           </h1>
-          <!-- 副标题：直接说明 AI 承担什么，替换原来的品牌意象句 -->
+          <!-- 副标题说明创建方式与免费导出能力，直接回应制作需求。 -->
           <p class="animate-rise animate-rise--delay-two mt-6 text-base font-medium text-sf-text-2">
             {{ $t("resumeHomeHeroSubtitle") }}
           </p>
