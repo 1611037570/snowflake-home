@@ -62,6 +62,8 @@ const getLastUseTime = (item) => {
 const getResumePosition = (item) => {
   return item?.data?.user?.data?.position || $t("resumeMinePositionEmpty");
 };
+// 岗位为空时用中性样式展示占位文案，避免和真实岗位的标签混淆
+const hasResumePosition = (item) => Boolean(item?.data?.user?.data?.position);
 
 // 导出指定简历的完整 JSON 配置，支持后续无损导入恢复。
 const exportJson = (item) => {
@@ -226,35 +228,86 @@ const handleClearTrash = () => {
                   </template>
                 </SfDropdown>
               </template>
-              <div class="truncate text-base font-black text-sf-text">
-                {{ getResumeTitle(card.item) }}
-              </div>
-              <div class="mt-1 flex items-center justify-between gap-2">
-                <div class="truncate text-sm text-sf-text-2">
-                  {{ getResumePosition(card.item) }}
+              <!-- 标题行：左侧圆环展示必填项完成度，与编辑器进度环同一套画法 -->
+              <div class="flex items-center gap-2">
+                <span
+                  class="relative flex h-7 w-7 shrink-0 items-center justify-center"
+                  role="img"
+                  :aria-label="`${$t('resumeMineProgress')} ${card.progress}%`"
+                >
+                  <svg class="absolute inset-0 h-7 w-7 -rotate-90" viewBox="0 0 48 48" aria-hidden="true">
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="19"
+                      fill="none"
+                      stroke="currentColor"
+                      class="text-sf-bg-2"
+                      stroke-width="6"
+                    />
+                    <circle
+                      cx="24"
+                      cy="24"
+                      r="19"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="6"
+                      stroke-linecap="round"
+                      stroke-dasharray="119.38"
+                      :class="card.progress >= 100 ? 'text-sf-success' : 'text-sf-theme'"
+                      :stroke-dashoffset="119.38 - (119.38 * card.progress) / 100"
+                    />
+                  </svg>
+                  <span
+                    class="text-[10px] font-bold"
+                    :class="card.progress >= 100 ? 'text-sf-success' : 'text-sf-text'"
+                  >
+                    {{ card.progress }}
+                  </span>
+                </span>
+                <div class="min-w-0 truncate text-sm font-black text-sf-text">
+                  {{ getResumeTitle(card.item) }}
                 </div>
+              </div>
+              <div class="mt-1 flex items-center justify-between gap-3">
+                <span
+                  class="min-w-0 truncate rounded-full px-3 py-1 text-xs font-medium"
+                  :class="
+                    hasResumePosition(card.item)
+                      ? 'bg-sf-theme-3 text-sf-theme'
+                      : 'bg-sf-bg text-sf-text-3'
+                  "
+                >
+                  {{ getResumePosition(card.item) }}
+                </span>
                 <span class="shrink-0 text-xs text-sf-text-3">{{ getLastUseTime(card.item) }}</span>
               </div>
-              <div class="mt-2 flex items-center gap-3">
-                <SfButton
-                  :round="false"
-                  plain
-                  class="flex-1"
+              <!-- 底部操作条：整条贴住卡片底边，格子等宽、格间用竖线分隔 -->
+              <div class="-mx-2 -mb-2 mt-2 flex border-t border-sf-b">
+                <button
+                  type="button"
+                  class="flex flex-1 cursor-pointer items-center justify-center gap-2 py-2 text-sm text-sf-text-2 transition-colors hover:bg-sf-bg hover:text-sf-text"
                   @click.stop="handleEdit(card.index)"
-                  icon="lucide:pencil"
                 >
+                  <SfIcon icon="lucide:pencil" size="4" />
                   {{ $t("resumeMineEdit") }}
-                </SfButton>
-                <SfButton
-                  :round="false"
-                  plain
-                  type="error"
-                  class="flex-1"
-                  @click.stop="handleDelete(card.index)"
-                  icon="lucide:trash-2"
+                </button>
+                <button
+                  type="button"
+                  class="flex flex-1 cursor-pointer items-center justify-center gap-2 border-l border-sf-b py-2 text-sm text-sf-text-2 transition-colors hover:bg-sf-bg hover:text-sf-text"
+                  @click.stop="copyResume(card.item)"
                 >
+                  <SfIcon icon="lucide:copy" size="4" />
+                  {{ $t("resumeMineCopy") }}
+                </button>
+                <button
+                  type="button"
+                  class="flex flex-1 cursor-pointer items-center justify-center gap-2 border-l border-sf-b py-2 text-sm text-sf-error transition-colors hover:bg-sf-error-2"
+                  @click.stop="handleDelete(card.index)"
+                >
+                  <SfIcon icon="lucide:trash-2" size="4" />
                   {{ $t("resumeMineDelete") }}
-                </SfButton>
+                </button>
               </div>
             </ResumeCardContainer>
           </template>
@@ -268,37 +321,42 @@ const handleClearTrash = () => {
         >
           <template #default="{ item, index }">
             <ResumeCardContainer :item="item" :action-text="$t('resumeMineDeleted')">
-              <div class="truncate text-base font-black text-sf-text">
+              <div class="truncate text-sm font-black text-sf-text">
                 {{ getResumeTitle(item) }}
               </div>
               <div class="mt-1 flex items-center justify-between gap-3">
-                <div class="truncate text-sm text-sf-text-2">
+                <span
+                  class="min-w-0 truncate rounded-full px-3 py-1 text-xs font-medium"
+                  :class="
+                    hasResumePosition(item)
+                      ? 'bg-sf-theme-3 text-sf-theme'
+                      : 'bg-sf-bg text-sf-text-3'
+                  "
+                >
                   {{ getResumePosition(item) }}
-                </div>
+                </span>
                 <span class="shrink-0 text-xs text-sf-text-3">
                   {{ $t("resumeMineTrashAutoClean", { days: resumeStore.getTrashRemainingDays(item) }) }}
                 </span>
               </div>
-              <div class="mt-2 flex items-center gap-3">
-                <SfButton
-                  :round="false"
-                  plain
-                  class="flex-1"
+              <!-- 底部操作条：与草稿卡片同一套分栏样式 -->
+              <div class="-mx-2 -mb-2 mt-2 flex border-t border-sf-b">
+                <button
+                  type="button"
+                  class="flex flex-1 cursor-pointer items-center justify-center gap-2 py-2 text-sm text-sf-text-2 transition-colors hover:bg-sf-bg hover:text-sf-text"
                   @click="resumeStore.restoreResume(index)"
-                  icon="lucide:rotate-ccw"
                 >
+                  <SfIcon icon="lucide:rotate-ccw" size="4" />
                   {{ $t("resumeMineRestore") }}
-                </SfButton>
-                <SfButton
-                  :round="false"
-                  plain
-                  type="error"
-                  class="flex-1"
+                </button>
+                <button
+                  type="button"
+                  class="flex flex-1 cursor-pointer items-center justify-center gap-2 border-l border-sf-b py-2 text-sm text-sf-error transition-colors hover:bg-sf-error-2"
                   @click="resumeStore.permanentlyDeleteResume(index)"
-                  icon="lucide:trash-2"
                 >
+                  <SfIcon icon="lucide:trash-2" size="4" />
                   {{ $t("resumeMinePermanentDelete") }}
-                </SfButton>
+                </button>
               </div>
             </ResumeCardContainer>
           </template>

@@ -46,7 +46,7 @@ const boxSize = computed(() => {
       <ThumbPreview :item="getThumbItem(item)" @select="emit('click')" />
       <!-- 底部信息条：纯色背景且高度随内容，不再用半透明渐变遮挡简历缩略图 -->
       <div
-        class="absolute inset-x-0 bottom-0 z-10 flex flex-col border-t border-sf-b bg-sf-primary px-3 py-3"
+        class="absolute inset-x-0 bottom-0 z-10 flex flex-col border-t border-sf-b bg-sf-primary p-2"
       >
         <slot />
       </div>
