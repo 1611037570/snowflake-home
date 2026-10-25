@@ -341,16 +341,15 @@ function formatScore(score: number) {
     <main class="mx-auto w-full max-w-screen-xl px-3 py-3 text-sf-text">
       <nav aria-label="面包屑" class="text-sm text-sf-text-2">
         <RouterLink to="/resume/guide" class="transition-colors hover:text-sf-theme">
-          求职指南
+          求职中心
         </RouterLink>
         <span class="px-3" aria-hidden="true">/</span>
         <span aria-current="page">Offer 对比决策器</span>
       </nav>
 
       <header v-if="!showResult" class="mt-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
-        <p class="text-sm font-semibold text-sf-theme">多份工作怎么选</p>
-        <h1 class="mt-3 text-3xl font-black">Offer 对比决策器</h1>
-        <p class="mt-3 max-w-3xl leading-normal text-sf-text-2">
+        <h1 class="text-xl font-bold">Offer 对比决策器</h1>
+        <p class="mt-3 max-w-3xl text-sm leading-normal text-sf-text-2">
           逐项填写多份 Offer 的收入、福利、时间成本、稳定性与成长条件，完成后查看综合排序和逐项优劣。
         </p>
       </header>
@@ -358,7 +357,7 @@ function formatScore(score: number) {
       <section v-if="!showResult" class="mt-3 grid gap-3">
         <section class="rounded-3xl border border-sf-b bg-sf-primary p-3">
           <header class="flex flex-wrap items-center justify-between gap-3">
-            <h2 class="text-xl font-bold">参与对比的公司</h2>
+            <h2 class="text-base font-bold">参与对比的公司</h2>
             <SfButton plain @click="addCompany">增加公司</SfButton>
           </header>
           <ul class="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
@@ -379,12 +378,12 @@ function formatScore(score: number) {
                   移除
                 </SfButton>
               </header>
-              <label class="mt-3 block font-semibold">
+              <label class="mt-3 block text-sm font-semibold">
                 公司或 Offer 名称
                 <SfInput
                   v-model="company.name"
                   :placeholder="`例如：${company.fallbackName} 公司名称`"
-                  class="mt-3 h-12 w-full border border-sf-b bg-sf-primary"
+                  class="mt-3 h-9 w-full border border-sf-b bg-sf-primary text-sm"
                 />
               </label>
             </li>
@@ -403,7 +402,7 @@ function formatScore(score: number) {
             <li v-for="(metric, metricIndex) in offerComparisonMetrics" :key="metric.key">
               <button
                 type="button"
-                class="h-9 w-full cursor-pointer rounded-full border font-bold transition-colors hover:border-sf-theme hover:bg-sf-bg"
+                class="h-9 w-full cursor-pointer rounded-full border font-normal transition-colors hover:border-sf-theme hover:bg-sf-bg"
                 :class="[
                   activeMetricIndex === metricIndex
                     ? 'border-sf-theme bg-sf-theme-3 text-sf-theme'
@@ -426,10 +425,10 @@ function formatScore(score: number) {
           :key="activeMetric.key"
           class="rounded-3xl border border-sf-b bg-sf-primary p-3"
         >
-          <legend class="px-3 text-xl font-bold">
+          <legend class="px-3 text-base font-bold">
             {{ activeMetricIndex + 1 }}. {{ activeMetric.title }}
           </legend>
-          <p class="mt-3 leading-normal text-sf-text-2">{{ activeMetric.description }}</p>
+          <p class="mt-3 text-sm leading-normal text-sf-text-2">{{ activeMetric.description }}</p>
 
           <section
             v-if="activeMetric.inputType === 'number'"
@@ -440,21 +439,21 @@ function formatScore(score: number) {
               :key="company.id"
               class="rounded-3xl border border-sf-b bg-sf-bg p-3"
             >
-              <h2 class="font-bold">{{ getCompanyName(company) }}</h2>
+              <h2 class="text-sm font-bold">{{ getCompanyName(company) }}</h2>
               <SfInputNumber
                 :model-value="company.metrics[activeMetric.key].value"
                 :min="activeMetric.min ?? 0"
                 :max="activeMetric.max"
                 :step="activeMetric.step ?? 1"
                 :precision="(activeMetric.step ?? 1) < 1 ? 1 : 0"
-                class="mt-3 h-12 w-full border border-sf-b bg-sf-primary"
+                class="mt-3 h-9 w-full border border-sf-b bg-sf-primary text-sm"
                 @update:model-value="setMetricValue(company.id, $event)"
               />
               <p class="mt-3 text-sm text-sf-text-2">单位：{{ activeMetric.unit }}</p>
               <footer class="mt-3 flex flex-wrap gap-3 border-t border-sf-b pt-3">
                 <button
                   type="button"
-                  class="cursor-pointer rounded-3xl border px-3 py-3 transition-colors hover:border-sf-theme hover:bg-sf-primary"
+                  class="h-9 cursor-pointer rounded-3xl border px-3 text-sm transition-colors hover:border-sf-theme hover:bg-sf-primary"
                   :class="
                     company.metrics[activeMetric.key].status === 'unknown'
                       ? 'border-sf-theme bg-sf-theme-3 text-sf-theme'
@@ -475,12 +474,12 @@ function formatScore(score: number) {
               :key="choice.value"
               class="rounded-3xl border border-sf-b bg-sf-bg p-3"
             >
-              <p class="text-sm font-medium leading-normal">{{ choice.label }}</p>
+              <p class="text-sm font-normal leading-normal">{{ choice.label }}</p>
               <ul class="mt-3 flex flex-wrap gap-3">
                 <li v-for="company in companies" :key="company.id">
                   <button
                     type="button"
-                    class="min-h-12 cursor-pointer rounded-3xl border px-3 py-3 text-sm font-semibold transition-colors hover:border-sf-theme hover:bg-sf-primary"
+                    class="h-9 cursor-pointer rounded-3xl border px-3 text-sm font-normal transition-colors hover:border-sf-theme hover:bg-sf-primary"
                     :class="
                       company.metrics[activeMetric.key].status === 'value' &&
                       company.metrics[activeMetric.key].value === choice.value
@@ -500,12 +499,12 @@ function formatScore(score: number) {
               </ul>
             </li>
             <li class="rounded-3xl border border-sf-b bg-sf-bg p-3">
-              <p class="text-sm font-medium">未说明 / 不清楚</p>
+              <p class="text-sm font-normal">未说明 / 不清楚</p>
               <ul class="mt-3 flex flex-wrap gap-3">
                 <li v-for="company in companies" :key="company.id">
                   <button
                     type="button"
-                    class="min-h-12 cursor-pointer rounded-3xl border px-3 py-3 text-sm font-semibold transition-colors hover:border-sf-theme hover:bg-sf-primary"
+                    class="h-9 cursor-pointer rounded-3xl border px-3 text-sm font-normal transition-colors hover:border-sf-theme hover:bg-sf-primary"
                     :class="
                       company.metrics[activeMetric.key].status === 'unknown'
                         ? 'border-sf-theme bg-sf-theme-3 text-sf-theme'
@@ -540,8 +539,8 @@ function formatScore(score: number) {
         </fieldset>
 
         <section class="rounded-3xl border border-sf-b bg-sf-primary p-3 text-center">
-          <h2 class="text-2xl font-black">查看对比结果</h2>
-          <p class="mt-3 text-sf-text-2">
+          <h2 class="text-lg font-bold">查看对比结果</h2>
+          <p class="mt-3 text-sm text-sf-text-2">
             {{
               isCompleted
                 ? "全部对比项已完成，可以查看结果。"
@@ -550,7 +549,6 @@ function formatScore(score: number) {
           </p>
           <SfButton
             :disabled="!isCompleted"
-            size="large"
             class="mx-auto mt-3"
             @click="viewComparisonResult"
           >
@@ -561,59 +559,59 @@ function formatScore(score: number) {
 
       <section v-else class="mt-3 rounded-3xl border border-sf-b bg-sf-primary p-3 text-center">
         <article
-          class="relative overflow-hidden rounded-3xl border-4 border-double border-sf-theme bg-sf-primary p-6 text-center"
+          class="relative overflow-hidden rounded-3xl border-4 border-double border-sf-theme bg-sf-primary p-3 text-center"
           aria-live="polite"
         >
           <span
-            class="pointer-events-none absolute left-3 top-3 h-12 w-12 border-l-4 border-t-4 border-sf-theme"
+            class="pointer-events-none absolute left-3 top-3 h-9 w-9 border-l-4 border-t-4 border-sf-theme"
             aria-hidden="true"
           ></span>
           <span
-            class="pointer-events-none absolute right-3 top-3 h-12 w-12 border-r-4 border-t-4 border-sf-theme"
+            class="pointer-events-none absolute right-3 top-3 h-9 w-9 border-r-4 border-t-4 border-sf-theme"
             aria-hidden="true"
           ></span>
           <span
-            class="pointer-events-none absolute bottom-3 left-3 h-12 w-12 border-b-4 border-l-4 border-sf-theme"
+            class="pointer-events-none absolute bottom-3 left-3 h-9 w-9 border-b-4 border-l-4 border-sf-theme"
             aria-hidden="true"
           ></span>
           <span
-            class="pointer-events-none absolute bottom-3 right-3 h-12 w-12 border-b-4 border-r-4 border-sf-theme"
+            class="pointer-events-none absolute bottom-3 right-3 h-9 w-9 border-b-4 border-r-4 border-sf-theme"
             aria-hidden="true"
           ></span>
 
-          <p class="text-sm font-semibold text-sf-theme">轻舟简历 · 求职指南</p>
-          <h1 class="mt-3 text-3xl font-black">Offer 综合对比结果</h1>
-          <p class="mt-6 text-xl font-bold text-sf-text">{{ resultTitle }}</p>
+          <p class="text-xs font-semibold text-sf-theme">轻舟简历 · 求职中心</p>
+          <h1 class="mt-3 text-xl font-bold">Offer 综合对比结果</h1>
+          <p class="mt-3 text-base font-bold text-sf-text">{{ resultTitle }}</p>
 
-          <ol class="mx-auto mt-6 grid max-w-5xl gap-3 md:grid-cols-2 xl:grid-cols-3">
+          <ol class="mx-auto mt-3 grid max-w-5xl gap-3 md:grid-cols-2 xl:grid-cols-3">
             <li
               v-for="(result, resultIndex) in rankedCompanies"
               :key="result.company.id"
               class="rounded-3xl border border-sf-b bg-sf-bg p-3 text-left"
             >
               <p class="text-sm font-semibold text-sf-text-2">综合排序第 {{ resultIndex + 1 }} 名</p>
-              <h2 class="mt-3 text-xl font-bold">{{ getCompanyName(result.company) }}</h2>
-              <p class="mt-3 text-5xl font-black text-sf-theme">
+              <h2 class="mt-3 text-base font-bold">{{ getCompanyName(result.company) }}</h2>
+              <p class="mt-3 text-3xl font-black text-sf-theme">
                 {{ result.comparableWeight ? formatScore(result.score) : "—" }}
               </p>
               <p class="mt-3 text-sm text-sf-text-2">基于已知项目折算的综合得分</p>
-              <p class="mt-3 font-semibold">优势项</p>
-              <p class="mt-3 leading-normal text-sf-text-2">
+              <p class="mt-3 text-sm font-semibold">优势项</p>
+              <p class="mt-3 text-sm leading-normal text-sf-text-2">
                 {{ getCompanyAdvantages(result.company).join("、") || "暂无明显优势项" }}
               </p>
-              <p class="mt-3 font-semibold">相对短板</p>
-              <p class="mt-3 leading-normal text-sf-text-2">
+              <p class="mt-3 text-sm font-semibold">相对短板</p>
+              <p class="mt-3 text-sm leading-normal text-sf-text-2">
                 {{ getCompanyWeaknesses(result.company).join("、") || "暂无明显短板" }}
               </p>
-              <p class="mt-3 font-semibold">签约前待确认</p>
-              <p class="mt-3 leading-normal text-sf-text-2">
+              <p class="mt-3 text-sm font-semibold">签约前待确认</p>
+              <p class="mt-3 text-sm leading-normal text-sf-text-2">
                 {{ getCompanyPendingMetrics(result.company).join("、") || "无" }}
               </p>
             </li>
           </ol>
 
-          <section class="mt-6 text-left">
-            <h2 class="text-2xl font-black text-center">逐项优劣对比</h2>
+          <section class="mt-3 text-left">
+            <h2 class="text-lg font-bold text-center">逐项优劣对比</h2>
             <div class="mt-3 overflow-x-auto rounded-3xl border border-sf-b">
               <table class="w-full min-w-max border-collapse bg-sf-primary text-sm">
                 <thead>
@@ -643,7 +641,7 @@ function formatScore(score: number) {
             </div>
           </section>
 
-          <footer class="mt-6 border-t border-sf-b pt-3 text-sm text-sf-text-2">
+          <footer class="mt-3 border-t border-sf-b pt-3 text-xs text-sf-text-2">
             不清楚的维度不参与该公司的计分，结果按实际已知信息分别折算；请结合个人优先级、风险承受能力和长期目标作出最终选择。
           </footer>
         </article>

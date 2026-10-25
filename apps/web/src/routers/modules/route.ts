@@ -42,6 +42,11 @@ const resumeChildren: RouteRecordRaw[] = [
     path: "guide/offer-comparison",
     component: () => import("@/views/resume/guide/offerComparison/index.vue"),
   },
+  // 真实时薪计算器作为求职指南二级页面单独按需加载。
+  {
+    path: "guide/real-hourly-wage",
+    component: () => import("@/views/resume/guide/realHourlyWage/index.vue"),
+  },
   // 通用设置页复用编辑器的备份文案与目录授权键，需一并加载编辑器语言包
   {
     path: "settings",

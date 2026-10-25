@@ -142,7 +142,7 @@
                 "@type": "BreadcrumbList", // 页面层级导航类型。
                 itemListElement: [
                   { "@type": "ListItem", position: 1, name: "轻舟简历", item: `${origin.replace(/\/+$/, "")}/resume` },
-                  { "@type": "ListItem", position: 2, name: "求职指南", item: `${origin.replace(/\/+$/, "")}/resume/guide` },
+                  { "@type": "ListItem", position: 2, name: "求职中心", item: `${origin.replace(/\/+$/, "")}/resume/guide` },
                   { "@type": "ListItem", position: 3, name: "离职决策快速评分", item: url },
                 ],
               },
@@ -166,8 +166,32 @@
                 "@type": "BreadcrumbList", // 页面层级导航类型。
                 itemListElement: [
                   { "@type": "ListItem", position: 1, name: "轻舟简历", item: `${origin.replace(/\/+$/, "")}/resume` },
-                  { "@type": "ListItem", position: 2, name: "求职指南", item: `${origin.replace(/\/+$/, "")}/resume/guide` },
+                  { "@type": "ListItem", position: 2, name: "求职中心", item: `${origin.replace(/\/+$/, "")}/resume/guide` },
                   { "@type": "ListItem", position: 3, name: "Offer 对比决策器", item: url },
+                ],
+              },
+            ],
+          });
+        } else if (route === "/resume/guide/real-hourly-wage") {
+          const schema = document.querySelector('script[type="application/ld+json"]');
+          if (schema) schema.textContent = JSON.stringify({
+            "@context": "https://schema.org", // 结构化数据词汇表。
+            "@graph": [
+              {
+                "@type": "WebApplication", // 真实时薪计算器的应用类型。
+                name: page.title, // 工具名称。
+                description: page.description, // 工具描述。
+                url, // 当前工具地址。
+                applicationCategory: "FinanceApplication", // 工具所属应用类别。
+                browserRequirements: "Requires JavaScript", // 工具运行环境要求。
+                offers: { "@type": "Offer", price: "0", priceCurrency: "CNY" }, // 工具免费使用。
+              },
+              {
+                "@type": "BreadcrumbList", // 页面层级导航类型。
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "轻舟简历", item: `${origin.replace(/\/+$/, "")}/resume` },
+                  { "@type": "ListItem", position: 2, name: "求职中心", item: `${origin.replace(/\/+$/, "")}/resume/guide` },
+                  { "@type": "ListItem", position: 3, name: "真实时薪计算器", item: url },
                 ],
               },
             ],

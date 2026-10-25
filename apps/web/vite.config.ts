@@ -177,6 +177,7 @@ export default ({ mode }: { mode: string }) => {
                 "/resume/guide",
                 "/resume/guide/resignation-score",
                 "/resume/guide/offer-comparison",
+                "/resume/guide/real-hourly-wage",
               ].map((route) => [
                 route,
                 resolveSiteMetadata(route, settings.defaultLanguage, settings.defaultRoute, catalogCounts),

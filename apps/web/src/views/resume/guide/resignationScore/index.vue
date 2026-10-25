@@ -51,16 +51,15 @@ function resetScore() {
     <main class="mx-auto w-full max-w-screen-xl px-3 py-3 text-sf-text">
       <nav aria-label="面包屑" class="text-sm text-sf-text-2">
         <RouterLink to="/resume/guide" class="transition-colors hover:text-sf-theme">
-          求职指南
+          求职中心
         </RouterLink>
         <span class="px-3" aria-hidden="true">/</span>
         <span aria-current="page">离职决策快速评分</span>
       </nav>
 
       <header v-if="!showResult" class="mt-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
-        <p class="text-sm font-semibold text-sf-theme">1 分钟完成自测</p>
-        <h1 class="mt-3 text-3xl font-black">离职决策 10 项快速评分表</h1>
-        <p class="mt-3 max-w-3xl leading-normal text-sf-text-2">
+        <h1 class="text-xl font-bold">离职决策 10 项快速评分表</h1>
+        <p class="mt-3 max-w-3xl text-sm leading-normal text-sf-text-2">
           每项满分 10 分，选择最贴合你现状的档位。完成全部十项后，系统会自动计算总分并给出对应结果。
         </p>
       </header>
@@ -79,7 +78,7 @@ function resetScore() {
               <li v-for="(item, itemIndex) in resignationScoreList" :key="item.title">
                 <button
                   type="button"
-                  class="h-9 w-full cursor-pointer rounded-full border font-bold transition-colors hover:border-sf-theme hover:bg-sf-bg"
+                  class="h-9 w-full cursor-pointer rounded-full border font-normal transition-colors hover:border-sf-theme hover:bg-sf-bg"
                   :class="[
                     activeItemIndex === itemIndex
                       ? 'border-sf-theme bg-sf-theme-3 text-sf-theme'
@@ -102,14 +101,14 @@ function resetScore() {
             :key="activeScoreItem.title"
             class="rounded-3xl border border-sf-b bg-sf-primary p-3"
           >
-            <legend class="px-3 text-xl font-bold">
+            <legend class="px-3 text-base font-bold">
               {{ activeItemIndex + 1 }}. {{ activeScoreItem.title }}
             </legend>
             <ul class="mt-3 grid gap-3 md:grid-cols-2">
               <li v-for="option in activeScoreItem.options" :key="option.score">
                 <button
                   type="button"
-                  class="h-full w-full cursor-pointer rounded-3xl border p-3 text-left transition-colors hover:border-sf-theme hover:bg-sf-bg"
+                  class="min-h-9 w-full cursor-pointer rounded-3xl border px-3 py-0 text-left font-normal transition-colors hover:border-sf-theme hover:bg-sf-bg"
                   :class="
                     selectedScores[activeItemIndex] === option.score
                       ? 'border-sf-theme bg-sf-theme-3'
@@ -118,7 +117,7 @@ function resetScore() {
                   :aria-pressed="selectedScores[activeItemIndex] === option.score"
                   @click="selectScore(activeItemIndex, option.score)"
                 >
-                  <span class="leading-normal text-sf-text-2">{{ option.description }}</span>
+                  <span class="text-sm leading-normal text-sf-text-2">{{ option.description }}</span>
                 </button>
               </li>
             </ul>
@@ -142,8 +141,8 @@ function resetScore() {
 
         <section class="mt-3 rounded-3xl border border-sf-b bg-sf-primary p-3 text-center">
           <template v-if="!showResult">
-            <h2 class="text-2xl font-black">查看评估结果</h2>
-            <p class="mt-3 text-sf-text-2">
+            <h2 class="text-lg font-bold">查看评估结果</h2>
+            <p class="mt-3 text-sm text-sf-text-2">
               {{
                 isCompleted
                   ? "十项评分已完成，可以查看评估结果。"
@@ -152,7 +151,6 @@ function resetScore() {
             </p>
             <SfButton
               :disabled="!isCompleted"
-              size="large"
               class="mx-auto mt-3"
               @click="viewScoreResult"
             >
@@ -162,41 +160,41 @@ function resetScore() {
 
           <article
             v-if="showResult && scoreResult"
-            class="relative mt-3 overflow-hidden rounded-3xl border-4 border-double border-sf-theme bg-sf-primary p-6 text-center"
+            class="relative mt-3 overflow-hidden rounded-3xl border-4 border-double border-sf-theme bg-sf-primary p-3 text-center"
             aria-live="polite"
           >
             <span
-              class="pointer-events-none absolute left-3 top-3 h-12 w-12 border-l-4 border-t-4 border-sf-theme"
+              class="pointer-events-none absolute left-3 top-3 h-9 w-9 border-l-4 border-t-4 border-sf-theme"
               aria-hidden="true"
             ></span>
             <span
-              class="pointer-events-none absolute right-3 top-3 h-12 w-12 border-r-4 border-t-4 border-sf-theme"
+              class="pointer-events-none absolute right-3 top-3 h-9 w-9 border-r-4 border-t-4 border-sf-theme"
               aria-hidden="true"
             ></span>
             <span
-              class="pointer-events-none absolute bottom-3 left-3 h-12 w-12 border-b-4 border-l-4 border-sf-theme"
+              class="pointer-events-none absolute bottom-3 left-3 h-9 w-9 border-b-4 border-l-4 border-sf-theme"
               aria-hidden="true"
             ></span>
             <span
-              class="pointer-events-none absolute bottom-3 right-3 h-12 w-12 border-b-4 border-r-4 border-sf-theme"
+              class="pointer-events-none absolute bottom-3 right-3 h-9 w-9 border-b-4 border-r-4 border-sf-theme"
               aria-hidden="true"
             ></span>
 
-            <p class="text-sm font-semibold text-sf-theme">轻舟简历 · 求职指南</p>
-            <h2 class="mt-3 text-3xl font-black">工作去留评估结果</h2>
-            <p class="mt-6 text-sm text-sf-text-2">当前工作综合得分</p>
-            <p class="mt-3 text-6xl font-black text-sf-theme">
-              {{ totalScore }}<span class="text-lg text-sf-text-2"> / 100</span>
+            <p class="text-xs font-semibold text-sf-theme">轻舟简历 · 求职中心</p>
+            <h2 class="mt-3 text-xl font-bold">工作去留评估结果</h2>
+            <p class="mt-3 text-xs text-sf-text-2">当前工作综合得分</p>
+            <p class="mt-3 text-4xl font-black text-sf-theme">
+              {{ totalScore }}<span class="text-sm text-sf-text-2"> / 100</span>
             </p>
             <p
-              class="mx-auto mt-6 w-fit rounded-full border border-sf-theme bg-sf-theme-3 px-3 font-bold text-sf-theme"
+              class="mx-auto mt-3 w-fit rounded-full border border-sf-theme bg-sf-theme-3 px-3 text-sm font-bold text-sf-theme"
             >
               {{ scoreResult.rangeLabel }}
             </p>
-            <p class="mx-auto mt-3 max-w-2xl text-xl font-bold leading-normal text-sf-text">
+            <p class="mx-auto mt-3 max-w-2xl text-base font-bold leading-normal text-sf-text">
               {{ scoreResult.content }}
             </p>
-            <footer class="mt-6 border-t border-sf-b pt-3 text-sm text-sf-text-2">
+            <footer class="mt-3 border-t border-sf-b pt-3 text-xs text-sf-text-2">
               本成绩根据收入、福利、通勤、工作边界、发展与身心健康等十项现状综合计算。
             </footer>
           </article>

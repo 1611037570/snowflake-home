@@ -194,6 +194,25 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
+    route: "/resume/guide/real-hourly-wage",
+    changefreq: "monthly",
+    priority: 0.8,
+    locales: {
+      zh: {
+        title: "真实时薪计算器 - 计算大小周单休加班与通勤成本 | 轻舟简历",
+        description:
+          "输入年度现金收入、双休大小周或单休制度、法定节假日休假情况、每日工时、通勤与年假，计算真实时薪、年度时间成本和标准双休等价年薪。",
+        keywords: "真实时薪计算器,大小周工资,单休工资,加班成本,通勤成本,时薪计算,双休等价工资",
+      },
+      en: {
+        title: "Real Hourly Wage Calculator - Include Overtime and Commute | Skiff Resume",
+        description:
+          "Calculate your real hourly wage using annual cash income, work schedule, public holiday access, daily hours, commute and paid leave, with a standard five-day-week salary equivalent.",
+        keywords: "real hourly wage calculator,overtime cost,commute cost,work schedule calculator,equivalent salary",
+      },
+    },
+  },
+  {
     route: "/resume/editor",
     noindex: true,
     locales: {
