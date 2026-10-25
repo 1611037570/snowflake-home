@@ -217,12 +217,13 @@ export const DEFAULT_USER_FORM = [
         span: 24,
         // 头像与其他个人信息字段统一圆角边框及上下左右留白。
         colClass: DEFAULT_COL_CLASS + " py-1 px-3!",
+        // 头像操作接入统一标题行，隐藏状态仍由表单项维护。
         ui: {
-          // 头像隐藏开关：控制头像在简历预览中显示或隐藏
-          hidden: {
-            source: ["ui", "avatar", "hidden"],
-            prop: "hidden",
-            defaultValue: false,
+          labelActions: "avatarSettings", // 紧随头像标题的设置组件。
+          hidden: { // 头像在简历预览中的隐藏状态绑定。
+            source: ["ui", "avatar", "hidden"], // 沿用头像隐藏状态的存储路径。
+            prop: "hidden", // 统一表单项读取和更新的隐藏属性。
+            defaultValue: false, // 默认在预览中显示头像。
           },
         },
         model: [

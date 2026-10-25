@@ -27,15 +27,22 @@
               {{ currentForm.label }}
             </span>
             <sf-tooltip :content="currentForm.tip" v-if="currentForm.tip" class="text-sf-text" />
+            <!-- 设置紧随字段标题，隐藏开关留在标题行最右侧。 -->
+            <component v-if="labelActions" :is="labelActions" />
           </div>
-          <SfIcon
+          <!-- 隐藏按钮沿用编辑器其他标题操作的悬浮提示。 -->
+          <SfTooltip
             v-if="currentForm.ui?.hidden"
-            @pointerdown.stop.prevent
-            @click.stop.prevent="toggleHidden"
-            :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
-            size="4"
-            class="cursor-pointer hover:text-sf-theme"
-          />
+            :content="hidden ? $t('show') : $t('hide')"
+          >
+            <SfIcon
+              @pointerdown.stop.prevent
+              @click.stop.prevent="toggleHidden"
+              :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
+              size="4"
+              class="ml-auto shrink-0 cursor-pointer hover:text-sf-theme"
+            />
+          </SfTooltip>
           <SfIcon
             v-if="currentForm.ui?.removable"
             @pointerdown.stop.prevent
@@ -54,6 +61,7 @@
 <script setup lang="ts">
 import { computed, inject } from "vue";
 import { getFieldDataPath } from "../code/fieldData";
+import { getComponent } from "../code/getComponent";
 import { isFieldHidden } from "../code/fieldVisible";
 import { DF_ROOT_DATA, DF_USE_RULES } from "../code/injectionKeys";
 import type { DataPathContext } from "../code/pathContext";
@@ -70,6 +78,8 @@ const emit = defineEmits<{
 }>();
 const rootData: any = inject(DF_ROOT_DATA);
 const useRules = inject(DF_USE_RULES, () => true);
+// 标题操作与输入控件共用实例组件注册机制，不在表单中写业务特例。
+const labelActions = computed(() => getComponent(currentForm.ui?.labelActions));
 const hiddenBinding = computed(() => currentForm?.ui?.hidden);
 // 表单项直接读取自身的隐藏绑定，避免把 UI 状态传给实际输入组件
 const hidden = computed(() => {
@@ -109,6 +119,11 @@ const getSpan = (span: number | string | undefined) => {
 </script>
 
 <style scoped>
+/* 顶部标签占满整行，避免按内容收缩导致隐藏按钮仍挤在标题旁。 */
+:deep(.el-form-item--label-top > .el-form-item__label) {
+  width: 100%;
+}
+
 /* 表单控制项置灰时统一应用灰度效果 */
 .dynamic-form-muted {
   filter: grayscale(1);

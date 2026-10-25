@@ -32,7 +32,7 @@ const mockHonor = {
       <SfTooltip :content="$t('honorTemplate')">
         <Icon
           click-through
-          icon="lucide:layout-template"
+          icon="lucide:settings-2"
           :aria-label="$t('honorTemplate')"
           aria-haspopup="menu"
         />

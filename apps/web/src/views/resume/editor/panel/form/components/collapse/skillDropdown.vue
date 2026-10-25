@@ -75,7 +75,7 @@ const selectSkillTemplate = (value) => {
       <SfTooltip :content="$t('skillLayout')">
         <Icon
           click-through
-          icon="lucide:layout-template"
+          icon="lucide:settings-2"
           :aria-label="$t('skillLayout')"
           aria-haspopup="menu"
         />

@@ -52,6 +52,8 @@ export type FieldChecks = {
 
 /** 表单项 UI 配置 */
 export interface FieldUIConfig {
+  /** 字段标题后的附加操作组件名称，沿用表单实例组件注册表 */
+  labelActions?: string;
   /** 表单项图标选择绑定：与隐藏绑定同结构，存在时渲染图标选择器 */
   icon?: ModelBinding;
   /** 表单项隐藏状态绑定 */

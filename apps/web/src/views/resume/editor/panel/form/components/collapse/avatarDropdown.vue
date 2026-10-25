@@ -69,7 +69,7 @@ const shapeOptions = computed(() => [
 </script>
 
 <template>
-  <!-- 与专业技能、荣誉证书一致，在模块标题操作区打开独立样式下拉。 -->
+  <!-- 头像设置复用编辑区统一操作图标，接入表单标题行。 -->
   <span class="flex items-center" @click.stop @mousedown.stop>
     <SfDropdown
       trigger="click"
@@ -80,7 +80,7 @@ const shapeOptions = computed(() => [
       <SfTooltip :content="$t('avatarSettings')">
         <Icon
           click-through
-          icon="lucide:layout-template"
+          icon="lucide:settings-2"
           :aria-label="$t('avatarSettings')"
           aria-haspopup="menu"
         />
