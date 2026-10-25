@@ -9,7 +9,14 @@ import process from "node:process";
 const SITE_ORIGIN = "https://qzcv.net";
 
 /** 待提交的页面路径，取自 site.config.ts 中可收录的简历路由（noindex 页不提交）。 */
-const PAGE_PATHS = ["/resume", "/resume/template", "/resume/ai", "/resume/statistics", "/resume/guide"];
+const PAGE_PATHS = [
+  "/resume",
+  "/resume/template",
+  "/resume/ai",
+  "/resume/statistics",
+  "/resume/guide",
+  "/resume/guide/resignation-score",
+];
 
 /** IndexNow 配置：key 文件须能在站点根直接访问，文件内容即 key 本身。 */
 const INDEXNOW = {

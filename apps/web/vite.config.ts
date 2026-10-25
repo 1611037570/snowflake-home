@@ -170,7 +170,13 @@ export default ({ mode }: { mode: string }) => {
             ),
             // 同一份 index.html 在应用加载前按公开路由设置构建期页面信息。
             resumeSeoMetadata: JSON.stringify(Object.fromEntries(
-              ["/resume", "/resume/template", "/resume/ai", "/resume/guide"].map((route) => [
+              [
+                "/resume",
+                "/resume/template",
+                "/resume/ai",
+                "/resume/guide",
+                "/resume/guide/resignation-score",
+              ].map((route) => [
                 route,
                 resolveSiteMetadata(route, settings.defaultLanguage, settings.defaultRoute, catalogCounts),
               ]),

@@ -32,6 +32,11 @@ const resumeChildren: RouteRecordRaw[] = [
   { path: "ai", component: () => import("@/views/resume/settings/ai/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
   { path: "guide", component: () => import("@/views/resume/guide/index.vue") },
+  // 离职决策评分作为求职指南二级页面单独按需加载。
+  {
+    path: "guide/resignation-score",
+    component: () => import("@/views/resume/guide/resignationScore/index.vue"),
+  },
   // 通用设置页复用编辑器的备份文案与目录授权键，需一并加载编辑器语言包
   {
     path: "settings",

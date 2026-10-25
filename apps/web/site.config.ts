@@ -156,6 +156,25 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
+    route: "/resume/guide/resignation-score",
+    changefreq: "monthly",
+    priority: 0.8,
+    locales: {
+      zh: {
+        title: "离职决策快速评分 - 10 项工作去留自测 | 轻舟简历",
+        description:
+          "通过收入、年终奖、五险一金、通勤、加班、休假、下班边界、职场氛围、成长和健康十项评分，1 分钟判断当前工作是否值得继续。",
+        keywords: "离职决策,离职测试,工作去留,裸辞评估,工作满意度,职业选择,离职评分表",
+      },
+      en: {
+        title: "Resignation Decision Score - 10-Item Job Assessment | Skiff Resume",
+        description:
+          "Assess pay, benefits, commute, overtime, time off, boundaries, workplace culture, growth and health to decide whether your current job is worth keeping.",
+        keywords: "resignation decision,job assessment,quit job test,career decision,job satisfaction",
+      },
+    },
+  },
+  {
     route: "/resume/editor",
     noindex: true,
     locales: {

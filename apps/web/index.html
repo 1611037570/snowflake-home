@@ -124,6 +124,30 @@
             description: page.description, // 页面描述。
             url, // 当前页面地址。
           });
+        } else if (route === "/resume/guide/resignation-score") {
+          const schema = document.querySelector('script[type="application/ld+json"]');
+          if (schema) schema.textContent = JSON.stringify({
+            "@context": "https://schema.org", // 结构化数据词汇表。
+            "@graph": [
+              {
+                "@type": "Article", // 离职决策评分指南的内容类型。
+                headline: page.title, // 文章标题。
+                description: page.description, // 文章描述。
+                url, // 当前文章地址。
+                mainEntityOfPage: url, // 文章对应的规范页面地址。
+                author: { "@type": "Organization", name: "轻舟简历" }, // 文章作者。
+                publisher: { "@type": "Organization", name: "轻舟简历" }, // 文章发布方。
+              },
+              {
+                "@type": "BreadcrumbList", // 页面层级导航类型。
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "轻舟简历", item: `${origin.replace(/\/+$/, "")}/resume` },
+                  { "@type": "ListItem", position: 2, name: "求职指南", item: `${origin.replace(/\/+$/, "")}/resume/guide` },
+                  { "@type": "ListItem", position: 3, name: "离职决策快速评分", item: url },
+                ],
+              },
+            ],
+          });
         }
       })();
     </script>
