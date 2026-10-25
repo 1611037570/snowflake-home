@@ -6,14 +6,12 @@ import { useDebounceFn } from "@vueuse/core";
 import dayjs from "dayjs";
 import { useResumeStore } from "@/stores";
 import { $t } from "@/locales";
+import LocalBackupSettings from "@/views/resume/components/localBackupSettings.vue";
 import {
-  disableLocalBackup,
-  enableLocalBackup,
   initLocalBackup,
   isFileSystemAccessSupported,
+  localBackupDirectory,
   localBackupEnabled,
-  localBackupNeedsAuth,
-  requestLocalBackupPermission,
   writeLocalBackup,
 } from "@/utils/modules/localBackup";
 
@@ -28,8 +26,6 @@ const { currentItem } = storeToRefs(resumeStore);
 
 // 弹窗可见性
 const visible = ref(false);
-// 绑定的备份目录名
-const backupPath = ref("");
 // 最近一次本地备份状态与时间
 const backupStatus = ref("");
 const lastBackupTime = ref("");
@@ -37,13 +33,15 @@ const lastBackupTime = ref("");
 const getBackupStatusKey = (resumeId, path) => `resume-local-backup:${resumeId}:${path}`;
 const restoreBackupStatus = () => {
   const resumeId = currentItem.value?.id;
-  if (!resumeId || !backupPath.value) {
+  if (!resumeId || !localBackupDirectory.value) {
     backupStatus.value = "";
     lastBackupTime.value = "";
     return;
   }
   try {
-    const status = JSON.parse(localStorage.getItem(getBackupStatusKey(resumeId, backupPath.value)));
+    const status = JSON.parse(
+      localStorage.getItem(getBackupStatusKey(resumeId, localBackupDirectory.value)),
+    );
     backupStatus.value =
       status?.success === true ? "success" : status?.success === false ? "failed" : "";
     lastBackupTime.value = status?.time || "";
@@ -53,15 +51,17 @@ const restoreBackupStatus = () => {
   }
 };
 
-watch(() => [currentItem.value?.id, backupPath.value], restoreBackupStatus, { immediate: true });
+watch(() => [currentItem.value?.id, localBackupDirectory.value], restoreBackupStatus, {
+  immediate: true,
+});
 
 // 悬浮提示：备份失败时不展示失败时间，改为提示重新授权
 const tooltipContent = computed(() => {
   if (!localBackupEnabled.value) return $t("enableLocalBackup");
   if (backupStatus.value === "failed") {
-    return `${$t("backupDirectory", { path: backupPath.value })}；${$t("backupFailedReauthorize")}`;
+    return `${$t("backupDirectory", { path: localBackupDirectory.value })}；${$t("backupFailedReauthorize")}`;
   }
-  return `${$t("backupDirectory", { path: backupPath.value })}${lastBackupTime.value ? $t("latestBackup", { time: lastBackupTime.value }) : ""}`;
+  return `${$t("backupDirectory", { path: localBackupDirectory.value })}${lastBackupTime.value ? $t("latestBackup", { time: lastBackupTime.value }) : ""}`;
 });
 
 const backupState = computed(() => {
@@ -97,9 +97,8 @@ const backupState = computed(() => {
 const doBackup = async () => {
   if (!localBackupEnabled.value) return;
   const item = currentItem.value;
-  if (!item) return;
-  const path = backupPath.value;
-  const statusKey = getBackupStatusKey(item.id, path);
+  if (!item || !localBackupDirectory.value) return;
+  const statusKey = getBackupStatusKey(item.id, localBackupDirectory.value);
   const startTime = Date.now();
   backupStatus.value = "pending";
   // 备份文件名：轻舟简历备份-简历ID（固定文件名，重复备份直接覆盖同一文件）
@@ -122,7 +121,7 @@ const doBackup = async () => {
   } catch {
     // 浏览器存储不可用时仍保留当前页面的实际备份状态
   }
-  if (statusKey === getBackupStatusKey(currentItem.value?.id, backupPath.value)) {
+  if (statusKey === getBackupStatusKey(currentItem.value?.id, localBackupDirectory.value)) {
     backupStatus.value = success ? "success" : "failed";
     lastBackupTime.value = time;
   }
@@ -139,32 +138,10 @@ watch(
   },
 );
 
-// 初始化绑定状态
+// 初始化绑定状态：目录名与开关由工具模块统一维护，与设置页共用
 onMounted(async () => {
-  const name = await initLocalBackup();
-  if (name) backupPath.value = name;
+  await initLocalBackup();
 });
-
-// 绑定或解绑
-const handleBind = async () => {
-  if (localBackupEnabled.value) {
-    await disableLocalBackup();
-    backupPath.value = "";
-  } else {
-    const name = await enableLocalBackup();
-    if (name) {
-      backupPath.value = name;
-      // 绑定后立即备份一次，不再等待简历内容变更
-      await doBackup();
-    }
-  }
-};
-
-// 备份失败后重新授权目录权限，授权成功立即补一次备份
-const handleReauthorize = async () => {
-  const granted = await requestLocalBackupPermission();
-  if (granted) await doBackup();
-};
 </script>
 
 <template>
@@ -184,25 +161,9 @@ const handleReauthorize = async () => {
     </SfTooltip>
 
     <SfModal v-model="visible" :title="$t('localBackup')">
-      <div class="flex w-[360px] flex-col gap-4 p-4">
-        <div class="flex items-center justify-between">
-          <span class="text-sm text-sf-text-3">{{ $t("backupLocation") }}</span>
-          <span class="text-sm text-sf-text">{{ backupPath || $t("unbound") }}</span>
-        </div>
-        <span v-if="localBackupNeedsAuth" class="text-xs text-sf-warning">
-          {{ $t("backupPermissionExpired") }}
-        </span>
-        <SfButton
-          v-if="localBackupNeedsAuth"
-          class="w-full"
-          type="theme"
-          @click="handleReauthorize"
-        >
-          {{ $t("reauthorize") }}
-        </SfButton>
-        <SfButton class="w-full" :type="localBackupEnabled ? 'error' : 'theme'" @click="handleBind">
-          {{ localBackupEnabled ? $t("unbind") : $t("chooseAndBind") }}
-        </SfButton>
+      <div class="w-[360px]">
+        <!-- 备份配置与通用设置页共用同一份内容组件，避免两处各写一套 -->
+        <LocalBackupSettings :show-hint="false" />
       </div>
     </SfModal>
   </div>

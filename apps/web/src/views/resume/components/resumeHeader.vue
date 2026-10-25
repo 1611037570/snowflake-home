@@ -35,6 +35,10 @@ const navList = [
     key: "resumeNavGuide", // 导航文案标识
     path: "/resume/guide", // 导航目标路径
   },
+  {
+    key: "resumeNavSettings", // 导航文案标识
+    path: "/resume/settings", // 导航目标路径
+  },
 ];
 // 当前高亮导航，以当前路由路径为准。
 const activeNavIndex = computed(() => navList.findIndex((item) => route.path === item.path));
