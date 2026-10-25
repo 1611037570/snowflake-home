@@ -73,6 +73,8 @@
     </div>
     <!-- 非推荐浏览器时显示建议提示 -->
     <DetectTip />
+    <!-- 来源调查：暂时屏蔽，恢复时取消下一行注释 -->
+    <!-- <SourceSurvey /> -->
   </div>
 </template>
 
@@ -90,6 +92,8 @@ import AiMask from "./components/aiMask.vue";
 import Header from "./components/header/index.vue";
 import ExportMask from "./components/exportMask.vue";
 import DetectTip from "./components/detectTip.vue";
+// 来源调查暂时屏蔽，恢复时与模板中的组件一起取消注释
+// import SourceSurvey from "./components/sourceSurvey.vue";
 import MobileWorkspaceNav from "./components/mobileWorkspaceNav.vue";
 import Preview from "./preview/index.vue";
 import Toolbar from "./toolbar/index.vue";
