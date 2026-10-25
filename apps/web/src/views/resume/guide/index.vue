@@ -57,7 +57,7 @@ function scrollToGuide(index: number) {
       </header>
 
       <section
-        class="mt-3 grid items-start gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]"
+        class="mt-3 grid items-start gap-3 lg:grid-cols-[9rem_minmax(0,1fr)]"
       >
         <aside class="sticky top-3 self-start">
           <nav
@@ -74,7 +74,7 @@ function scrollToGuide(index: number) {
                 <li v-for="(guide, guideIndex) in jobGuideList" :key="guide.name">
                   <button
                     type="button"
-                    class="w-full cursor-pointer rounded-xl p-3 text-left text-sm font-semibold transition-colors hover:bg-sf-bg"
+                    class="w-full cursor-pointer whitespace-nowrap rounded-xl p-3 text-left text-sm font-semibold transition-colors hover:bg-sf-bg"
                     :class="
                       activeGuideIndex === guideIndex
                         ? 'bg-sf-theme-3 text-sf-theme'
@@ -94,7 +94,7 @@ function scrollToGuide(index: number) {
                 <li v-for="(guide, guideIndex) in jobGuideList" :key="guide.name">
                   <button
                     type="button"
-                    class="w-full cursor-pointer rounded-xl p-3 text-left text-sm font-semibold transition-colors hover:bg-sf-bg"
+                    class="w-full cursor-pointer whitespace-nowrap rounded-xl p-3 text-left text-sm font-semibold transition-colors hover:bg-sf-bg"
                     :class="
                       activeGuideIndex === guideIndex
                         ? 'bg-sf-theme-3 text-sf-theme'
@@ -130,22 +130,11 @@ function scrollToGuide(index: number) {
               </span>
             </h2>
             <ol class="mt-3 grid gap-3 md:grid-cols-2">
-              <li
-                v-for="(item, itemIndex) in guide.list"
-                :key="item.title"
-                class="h-full"
-              >
+              <li v-for="item in guide.list" :key="item.title" class="h-full">
                 <section
                   class="h-full rounded-3xl border border-sf-b bg-sf-primary p-3 transition-colors hover:border-sf-theme hover:bg-sf-bg"
                 >
-                  <h3
-                    class="flex items-center justify-between gap-3 pb-1 text-lg font-bold text-sf-text"
-                  >
-                    <span>{{ item.title }}</span>
-                    <span class="shrink-0 text-sm font-semibold text-sf-text-2">
-                      {{ itemIndex + 1 }}
-                    </span>
-                  </h3>
+                  <h3 class="pb-1 text-lg font-bold text-sf-text">{{ item.title }}</h3>
                   <p class="leading-normal text-sf-text-2">{{ item.content }}</p>
                 </section>
               </li>
