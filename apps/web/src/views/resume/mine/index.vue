@@ -25,7 +25,7 @@ const router = useRouter();
 
 const resumeStore = useResumeStore();
 const { resumeList: list, currentIndex } = storeToRefs(resumeStore);
-const { maxCount, maxTrashCount } = resumeStore;
+const { maxCount } = resumeStore;
 const { getExportFileName, getResumeTitle } = useResumeName();
 const { proxy } = getCurrentInstance();
 
@@ -133,16 +133,19 @@ const getActionList = (item) => [
   },
 ];
 
-// 当前标签：draft | trash
-const activeTab = ref("draft");
+// 回收站弹窗：首次打开时才加载回收站正文，避免一进页面就读取已删除简历
+const trashVisible = ref(false);
 const trashReady = ref(false);
 const trashCount = computed(() => resumeStore.list.filter((item) => item.deletedAt !== null).length);
-const selectTab = async (tab) => {
-  activeTab.value = tab;
-  if (tab !== "trash" || trashReady.value) return;
+const openTrash = async () => {
+  trashVisible.value = true;
+  if (trashReady.value) return;
   await resumeStore.loadTrashResumes();
   trashReady.value = true;
 };
+// 顶部入口样式：沿用编辑器「导出简历」入口的胶囊与悬停手感，底色改用卡片色以免与页底同色
+const entryButtonClass =
+  "flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-primary p-1 px-2 text-sm transition-colors hover:bg-sf-theme hover:text-white";
 
 // 按真实下标定位简历（displayList 中已携带 index）
 const handleEdit = (index) => {
@@ -177,39 +180,38 @@ const handleClearTrash = () => {
 
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
-    <!-- 标签切换栏 -->
+    <!-- 标题与操作栏：回收站收进右侧弹窗入口，不再与草稿并列成标签 -->
     <div class="mt-2 flex w-full min-w-0 flex-wrap items-center justify-between gap-3 px-3 sm:flex-nowrap sm:px-6">
-      <div class="flex gap-3 sm:gap-6">
-        <SfSpan
-          :active="activeTab === 'draft'"
-          class="flex-c h-10 text-[15px] font-extrabold"
-          @click="selectTab('draft')"
-        >
-          {{ $t("resumeMineDraftsCount", { current: list.length, max: maxCount }) }}
-        </SfSpan>
-        <SfSpan
-          :active="activeTab === 'trash'"
-          class="flex-c h-10 text-[15px] font-extrabold"
-          @click="selectTab('trash')"
-        >
-          {{ $t("resumeMineTrashCount", { current: trashCount, max: maxTrashCount }) }}
-        </SfSpan>
-      </div>
-      <!-- 草稿与回收站使用对应操作入口。 -->
+      <SfSpan :active="true" class="flex-c h-10 text-[15px] font-extrabold">
+        {{ $t("resumeMineDraftsCount", { current: list.length, max: maxCount }) }}
+      </SfSpan>
       <div class="flex flex-wrap gap-3">
-        <template v-if="activeTab === 'draft'">
-          <ImportResume />
-          <SendResume />
-        </template>
-        <SfButton v-else plain type="error" icon="lucide:trash-2" @click="handleClearTrash">
-          {{ $t("resumeMineClearAll") }}
-        </SfButton>
+        <div :class="[entryButtonClass, 'group']" @click="openTrash">
+          <SfIcon icon="lucide:trash-2" size="4" />
+          <span>{{ $t("resumeMineTrash") }}</span>
+          <span class="text-xs opacity-70 group-hover:opacity-100">{{ trashCount }}</span>
+        </div>
+        <!-- 走组件插槽覆盖入口样式，避免改动组件内部默认按钮影响编辑器侧栏 -->
+        <ImportResume>
+          <template #trigger="{ open }">
+            <div :class="entryButtonClass" @click="open">
+              <SfIcon icon="fa6-solid:file-import" size="4" />
+              <span>{{ $t("resumeImportResume") }}</span>
+            </div>
+          </template>
+        </ImportResume>
+        <SendResume>
+          <div :class="entryButtonClass">
+            <SfIcon icon="ph:paper-plane-right-fill" size="4" class="rotate-180" />
+            <span>{{ $t("resumeSendResume") }}</span>
+          </div>
+        </SendResume>
       </div>
     </div>
     <SfScrollbar class="flex-1" flush>
       <div class="flex h-full flex-col px-3 py-1">
         <!-- 简历草稿列表 -->
-        <RevealGrid v-if="activeTab === 'draft'" :items="displayList" key-field="id">
+        <RevealGrid :items="displayList" key-field="id">
           <template #default="{ item: card }">
             <!-- 新建简历入口项 -->
             <CreateResume v-if="card.type === 'create'" />
@@ -259,7 +261,7 @@ const handleClearTrash = () => {
                     />
                   </svg>
                   <span
-                    class="text-[10px] font-bold"
+                    class="text-[10px]"
                     :class="card.progress >= 100 ? 'text-sf-success' : 'text-sf-text'"
                   >
                     {{ card.progress }}
@@ -312,71 +314,6 @@ const handleClearTrash = () => {
             </ResumeCardContainer>
           </template>
         </RevealGrid>
-
-        <!-- 回收站列表 -->
-        <RevealGrid
-          v-else-if="activeTab === 'trash' && trashReady && resumeStore.trashList.length > 0"
-          :items="resumeStore.trashList"
-          key-field="id"
-        >
-          <template #default="{ item, index }">
-            <ResumeCardContainer :item="item" :action-text="$t('resumeMineDeleted')">
-              <div class="truncate text-sm font-black text-sf-text">
-                {{ getResumeTitle(item) }}
-              </div>
-              <div class="mt-1 flex items-center justify-between gap-3">
-                <span
-                  class="min-w-0 truncate rounded-full px-3 py-1 text-xs font-medium"
-                  :class="
-                    hasResumePosition(item)
-                      ? 'bg-sf-theme-3 text-sf-theme'
-                      : 'bg-sf-bg text-sf-text-3'
-                  "
-                >
-                  {{ getResumePosition(item) }}
-                </span>
-                <span class="shrink-0 text-xs text-sf-text-3">
-                  {{ $t("resumeMineTrashAutoClean", { days: resumeStore.getTrashRemainingDays(item) }) }}
-                </span>
-              </div>
-              <!-- 底部操作条：与草稿卡片同一套分栏样式 -->
-              <div class="-mx-2 -mb-2 mt-2 flex border-t border-sf-b">
-                <button
-                  type="button"
-                  class="flex flex-1 cursor-pointer items-center justify-center gap-2 py-2 text-sm text-sf-text-2 transition-colors hover:bg-sf-bg hover:text-sf-text"
-                  @click="resumeStore.restoreResume(index)"
-                >
-                  <SfIcon icon="lucide:rotate-ccw" size="4" />
-                  {{ $t("resumeMineRestore") }}
-                </button>
-                <button
-                  type="button"
-                  class="flex flex-1 cursor-pointer items-center justify-center gap-2 border-l border-sf-b py-2 text-sm text-sf-error transition-colors hover:bg-sf-error-2"
-                  @click="resumeStore.permanentlyDeleteResume(index)"
-                >
-                  <SfIcon icon="lucide:trash-2" size="4" />
-                  {{ $t("resumeMinePermanentDelete") }}
-                </button>
-              </div>
-            </ResumeCardContainer>
-          </template>
-        </RevealGrid>
-        <div
-          v-else-if="activeTab === 'trash' && !trashReady"
-          class="flex flex-col items-center justify-center py-20 text-sf-text-2"
-        >
-          <SfIcon
-            icon="line-md:loading-twotone-loop"
-            size="8"
-            class="mb-4 animate-spin text-sf-theme"
-          />
-          <span class="text-base">{{ $t("resumeMineTrashLoading") }}</span>
-        </div>
-        <!-- 回收站为空 -->
-        <div v-else class="flex flex-col items-center justify-center py-20 text-sf-text-2">
-          <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
-          <span class="text-base">{{ $t("resumeMineTrashEmpty") }}</span>
-        </div>
       </div>
     </SfScrollbar>
     <!-- 草稿专用全屏预览：复用模板页预览布局。 -->
@@ -390,6 +327,80 @@ const handleClearTrash = () => {
       @close="closePreview"
       @action="editPreview"
     />
+    <!-- 回收站弹窗：只列名称与状态，不渲染简历缩略图 -->
+    <SfModal v-model="trashVisible" :title="$t('resumeMineTrash')" width="600px">
+      <div class="flex w-full flex-col gap-3">
+        <div v-if="trashReady && resumeStore.trashList.length > 0" class="flex flex-col gap-3">
+          <div
+            v-for="(item, index) in resumeStore.trashList"
+            :key="item.id"
+            class="flex flex-wrap items-center gap-3 rounded-3xl border border-sf-b p-3 transition-colors hover:border-sf-theme"
+          >
+            <div class="flex min-w-0 flex-1 flex-col gap-1">
+              <div class="truncate text-sm font-bold text-sf-text">
+                {{ getResumeTitle(item) }}
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class="truncate rounded-full px-2 py-0.5 text-xs"
+                  :class="
+                    hasResumePosition(item)
+                      ? 'bg-sf-theme-3 text-sf-theme'
+                      : 'bg-sf-bg text-sf-text-3'
+                  "
+                >
+                  {{ getResumePosition(item) }}
+                </span>
+                <span class="text-xs text-sf-text-3">
+                  {{ $t("resumeMineTrashAutoClean", { days: resumeStore.getTrashRemainingDays(item) }) }}
+                </span>
+              </div>
+            </div>
+            <div class="flex shrink-0 items-center gap-3">
+              <button
+                type="button"
+                class="flex cursor-pointer items-center gap-1 rounded-xl px-3 py-1 text-sm text-sf-text-2 transition-colors hover:bg-sf-bg hover:text-sf-text"
+                @click="resumeStore.restoreResume(index)"
+              >
+                <SfIcon icon="lucide:rotate-ccw" size="4" />
+                {{ $t("resumeMineRestore") }}
+              </button>
+              <button
+                type="button"
+                class="flex cursor-pointer items-center gap-1 rounded-xl px-3 py-1 text-sm text-sf-error transition-colors hover:bg-sf-error-2"
+                @click="resumeStore.permanentlyDeleteResume(index)"
+              >
+                <SfIcon icon="lucide:trash-2" size="4" />
+                {{ $t("resumeMinePermanentDelete") }}
+              </button>
+            </div>
+          </div>
+        </div>
+        <div
+          v-else-if="!trashReady"
+          class="flex flex-col items-center justify-center py-20 text-sf-text-2"
+        >
+          <SfIcon
+            icon="line-md:loading-twotone-loop"
+            size="8"
+            class="mb-4 animate-spin text-sf-theme"
+          />
+          <span class="text-base">{{ $t("resumeMineTrashLoading") }}</span>
+        </div>
+        <div v-else class="flex flex-col items-center justify-center py-20 text-sf-text-2">
+          <SfIcon icon="lucide:trash-2" size="12" class="mb-4 text-sf-text-3" />
+          <span class="text-base">{{ $t("resumeMineTrashEmpty") }}</span>
+        </div>
+        <div
+          v-if="trashReady && resumeStore.trashList.length > 0"
+          class="flex justify-end border-t border-sf-b pt-3"
+        >
+          <SfButton plain type="error" icon="lucide:trash-2" @click="handleClearTrash">
+            {{ $t("resumeMineClearAll") }}
+          </SfButton>
+        </div>
+      </div>
+    </SfModal>
     <RenameResumeModal v-model="renameVisible" :item="renameItem" />
   </div>
 </template>

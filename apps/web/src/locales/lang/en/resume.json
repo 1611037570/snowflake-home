@@ -746,6 +746,7 @@
   "resumeStatisticsApplicationPlatform": "Application Platform",
   "resumeMineDraftsCount": "Drafts ({current}/{max})",
   "resumeMineTrashCount": "Trash ({current}/{max})",
+  "resumeMineTrash": "Trash",
   "resumeMineClearAll": "Delete All",
   "resumeMineEdit": "Edit",
   "resumeMineDelete": "Delete",

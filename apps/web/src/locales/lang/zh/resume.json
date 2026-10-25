@@ -746,6 +746,7 @@
   "resumeStatisticsApplicationPlatform": "投递平台",
   "resumeMineDraftsCount": "简历草稿({current}/{max})",
   "resumeMineTrashCount": "回收站({current}/{max})",
+  "resumeMineTrash": "回收站",
   "resumeMineClearAll": "全部删除",
   "resumeMineEdit": "编辑",
   "resumeMineDelete": "删除",
