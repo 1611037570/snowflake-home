@@ -31,6 +31,7 @@ const resumeChildren: RouteRecordRaw[] = [
   { path: "mine", component: () => import("@/views/resume/mine/index.vue"), meta: { localeFiles: ["resume", "resume-editor"] } },
   { path: "ai", component: () => import("@/views/resume/settings/ai/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
+  { path: "guide", component: () => import("@/views/resume/guide/index.vue") },
   {
     path: "editor",
     name: "editor",

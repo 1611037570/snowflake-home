@@ -115,6 +115,15 @@
               applicationCategory: "BusinessApplication", // 软件应用所属类别。
             },
           });
+        } else if (route === "/resume/guide") {
+          const schema = document.querySelector('script[type="application/ld+json"]');
+          if (schema) schema.textContent = JSON.stringify({
+            "@context": "https://schema.org", // 结构化数据词汇表。
+            "@type": "CollectionPage", // 制作指南的内容集合页面类型。
+            name: page.title, // 页面标题。
+            description: page.description, // 页面描述。
+            url, // 当前页面地址。
+          });
         }
       })();
     </script>

@@ -137,6 +137,25 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
+    route: "/resume/guide",
+    changefreq: "monthly",
+    priority: 0.8,
+    locales: {
+      zh: {
+        title: "简历制作指南 - 求职、面试与应届生避坑 | 轻舟简历",
+        description:
+          "轻舟简历制作指南汇总简历写作、应届生求职避坑、三方协议、离职交接与面试问答等实用内容，帮助求职者做好投递和面试准备。",
+        keywords: "简历制作指南,简历怎么写,应届生简历,求职避坑,面试技巧,面试问题,三方协议,离职注意事项",
+      },
+      en: {
+        title: "Resume Writing Guide - Job Search and Interview Advice | Skiff Resume",
+        description:
+          "Practical guidance on resume writing, graduate job searches, employment agreements, resignations, interview preparation and common interview questions.",
+        keywords: "resume writing guide,graduate job search,interview tips,interview questions,employment agreement,resignation advice",
+      },
+    },
+  },
+  {
     route: "/resume/editor",
     noindex: true,
     locales: {
