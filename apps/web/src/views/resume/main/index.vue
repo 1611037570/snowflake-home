@@ -2,16 +2,16 @@
   <SfScrollbar class="h-full bg-sf-page" flush>
     <main class="resume-home relative w-full shrink-0 overflow-hidden bg-sf-page text-sf-text">
       <section
-        class="resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-x-12 gap-y-9 px-6 pt-24 pb-9 lg:grid-cols-2 lg:px-12"
+        class="resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-x-12 gap-y-9 px-6 pt-24 pb-9 sm:pb-32 lg:grid-cols-2 lg:px-12"
       >
         <article class="relative z-10 mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
-          <!-- 首页主标题聚焦在线简历制作，模板与 AI 分别由独立页面承接。 -->
+          <!-- 首页主标题承接开源、免费、AI 生成简历的检索词，浏览器标题仍由 site.config 控制 -->
           <h1
             class="animate-rise animate-rise--delay-one text-4xl leading-[1.15] font-black tracking-[-0.04em] sm:text-5xl lg:text-6xl"
           >
             {{ $t("resumeHomeHeroTitle") }}
           </h1>
-          <!-- 副标题说明创建方式与免费导出能力，直接回应制作需求。 -->
+          <!-- 副标题说明 AI 承担哪几步，以及导出能力与免费事实 -->
           <p class="animate-rise animate-rise--delay-two mt-6 text-base font-medium text-sf-text-2">
             {{ $t("resumeHomeHeroSubtitle") }}
           </p>
@@ -58,13 +58,13 @@
                 class="transition-transform duration-300 group-hover:translate-x-1"
               />
             </router-link>
-            <!-- 页面滚动发生在内部滚动容器里，原生锚点无效，改为主动滚动到 AI 卡片 -->
+            <!-- 页面滚动发生在内部滚动容器里，原生锚点无效，改为主动滚动到首屏下方的编辑器截图 -->
             <button
               type="button"
               class="inline-flex cursor-pointer items-center justify-center gap-3 rounded-full border border-sf-b bg-sf-primary px-6 py-3 font-semibold transition-colors duration-300 hover:bg-sf-bg"
-              @click="scrollToAi"
+              @click="scrollToEditor"
             >
-              {{ $t("resumeHomeAiCta") }}
+              {{ $t("resumeHomeEditorCta") }}
               <SfIcon icon="mingcute:arrow-down-line" size="4" />
             </button>
           </div>
@@ -93,10 +93,49 @@
         </div>
       </section>
 
+      <!-- 编辑器截图：向上负边距让截图顶部露在首屏底边，继续滚动才完整展开；说明放在图下，不占首屏 -->
+      <figure
+        id="editor-shot"
+        class="relative mx-auto -mt-9 max-w-[1440px] scroll-mt-16 px-6 sm:-mt-24 lg:px-12"
+      >
+        <img
+          :src="editorShot"
+          :alt="$t('resumeHomeShotAlt')"
+          width="1650"
+          height="1143"
+          decoding="async"
+          class="mx-auto h-auto w-full max-w-[1080px] rounded-2xl border border-sf-b bg-sf-b"
+        />
+        <figcaption
+          class="mx-auto mt-3 max-w-2xl text-center text-sm leading-normal text-sf-text-2"
+        >
+          {{ $t("resumeHomeShotCaption") }}
+        </figcaption>
+      </figure>
+
+      <!-- 看完截图后的下一步入口：直接开始做简历，或继续往下看流程 -->
+      <div class="mt-6 flex flex-col justify-center gap-3 px-6 sm:flex-row lg:px-12">
+        <router-link
+          to="/resume/template"
+          class="inline-flex cursor-pointer items-center justify-center gap-3 rounded-full bg-sf-theme px-6 py-3 font-semibold text-sf-theme-text transition-transform duration-300 hover:-translate-y-1"
+        >
+          {{ $t("resumeHomeShotCreate") }}
+          <SfIcon icon="mingcute:arrow-right-line" size="4" />
+        </router-link>
+        <button
+          type="button"
+          class="inline-flex cursor-pointer items-center justify-center gap-3 rounded-full border border-sf-b bg-sf-primary px-6 py-3 font-semibold transition-colors duration-300 hover:bg-sf-bg"
+          @click="scrollToJourney"
+        >
+          {{ $t("resumeHomeShotMore") }}
+          <SfIcon icon="mingcute:arrow-down-line" size="4" />
+        </button>
+      </div>
+
       <section
         id="journey"
         :ref="registerRevealSection"
-        class="resume-home__reveal relative mx-auto flex max-w-[1440px] flex-col justify-center px-6 py-6 lg:px-12"
+        class="resume-home__reveal relative mx-auto flex max-w-[1440px] scroll-mt-16 flex-col justify-center px-6 py-6 lg:px-12"
       >
         <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div class="max-w-2xl">
@@ -194,6 +233,8 @@ import { resumeTemplateList } from "../template/data/list";
 import HeroSwitcher from "./heroSwitcher.vue";
 import ResumeHomeFaq from "./faq.vue";
 import OnlineWriters from "../components/onlineWriters.vue";
+// 首屏底边露头的编辑器截图，滚动后完整展开
+import editorShot from "@/assets/images/resume/editor.webp";
 import { computed, onMounted, ref } from "vue";
 
 const resumeStore = useResumeStore();
@@ -302,11 +343,18 @@ useIntersectionObserver(
 );
 
 // 页面滚动由内部滚动容器承载，原生 hash 定位不生效，改为按目标元素主动滚动
-function scrollToAi() {
-  const target = document.getElementById("ai");
+// 滚动到首屏下方的编辑器截图，留出固定页头的高度
+function scrollToEditor() {
+  const target = document.getElementById("editor-shot");
   if (!target) return;
-  // 居中滚动，避免固定页头遮住卡片标题
-  target.scrollIntoView({ behavior: "smooth", block: "center" });
+  target.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// 滚动到下方的流程说明区，作为「继续了解」的去处
+function scrollToJourney() {
+  const target = document.getElementById("journey");
+  if (!target) return;
+  target.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 // 首屏关键点：对应产品真实能力，不写做不到的承诺

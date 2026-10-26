@@ -34,7 +34,7 @@ onMounted(() => {
       <span class="text-[9px] leading-none text-sf-text-3">{{ $t("resumeOnline") }}</span>
     </span>
   </SfTooltip>
-  <p v-else class="text-xs text-sf-text-2">
+  <p v-else class="pb-3 text-xs text-sf-text-2">
     {{ $t("resumeOnlineWriters", { count: Math.round(displayCount) }) }}
   </p>
 </template>
