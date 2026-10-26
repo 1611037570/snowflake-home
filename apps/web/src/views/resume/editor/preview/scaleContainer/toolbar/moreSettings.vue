@@ -126,11 +126,11 @@ const resetExperienceLayout = () => {
 <template>
   <SfDropdown v-if="currentUI" trigger="click" placement="bottom-start" :show-arrow="false" @visible-change="dropdownVisible = $event">
     <span
-      class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg"
-      :class="{ 'text-sf-theme!': dropdownVisible }"
+      class="flex h-6 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2 text-[11px] text-sf-text-2 transition-colors hover:bg-sf-bg"
+      :class="{ 'bg-sf-bg text-sf-theme!': dropdownVisible }"
     >
       <SfIcon icon="lucide:sliders-horizontal" size="4" />
-      <span class="text-[11px] leading-none">{{ $t("designMore") }}</span>
+      <span class="whitespace-nowrap">{{ $t("designMore") }}</span>
     </span>
     <template #dropdown>
       <SfScrollbar

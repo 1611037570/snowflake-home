@@ -8,10 +8,12 @@ import { useResumeStore } from "@/stores";
 import { RESUME_HEIGHT, RESUME_WIDTH } from "../shared/constants";
 import Language from "./toolbar/language.vue";
 import TemplateSettings from "./toolbar/templateSettings.vue";
-import Font from "./toolbar/font.vue";
 import Settings from "./toolbar/settings.vue";
 import MoreSettings from "./toolbar/moreSettings.vue";
-import MoreMenu from "./toolbar/moreMenu.vue";
+import FontFamily from "./toolbar/fontFamily.vue";
+import FontSize from "./toolbar/fontSize.vue";
+import Spacing from "./toolbar/spacing.vue";
+import SettingPill from "./toolbar/settingPill.vue";
 import OnePage from "./toolbar/onePage.vue";
 import PrintMode from "./toolbar/printMode.vue";
 
@@ -33,6 +35,7 @@ const contentRef = ref(null);
 const contentSize = ref({ width: 0, height: 0 });
 const availableSize = ref({ width: 0, height: 0 });
 const showBackTop = ref(false);
+const scaleDropdownVisible = ref(false); // 缩放下拉展开时保持入口高亮
 const manualScale = ref(1);
 const maxScale = ref(1);
 const scaleMode = ref("onePage");
@@ -204,66 +207,69 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
 
 <template>
   <div class="group relative flex h-full flex-col self-stretch overflow-hidden">
-    <!-- 视图条：图标在上、文字在下的两行入口，高度与左侧栏头一致 -->
+    <!-- 视图条：上行直出高频排版参数，下行放面板入口与视图操作，两行合起来与左侧栏头同高 -->
     <div
-      class="flex h-14 shrink-0 items-center gap-1 self-stretch border-b border-sf-b bg-sf-primary px-3 select-none"
+      class="flex h-14 shrink-0 flex-col border-b border-sf-b bg-sf-primary select-none"
       v-show="showToolbar"
     >
-      <TemplateSettings />
-      <Font />
-      <Settings />
-      <MoreSettings />
-      <Language />
-      <span class="mx-1.5 h-6 w-px bg-sf-b"></span>
-      <SfDropdown trigger="hover" placement="bottom-start" :show-arrow="false">
-        <span
-          class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg"
+      <!-- 上行：字体、字号、间距、缩放统一排在最左侧，宽度不足时向右滚动 -->
+      <div class="toolbar-row flex min-h-0 flex-1 items-center gap-3 overflow-x-auto px-3">
+        <FontFamily />
+        <FontSize />
+        <Spacing />
+        <SfDropdown
+          trigger="hover"
+          placement="bottom-start"
+          :show-arrow="false"
+          @visible-change="scaleDropdownVisible = $event"
         >
-          <SfIcon icon="lucide:expand" size="4" />
-          <span class="text-[11px] leading-none">{{ scaleLabel }}</span>
-        </span>
-        <template #dropdown>
-          <SfList
-            :list="SCALE_LIST"
-            class="w-[140px]"
-            :border="false"
-            :auto-close="false"
-            @onClick="handleScaleSelect"
-          >
-          </SfList>
-        </template>
-      </SfDropdown>
-      <span class="mx-1.5 h-6 w-px bg-sf-b"></span>
-      <!-- 桌面直接展开视图操作；窄屏宽度不足时才收进「更多」 -->
-      <div class="flex items-center gap-1">
-        <div class="hidden items-center gap-1 md:flex">
-          <OnePage />
-          <PrintMode />
-          <SfTooltip :content="$t('fullscreen')">
-            <SfIcon
-              icon="lucide:maximize"
-              size="4"
-              boxSize="8"
-              class="rounded-full text-sf-text-2 transition-colors hover:bg-sf-bg"
-              @click="$emit('fullscreen')"
-            />
-          </SfTooltip>
-          <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
-            <SfIcon
-              icon="lucide:circle-slash"
-              size="4"
-              boxSize="8"
-              class="rounded-full text-sf-text-2 transition-colors hover:bg-sf-bg"
-              @click="clearSelectedModules"
-            />
-          </SfTooltip>
-        </div>
-        <span class="mx-1.5 text-[11px] text-sf-text-3">{{
+          <SettingPill
+            :label="$t('toolbarZoom')"
+            :value="scaleLabel"
+            :active="scaleDropdownVisible"
+          />
+          <template #dropdown>
+            <SfList
+              :list="SCALE_LIST"
+              class="w-[140px]"
+              :border="false"
+              :auto-close="false"
+              @onClick="handleScaleSelect"
+            >
+            </SfList>
+          </template>
+        </SfDropdown>
+        <span class="text-[11px] whitespace-nowrap text-sf-text-3">{{
           $t("paperPageCount", { count: pageCount })
         }}</span>
-        <div class="flex items-center md:hidden">
-          <MoreMenu @fullscreen="$emit('fullscreen')" />
-        </div>
+      </div>
+      <!-- 下行：设计面板入口与整份简历的操作，同样从左侧排起 -->
+      <div class="toolbar-row flex min-h-0 flex-1 items-center gap-1 overflow-x-auto px-3">
+        <TemplateSettings />
+        <Settings />
+        <MoreSettings />
+        <Language />
+        <span class="mx-1 h-4 w-px shrink-0 bg-sf-b"></span>
+        <OnePage />
+        <PrintMode />
+        <!-- 全屏带文字标签，与相邻的整份简历操作保持同一种入口样式 -->
+        <button
+          type="button"
+          class="flex h-6 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2 text-[11px] text-sf-text-2 transition-colors hover:bg-sf-bg"
+          @click="$emit('fullscreen')"
+        >
+          <SfIcon icon="lucide:maximize" size="4" />
+          <span class="whitespace-nowrap">{{ $t("fullscreen") }}</span>
+        </button>
+        <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
+          <SfIcon
+            icon="lucide:circle-slash"
+            size="4"
+            boxSize="6"
+            class="cursor-pointer rounded-full text-sf-text-2 transition-colors hover:bg-sf-bg"
+            @click="clearSelectedModules"
+          />
+        </SfTooltip>
       </div>
     </div>
     <!-- 预览滚动区外层：画布比面板低一档，纸张靠阴影浮起 -->
@@ -324,6 +330,18 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
 </template>
 
 <style scoped>
+/* 两行入口共用同一套横向排布：宽度不足时横向滚动，不显示滚动条 */
+.toolbar-row {
+  scrollbar-width: none;
+}
+.toolbar-row::-webkit-scrollbar {
+  display: none;
+}
+/* 入口一律不压缩，超宽交给行内横向滚动接手 */
+.toolbar-row > * {
+  flex-shrink: 0;
+}
+
 :global(.scale-dropdown-popper) {
   z-index: 9999 !important;
 }

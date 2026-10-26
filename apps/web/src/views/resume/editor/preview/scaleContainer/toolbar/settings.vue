@@ -12,14 +12,11 @@ import {
   defaultFooterTemplate,
   defaultInfoPosition,
   defaultLeftColumnWidth,
-  defaultLineHeight,
-  defaultModuleSpacing,
-  defaultPaddingHorizontal,
-  defaultPaddingVertical,
-  defaultParagraphSpacing,
   defaultSubtitleCenter,
+  defaultTextAlign,
   footerTemplateList,
   infoPositionList,
+  textAlignList,
   uiParamRanges,
   defaultUserInfoLayout,
   userInfoLayoutList,
@@ -67,33 +64,15 @@ const subtitleCenter = computed({
   },
 });
 
-// 左栏宽度占比：仅双栏布局展示，位置固定在参数列表最上方
+// 左栏宽度占比：仅双栏布局展示
 const leftColumnWidthParam = {
   labelKey: "layoutLeftColumnWidth",
   key: "layout.leftColumnWidth",
   defaultValue: defaultLeftColumnWidth,
   unit: "%",
 };
-// 页面布局数值参数：标签、绑定字段、默认值与单位集中维护，模板统一渲染
-const layoutParams = [
-  leftColumnWidthParam,
-  { labelKey: "layoutTopBottomMargin", key: "page.padding.vertical", defaultValue: defaultPaddingVertical, unit: "px" },
-  {
-    labelKey: "layoutLeftRightMargin",
-    key: "page.padding.horizontal",
-    defaultValue: defaultPaddingHorizontal,
-    unit: "px",
-  },
-  { labelKey: "layoutModuleSpacing", key: "page.spacing.module", defaultValue: defaultModuleSpacing, unit: "px" },
-  {
-    labelKey: "layoutParagraphSpacing",
-    key: "page.spacing.paragraph",
-    defaultValue: defaultParagraphSpacing,
-    unit: "px",
-  },
-  // 行间距为字号倍数，单位与其它像素值不同
-  { labelKey: "layoutLineHeight", key: "font.lineHeight", defaultValue: defaultLineHeight, unit: "lineHeightUnit" },
-];
+// 页边距、模块间距与行间距已移到视图条的「间距」「行距」入口，这里只保留版式相关的左栏宽度
+const layoutParams = [leftColumnWidthParam];
 
 // 版式由主题定义决定；主题预设保存着当前主题的数值参数，恢复默认时以它为准而不是全局默认值
 const layoutType = computed(() => resolveThemeDecisions(currentUI.value?.theme?.template).layoutType);
@@ -114,6 +93,8 @@ const layoutOptionParams = computed(() => {
     { label: $t("avatarPosition"), key: "user.avatarPosition", list: avatarPositionList },
     { label: $t("infoAlign"), key: "user.infoPosition", list: infoPositionList },
     { label: $t("timePosition"), key: "content.datePosition", list: datePositionList },
+    // 文本对齐同属正文排版，并入布局选项统一渲染
+    { label: $t("textAlign"), key: "content.textAlign", list: textAlignList },
   ].map((item) => ({ ...item, list: localizeResumeEditorOptionList(item.list) }));
 });
 
@@ -122,6 +103,7 @@ const layoutOptionDefaults = {
   "user.avatarPosition": defaultAvatarPosition, // 头像位置默认值
   "user.infoPosition": defaultInfoPosition, // 个人信息对齐默认值
   "content.datePosition": defaultDatePosition, // 经历日期位置默认值
+  "content.textAlign": defaultTextAlign, // 文本对齐默认值
 };
 
 // 主题固定的选项保持可见，由限制说明给出原因并阻止写入
@@ -189,11 +171,11 @@ const resetFooterSettings = () => {
 <template>
   <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false" @visible-change="dropdownVisible = $event">
     <span
-      class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg"
-      :class="{ 'text-sf-theme!': dropdownVisible }"
+      class="flex h-6 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2 text-[11px] text-sf-text-2 transition-colors hover:bg-sf-bg"
+      :class="{ 'bg-sf-bg text-sf-theme!': dropdownVisible }"
     >
       <SfIcon icon="lucide:layout-template" size="4" />
-      <span class="text-[11px] leading-none">{{ $t("layout") }}</span>
+      <span class="whitespace-nowrap">{{ $t("layout") }}</span>
     </span>
     <template #dropdown>
       <SfScrollbar
@@ -201,7 +183,13 @@ const resetFooterSettings = () => {
         class="w-80 rounded-3xl border border-sf-b bg-sf-primary p-3"
       >
         <div class="flex flex-col gap-3 pb-3">
-          <SettingSection :title="$t('pageLayout')" :reset-label="$t('reset')" @reset="resetPageLayout">
+          <!-- 单栏布局没有左栏宽度可调，这一组随之隐藏 -->
+          <SettingSection
+            v-if="visibleLayoutParams.length"
+            :title="$t('pageLayout')"
+            :reset-label="$t('reset')"
+            @reset="resetPageLayout"
+          >
             <SettingNumberField
               v-for="item in visibleLayoutParams"
               :key="item.key"
@@ -210,7 +198,7 @@ const resetFooterSettings = () => {
               :min="uiParamRanges[item.key].min"
               :max="uiParamRanges[item.key].max"
               :step="uiParamRanges[item.key].step"
-              :unit="item.unit === 'lineHeightUnit' ? $t(item.unit) : item.unit"
+              :unit="item.unit"
               @update:model-value="(value) => setNumberParam(item.key, value)"
               @reset="setParam(item.key, getParamDefault(item.key))"
             />

@@ -155,6 +155,8 @@ export const ICON_LIST: Record<string, IconItem> = {
   "logos:router": { icon: "logos:router" },
   "lucide:maximize": { icon: "lucide:maximize", name: "全屏" },
   "lucide:check": { icon: "lucide:check" },
+  "lucide:chevron-down": { icon: "lucide:chevron-down" },
+  "lucide:circle-alert": { icon: "lucide:circle-alert" },
   "lucide:archive": { icon: "lucide:archive" },
   "lucide:archive-restore": { icon: "lucide:archive-restore" },
   "lucide:eye": { icon: "lucide:eye" },

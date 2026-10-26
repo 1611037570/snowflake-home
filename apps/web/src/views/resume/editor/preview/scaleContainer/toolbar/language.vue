@@ -43,10 +43,10 @@ const handleLangSelect = (item) => {
 <template>
   <SfDropdown trigger="click" placement="bottom-start" :show-arrow="false">
     <span
-      class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg"
+      class="flex h-6 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2 text-[11px] text-sf-text-2 transition-colors hover:bg-sf-bg"
     >
       <SfIcon icon="mdi:translate" size="4" />
-      <span class="text-[11px] leading-none">{{ $t("resumeLanguage") }}</span>
+      <span class="whitespace-nowrap">{{ $t("resumeLanguage") }}</span>
     </span>
     <template #dropdown>
       <SfList class="w-[140px]" :list="langOptions" :border="false" @onClick="handleLangSelect" />

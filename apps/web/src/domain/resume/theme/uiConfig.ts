@@ -34,30 +34,37 @@ export const fontFamilyList = [
   {
     name: "阿里普惠体",
     value: "text-puhui",
+    group: "chinese", // 语种分组：中文字体
   },
   {
     name: "思源宋体",
     value: "text-source-han-serif",
+    group: "chinese", // 语种分组：中文字体
   },
   {
     name: "思源黑体",
     value: "text-source-han-sans",
+    group: "chinese", // 语种分组：中文字体
   },
   {
     name: "霞鹜新晰黑",
     value: "text-lxgw-neo-xihei",
+    group: "chinese", // 语种分组：中文字体
   },
   {
     name: "霞鹜文楷 Lite",
     value: "text-lxgw-wenkai-lite",
+    group: "chinese", // 语种分组：中文字体
   },
   {
     name: "Inter",
     value: "text-inter",
+    group: "latin", // 语种分组：仅英文字体
   },
   {
     name: "EB Garamond",
     value: "text-eb-garamond",
+    group: "latin", // 语种分组：仅英文字体
   },
 ];
 

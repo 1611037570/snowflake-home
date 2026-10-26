@@ -18,15 +18,15 @@ const onFitOnePage = () => {
   <!-- 智能一页名称常驻显示，避免依赖悬停提示才能识别功能。 -->
   <button
     type="button"
-    class="flex h-12 cursor-pointer flex-col items-center justify-center gap-1 rounded-2xl px-2 text-sf-text-2 transition-colors hover:bg-sf-bg disabled:cursor-wait disabled:text-sf-theme"
+    class="flex h-6 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2 text-[11px] text-sf-text-2 transition-colors hover:bg-sf-bg disabled:cursor-wait disabled:text-sf-theme"
     :disabled="isFittingOnePage"
     :aria-busy="isFittingOnePage"
     @click="onFitOnePage"
   >
     <SfIcon v-if="isFittingOnePage" icon="line-md:loading-twotone-loop" size="4" />
-    <!-- 文档图标直接表达简历处理，并与折叠菜单入口保持一致。 -->
+    <!-- 文档图标直接表达简历处理 -->
     <SfIcon v-else icon="mdi:file-document-outline" size="4" />
-    <span class="text-[11px] leading-none whitespace-nowrap">
+    <span class="whitespace-nowrap">
       {{ isFittingOnePage ? $t("compressingOnePage") : $t("smartOnePage") }}
     </span>
   </button>
