@@ -68,10 +68,14 @@ const AsyncCityPicker = defineAsyncComponent({
 const resumeStore = useResumeStore();
 const { currentData, runtimeConfig } = storeToRefs(resumeStore);
 let keyboardFocusPending = false;
-// 捕获点击与键盘焦点，定位所属模块与子记录，不触发预览滚动。
-// 用 click 而非 pointerdown：移动端事件顺序里只有 click 确定发生在输入框聚焦之后，
-// pointerdown 时写状态会先触发重渲染，导致首次点击丢失、输入框要点两次。
-const markEditingModule = (event) => {
+// 触摸与手写笔直接操作表单时不更新预览提示，避免辅助重绘干扰控件激活。
+const isDirectPointerInteraction = (event) => {
+  if (event.pointerType) return event.pointerType !== "mouse";
+  return window.matchMedia("(hover: none), (pointer: coarse)").matches;
+};
+// 捕获鼠标点击与键盘焦点，定位所属模块与子记录，不触发预览滚动。
+const markEditingModule = (event, allowDirectPointer = false) => {
+  if (!allowDirectPointer && isDirectPointerInteraction(event)) return;
   const target = event.target instanceof Element ? event.target : null;
   const itemIndexValue = target?.closest("[data-item-index]")?.dataset.itemIndex;
   const parsedItemIndex = itemIndexValue == null ? null : Number(itemIndexValue);
@@ -105,7 +109,7 @@ const prepareKeyboardModuleFocus = (event) => {
 };
 const markKeyboardEditingModule = (event) => {
   if (!keyboardFocusPending) return;
-  markEditingModule(event);
+  markEditingModule(event, true);
 };
 // 删除当前模块后清除提示，隐藏不改变原有显示状态。
 watch(

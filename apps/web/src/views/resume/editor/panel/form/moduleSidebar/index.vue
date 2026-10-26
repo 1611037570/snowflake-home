@@ -135,7 +135,7 @@ onUnmounted(() => {
           <!-- 图标与拖拽把手叠放：悬停时互换，行宽保持不动 -->
           <span class="relative h-4 w-4 shrink-0">
             <span
-              class="absolute inset-0 flex items-center justify-center transition-opacity duration-150"
+              class="module-sidebar-icon absolute inset-0 flex items-center justify-center transition-opacity duration-150"
               :class="item.fixed ? '' : 'group-hover/rail:opacity-0'"
             >
               <SfIcon :icon="item.icon" size="4" />
@@ -143,7 +143,7 @@ onUnmounted(() => {
             <!-- 固定模块不参与拖拽，悬停时保留原图标并显示抓手光标 -->
             <span
               v-if="!item.fixed"
-              class="module-sidebar-drag absolute inset-0 flex cursor-grab! items-center justify-center opacity-0 transition-opacity duration-150 group-hover/rail:opacity-100 active:cursor-grabbing!"
+              class="module-sidebar-drag pointer-events-none absolute inset-0 flex cursor-grab! items-center justify-center opacity-0 transition-opacity duration-150 group-hover/rail:pointer-events-auto group-hover/rail:opacity-100 active:cursor-grabbing!"
               @click.stop
             >
               <!-- 图标组件自身带 cursor-pointer，抓手光标必须加感叹号才生效 -->
@@ -271,6 +271,15 @@ onUnmounted(() => {
 
   .rail-row .module-name,
   .rail-row .rail-meta {
+    display: none;
+  }
+
+  /* 触屏端保留模块图标并关闭悬停拖拽层，单次点击直接交给模块行。 */
+  .module-sidebar-icon {
+    opacity: 1 !important;
+  }
+
+  .module-sidebar-drag {
     display: none;
   }
 
