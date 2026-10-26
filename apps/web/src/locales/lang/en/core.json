@@ -42,7 +42,8 @@
     "theme": {
     "system": "Follow System",
     "dark": "Dark Mode",
-    "light": "Light Mode"
+    "light": "Light Mode",
+    "eyeCare": "Eye Care Mode"
     },
     "user": {
     "name": "XiaoYang",

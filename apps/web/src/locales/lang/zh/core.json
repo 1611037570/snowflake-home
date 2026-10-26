@@ -43,7 +43,8 @@
     "theme": {
     "system": "跟随系统",
     "dark": "暗黑模式",
-    "light": "白天模式"
+    "light": "白天模式",
+    "eyeCare": "护眼模式"
     },
     "user": {
     "name": "小羊",

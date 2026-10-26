@@ -114,6 +114,40 @@
   --sf-transparent-3: color-mix(in oklab, oklch(46.099% 0.06009 259.259) 40%, transparent);
   --sf-border: rgba(255, 255, 255, 0.25);
 }
+/* 护眼模式：暖纸体系，与亮/暗并列的第三套变量，仅手动选择。
+   纸色不是逐层手调的，是同一套色相（oklch 94）按深度递推出来的：明度从最亮面 0.992
+   到最深层 0.868，彩度随深度递增 0.005 → 0.025，r-b 依次 5 / 11 / 17 / 18 / 21 / 23。
+   三层主平面必须等间距：画布 → 次级面 → 最亮面每档对比 1.07，画布到最亮面 1.15；
+   最亮面要留在接近白的位置，否则卡片和面板糊成一片，就没有层次了。
+   墨色与强调色保持冷色（ink 255°、accent 184°），冷墨压暖纸才有温差；
+   不加纯白——最亮面也是纸白，白色挨着暖纸会显出一块冷斑。
+   soft 色一律由主色与纸白在 oklab 里按比例混出，保证软色本身也带纸温。 */
+.eye-care {
+  --sf-theme: #0e6b62;
+  --sf-theme-2: color-mix(in oklab, #0e6b62 50%, transparent);
+  --sf-theme-3: color-mix(in oklab, #0e6b62 10%, #fdfcf8);
+  --sf-success: #17795a;
+  --sf-success-2: color-mix(in oklab, #17795a 10%, #fdfcf8);
+  --sf-warning: #8f6408;
+  --sf-warning-2: color-mix(in oklab, #8f6408 10%, #fdfcf8);
+  --sf-error: #b02a1e;
+  --sf-error-2: color-mix(in oklab, #b02a1e 8%, #fdfcf8);
+  --sf-text: #1b1e22;
+  --sf-text-2: #4b5158;
+  --sf-text-3: #757b82;
+  --sf-base: #1b1e22;
+  --sf-primary: #fdfcf8;
+  --sf-page: #f0ecdf;
+  --sf-background: #f6f4eb;
+  --sf-background-2: #e4e0cf;
+  --sf-background-3: #d9d4c2;
+  /* 护眼模式的模块头部背景 */
+  --sf-module-header: #ede9db;
+  --sf-transparent: rgba(246, 244, 235, 0.8);
+  --sf-transparent-2: rgba(246, 244, 235, 0.6);
+  --sf-transparent-3: rgba(246, 244, 235, 0.4);
+  --sf-border: #e3dece;
+}
 
 /* 自定义工具类 */
 @layer utilities {

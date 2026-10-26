@@ -3,9 +3,9 @@
     <!-- 点击入口只展开选项，选择具体模式后才修改主题。 -->
     <SfDropdown trigger="click">
       <SfIcon
-        :icon="theme === 'dark' ? 'twemoji:sun' : 'ri:moon-clear-fill'"
+        :icon="theme === 'dark' ? 'twemoji:sun' : theme === 'eye-care' ? 'ri:leaf-fill' : 'ri:moon-clear-fill'"
         size="8"
-        style="color: #f3d776"
+        :style="{ color: theme === 'eye-care' ? 'var(--sf-theme)' : '#f3d776' }"
         class="transition-all duration-300 hover:scale-120"
       />
       <template #dropdown>
@@ -40,6 +40,7 @@ const list = computed(() => {
     { name: $t("core.theme.system"), value: "system" },
     { name: $t("core.theme.light"), value: "light" },
     { name: $t("core.theme.dark"), value: "dark" },
+    { name: $t("core.theme.eyeCare"), value: "eye-care" },
   ];
 });
 
