@@ -67,7 +67,9 @@
       // 打包时写入公开路由的信息，应用脚本加载前按地址更新同一个 index.html。
       (() => {
         const pages = <%- resumeSeoMetadata %>;
-        const route = window.location.pathname.replace(/\/+$/, "") || "/";
+        // 根路径按入口路由输出，canonical 指到入口页，避免根域与 /resume 形成两个重复首页
+        const pathname = window.location.pathname.replace(/\/+$/, "");
+        const route = pathname || "<%= defaultRoute %>";
         const page = pages[route];
         if (!page) return;
         const origin = <%- JSON.stringify(siteUrl) %> || window.location.origin;

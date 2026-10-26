@@ -161,6 +161,7 @@ export default ({ mode }: { mode: string }) => {
           data: {
             defaultLang: settings.defaultLanguage, // 默认语言
             siteUrl: settings.siteUrl, // 站点绝对地址，用于 og 卡片与结构化数据
+            defaultRoute: settings.defaultRoute, // 产品入口路由，根路径按它输出页面信息与 canonical
             // 初始 HTML 与客户端按同一入口路由选择产品信息。
             siteMetadata: resolveSiteMetadata(
               settings.defaultRoute,

@@ -70,8 +70,8 @@
           </div>
         </article>
 
-        <!-- 右侧：真实简历预览，替换原占位截图区 -->
-        <div class="relative mx-auto w-full max-w-[380px]">
+        <!-- 右侧：真实简历预览，替换原占位截图区；示例简历是假数据，禁止搜索引擎把它当成页面正文抓进摘要 -->
+        <div class="relative mx-auto w-full max-w-[380px]" data-nosnippet>
           <!-- 首屏简历展示与翻页切换 -->
           <HeroSwitcher :items="heroSwitcherItems" @change="handleHeroChange">
             <!-- 鼠标经过简历时浮出的创建入口，点击用当前范本直接创建简历；层级需高于叠放卡片才能显示与点击 -->
