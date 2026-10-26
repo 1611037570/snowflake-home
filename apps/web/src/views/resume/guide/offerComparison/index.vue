@@ -340,8 +340,8 @@ function formatScore(score: number) {
   <SfScrollbar class="h-full bg-sf-page" flush>
     <main class="mx-auto w-full max-w-screen-xl px-3 py-3 text-sf-text">
       <nav aria-label="面包屑" class="text-sm text-sf-text-2">
-        <RouterLink to="/resume/guide" class="transition-colors hover:text-sf-theme">
-          求职中心
+        <RouterLink to="/resume/tools" class="transition-colors hover:text-sf-theme">
+          求职工具
         </RouterLink>
         <span class="px-3" aria-hidden="true">/</span>
         <span aria-current="page">Offer 对比决策器</span>
@@ -579,7 +579,7 @@ function formatScore(score: number) {
             aria-hidden="true"
           ></span>
 
-          <p class="text-xs font-semibold text-sf-theme">轻舟简历 · 求职中心</p>
+          <p class="text-xs font-semibold text-sf-theme">轻舟简历 · 求职工具</p>
           <h1 class="mt-3 text-xl font-bold">Offer 综合对比结果</h1>
           <p class="mt-3 text-base font-bold text-sf-text">{{ resultTitle }}</p>
 

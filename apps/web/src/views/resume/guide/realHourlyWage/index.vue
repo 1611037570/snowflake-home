@@ -191,8 +191,8 @@ function formatHourlyWage(value: number) {
   <SfScrollbar class="h-full bg-sf-page" flush>
     <main class="mx-auto w-full max-w-screen-xl px-3 py-3 text-sf-text">
       <nav aria-label="面包屑" class="text-sm text-sf-text-2">
-        <RouterLink to="/resume/guide" class="transition-colors hover:text-sf-theme">
-          求职中心
+        <RouterLink to="/resume/tools" class="transition-colors hover:text-sf-theme">
+          求职工具
         </RouterLink>
         <span class="px-3" aria-hidden="true">/</span>
         <span aria-current="page">真实时薪计算器</span>

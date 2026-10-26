@@ -50,8 +50,8 @@ function resetScore() {
   <SfScrollbar class="h-full bg-sf-page" flush>
     <main class="mx-auto w-full max-w-screen-xl px-3 py-3 text-sf-text">
       <nav aria-label="面包屑" class="text-sm text-sf-text-2">
-        <RouterLink to="/resume/guide" class="transition-colors hover:text-sf-theme">
-          求职中心
+        <RouterLink to="/resume/tools" class="transition-colors hover:text-sf-theme">
+          求职工具
         </RouterLink>
         <span class="px-3" aria-hidden="true">/</span>
         <span aria-current="page">离职决策快速评分</span>
@@ -180,7 +180,7 @@ function resetScore() {
               aria-hidden="true"
             ></span>
 
-            <p class="text-xs font-semibold text-sf-theme">轻舟简历 · 求职中心</p>
+            <p class="text-xs font-semibold text-sf-theme">轻舟简历 · 求职工具</p>
             <h2 class="mt-3 text-xl font-bold">工作去留评估结果</h2>
             <p class="mt-3 text-xs text-sf-text-2">当前工作综合得分</p>
             <p class="mt-3 text-4xl font-black text-sf-theme">

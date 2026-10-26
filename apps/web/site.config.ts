@@ -156,7 +156,28 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
-    route: "/resume/guide/resignation-score",
+    route: "/resume/tools",
+    changefreq: "monthly",
+    priority: 0.8,
+    locales: {
+      zh: {
+        title: "求职工具 - 离职评分、Offer 对比与真实时薪 | 轻舟简历",
+        description:
+          "三个求职决策工具：10 项离职决策评分表判断工作去留，Offer 对比决策器比较薪酬与用工条件，真实时薪计算器把加班通勤算进时薪。",
+        keywords:
+          "求职工具,离职决策,Offer对比,真实时薪计算器,工作去留,薪资对比,加班成本,求职决策工具",
+      },
+      en: {
+        title: "Job Search Tools - Resignation Score, Offer Comparison and Real Hourly Wage | Skiff Resume",
+        description:
+          "Three decision tools for job hunting: score whether a job is worth keeping, compare multiple offers on pay and employment terms, and calculate a real hourly wage including overtime and commute.",
+        keywords:
+          "job search tools,resignation decision,job offer comparison,real hourly wage calculator,career decision tools",
+      },
+    },
+  },
+  {
+    route: "/resume/tools/resignation-score",
     changefreq: "monthly",
     priority: 0.8,
     locales: {
@@ -175,7 +196,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
-    route: "/resume/guide/offer-comparison",
+    route: "/resume/tools/offer-comparison",
     changefreq: "monthly",
     priority: 0.8,
     locales: {
@@ -194,7 +215,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
-    route: "/resume/guide/real-hourly-wage",
+    route: "/resume/tools/real-hourly-wage",
     changefreq: "monthly",
     priority: 0.8,
     locales: {
@@ -209,6 +230,25 @@ export const SITE_CONFIGS: SiteConfig[] = [
         description:
           "Calculate your real hourly wage using annual cash income, work schedule, public holiday access, daily hours, commute and paid leave, with a standard five-day-week salary equivalent.",
         keywords: "real hourly wage calculator,overtime cost,commute cost,work schedule calculator,equivalent salary",
+      },
+    },
+  },
+  {
+    route: "/resume/settings",
+    changefreq: "monthly",
+    priority: 0.5,
+    locales: {
+      zh: {
+        title: "通用设置 - 模型配置与本地备份 | 轻舟简历",
+        description:
+          "在通用设置里选择每个助手使用的模型、添加自有模型服务，并绑定本地备份目录，编辑简历时自动把 JSON 草稿写进该目录。",
+        keywords: "轻舟简历设置,模型配置,API 模型,本地备份,简历备份目录,数据存放",
+      },
+      en: {
+        title: "General Settings - Model Configuration and Local Backup | Skiff Resume",
+        description:
+          "Choose which model each assistant uses, add your own model provider, and bind a local backup folder that receives a JSON draft whenever you edit a resume.",
+        keywords: "Skiff Resume settings,model configuration,API model,local backup,resume backup folder",
       },
     },
   },

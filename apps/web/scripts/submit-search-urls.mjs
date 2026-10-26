@@ -15,9 +15,11 @@ const PAGE_PATHS = [
   "/resume/ai",
   "/resume/statistics",
   "/resume/guide",
-  "/resume/guide/resignation-score",
-  "/resume/guide/offer-comparison",
-  "/resume/guide/real-hourly-wage",
+  "/resume/tools",
+  "/resume/tools/resignation-score",
+  "/resume/tools/offer-comparison",
+  "/resume/tools/real-hourly-wage",
+  "/resume/settings",
 ];
 
 /** IndexNow 配置：key 文件须能在站点根直接访问，文件内容即 key 本身。 */

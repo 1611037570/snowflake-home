@@ -36,6 +36,10 @@ const navList = [
     path: "/resume/guide", // 导航目标路径
   },
   {
+    key: "resumeNavTools", // 导航文案标识
+    path: "/resume/tools", // 导航目标路径
+  },
+  {
     key: "resumeNavSettings", // 导航文案标识
     path: "/resume/settings", // 导航目标路径
   },
