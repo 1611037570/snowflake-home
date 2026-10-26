@@ -65,13 +65,6 @@ const resumeChildren: RouteRecordRaw[] = [
     component: () => import("@/views/resume/editor/index.vue"),
     meta: { hideResumeLayout: true, localeFiles: ["resume", "resume-editor"] },
   },
-  // 左栏重构静态视觉 Demo：只画界面，不连接编辑逻辑
-  {
-    path: "editor-demo",
-    name: "resume-editor-demo",
-    component: () => import("@/views/resume/editorDemo/index.vue"),
-    meta: { hideResumeLayout: true },
-  },
   {
     path: "print",
     name: "resume-print",

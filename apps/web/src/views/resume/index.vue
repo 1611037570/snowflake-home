@@ -62,21 +62,19 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
       <!-- <SfFooter /> -->
     </div>
   </main>
-  <!-- 编辑器由右侧工具轨承接分享与反馈入口，避免重复显示悬浮操作；左栏 Demo 为纯静态页面，不挂悬浮入口。 -->
+  <!-- 编辑器由右侧工具轨承接分享与反馈入口，避免重复显示悬浮操作；打印预览页不挂悬浮入口。 -->
   <IssueFeedback
     v-if="
       resumeReady &&
       route.name !== 'resume-print' &&
-      route.name !== 'editor' &&
-      route.name !== 'resume-editor-demo'
+      route.name !== 'editor'
     "
   />
   <Share
     v-if="
       resumeReady &&
       route.name !== 'resume-print' &&
-      route.name !== 'editor' &&
-      route.name !== 'resume-editor-demo'
+      route.name !== 'editor'
     "
   />
 </template>
