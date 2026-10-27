@@ -115,6 +115,8 @@ onMounted(() => {});
 
 const toolbarConfig = {
   toolbarKeys: [
+    // 清除格式放在最前：选中文本点一下即可去掉加粗、斜体、颜色、背景色等全部行内样式
+    "clearStyle",
     "bold",
     "italic",
     "underline",
