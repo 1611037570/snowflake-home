@@ -307,6 +307,7 @@
   "ai": "AI",
   "template": "Templates",
   "renameResume": "Rename Resume",
+  "feedbackShort": "Feedback",
   "editTitle": "Edit title",
   "moduleTitleHint": "Use the default title whenever possible. If you change it, preserve its original meaning to avoid affecting ATS recognition.",
   "titlePlaceholder": "Please enter a title",
