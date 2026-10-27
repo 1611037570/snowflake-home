@@ -331,9 +331,18 @@ const confirmLink = async () => {
   padding: 0 !important;
   padding-bottom: 3px !important;
 }
-// 让编辑器内容自然撑开，由外层滚动容器负责滚动
+// 让编辑器内容自然撑开，由外层滚动容器负责滚动。
+// 高度写 100% 时，正文会锁定在外层可视高度内：超出部分既不撑开容器也不产生滚动条，
+// 长文粘贴后只看到前几段，后面被裁掉。
 :deep(.w-e-scroll) {
-  height: 100% !important;
+  height: auto !important;
+}
+// SfScrollbar 统一把内容容器钉成 100% 高，正文作为它的子节点同样会被裁断。
+// 这里只在本组件内放开，其它用到 SfScrollbar 的布局不受影响。
+:deep(.el-scrollbar__view) {
+  display: block !important;
+  height: auto !important;
+  min-height: 100%;
 }
 // 正文仅保留顶部留白，取消底部及默认左右留白。
 :deep(.w-e-text-container [data-slate-editor]) {
