@@ -5,6 +5,7 @@
     :class="[bg, sfBorder]"
     @mousedown.capture="handleLinkMenuMouseDown"
     @click.capture="handleLinkMenuClick"
+    @paste.capture="handleExternalPaste"
   >
     <div class="relative">
       <!-- 编辑器实例创建成功后再挂载工具栏，避免工具栏在 editor 就绪前初始化报错 -->
@@ -65,6 +66,9 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
+import DOMPurify from "dompurify";
+import { ElMessage } from "element-plus";
+import { $t } from "@/locales";
 import {
   Editor,
   getSelectedEditorLink,
@@ -144,6 +148,68 @@ const handleCreated = (editor) => {
 
 const handleChange = (editor) => {
   updateCurrentLength(editor);
+};
+
+// 外部贴入内容的清洗口径：只做安全清洗（去脚本、去内联事件、去编辑器未挂载的媒体节点），
+// 标签与属性的最终收敛由预览层按 RICH_TEXT_SANITIZE_CONFIG 白名单完成，此处不再压缩结构，
+// 避免粘贴进来的内容在入库前就被改形。
+const PASTE_SANITIZE_CONFIG = {
+  // 编辑器没有挂载媒体模块，插入这些节点会让解析直接失败。
+  FORBID_TAGS: ["img", "video", "audio", "iframe"],
+};
+
+// 外部带格式内容粘贴兜底。
+// 编辑器内核的 paste 判定要求剪贴板只有一种类型（纯文本）才接管：
+//   clipboardData.getData("text/plain") !== "" && clipboardData.types.length === 1
+// 带格式的文案（网页 / Word / 聊天工具）types 为 text/plain + text/html，判定不成立，
+// 内核不 preventDefault 也不 insertData，只能等 beforeinput 的 dataTransfer；
+// beforeinput 取不到 dataTransfer 时两个分支都不执行，结果是「不插入、不报错」。
+// 另外 insertData → dangerouslyInsertHtml 在过滤后没有可用节点时会直接 return，
+// 同样表现为静默丢失。这里在捕获阶段自行接管，任何一条失败都降级为纯文本插入。
+const handleExternalPaste = (event) => {
+  const editor = editorRef.value;
+  if (!editor || editor.isDisabled()) return;
+  const target = event.target;
+  // 只接管正文区域，工具栏与链接弹窗保持默认粘贴行为。
+  if (!(target instanceof Element) || !target.closest("[data-slate-editor]")) return;
+  const data = event.clipboardData;
+  if (!data) return;
+  const html = data.getData("text/html");
+  // 纯文本粘贴由编辑器内核正常处理，不介入。
+  if (!html) return;
+
+  event.preventDefault();
+  event.stopPropagation();
+
+  const plainText = data.getData("text/plain");
+  // 用正文快照判断是否真的插入成功：内核在过滤后没有可用节点时既不报错也不插入。
+  const textBeforePaste = editor.getText();
+  let insertError = null;
+  try {
+    // 统一走白名单清洗，避免外部 HTML 带入脚本与内联事件。
+    editor.dangerouslyInsertHtml(DOMPurify.sanitize(html, PASTE_SANITIZE_CONFIG));
+  } catch (error) {
+    insertError = error;
+  }
+  // 插入成功即保持静默，正常粘贴不打扰用户。
+  if (editor.getText() !== textBeforePaste) return;
+
+  // 内容没进来必须让用户看见，任何降级都不允许静默发生。
+  if (insertError) console.warn("[wangEditor] 粘贴 HTML 解析失败，降级为纯文本插入", insertError);
+  if (!plainText) {
+    console.warn("[wangEditor] 粘贴内容没有可插入节点，也没有纯文本可降级");
+    ElMessage({ type: "error", message: $t("pasteContentLost"), grouping: true });
+    return;
+  }
+  console.warn("[wangEditor] 粘贴内容未插入，降级为纯文本");
+  try {
+    editor.insertText(plainText);
+  } catch (error) {
+    console.error("[wangEditor] 降级纯文本插入仍失败", error);
+    ElMessage({ type: "error", message: $t("pasteContentLost"), grouping: true });
+    return;
+  }
+  ElMessage({ type: "warning", message: $t("pasteHtmlFallback"), grouping: true });
 };
 
 // 打开外部弹窗前保存当前选中文字，关闭内置链接浮层依赖。

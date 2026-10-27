@@ -176,6 +176,8 @@
   "linkTextPlaceholder": "请输入链接文字",
   "linkUrl": "链接地址",
   "linkUrlPlaceholder": "请输入链接地址",
+  "pasteHtmlFallback": "外部格式无法解析，已按纯文本粘贴",
+  "pasteContentLost": "粘贴失败，请改为纯文本后重试",
   "educationScore": "成绩/GPA",
   "educationScorePlaceholder": "如：3.8/4.0",
   "collegeName": "学院名称",
