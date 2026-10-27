@@ -152,12 +152,41 @@ const handleChange = (editor) => {
   updateCurrentLength(editor);
 };
 
-// 外部贴入内容的清洗口径：只做安全清洗（去脚本、去内联事件、去编辑器未挂载的媒体节点），
-// 标签与属性的最终收敛由预览层按 RICH_TEXT_SANITIZE_CONFIG 白名单完成，此处不再压缩结构，
-// 避免粘贴进来的内容在入库前就被改形。
+// 外部贴入内容的清洗口径：安全清洗（去脚本、去内联事件、去编辑器未挂载的媒体节点），
+// 再配合 stripPastedTypography 摘掉主题控制的排版属性，只留简历支持的行内样式；
+// 结构标签的最终收敛仍由预览层按 RICH_TEXT_SANITIZE_CONFIG 白名单完成。
 const PASTE_SANITIZE_CONFIG = {
   // 编辑器没有挂载媒体模块，插入这些节点会让解析直接失败。
   FORBID_TAGS: ["img", "video", "audio", "iframe"],
+};
+
+// 只保留简历支持的行内样式（加粗、斜体、下划线、颜色、背景色、列表、链接），
+// 其余排版属性一律摘掉：字号、字体、行高、字距、缩进、内外边距都由简历主题与排版设置统一控制。
+// 外部值一旦被解析成行内标记存进简历，预览和导出的 PDF 就会脱离主题，和产品排版对不上。
+const PASTED_TYPOGRAPHY_PROPERTIES = [
+  "font-size",
+  "font-family",
+  "line-height",
+  "letter-spacing",
+  "text-indent",
+  "margin",
+  "padding",
+];
+
+const stripPastedTypography = (html) => {
+  const container = document.createElement("div");
+  container.innerHTML = html;
+  container.querySelectorAll("[style]").forEach((node) => {
+    PASTED_TYPOGRAPHY_PROPERTIES.forEach((property) => node.style.removeProperty(property));
+    // 属性被清空后不保留空 style。
+    if (!node.getAttribute("style")?.trim()) node.removeAttribute("style");
+  });
+  // 兼容 <font size="5" face="宋体"> 这类老式写法。
+  container.querySelectorAll("font[size], font[face]").forEach((node) => {
+    node.removeAttribute("size");
+    node.removeAttribute("face");
+  });
+  return container.innerHTML;
 };
 
 // 外部带格式内容粘贴兜底。
@@ -189,7 +218,8 @@ const handleExternalPaste = (event) => {
   let insertError = null;
   try {
     // 统一走白名单清洗，避免外部 HTML 带入脚本与内联事件。
-    editor.dangerouslyInsertHtml(DOMPurify.sanitize(html, PASTE_SANITIZE_CONFIG));
+    const sanitized = DOMPurify.sanitize(html, PASTE_SANITIZE_CONFIG);
+    editor.dangerouslyInsertHtml(stripPastedTypography(sanitized));
   } catch (error) {
     insertError = error;
   }
