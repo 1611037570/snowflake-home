@@ -389,7 +389,7 @@
   "exportFormat": "导出格式",
   "exportFormatDescription": "选择适合你的简历格式，用于投递、分享或备份",
   "exportCloudPrivacyTip": "云端导出会临时上传简历数据，仅用于生成文件。轻舟简历不会在服务器保存简历内容或导出文件。",
-  "exportMobileTip": "手机或平板推荐选择 PDF 云端导出，减少不同移动浏览器打印造成的分页和排版差异。",
+  "exportMobileTip": "手机或平板导出 PDF 时，请在系统打印预览中确认分页与排版后再保存。",
   "exportCloudUnavailableTip": "云端服务器暂不可用，本地打印效果与云端一致，可放心使用",
   "resumeConfig": "简历配置",
   "local": "本地",
