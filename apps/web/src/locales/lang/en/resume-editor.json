@@ -180,6 +180,8 @@
   "linkUrlPlaceholder": "Enter link URL",
   "pasteHtmlFallback": "Formatting could not be read, pasted as plain text",
   "pasteContentLost": "Paste failed. Please paste as plain text and try again",
+  "expandEditor": "Expand editor",
+  "expandEditorTitle": "Edit content",
   "educationScore": "Grade/GPA",
   "educationScorePlaceholder": "e.g. 3.8/4.0",
   "collegeName": "Department",

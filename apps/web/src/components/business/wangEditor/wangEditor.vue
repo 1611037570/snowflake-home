@@ -62,10 +62,51 @@
       </footer>
     </form>
   </SfModal>
+
+  <!-- 展开编辑：弹窗内使用独立编辑器实例，确认后才写回主编辑器 -->
+  <SfModal v-model="expandVisible" :title="$t('expandEditorTitle')" width="720px">
+    <div
+      class="flex h-[70vh] min-h-0 flex-col gap-3"
+      @paste.capture="(event) => handleExternalPaste(event, expandEditorRef)"
+      @mousedown.capture="handleLinkMenuMouseDown"
+      @click.capture="(event) => handleLinkMenuClick(event, expandEditorRef)"
+    >
+      <!-- 弹窗工具栏与主编辑器共用同一份配置，实例就绪后再渲染 -->
+      <div v-if="expandEditorRef" class="flex min-w-0 items-center rounded-2xl border border-sf-b px-3">
+        <div class="min-w-0 flex-1">
+          <Toolbar :editor="expandEditorRef" :defaultConfig="expandToolbarConfig" :mode="mode" />
+        </div>
+      </div>
+      <!-- 正文沿用主编辑器的滚动口径：外层 SfScrollbar 负责滚动，正文自然撑开 -->
+      <SfScrollbar
+        flush
+        max-height="100%"
+        class="min-h-0 flex-1 overflow-hidden rounded-2xl border border-sf-b"
+      >
+        <div class="p-3">
+          <Editor
+            :style="{ height: 'auto', minHeight: '80px' }"
+            v-model="expandHtml"
+            :defaultConfig="editorConfig"
+            :mode="mode"
+            @onCreated="handleExpandCreated"
+            @onChange="handleExpandChange"
+          />
+        </div>
+      </SfScrollbar>
+      <footer class="flex items-center justify-between gap-3">
+        <span class="text-xs text-sf-text-2">{{ expandLength }}/{{ props.maxLength }}</span>
+        <div class="flex gap-3">
+          <SfButton type="bg" @click="expandVisible = false">{{ $t("cancel") }}</SfButton>
+          <SfButton @click="confirmExpand">{{ $t("save") }}</SfButton>
+        </div>
+      </footer>
+    </div>
+  </SfModal>
 </template>
 
 <script setup>
-import { computed, onBeforeUnmount, onMounted, ref, shallowRef } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
 import DOMPurify from "dompurify";
 import { ElMessage } from "element-plus";
 import { $t } from "@/locales";
@@ -73,6 +114,7 @@ import {
   Editor,
   getSelectedEditorLink,
   insertEditorLink,
+  registerExpandHandler,
   Toolbar,
   updateEditorLink,
 } from "./editorLoader";
@@ -103,6 +145,8 @@ const linkMode = ref("insert");
 const linkText = ref("");
 const linkUrl = ref("");
 const canInsertLink = computed(() => Boolean(linkUrl.value.trim()));
+// 发起链接操作的编辑器实例，用于把链接插回展开弹窗或主编辑器
+const linkTargetEditor = shallowRef();
 
 // 根据编辑器实例的纯文本内容统计当前字数，仅用于展示
 const currentLength = ref(0);
@@ -128,10 +172,17 @@ const toolbarConfig = {
     "insertLink",
     "undo",
     "redo",
+    // 展开编辑放在工具栏末尾，点击打开大尺寸弹窗
+    "expandEditor",
   ],
 };
 // 关闭编辑器内部滚动，避免出现嵌套滚动条
 const editorConfig = { placeholder: "请输入内容...", scroll: false };
+
+// 弹窗本身就处于展开状态，工具栏去掉展开按钮避免出现无效入口
+const expandToolbarConfig = {
+  toolbarKeys: toolbarConfig.toolbarKeys.filter((key) => key !== "expandEditor"),
+};
 
 const mode = "simple"; // 或 'simple'
 
@@ -142,10 +193,61 @@ onBeforeUnmount(() => {
   editor.destroy();
 });
 
+// ——————————————展开编辑——————————————
+// 弹窗显隐，弹窗内独立编辑，确认后才写回主编辑器
+const expandVisible = ref(false);
+// 弹窗内编辑器的内容，未确认前不影响表单数据
+const expandHtml = ref("");
+// 弹窗内编辑器的纯文本字数
+const expandLength = ref(0);
+// 弹窗内编辑器实例，弹窗关闭后释放
+const expandEditorRef = shallowRef();
+
+const updateExpandLength = (editor) => {
+  expandLength.value = editor.getText().length;
+};
+
+// 以主编辑器的当前内容作为弹窗编辑的起点
+const openExpand = () => {
+  expandHtml.value = String(valueHtml.value ?? "");
+  expandLength.value = currentLength.value;
+  expandVisible.value = true;
+};
+
+const handleExpandCreated = (editor) => {
+  expandEditorRef.value = editor;
+  updateExpandLength(editor);
+};
+
+const handleExpandChange = (editor) => {
+  updateExpandLength(editor);
+};
+
+// 确认后写回主编辑器；取消、关闭弹窗与 ESC 都直接丢弃弹窗内的改动
+const confirmExpand = () => {
+  valueHtml.value = expandHtml.value;
+  currentLength.value = expandLength.value;
+  expandVisible.value = false;
+};
+
+// 弹窗内的编辑器实例不会被组件卸载自动销毁，关闭时手动回收
+watch(
+  expandVisible,
+  (visible) => {
+    if (visible) return;
+    const editor = expandEditorRef.value;
+    expandEditorRef.value = null;
+    editor?.destroy();
+  },
+  { flush: "pre" },
+);
+
 const handleCreated = (editor) => {
   editorRef.value = editor; // 记录 editor 实例，重要！
   finishReady();
   updateCurrentLength(editor);
+  // 工具栏上的展开按钮交由本组件打开弹窗
+  registerExpandHandler(editor, openExpand);
 };
 
 const handleChange = (editor) => {
@@ -197,8 +299,7 @@ const stripPastedTypography = (html) => {
 // beforeinput 取不到 dataTransfer 时两个分支都不执行，结果是「不插入、不报错」。
 // 另外 insertData → dangerouslyInsertHtml 在过滤后没有可用节点时会直接 return，
 // 同样表现为静默丢失。这里在捕获阶段自行接管，任何一条失败都降级为纯文本插入。
-const handleExternalPaste = (event) => {
-  const editor = editorRef.value;
+const handleExternalPaste = (event, editor = editorRef.value) => {
   if (!editor || editor.isDisabled()) return;
   const target = event.target;
   // 只接管正文区域，工具栏与链接弹窗保持默认粘贴行为。
@@ -245,9 +346,10 @@ const handleExternalPaste = (event) => {
 };
 
 // 打开外部弹窗前保存当前选中文字，关闭内置链接浮层依赖。
-const openLinkModal = async (mode = "insert") => {
-  const editor = editorRef.value;
+const openLinkModal = async (mode = "insert", editor = editorRef.value) => {
   if (!editor) return;
+  // 记录发起链接操作的编辑器，确认时插回到同一个编辑器
+  linkTargetEditor.value = editor;
   linkMode.value = mode;
   if (mode === "edit") {
     const link = await getSelectedEditorLink(editor);
@@ -273,14 +375,14 @@ const handleLinkMenuMouseDown = (event) => {
 };
 
 // 捕获原链接按钮点击，仅打开项目弹窗，不执行编辑器内置链接弹层。
-const handleLinkMenuClick = (event) => {
+const handleLinkMenuClick = (event, editor = editorRef.value) => {
   const target = event.target;
   if (!(target instanceof Element)) return;
   const menu = target.closest('[data-menu-key="insertLink"], [data-menu-key="editLink"]');
   if (!menu) return;
   event.preventDefault();
   event.stopPropagation();
-  openLinkModal(menu.getAttribute("data-menu-key") === "editLink" ? "edit" : "insert");
+  openLinkModal(menu.getAttribute("data-menu-key") === "editLink" ? "edit" : "insert", editor);
 };
 
 // 未填写协议时按网页地址补全，已填写的协议保持原值。
@@ -292,7 +394,7 @@ const normalizeLinkUrl = (value) => {
 
 // 确认后恢复编辑器选区并插入链接节点，弹窗始终位于编辑器外层。
 const confirmLink = async () => {
-  const editor = editorRef.value;
+  const editor = linkTargetEditor.value ?? editorRef.value;
   const url = normalizeLinkUrl(linkUrl.value);
   const text = linkText.value.trim() || url;
   if (!editor || !url) return;
