@@ -64,7 +64,12 @@
   </SfModal>
 
   <!-- 展开编辑：弹窗内使用独立编辑器实例，确认后才写回主编辑器 -->
-  <SfModal v-model="expandVisible" :title="$t('expandEditorTitle')" width="720px">
+  <SfModal
+    v-model="expandVisible"
+    :title="$t('expandEditorTitle')"
+    width="720px"
+    :before-close="guardExpandClose"
+  >
     <div
       class="flex h-[70vh] min-h-0 flex-col gap-3"
       @paste.capture="(event) => handleExternalPaste(event, expandEditorRef)"
@@ -97,7 +102,7 @@
       <footer class="flex items-center justify-between gap-3">
         <span class="text-xs text-sf-text-2">{{ expandLength }}/{{ props.maxLength }}</span>
         <div class="flex gap-3">
-          <SfButton type="bg" @click="expandVisible = false">{{ $t("cancel") }}</SfButton>
+          <SfButton type="bg" @click="closeExpand">{{ $t("cancel") }}</SfButton>
           <SfButton @click="confirmExpand">{{ $t("save") }}</SfButton>
         </div>
       </footer>
@@ -110,6 +115,7 @@ import { computed, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vu
 import DOMPurify from "dompurify";
 import { ElMessage } from "element-plus";
 import { $t } from "@/locales";
+import { confirm } from "@/components/business/confirm";
 import {
   Editor,
   getSelectedEditorLink,
@@ -200,6 +206,10 @@ const expandVisible = ref(false);
 const expandHtml = ref("");
 // 弹窗内编辑器的纯文本字数
 const expandLength = ref(0);
+// 弹窗内容是否有未保存的改动，用于关闭前的误关确认
+const expandDirty = ref(false);
+// 打开弹窗时的内容快照，只在编辑器内部比较，判断是否被改动
+let expandSnapshot = "";
 // 弹窗内编辑器实例，弹窗关闭后释放
 const expandEditorRef = shallowRef();
 
@@ -207,23 +217,49 @@ const updateExpandLength = (editor) => {
   expandLength.value = editor.getText().length;
 };
 
+// 有未保存的改动时先确认，返回 false 表示继续留在弹窗里
+const guardExpandClose = async () => {
+  if (!expandDirty.value) return true;
+  try {
+    await confirm($t("expandDiscardContent"), $t("expandDiscardTitle"), {
+      cancelText: $t("cancel"),
+      confirmText: $t("expandDiscardConfirm"),
+    });
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+// 取消按钮与弹窗关闭出口共用同一个守卫
+const closeExpand = async () => {
+  if (!(await guardExpandClose())) return;
+  expandVisible.value = false;
+};
+
 // 以主编辑器的当前内容作为弹窗编辑的起点
 const openExpand = () => {
   expandHtml.value = String(valueHtml.value ?? "");
+  expandSnapshot = expandHtml.value;
+  expandDirty.value = false;
   expandLength.value = currentLength.value;
   expandVisible.value = true;
 };
 
 const handleExpandCreated = (editor) => {
   expandEditorRef.value = editor;
+  // 编辑器会把 HTML 规范化，创建后以规范化结果作为未修改基准
+  expandSnapshot = editor.getHtml();
+  expandDirty.value = false;
   updateExpandLength(editor);
 };
 
 const handleExpandChange = (editor) => {
   updateExpandLength(editor);
+  expandDirty.value = editor.getHtml() !== expandSnapshot;
 };
 
-// 确认后写回主编辑器；取消、关闭弹窗与 ESC 都直接丢弃弹窗内的改动
+// 保存才写回主编辑器；取消、右上角关闭与 ESC 在有改动时会先弹确认
 const confirmExpand = () => {
   valueHtml.value = expandHtml.value;
   currentLength.value = expandLength.value;

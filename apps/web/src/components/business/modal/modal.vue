@@ -30,7 +30,7 @@
             {{ title }}
             <div class="absolute top-1/2 -right-1 z-2 h-9 w-9 -translate-y-1/2">
               <SfIcon
-                @click="modeValue = false"
+                @click="requestClose"
                 icon="carbon:close-outline"
                 size="6"
                 boxSize="9"
@@ -67,6 +67,8 @@ const props = defineProps({
   width: { type: String, default: "" },
   /** 是否全屏显示（默认 false） */
   full: { type: Boolean, default: false },
+  /** 关闭前的守卫，返回 false 可阻止关闭，支持异步返回 Promise */
+  beforeClose: { type: Function, default: undefined },
 });
 
 // ==================== 全局状态 ====================
@@ -84,9 +86,26 @@ const isLocked = useScrollLock(document.body);
 /** 缓存遮罩层边界信息，避免鼠标移动时重复读取 */
 let maskRect = null;
 
+// 统一的关闭入口：右上角关闭按钮与 ESC 都先过守卫，未传守卫时直接关闭
+// 守卫执行期间忽略重复触发，避免连点关闭按钮弹出多个确认框
+let closing = false;
+const requestClose = async () => {
+  if (closing) return;
+  closing = true;
+  try {
+    if (props.beforeClose) {
+      const allowed = await props.beforeClose();
+      if (allowed === false) return;
+    }
+    modeValue.value = false;
+  } finally {
+    closing = false;
+  }
+};
+
 // ==================== 键盘事件 ====================
 // ESC 关闭交给弹层仲裁：叠加确认框时只关闭最上层，本弹窗保持打开。
-useOverlayKeys({ escape: () => (modeValue.value = false) }, () => modeValue.value);
+useOverlayKeys({ escape: requestClose }, () => modeValue.value);
 
 /**
  * 弹窗打开与关闭的联动处理
