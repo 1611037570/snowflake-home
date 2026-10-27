@@ -330,15 +330,16 @@ const confirmLink = async () => {
   height: 24px; // 按钮高度
   padding: 0 4px; // 按钮左右留白，控制按钮宽度
 }
+// 选中态不铺背景底色，只让图标变成主题色
 :deep(.w-e-bar-item .active) {
-  background-color: var(--color-sf-theme-2) !important;
-}
-// 修改工具栏按钮hover样式
-:deep(.w-e-bar-item button:hover) {
+  background-color: transparent;
   svg {
-    fill: var(--color-sf-theme) !important;
+    fill: var(--color-sf-theme);
   }
-  background: none;
+}
+// 修改工具栏按钮hover样式：只给中性背景色反馈，图标不变色
+:deep(.w-e-bar-item button:hover) {
+  background-color: var(--color-sf-bg-2);
 }
 // 修改工具栏按钮下拉菜单hover样式
 :deep(.w-e-menu-tooltip-v5) {
