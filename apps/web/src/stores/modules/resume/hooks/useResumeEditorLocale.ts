@@ -40,6 +40,8 @@ const TEXT_KEYS_SOURCE = `
   请选择出生日期: "birthdayPlaceholder",
   年龄: "age",
   日期: "dateDisplay",
+  实际整年: "workYearsExact",
+  四舍五入: "workYearsRound",
   性别: "sex",
   学历: "educationLevel",
   请选择学历: "educationLevelPlaceholder",

@@ -73,6 +73,8 @@
   "birthdayPlaceholder": "请选择出生日期",
   "age": "年龄",
   "dateDisplay": "日期",
+  "workYearsExact": "实际整年",
+  "workYearsRound": "四舍五入",
   "sex": "性别",
   "sexPlaceholder": "请选择性别",
   "educationLevel": "学历",

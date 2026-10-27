@@ -5,6 +5,7 @@ import { resolveIcon } from "@/views/resume/editor/data/iconCategories";
 import { isUserCustomFieldKey } from "@/stores/modules/resume/hooks/useUserCustomField";
 import { getUserSubtitleKeys } from "@/stores/modules/resume/hooks/useUserSubtitle";
 import { getInfoSeparatorMark } from "@/domain/resume/theme/uiConfig";
+import { calcWorkYears } from "@/domain/resume/workYears";
 import { getPreviewText } from "@/views/resume/editor/preview/shared/i18n";
 import UserContactItem from "./userContactItem.vue";
 import { useUserFieldVisibility } from "../useUserFieldVisibility";
@@ -43,6 +44,8 @@ const ui = computed(() => previewData.value?.user?.ui || {});
 const fieldIcon = (key) => resolveIcon(ui.value?.[key]?.icon);
 // 出生日期展示形态：年龄或出生日期，未配置时按年龄展示
 const birthdayDisplay = computed(() => ui.value?.birthday?.display || "age");
+// 参加工作时间展示形态：工作年限按实际整年或四舍五入展示，未配置时按实际整年
+const workTimeDisplay = computed(() => ui.value?.workTime?.display || "exact");
 // 组合字段沿用全局分隔符，避免内部仍固定为圆点。
 const joinInfo = (items) => {
   const mark = getInfoSeparatorMark(infoSeparator.value);
@@ -65,13 +68,8 @@ const age = computed(() => {
 // 按个人资料中的参加工作时间计算工作经验，避免依赖全局当前简历状态
 const workYearsNumber = computed(() => {
   if (isUserFieldHidden("workTime")) return 0;
-  const workTime = user.value?.workTime;
-  if (!workTime) return 0;
-  const startDate = dayjs(workTime);
-  if (!startDate.isValid()) return 0;
-  const diffInMonths = dayjs().diff(startDate, "month");
-  const years = Math.floor((diffInMonths + 7) / 12);
-  return years > 0 ? years : 0;
+  // 取整口径跟随该字段的展示形态：默认实际整年，选四舍五入时把满 5 个月计入下一年
+  return calcWorkYears(user.value?.workTime, { round: workTimeDisplay.value === "round" });
 });
 // 根据信息位置切换布局，并保持对应的水平对齐方式
 const useFlexLayout = computed(() => !props.singleColumnGrid && userInfoLayout?.value === "flex");

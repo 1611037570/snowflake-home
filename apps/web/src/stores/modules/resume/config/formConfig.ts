@@ -445,6 +445,11 @@ export const DEFAULT_USER_FORM = [
             tip: "推荐必填",
             addable: true,
             defaultAdded: true,
+            // 展示形态：工作年限按实际整年计，或把满 5 个月计入下一年
+            displayOptions: [
+              { label: "实际整年", value: "exact" },
+              { label: "四舍五入", value: "round" },
+            ],
             props: {
               placeholder: "请选择参加工作时间",
               valueFormat: "YYYY.MM",

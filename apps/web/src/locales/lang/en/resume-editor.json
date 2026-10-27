@@ -73,6 +73,8 @@
   "birthdayPlaceholder": "Please select your date of birth",
   "age": "Age",
   "dateDisplay": "Date",
+  "workYearsExact": "Full years",
+  "workYearsRound": "Rounded",
   "sex": "Gender",
   "sexPlaceholder": "Please select your gender",
   "educationLevel": "Education",

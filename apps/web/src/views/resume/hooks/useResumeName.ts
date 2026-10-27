@@ -5,25 +5,12 @@ import { computed } from "vue";
 import { storeToRefs } from "pinia";
 import dayjs from "dayjs";
 import i18n from "@/locales";
+import { calcWorkYears } from "@/domain/resume/workYears";
 import { useResumeStore } from "@/stores";
 
 export const useResumeName = () => {
   const resumeStore = useResumeStore();
   const { currentItem } = storeToRefs(resumeStore);
-
-  // 计算工作年限数字（规则：满5个月按1年算，以此类推）
-  const calcWorkYears = (workTime: string) => {
-    if (!workTime) return 0;
-
-    const startDate = dayjs(workTime);
-    if (!startDate.isValid()) return 0;
-
-    const diffInMonths = dayjs().diff(startDate, "month");
-    // 偏移7个月以实现：5-16个月=1年，17-28个月=2年...
-    const years = Math.floor((diffInMonths + 7) / 12);
-
-    return years > 0 ? years : 0;
-  };
 
   // 根据完整简历项生成标题，自定义模式优先使用自定义标题
   const getResumeTitle = (resumeItem: any) => {
@@ -40,7 +27,10 @@ export const useResumeName = () => {
     const name = user?.data?.name || "";
     const edu = education?.list?.[0]?.data?.education || "";
     const position = user?.data?.position || "";
-    const years = calcWorkYears(user?.data?.workTime);
+    // 取整口径跟随个人信息的展示形态：默认实际整年，选四舍五入才计入未满一年的月份
+    const years = calcWorkYears(user?.data?.workTime, {
+      round: user?.ui?.workTime?.display === "round",
+    });
     const experience = years ? i18n.global.t("resumeNameYearsExperience", { years }) : "";
     return [name, edu, position, experience].filter(Boolean).join("-") || defaultName;
   };
