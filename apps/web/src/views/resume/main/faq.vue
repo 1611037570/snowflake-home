@@ -64,7 +64,7 @@ const leave = (element) => {
 </script>
 
 <template>
-  <section class="mx-auto flex max-w-[1440px] flex-col gap-9 px-6 py-6 lg:px-12">
+  <section class="mx-auto flex max-w-[1440px] flex-col gap-9 px-6 py-12 lg:px-12 lg:py-18">
     <div class="max-w-2xl">
       <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">
         {{ $t("resumeHomeFaqEyebrow") }}

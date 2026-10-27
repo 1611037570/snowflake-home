@@ -2,7 +2,7 @@
   <SfScrollbar class="h-full bg-sf-page" flush>
     <main class="resume-home relative w-full shrink-0 overflow-hidden bg-sf-page text-sf-text">
       <section
-        class="resume-home__hero relative mx-auto grid min-h-screen max-w-[1440px] items-center gap-x-12 gap-y-9 px-6 pt-24 pb-9 sm:pb-32 lg:grid-cols-2 lg:px-12"
+        class="resume-home__hero relative mx-auto grid max-w-[1440px] items-center gap-x-12 gap-y-12 px-6 pt-24 pb-12 sm:pb-32 lg:min-h-screen lg:grid-cols-2 lg:px-12"
       >
         <article class="relative z-10 mx-auto max-w-xl text-center lg:mx-0 lg:text-left">
           <!-- 首页主标题承接开源、免费、AI 生成简历的检索词，浏览器标题仍由 site.config 控制 -->
@@ -15,35 +15,6 @@
           <p class="animate-rise animate-rise--delay-two mt-6 text-base font-medium text-sf-text-2">
             {{ $t("resumeHomeHeroSubtitle") }}
           </p>
-          <!-- 首屏关键点：把用户最先关心的能力直接摊开 -->
-          <ul
-            class="animate-rise animate-rise--delay-three mt-6 flex flex-wrap justify-center gap-3 lg:justify-start"
-          >
-            <li
-              v-for="point in keyPoints"
-              :key="point"
-              class="rounded-full border border-sf-b bg-sf-primary px-3 py-1 text-xs font-medium text-sf-text-2"
-            >
-              {{ point }}
-            </li>
-          </ul>
-          <!-- 首屏指标：数字在上、标签在下，内容水平垂直居中 -->
-          <dl
-            class="animate-rise animate-rise--delay-three mt-9 grid grid-cols-2 gap-x-3 gap-y-6 sm:grid-cols-5"
-          >
-            <div
-              v-for="(stat, index) in headlineStats"
-              :key="stat.label"
-              class="flex flex-col items-center justify-center text-center"
-            >
-              <dt class="flex flex-col items-center gap-1">
-                <span class="text-3xl font-black text-sf-theme">{{
-                  Math.round(animatedHeadlineStats[index])
-                }}</span>
-                <span class="text-sm font-bold text-sf-text">{{ stat.label }}</span>
-              </dt>
-            </div>
-          </dl>
           <div
             class="animate-rise animate-rise--delay-three mt-9 flex flex-col justify-center gap-3 sm:flex-row lg:justify-start"
           >
@@ -68,6 +39,35 @@
               <SfIcon icon="mingcute:arrow-down-line" size="4" />
             </button>
           </div>
+          <!-- 首屏关键点：把用户最先关心的能力直接摊开 -->
+          <ul
+            class="animate-rise animate-rise--delay-three mt-6 flex flex-wrap justify-center gap-3 lg:justify-start"
+          >
+            <li
+              v-for="point in keyPoints"
+              :key="point"
+              class="rounded-full bg-sf-bg-2 px-3 py-3 text-xs font-medium text-sf-text-2"
+            >
+              {{ point }}
+            </li>
+          </ul>
+          <!-- 首屏指标：数字在上、标签在下，内容水平垂直居中 -->
+          <dl
+            class="animate-rise animate-rise--delay-three mt-9 grid grid-cols-3 gap-3 border-t border-sf-b pt-6 sm:grid-cols-5"
+          >
+            <div
+              v-for="(stat, index) in headlineStats"
+              :key="stat.label"
+              class="flex flex-col items-center justify-center text-center"
+            >
+              <dt class="flex flex-col items-center gap-1">
+                <span class="text-2xl font-black text-sf-theme">{{
+                  Math.round(animatedHeadlineStats[index])
+                }}</span>
+                <span class="text-xs font-medium text-sf-text-2">{{ stat.label }}</span>
+              </dt>
+            </div>
+          </dl>
         </article>
 
         <!-- 右侧：真实简历预览，替换原占位截图区；示例简历是假数据，禁止搜索引擎把它当成页面正文抓进摘要 -->
@@ -135,7 +135,7 @@
       <section
         id="journey"
         :ref="registerRevealSection"
-        class="resume-home__reveal relative mx-auto flex max-w-[1440px] scroll-mt-16 flex-col justify-center px-6 py-6 lg:px-12"
+        class="resume-home__reveal relative mx-auto flex max-w-[1440px] scroll-mt-16 flex-col justify-center px-6 py-12 lg:px-12 lg:py-18"
       >
         <div class="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <div class="max-w-2xl">
@@ -147,62 +147,43 @@
             </h2>
           </div>
         </div>
-        <!-- 四个模块合并为左右交替的纵向时间轴：主线居中，卡片一左一右 -->
-        <div class="resume-home__journey-grid mt-12 grid gap-6">
+        <!-- 并列展示求职各阶段，方便快速比较功能 -->
+        <div class="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           <article
             v-for="(group, index) in featureGroups"
             :id="group.id"
             :key="group.id"
-            class="resume-home__journey-card relative flex gap-6 md:block"
+            class="resume-home__journey-card flex h-full flex-col rounded-[21px] border border-sf-b bg-sf-primary p-6 transition-colors duration-300 hover:border-sf-theme"
           >
-            <!-- 时间轴节点：移动端排在卡片左侧，桌面端压在居中主线上 -->
-            <span
-              class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-sf-b bg-sf-primary text-sm font-black text-sf-theme md:absolute md:top-0 md:left-1/2 md:-translate-x-1/2"
-            >
-              0{{ index + 1 }}
-            </span>
-            <!-- 卡片占半幅：靠轴一侧留出 3rem 给节点 -->
-            <div class="flex-1 md:w-1/2" :class="index % 2 ? 'md:ml-auto md:pl-12' : 'md:pr-12'">
-              <div
-                class="rounded-[21px] border border-sf-b bg-sf-primary p-3 transition-transform duration-300 hover:-translate-y-1"
-              >
-                <div class="flex items-center gap-3">
-                  <span class="flex h-9 w-9 items-center justify-center rounded-xl text-sf-theme">
-                    <SfIcon :icon="group.icon" size="5" />
-                  </span>
-                  <h3 class="text-xl font-black tracking-[-0.02em]">{{ group.eyebrow }}</h3>
-                </div>
-                <p class="mt-3 leading-7 text-sf-text-2">{{ group.description }}</p>
-                <ul class="mt-3 grid gap-3">
-                  <li
-                    v-for="item in group.items"
-                    :key="item"
-                    class="flex items-start gap-3 text-sm leading-6 text-sf-text-2"
-                  >
-                    <span
-                      class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-sf-success-2 text-sf-success"
-                    >
-                      <SfIcon icon="lucide:check" size="3" />
-                    </span>
-                    {{ item }}
-                  </li>
-                </ul>
-              </div>
+            <!-- 序号与名称并排，压缩卡片标题空间 -->
+            <div class="flex items-center gap-3">
+              <span class="text-sm font-black text-sf-theme">0{{ index + 1 }}</span>
+              <h3 class="text-xl font-bold tracking-[-0.02em]">{{ group.eyebrow }}</h3>
             </div>
+            <p class="mt-3 font-medium leading-7 text-sf-text">{{ group.description }}</p>
+            <ul class="mt-3 grid gap-3">
+              <li
+                v-for="item in group.items"
+                :key="item"
+                class="text-sm leading-6 text-sf-text-2"
+              >
+                {{ item }}
+              </li>
+            </ul>
           </article>
         </div>
       </section>
 
-      <!-- 常见问题：置于收尾区块之前，独立入场，便于检索站内高频疑问 -->
+      <!-- 各内容区使用一致的纵向留白，保持页面节奏 -->
       <ResumeHomeFaq :ref="registerRevealSection" class="resume-home__reveal" />
 
       <section
         :ref="registerRevealSection"
-        class="resume-home__reveal relative mx-auto flex max-w-[1440px] items-center px-6 py-6 lg:px-12"
+        class="resume-home__reveal relative mx-auto flex max-w-[1440px] items-center px-6 py-12 lg:px-12 lg:py-18"
       >
-        <div class="relative w-full overflow-hidden rounded-[30px] px-6 py-12 text-center sm:px-12">
+        <div class="relative w-full overflow-hidden rounded-[30px] px-6 text-center sm:px-12">
           <div class="relative mx-auto max-w-2xl">
-            <h2 class="mt-6 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+            <h2 class="text-3xl font-black tracking-[-0.04em] sm:text-4xl">
               {{ $t("resumeHomeClosingTitle") }}
             </h2>
             <p class="mt-3 leading-7 text-sf-text-2">
@@ -368,7 +349,6 @@ const keyPoints = computed(() => [
 
 const featureGroups = computed(() => [
   {
-    icon: "ph:file-md-duotone",
     id: "create",
     eyebrow: $t("resumeHomeCreateEyebrow"),
     description: $t("resumeHomeCreateDescription"),
@@ -379,7 +359,6 @@ const featureGroups = computed(() => [
     ],
   },
   {
-    icon: "mdi:widgets",
     id: "editor",
     eyebrow: $t("resumeHomeEditorEyebrow"),
     description: $t("resumeHomeEditorDescription"),
@@ -390,14 +369,12 @@ const featureGroups = computed(() => [
     ],
   },
   {
-    icon: "ph:brain-duotone",
     id: "ai",
     eyebrow: $t("resumeHomeAiEyebrow"),
     description: $t("resumeHomeAiDescription"),
     items: [$t("resumeHomeAiFeature1"), $t("resumeHomeAiFeature2"), $t("resumeHomeAiFeature3")],
   },
   {
-    icon: "mdi:chart-pie",
     id: "statistics",
     eyebrow: $t("resumeHomeStatisticsEyebrow"),
     description: $t("resumeHomeStatisticsDescription"),
@@ -487,42 +464,6 @@ const featureGroups = computed(() => [
 
 .resume-home__journey-card:nth-child(4) {
   transition-delay: 0.27s;
-}
-
-/* 时间轴主线：每行自绘一段，从节点下沿连到下一行，最后一行不再延伸 */
-.resume-home__journey-card::before {
-  position: absolute;
-  top: 3rem;
-  bottom: -1.5rem;
-  left: 1.5rem;
-  width: 1px;
-  transform: translateX(-50%);
-  background: var(--sf-border);
-  content: "";
-}
-
-/* 相邻两行的咬合距离：每行都上移同样的值，节点才会沿轴均匀推进。
-   取值必须满足「咬合 ≤ 卡片高度 ÷ 2 + 行间距」，超出后同一侧的前后两张卡会叠在一起。 */
-.resume-home__journey-grid {
-  --journey-overlap: 6rem;
-}
-
-/* 桌面端主线移到整行的正中：卡片在哪一侧都不影响轴的位置 */
-@media (min-width: 768px) {
-  .resume-home__journey-card::before {
-    left: 50%;
-    /* 主线缩短咬合距离，正好收在下一行节点的上沿 */
-    bottom: calc(var(--journey-overlap) - 1.5rem);
-  }
-
-  /* 首行之外的每一行都上移相同距离，行间距与节点间距保持一致 */
-  .resume-home__journey-card:nth-child(n + 2) {
-    margin-top: calc(-1 * var(--journey-overlap));
-  }
-}
-
-.resume-home__journey-card:last-child::before {
-  content: none;
 }
 
 .animate-rise {
