@@ -11,9 +11,6 @@ import TemplateCategory from "./components/templateCategory.vue";
 import { resumeTemplateList } from "./data/list";
 import { loadResumeTemplateData } from "./data/resumeData";
 import { expandConfigModules } from "@/stores/modules/resume/hooks/useConfigTemplate";
-import { darkThemeColors, lightThemeColors } from "@/configs/modules/theme";
-import { useThemeStore } from "@/stores/modules/theme";
-import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
 import { useRoute } from "vue-router";
 import { publicExamples } from "../seo/catalog";
@@ -279,23 +276,12 @@ const setPreviewSize = (size) => {
   gridClass.value = size;
 };
 const gridClass = ref("default");
-// 卡片只定义宽度，高度由 A4 比例（794:1123）自动派生：宽度是唯一旋钮
-// 宽度已扣除外框描边，卡片用 content-box：缩略图可用区正好是 A4，页面不会露出空隙
+// 卡片整体保持纸张比例，名称、说明和标签放回卡片底部。
 const cardSizeClass = computed(() =>
-  gridClass.value === "small" ? "w-[378px] aspect-[794/1123]" : "w-[236px] aspect-[794/1123]",
+  gridClass.value === "small" ? "w-full max-w-[378px] aspect-[794/1123]" : "w-full max-w-[236px] aspect-[794/1123]",
 );
 // 缩略图只消费简历内容与配置，不把卡片上的筛选信息传进渲染链路
 const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: item?.ui });
-// 标签彩虹配色：亮色模式取浅色主题色、暗色模式取饱和主题色，标签按顺序循环取用
-const { isDark } = storeToRefs(useThemeStore());
-const tagColorList = computed(() =>
-  (isDark.value ? darkThemeColors : lightThemeColors).map((color) => color.value),
-);
-const getTagStyle = (index) => ({
-  background: tagColorList.value[index % tagColorList.value.length],
-});
-// 浅色底配深色文字、饱和底配白字，两种模式下都保持可读
-const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text-sf-text"));
 </script>
 
 <template>
@@ -303,17 +289,17 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
     <ListScroll
       class="flex-1"
       flush
-      content-class="px-3 py-2 sm:px-6"
+      content-class="px-3 py-6 sm:px-6"
       :loading="templateLoading"
       :has-more="hasMore"
       :count="displayedTemplates.length"
       :load-more="loadNextTemplates"
       :reset-key="templateGridKey"
     >
-      <!-- 页面主题与真实条目数在可见内容中说明，和 SEO 文案使用同一份清单。 -->
+      <!-- 标题区降低字号与高度，将首屏空间留给筛选和简历。 -->
       <header class="mb-3">
-        <h1 class="text-lg font-bold text-sf-text">{{ $t("resumeTemplateTitle") }}</h1>
-        <p class="mt-3 text-sm text-sf-text-2">
+        <h1 class="text-lg font-semibold text-sf-text">{{ $t("resumeTemplateTitle") }}</h1>
+        <p class="mt-[6px] max-w-3xl text-xs leading-6 text-sf-text-2">
           {{ $t("resumeTemplateSeoIntro", { examples: resumeTemplateList.length, templates: resumeStyleTemplateList.length }) }}
         </p>
       </header>
@@ -325,7 +311,7 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
       <!-- 首批范本未就绪时按真实卡片尺寸占位，避免筛选栏下方整片空白。 -->
       <div
         v-if="templateLoading && (!displayedTemplates.length || !previewBase)"
-        class="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        class="grid grid-cols-1 gap-x-3 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
         role="status"
         aria-busy="true"
         :aria-label="$t('resumeTemplateLoading')"
@@ -333,9 +319,11 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
         <div v-for="index in 8" :key="index" class="flex justify-center">
           <div
             :class="cardSizeClass"
-            class="relative box-content overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary"
+            class="relative overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary"
           >
-            <ResumePreviewSkeleton />
+            <div class="absolute inset-0">
+              <ResumePreviewSkeleton />
+            </div>
             <div
               class="absolute inset-x-0 bottom-0 flex flex-col gap-3 border-t border-sf-b bg-sf-primary p-3"
             >
@@ -349,6 +337,7 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
       <RevealGrid
         v-else
         :key="templateGridKey"
+        class="gap-y-6! [&>div]:items-stretch"
         :items="displayedTemplates"
         :size="gridClass"
         :reveal="false"
@@ -358,18 +347,17 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
           <!-- 卡片外壳由模板页自己维护，缩略图仍复用懒加载预览组件 -->
           <div
             :class="cardSizeClass"
-            class="group relative box-content flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-all duration-200 hover:scale-102 hover:border-sf-theme"
+            class="group relative flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-colors hover:border-sf-theme focus-within:border-sf-theme"
             @click="openFullscreen(card)"
           >
-            <!-- 缩略图铺满整卡，信息层浮在它的下半部分之上 -->
+            <!-- 预览铺满卡片，底部信息区覆盖在预览之上。 -->
             <div class="absolute inset-0">
               <ThumbPreview :item="getThumbItem(card.item)" />
             </div>
-            <!-- 信息层之外的剩余空间：hover 遮罩与按钮在这里垂直居中，不会被信息层压住 -->
             <div class="relative min-h-0 flex-1">
               <!-- 悬浮遮罩：淡白蒙层不加模糊，简历内容仍可见，承载预览与使用按钮 -->
               <div
-                class="invisible absolute inset-0 flex items-center justify-center gap-3 bg-sf-transparent-3 opacity-0 transition-all duration-200 group-hover:visible group-hover:opacity-100"
+                class="pointer-events-none absolute inset-0 flex items-center justify-center gap-3 bg-sf-transparent-3 opacity-0 transition-opacity duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
               >
                 <SfButton @click.stop="openFullscreen(card)">
                   {{ $t("resumeTemplatePreview") }}
@@ -379,22 +367,20 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
                 </SfButton>
               </div>
             </div>
-            <!-- 信息层悬浮在卡片底部：纯色背景、高度随内容，标签默认显示 -->
-            <div class="relative flex flex-col gap-1 border-t border-sf-b bg-sf-primary px-3 py-3">
-              <div class="truncate text-base font-black text-sf-text">
+            <!-- 名称、说明与标签统一收在卡片内部的底部信息区。 -->
+            <div class="relative flex flex-col gap-[6px] border-t border-sf-b bg-sf-primary p-3">
+              <div class="truncate text-sm font-medium text-sf-text">
                 {{ card.name }}
               </div>
-              <div class="line-clamp-2 text-sm text-sf-text-2">
+              <div class="line-clamp-2 text-xs leading-6 text-sf-text-2">
                 {{ card.description }}
               </div>
-              <!-- 标签按顺序取用配置里的彩虹色，尺寸收紧到与信息层同一档 -->
-              <div v-if="card.tags.length" class="flex flex-wrap gap-x-3 gap-y-1">
+              <!-- 标签统一使用中性色，主题色留给筛选与操作。 -->
+              <div v-if="card.tags.length" class="flex flex-wrap gap-[6px]">
                 <span
-                  v-for="(tag, index) in card.tags"
+                  v-for="tag in card.tags"
                   :key="tag"
-                  class="rounded-md px-3 py-1 text-xs"
-                  :class="tagTextClass"
-                  :style="getTagStyle(index)"
+                  class="rounded bg-sf-bg-2 px-[6px] py-[3px] text-xs text-sf-text-2"
                 >
                   {{ tag }}
                 </span>
@@ -403,7 +389,7 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
           </div>
         </template>
         <template #empty>
-          <div class="flex h-36 items-center justify-center text-sm text-sf-text-2">
+          <div class="flex min-h-60 items-center justify-center rounded-xl border border-dashed border-sf-b text-sm text-sf-text-2">
             {{ $t("resumeTemplateEmpty") }}
           </div>
         </template>

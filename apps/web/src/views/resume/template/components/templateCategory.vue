@@ -2,9 +2,6 @@
 import { resumeTemplateList, resumeTemplateTopCategories } from "../data/list";
 import { resumeStyleTemplateList } from "@/views/resume/theme";
 import { computed, ref } from "vue";
-import { storeToRefs } from "pinia";
-import { darkThemeColors, lightThemeColors } from "@/configs/modules/theme";
-import { useThemeStore } from "@/stores/modules/theme";
 
 // 一级分类容量：回答「这一栏有多少」，取全量条数，不随筛选变化
 const topCategoryCounts = {
@@ -12,22 +9,12 @@ const topCategoryCounts = {
   template: resumeStyleTemplateList.length,
 };
 
-// 一级分类卡片的图标配色：按色名去配置的彩虹色里定位，两类各一种色、不做统一
-const TOP_CATEGORY_COLOR_NAME = { example: "浅晶蓝", template: "淡柔紫" };
-const { isDark } = storeToRefs(useThemeStore());
-// 亮色模式用浅色底配同色系的饱和图标，暗色模式两者对调，两种模式下都够清晰
+// 页签仅派生真实数量，统一使用面板的主题色与中性色。
 const topCategoryCards = computed(() =>
-  resumeTemplateTopCategories.map((top) => {
-    const index = lightThemeColors.findIndex(
-      (color) => color.name === TOP_CATEGORY_COLOR_NAME[top.key],
-    );
-    return {
-      ...top,
-      count: topCategoryCounts[top.key],
-      tileColor: isDark.value ? darkThemeColors[index].value : lightThemeColors[index].value,
-      iconColor: isDark.value ? lightThemeColors[index].value : darkThemeColors[index].value,
-    };
-  }),
+  resumeTemplateTopCategories.map((top) => ({
+    ...top,
+    count: topCategoryCounts[top.key], // 分类内的真实条目数量
+  })),
 );
 
 const emit = defineEmits(["change", "category-change", "size-change"]);
@@ -97,55 +84,48 @@ const getTemplateTypeCount = (key) =>
 </script>
 
 <template>
-  <section class="mb-3">
-    <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-      <!-- 一级分类做成卡片：图标底色取配置里的彩虹色，两类各一种色、不做统一 -->
-      <nav class="flex flex-wrap gap-3">
+  <!-- 分类和筛选收进同一面板，压缩空白并建立明确的内容边界。 -->
+  <section class="mb-6 rounded-xl border border-sf-b bg-sf-primary p-3 sm:px-6">
+    <div class="flex flex-col gap-3 border-b border-sf-b pb-3 md:flex-row md:items-center md:justify-between">
+      <!-- 分类采用文字页签，数量作为小角标，不再占据独立卡片。 -->
+      <nav class="flex flex-wrap gap-6">
         <button
           v-for="top in topCategoryCards"
           :key="top.key"
           type="button"
-          class="flex cursor-pointer items-center gap-3 rounded-2xl border bg-sf-primary px-3 py-3 transition-colors"
+          class="relative flex h-9 cursor-pointer items-center gap-[6px] text-sm transition-colors after:absolute after:inset-x-0 after:-bottom-3 after:h-0.5 after:rounded-full after:bg-sf-theme"
           :class="
-            currentTopCategory === top.key ? 'border-sf-theme' : 'border-sf-b hover:border-sf-theme'
+            currentTopCategory === top.key ? 'font-semibold text-sf-theme after:opacity-100' : 'font-normal text-sf-text-2 after:opacity-0 hover:text-sf-text'
           "
           @click="selectTopCategory(top.key)"
         >
-          <span
-            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl"
-            :style="{ background: top.tileColor, color: top.iconColor }"
-          >
-            <SfIcon :icon="top.icon" size="6" />
-          </span>
-          <span class="flex flex-col items-start">
-            <span
-              class="text-2xl font-black"
-              :class="currentTopCategory === top.key ? 'text-sf-theme' : 'text-sf-text'"
-            >
-              {{ top.count }}
-            </span>
-            <span class="mt-1 text-sm text-sf-text-2">
-              {{ $t(`resumeTemplateTopCategory_${top.key}`) }}
-            </span>
-          </span>
+          <span>{{ $t(`resumeTemplateTopCategory_${top.key}`) }}</span>
+          <span class="rounded bg-sf-bg px-[6px] py-[3px] text-[11px] leading-none font-normal text-sf-text-3 tabular-nums">{{ top.count }}</span>
         </button>
       </nav>
+      <!-- 尺寸切换降低视觉权重，两档使用一致的点击区域。 -->
       <div class="flex flex-wrap items-center gap-3">
-        <span class="text-sm font-bold text-sf-text-2">{{ $t("resumeTemplatePreviewSize") }}</span>
-        <SfButton
-          :plain="previewSize !== 'default'"
-          :round="true"
-          @click="selectPreviewSize('default')"
-        >
-          {{ $t("resumeTemplateSmallPreview") }}
-        </SfButton>
-        <SfButton
-          :plain="previewSize !== 'small'"
-          :round="true"
-          @click="selectPreviewSize('small')"
-        >
-          {{ $t("resumeTemplateLargePreview") }}
-        </SfButton>
+        <span class="text-xs text-sf-text-3">{{ $t("resumeTemplatePreviewSize") }}</span>
+        <div class="flex gap-[3px] rounded-md bg-sf-bg p-[3px]">
+          <button
+            type="button"
+            class="h-6 cursor-pointer rounded px-3 text-xs transition-colors"
+            :class="previewSize === 'default' ? 'bg-sf-primary font-medium text-sf-text' : 'text-sf-text-2 hover:text-sf-text'"
+            :aria-pressed="previewSize === 'default'"
+            @click="selectPreviewSize('default')"
+          >
+            {{ $t("resumeTemplateSmallPreview") }}
+          </button>
+          <button
+            type="button"
+            class="h-6 cursor-pointer rounded px-3 text-xs transition-colors"
+            :class="previewSize === 'small' ? 'bg-sf-primary font-medium text-sf-text' : 'text-sf-text-2 hover:text-sf-text'"
+            :aria-pressed="previewSize === 'small'"
+            @click="selectPreviewSize('small')"
+          >
+            {{ $t("resumeTemplateLargePreview") }}
+          </button>
+        </div>
       </div>
     </div>
     <!-- 二级维度用下划线页签：下划线只出现在这一层，专门标识当前选中的维度；
@@ -161,7 +141,7 @@ const getTemplateTypeCount = (key) =>
         class="-mb-px cursor-pointer border-b-2 pb-3 text-sm transition-colors"
         :class="
           currentCategoryKey === category.key
-            ? 'border-sf-theme font-bold text-sf-theme'
+            ? 'border-sf-theme font-medium text-sf-theme'
             : 'border-transparent text-sf-text-2 hover:text-sf-theme'
         "
         @click="selectCategory(category.key)"
@@ -169,16 +149,16 @@ const getTemplateTypeCount = (key) =>
         {{ $t(`resumeTemplateCategory_${category.key}`) }}
       </button>
     </div>
-    <!-- 选项只用文字：下划线留给二级维度页签，这里选中只变主题色并加粗 -->
-    <div v-if="currentTopCategory !== 'template'" class="mt-3 flex flex-wrap gap-6">
+    <!-- 筛选选项使用轻背景区分选中态，与上层分类保持明确层级。 -->
+    <div v-if="currentTopCategory !== 'template'" class="mt-3 flex flex-wrap gap-[3px]">
       <button
         v-for="option in currentOptions"
         :key="option.key"
-        class="cursor-pointer text-sm transition-colors"
+        class="cursor-pointer rounded-md px-3 py-[6px] text-sm transition-colors"
         :class="
           selectedOptionKey === option.key
-            ? 'font-bold text-sf-theme'
-            : 'text-sf-text-2 hover:text-sf-theme'
+            ? 'bg-sf-theme-3 font-medium text-sf-theme'
+            : 'text-sf-text-2 hover:bg-sf-bg hover:text-sf-text'
         "
         type="button"
         @click="toggleOption(option.key)"
@@ -186,27 +166,27 @@ const getTemplateTypeCount = (key) =>
         {{ $t(`resumeTemplateOption_${currentCategory.key}_${option.key}`) }}
       </button>
     </div>
-    <!-- 简历模板按布局和类型固定两行展示，两行可组合筛选。 -->
-    <div v-else class="mt-3 flex flex-col gap-3">
-      <div v-for="category in currentCategories" :key="category.key" class="flex items-center gap-3">
-        <span class="w-[72px] shrink-0 text-sm font-bold text-sf-text-2">
+    <!-- 标签与选项收紧横向留白，两行仍保持起点对齐。 -->
+    <div v-else class="mt-3 flex flex-col gap-[6px]">
+      <div v-for="category in currentCategories" :key="category.key" class="flex items-center gap-[6px]">
+        <span class="w-9 shrink-0 text-xs text-sf-text-3">
           {{ $t(`resumeTemplateCategory_${category.key}`) }}
         </span>
-        <div class="flex min-w-0 flex-nowrap gap-6 overflow-x-auto whitespace-nowrap">
+        <div class="flex min-w-0 flex-nowrap gap-[3px] overflow-x-auto whitespace-nowrap">
           <button
             v-for="option in category.options"
             :key="option.key"
             type="button"
-            class="cursor-pointer text-sm transition-colors"
+            class="cursor-pointer rounded-md px-[6px] py-[6px] text-sm transition-colors"
             :class="
               (category.key === 'layout' ? selectedLayoutKey : selectedTierKey) === option.key
-                ? 'font-bold text-sf-theme'
-                : 'text-sf-text-2 hover:text-sf-theme'
+                ? 'bg-sf-theme-3 font-medium text-sf-theme'
+                : 'text-sf-text-2 hover:bg-sf-bg hover:text-sf-text'
             "
             @click="toggleTemplateOption(category.key, option.key)"
           >
             {{ $t(`resumeTemplateOption_design_${option.key}`) }}
-            <template v-if="category.key === 'tier'">（{{ getTemplateTypeCount(option.key) }}）</template>
+            <span v-if="category.key === 'tier'" class="ml-[6px] text-xs text-sf-text-3 tabular-nums">{{ getTemplateTypeCount(option.key) }}</span>
           </button>
         </div>
       </div>
