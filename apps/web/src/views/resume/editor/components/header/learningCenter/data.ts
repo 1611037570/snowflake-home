@@ -38,14 +38,14 @@ export interface LearningArticleContent extends LearningArticle {
   questions: LearningQuestion[];
 }
 
-// 按实际制作流程组织分类，写作内容复用模块帮助，避免维护两份说明。
+// 功能操作教程优先，写作参考置后并复用模块帮助。
 export const LEARNING_CATEGORIES: LearningCategory[] = [
   { key: "start", icon: "mdi:book-open-page-variant" },
   { key: "edit", icon: "lucide:file-text" },
-  { key: "writing", icon: "lucide:pencil" },
   { key: "layout", icon: "lucide:layout-template" },
   { key: "ai", icon: "lucide:sparkles" },
   { key: "export", icon: "fa6-solid:file-export" },
+  { key: "writing", icon: "lucide:pencil" },
 ];
 
 export const LEARNING_ARTICLES: LearningArticle[] = [
@@ -55,11 +55,6 @@ export const LEARNING_ARTICLES: LearningArticle[] = [
   { id: "fields", category: "edit" },
   { id: "records", category: "edit" },
   { id: "checks", category: "edit" },
-  ...[...DEFAULT_MODULE_NAMES.map((module) => module.key), "custom"].map((moduleKey) => ({
-    id: `writing_${moduleKey}`,
-    category: "writing" as const,
-    moduleKey,
-  })),
   { id: "style", category: "layout" },
   { id: "spacing", category: "layout" },
   { id: "preview", category: "layout" },
@@ -68,4 +63,9 @@ export const LEARNING_ARTICLES: LearningArticle[] = [
   { id: "save", category: "export" },
   { id: "export", category: "export" },
   { id: "privacy", category: "export" },
+  ...[...DEFAULT_MODULE_NAMES.map((module) => module.key), "custom"].map((moduleKey) => ({
+    id: `writing_${moduleKey}`,
+    category: "writing" as const,
+    moduleKey,
+  })),
 ];
