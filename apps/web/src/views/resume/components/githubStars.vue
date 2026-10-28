@@ -10,6 +10,15 @@ import { useGithubStars } from "@/hooks/modules/useGithubStars";
 provide(SF_ICON_LIST_KEY, {
   "simple-icons:github": SimpleIconsGithubIcon, // 仓库入口图标
 });
+
+// 图形尺寸与交互区域分别配置，默认保留其他页面的原有外观。
+const props = defineProps({
+  // 图标图形大小，使用间距单位。
+  size: { type: [String, Number], default: 8 },
+  // 图标交互区域大小，未设置时沿用图形大小。
+  boxSize: { type: [String, Number], default: undefined },
+});
+
 const { t, locale } = useI18n();
 const { stars, stale, loading, failed, refresh } = useGithubStars();
 const formattedStars = computed(() => stars.value?.toLocaleString(locale.value));
@@ -42,8 +51,10 @@ onMounted(refresh);
     <!-- 与主题、语言入口对齐，仅用小角标承载数量。 -->
     <SfIcon
       icon="simple-icons:github"
-      size="8"
-      class="text-inherit! transition-transform duration-200 motion-safe:group-hover:scale-110"
+      :size="props.size"
+      :box-size="props.boxSize"
+      class="text-inherit!"
+      :class="props.boxSize ? 'cursor-pointer rounded-lg transition-colors hover:bg-sf-bg' : 'transition-transform duration-200 motion-safe:group-hover:scale-110'"
     />
     <span
       v-if="stars !== null"

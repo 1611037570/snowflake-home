@@ -100,12 +100,12 @@ watch([() => route.path, isMobile], () => {
         </router-link>
       </nav>
 
-      <!-- 工具统一点击区域与悬停底色，窄屏收紧间距，弹出内容保持原始尺寸。 -->
-      <div class="ml-auto flex shrink-0 items-center gap-[3px] border-l border-sf-b pl-3 sm:gap-3 [&_[data-sf-icon-state]]:scale-75!">
-        <GithubStars class="rounded-lg hover:bg-sf-bg" />
-        <SfTheme class="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-sf-bg" />
-        <SfLocale class="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-sf-bg" />
-        <SfDonation class="h-9 w-9 justify-center rounded-lg transition-colors hover:bg-sf-bg" />
+      <!-- 使用图标盒子承担完整交互区域，避免缩放后触发范围与悬停背景不一致。 -->
+      <div class="ml-auto flex shrink-0 items-center gap-[3px] border-l border-sf-b pl-3 sm:gap-3">
+        <GithubStars size="6" :box-size="9" class="rounded-lg" />
+        <SfTheme size="6" :box-size="9" class="flex h-9 w-9 items-center justify-center" />
+        <SfLocale size="6" :box-size="9" class="flex h-9 w-9 items-center justify-center" />
+        <SfDonation size="6" :box-size="9" class="h-9 w-9 cursor-pointer justify-center" />
       </div>
     </div>
   </header>
