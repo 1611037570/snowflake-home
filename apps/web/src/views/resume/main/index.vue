@@ -98,39 +98,48 @@
         id="editor-shot"
         class="relative mx-auto -mt-9 max-w-[1440px] scroll-mt-16 px-6 sm:-mt-24 lg:px-12"
       >
-        <img
-          :src="editorShot"
-          :alt="$t('resumeHomeShotAlt')"
-          width="1650"
-          height="1143"
-          decoding="async"
-          class="mx-auto h-auto w-full max-w-[1080px] rounded-2xl border border-sf-b bg-sf-b"
-        />
-        <figcaption
-          class="mx-auto mt-3 max-w-2xl text-center text-sm leading-normal text-sf-text-2"
-        >
-          {{ $t("resumeHomeShotCaption") }}
-        </figcaption>
+        <!-- 展示框按视口高度同步收缩，为标题栏和切换按钮留出空间。 -->
+        <div class="resume-home__editor-showcase mx-auto w-full overflow-hidden rounded-3xl border border-sf-b bg-sf-primary">
+          <div class="flex items-center gap-[6px] border-b border-sf-b px-3 py-[6px]">
+            <!-- 窗口圆点使用红黄绿主题色，增强展示框的识别度。 -->
+            <span class="h-[6px] w-[6px] rounded-full bg-sf-error"></span>
+            <span class="h-[6px] w-[6px] rounded-full bg-sf-warning"></span>
+            <span class="h-[6px] w-[6px] rounded-full bg-sf-success"></span>
+            <span class="text-xs font-medium text-sf-text-2">{{ activeEditorShowcase.label }}</span>
+          </div>
+          <!-- 沿用编辑器截图原有高度，其余截图强制铺满同一画布。 -->
+          <div class="relative aspect-[2117/1398] w-full bg-sf-b">
+            <img
+              v-if="activeEditorShowcase.image"
+              :src="activeEditorShowcase.image"
+              :alt="activeEditorShowcase.label"
+              width="2117"
+              height="1398"
+              decoding="async"
+              class="absolute inset-0 block h-full w-full object-fill"
+            />
+            <!-- 未配置截图时占用同一画布，避免占位与图片高度不一致。 -->
+            <div v-else class="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-sf-bg text-center">
+              <span class="text-xl font-semibold text-sf-text">{{ activeEditorShowcase.label }}</span>
+              <span class="text-sm text-sf-text-2">{{ $t("resumeHomeShotPlaceholder") }}</span>
+            </div>
+          </div>
+        </div>
+        <!-- 图下仅保留紧凑的切换按钮，避免重复说明占用展示高度。 -->
+        <div class="mt-3 flex flex-wrap justify-center gap-3">
+          <button
+            v-for="(item, index) in editorShowcaseItems"
+            :key="item.label"
+            type="button"
+            class="inline-flex h-8 cursor-pointer items-center justify-center rounded-full border px-3 text-xs font-medium transition-colors"
+            :class="index === activeEditorShowcaseIndex ? 'border-sf-theme bg-sf-theme text-sf-theme-text' : 'border-sf-b bg-sf-primary text-sf-text-2 hover:border-sf-theme'"
+            :aria-pressed="index === activeEditorShowcaseIndex"
+            @click="activeEditorShowcaseIndex = index"
+          >
+            {{ item.label }}
+          </button>
+        </div>
       </figure>
-
-      <!-- 看完截图后的下一步入口：直接开始做简历，或继续往下看流程 -->
-      <div class="mt-6 flex flex-col justify-center gap-3 px-6 sm:flex-row lg:px-12">
-        <router-link
-          to="/resume/template"
-          class="inline-flex cursor-pointer items-center justify-center gap-3 rounded-full bg-sf-theme px-6 py-3 font-semibold text-sf-theme-text transition-transform duration-300 hover:-translate-y-1"
-        >
-          {{ $t("resumeHomeShotCreate") }}
-          <SfIcon icon="mingcute:arrow-right-line" size="4" />
-        </router-link>
-        <button
-          type="button"
-          class="inline-flex cursor-pointer items-center justify-center gap-3 rounded-full border border-sf-b bg-sf-primary px-6 py-3 font-semibold transition-colors duration-300 hover:bg-sf-bg"
-          @click="scrollToJourney"
-        >
-          {{ $t("resumeHomeShotMore") }}
-          <SfIcon icon="mingcute:arrow-down-line" size="4" />
-        </button>
-      </div>
 
       <section
         id="journey"
@@ -214,9 +223,21 @@ import { resumeTemplateList } from "../template/data/list";
 import HeroSwitcher from "./heroSwitcher.vue";
 import ResumeHomeFaq from "./faq.vue";
 import OnlineWriters from "../components/onlineWriters.vue";
-// 首屏底边露头的编辑器截图，滚动后完整展开
+// 首页展示区共用真实截图，切换入口后展示对应功能页面。
 import editorShot from "@/assets/images/resume/editor.webp";
+import createShot from "@/assets/images/resume/new.webp";
+import aiShot from "@/assets/images/resume/ai.webp";
 import { computed, onMounted, ref } from "vue";
+
+// 展示项与功能截图一一对应，标题和替代文字随当前选项同步切换。
+const editorShowcaseItems = computed(() => [
+  { label: $t("resumeHomeEditorEyebrow"), image: editorShot }, // 标签为展示名称，图片为对应页面截图
+  { label: $t("resumeHomeCreateEyebrow"), image: createShot }, // 标签为展示名称，图片为新建简历页面截图
+  { label: $t("resumeHomeAiEyebrow"), image: aiShot }, // 标签为展示名称，图片为智能助手页面截图
+]);
+// 当前选中的展示项。
+const activeEditorShowcaseIndex = ref(0);
+const activeEditorShowcase = computed(() => editorShowcaseItems.value[activeEditorShowcaseIndex.value]);
 
 const resumeStore = useResumeStore();
 // 深拷贝：套用范本时隔离示例数据，避免与预览共享引用导致互相串改
@@ -331,13 +352,6 @@ function scrollToEditor() {
   target.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-// 滚动到下方的流程说明区，作为「继续了解」的去处
-function scrollToJourney() {
-  const target = document.getElementById("journey");
-  if (!target) return;
-  target.scrollIntoView({ behavior: "smooth", block: "start" });
-}
-
 // 首屏关键点：对应产品真实能力，不写做不到的承诺
 const keyPoints = computed(() => [
   $t("resumeHomeKeyPointGenerate"),
@@ -388,6 +402,11 @@ const featureGroups = computed(() => [
 </script>
 
 <style scoped>
+/* 按截图原始比例限制宽度，短屏中也为页头与切换区保留展示空间。 */
+.resume-home__editor-showcase {
+  max-width: min(900px, calc((100svh - 180px) * 1650 / 1143));
+}
+
 .resume-home__closing {
   background-image: linear-gradient(135deg, var(--sf-primary), var(--sf-transparent));
 }
