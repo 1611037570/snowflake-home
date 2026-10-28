@@ -134,8 +134,9 @@ function handleAdd() {
             </EditableTitle>
           </div>
           <div class="flex items-center">
+            <!-- 帮助入口使用书本图标，表达模块写作指南。 -->
             <SfTooltip :content="$t('moduleHelpCenter')">
-              <Icon @click.stop="helpVisible = true" icon="mingcute:question-line" />
+              <Icon @click.stop="helpVisible = true" icon="mdi:book-open-page-variant" />
             </SfTooltip>
             <SfTooltip :content="$t('locatePreview')" v-if="!hidden">
               <Icon @click.stop="handlePreviewJump" icon="mdi:map-search-outline" />
