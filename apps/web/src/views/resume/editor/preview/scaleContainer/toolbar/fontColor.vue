@@ -52,7 +52,7 @@ const resetFontColor = () => {
   >
     <SettingPill compact :label="$t('fontColor')" :active="dropdownVisible">
       <!-- 字母下方色条对应当前正文字色，与参考图的字体颜色入口保持一致。 -->
-      <span class="flex w-6 flex-col items-center leading-none">
+      <span class="flex w-3 flex-col items-center leading-none">
         <span>A</span>
         <span class="h-[3px] w-3 rounded-full" :style="{ backgroundColor: fontColor }" />
       </span>
