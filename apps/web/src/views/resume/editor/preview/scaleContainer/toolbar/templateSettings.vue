@@ -86,11 +86,6 @@ const pageBackground = computed({
   },
 });
 
-// 黑底纸张切换为浅色预设，其余背景沿用深色预设，保证正文对比度。
-const activeFontColorOptions = computed(() =>
-  isDarkBackground(pageBackground.value) ? fontColorOptionsOnDark : fontColorOptions,
-);
-
 // 当前主题声明的页面背景独立展示在分组标题右侧。
 const themePageBackground = computed(
   () => themePresetUi.value.page.background || defaultPageBackground,
@@ -98,24 +93,12 @@ const themePageBackground = computed(
 // 固定背景预设始终完整展示，默认白色不因与主题背景重复而隐藏。
 const pageBackgroundOptions = computed(() => pageBackgroundColors);
 
-// 当前正文色不在阶梯内时按首档显示选中，主题自带的自定义色也能有一档选中态。
-const activeFontColor = computed(() => {
-  const options = activeFontColorOptions.value;
-  const matched = options.find((option) => normalizeHexColor(option.value) === normalizeHexColor(fontColor.value));
-  return (matched ?? options[0]).value;
-});
-const isFontColorActive = (value) => activeFontColor.value === value;
 const isPageBackgroundActive = (value) =>
   normalizeHexColor(pageBackground.value) === normalizeHexColor(value);
 
 // 主题色分组仅恢复当前主题的初始主题色。
 const resetThemeColor = () => {
   themeColor.value = themePresetUi.value.theme.color;
-};
-
-// 正文字色分组仅恢复当前主题的初始文字颜色。
-const resetFontColor = () => {
-  fontColor.value = themePresetUi.value.font.color;
 };
 
 // 页面背景分组通过现有写入入口恢复，继续处理明暗背景的文字对比度。
@@ -147,23 +130,6 @@ const resetPageBackground = () => {
             <CustomColorPicker v-model="themeColor" :label="$t('customColor')" />
           </template>
           <ThemeColorPicker v-model="themeColor" />
-        </SettingSection>
-
-        <SettingSection :title="$t('fontColor')" :reset-label="$t('reset')" @reset="resetFontColor">
-          <!-- 字体灰度仅保留圆形色块，选中项使用主题色边框。 -->
-          <div class="flex flex-wrap items-center gap-3">
-            <button
-              v-for="option in activeFontColorOptions"
-              :key="option.value"
-              type="button"
-              class="h-6 w-6 cursor-pointer rounded-full border border-sf-b transition-all duration-200 hover:scale-110"
-              :class="{ 'border-2 border-sf-theme': isFontColorActive(option.value) }"
-              :style="{ backgroundColor: option.value }"
-              :aria-label="$t(option.name)"
-              :aria-pressed="isFontColorActive(option.value)"
-              @click="fontColor = option.value"
-            />
-          </div>
         </SettingSection>
 
         <SettingSection :title="$t('resumeBackground')" :reset-label="$t('reset')" @reset="resetPageBackground">

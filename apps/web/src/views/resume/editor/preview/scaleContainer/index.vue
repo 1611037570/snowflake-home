@@ -12,6 +12,7 @@ import Settings from "./toolbar/settings.vue";
 import MoreSettings from "./toolbar/moreSettings.vue";
 import FontFamily from "./toolbar/fontFamily.vue";
 import FontSize from "./toolbar/fontSize.vue";
+import FontColor from "./toolbar/fontColor.vue";
 import Spacing from "./toolbar/spacing.vue";
 import SettingPill from "./toolbar/settingPill.vue";
 import OnePage from "./toolbar/onePage.vue";
@@ -207,15 +208,23 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
 
 <template>
   <div class="group relative flex h-full flex-col self-stretch overflow-hidden">
-    <!-- 视图条：上行直出高频排版参数，下行放面板入口与视图操作，两行合起来与左侧栏头同高 -->
+    <!-- 字体工具组独立放在最左侧，其余参数与视图操作继续按两行排列。 -->
     <div
-      class="flex h-14 shrink-0 flex-col border-b border-sf-b bg-sf-primary select-none"
+      class="grid h-14 shrink-0 grid-cols-[auto_minmax(0,1fr)] grid-rows-2 border-b border-sf-b bg-sf-primary select-none"
       v-show="showToolbar"
     >
-      <!-- 上行：字体、字号、间距、缩放统一排在最左侧，宽度不足时向右滚动 -->
+      <!-- 按参考图排列：字体名在上，字号与字体灰度在下。 -->
+      <div class="row-span-2 flex w-42 shrink-0 flex-col border-r border-sf-b px-3">
+        <div class="flex min-h-0 flex-1 items-center justify-center">
+          <FontFamily />
+        </div>
+        <div class="flex min-h-0 flex-1 items-center justify-between">
+          <FontSize />
+          <FontColor />
+        </div>
+      </div>
+      <!-- 上行：间距与缩放参数，宽度不足时向右滚动。 -->
       <div class="toolbar-row flex min-h-0 flex-1 items-center gap-3 overflow-x-auto px-3">
-        <FontFamily />
-        <FontSize />
         <Spacing />
         <SfDropdown
           trigger="hover"

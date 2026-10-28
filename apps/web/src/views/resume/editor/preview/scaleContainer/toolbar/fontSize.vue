@@ -66,8 +66,9 @@ const bodySize = computed(() => sizeFields.value[0].value);
     @visible-change="dropdownVisible = $event"
   >
     <SettingPill
+      compact
       :label="$t('fontSize')"
-      :value="`${bodySize}px`"
+      :value="`${bodySize}`"
       :active="dropdownVisible"
     />
     <template #dropdown>

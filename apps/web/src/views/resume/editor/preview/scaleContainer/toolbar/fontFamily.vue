@@ -78,6 +78,7 @@ const selectFont = (item) => {
     @visible-change="dropdownVisible = $event"
   >
     <SettingPill
+      compact
       :label="$t('toolbarFontFamily')"
       :value="currentName"
       :active="dropdownVisible"
