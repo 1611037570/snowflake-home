@@ -7,7 +7,8 @@ import GithubStars from "./githubStars.vue";
 
 const route = useRoute();
 const drawerVisible = ref(false);
-const isMobile = useMediaQuery("(max-width: 767px)");
+// 完整导航需要足够横向空间，中等屏幕继续使用抽屉入口。
+const isMobile = useMediaQuery("(max-width: 1279px)");
 
 // 桌面顶部与移动抽屉共用导航配置。
 const navList = [
@@ -44,10 +45,14 @@ const navList = [
     path: "/resume/settings", // 导航目标路径
   },
 ];
-// 匹配前忽略末尾斜杠，兼容服务器返回目录地址时的导航高亮。
-const activeNavIndex = computed(() =>
-  navList.findIndex((item) => route.path.replace(/\/+$/, "") === item.path),
-);
+// 子页面沿用所属导航的选中态，首页只匹配自身路径。
+const activeNavIndex = computed(() => {
+  const currentPath = route.path.replace(/\/+$/, "");
+  return navList.findIndex((item) =>
+    currentPath === item.path ||
+    (item.path !== "/resume" && currentPath.startsWith(`${item.path}/`)),
+  );
+});
 
 // 路由切换或恢复桌面宽度时收起移动导航。
 watch([() => route.path, isMobile], () => {
@@ -57,48 +62,50 @@ watch([() => route.path, isMobile], () => {
 
 <template>
   <header
-    class="fixed top-0 right-0 left-0 z-50 h-12 w-full border-b-[0.5px] border-sf-b bg-sf-primary font-extrabold text-sf-base"
+    class="fixed top-0 right-0 left-0 z-50 h-12 w-full border-b-[0.5px] border-sf-b bg-sf-primary text-sf-text"
     x
   >
-    <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-3 px-3">
+    <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-3 px-3 sm:px-6 xl:gap-6">
       <!-- 移动端左侧显示三横线导航入口，右侧保留功能按钮。 -->
       <button
         type="button"
-        class="flex h-9 w-9 cursor-pointer flex-col items-center justify-evenly text-sf-text md:hidden"
+        class="flex h-9 w-9 shrink-0 cursor-pointer flex-col items-center justify-center gap-[6px] rounded-md text-sf-text-2 transition-colors hover:bg-sf-bg hover:text-sf-text xl:hidden"
         :aria-label="$t('resumeNavOpen')"
         :aria-expanded="drawerVisible"
         @click="drawerVisible = true"
       >
-        <span class="h-0.5 w-6 rounded-full bg-current"></span>
-        <span class="h-0.5 w-6 rounded-full bg-current"></span>
-        <span class="h-0.5 w-6 rounded-full bg-current"></span>
+        <span class="h-px w-[18px] rounded-full bg-current"></span>
+        <span class="h-px w-[18px] rounded-full bg-current"></span>
+        <span class="h-px w-[18px] rounded-full bg-current"></span>
       </button>
 
-      <ProjectTitle class="hidden md:flex" url="/resume" />
+      <!-- 品牌保持静态，移动端也保留标识，文字仍沿用组件的响应式显示。 -->
+      <ProjectTitle
+        class="flex shrink-0 [&_.animate-pulse]:animate-none [&_a]:gap-3 [&_a]:rounded-none [&_a]:px-0 [&_a]:hover:bg-transparent [&_a>span]:font-semibold [&_a>span]:tracking-normal"
+        url="/resume"
+      />
 
-      <nav class="hidden min-w-0 items-center gap-3 md:flex">
+      <!-- 菜单占据中间区域，短下划线与文字居中对齐。 -->
+      <nav class="hidden h-full min-w-0 flex-1 items-center justify-center gap-6 overflow-x-auto xl:flex" :aria-label="$t('resumeNavTitle')">
         <!-- 使用 router-link 渲染为真实 a 标签，便于搜索引擎抓取站内链接 -->
         <router-link
           v-for="(item, index) in navList"
           :key="item.path"
           :to="item.path"
-          class="shrink-0"
+          class="relative inline-flex h-full shrink-0 items-center whitespace-nowrap text-sm transition-colors after:absolute after:bottom-0 after:left-1/2 after:h-0.5 after:w-6 after:-translate-x-1/2 after:rounded-full after:bg-sf-theme after:transition-opacity focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-sf-theme"
+          :class="index === activeNavIndex ? 'font-medium text-sf-theme after:opacity-100' : 'font-normal text-sf-text-2 after:opacity-0 hover:text-sf-text'"
+          :aria-current="index === activeNavIndex ? 'page' : undefined"
         >
-          <SfSpan
-            class="h-9 cursor-pointer text-[16px]"
-            :active="index === activeNavIndex"
-            :underline-height="1"
-          >
-            {{ $t(item.key) }}
-          </SfSpan>
+          {{ $t(item.key) }}
         </router-link>
       </nav>
 
-      <div class="ml-auto flex shrink-0 items-center gap-3">
-        <GithubStars />
-        <SfTheme />
-        <SfLocale />
-        <SfDonation />
+      <!-- 工具统一点击区域与悬停底色，窄屏收紧间距，弹出内容保持原始尺寸。 -->
+      <div class="ml-auto flex shrink-0 items-center gap-[3px] border-l border-sf-b pl-3 sm:gap-3 [&_[data-sf-icon-state]]:scale-75!">
+        <GithubStars class="rounded-lg hover:bg-sf-bg" />
+        <SfTheme class="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-sf-bg" />
+        <SfLocale class="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:bg-sf-bg" />
+        <SfDonation class="h-9 w-9 justify-center rounded-lg transition-colors hover:bg-sf-bg" />
       </div>
     </div>
   </header>
@@ -118,8 +125,8 @@ watch([() => route.path, isMobile], () => {
         v-for="(item, index) in navList"
         :key="item.path"
         :to="item.path"
-        class="hover:bg-sf-bg-hover cursor-pointer rounded-xl px-3 py-3 text-left font-bold"
-        :class="index === activeNavIndex ? 'bg-sf-theme-3 text-sf-theme' : ''"
+        class="relative flex cursor-pointer items-center rounded-lg px-6 py-3 text-left text-sm transition-colors before:absolute before:top-3 before:bottom-3 before:left-0 before:w-0.5 before:rounded-full before:bg-sf-theme hover:bg-sf-bg"
+        :class="index === activeNavIndex ? 'bg-sf-theme-3 font-medium text-sf-theme before:opacity-100' : 'font-normal text-sf-text-2 before:opacity-0'"
         :aria-current="index === activeNavIndex ? 'page' : undefined"
         @click="drawerVisible = false"
       >
