@@ -17,7 +17,6 @@ import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
 import { useRoute } from "vue-router";
 import { publicExamples } from "../seo/catalog";
-import PublicContent from "../seo/publicContent.vue";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
 const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
@@ -409,8 +408,6 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
           </div>
         </template>
       </RevealGrid>
-      <!-- 目录始终可见，不受交互筛选与触底加载影响。 -->
-      <PublicContent />
     </ListScroll>
     <!-- 模板页专用全屏预览：左侧展示简历，右侧展示模板文字信息 -->
     <TemplatePreview

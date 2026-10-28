@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import LocalBackupSettings from "../../components/localBackupSettings.vue";
-import PublicContent from "../../seo/publicContent.vue";
 </script>
 
 <template>
@@ -23,8 +22,6 @@ import PublicContent from "../../seo/publicContent.vue";
         <!-- 与编辑器头部的备份设置共用同一份内容组件 -->
         <LocalBackupSettings class="mt-3" />
       </section>
-      <!-- 公开说明与构建正文共用内容，不包含目录授权信息。 -->
-      <PublicContent />
     </main>
   </SfScrollbar>
 </template>

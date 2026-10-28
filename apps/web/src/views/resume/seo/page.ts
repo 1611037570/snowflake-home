@@ -1,5 +1,4 @@
 import { resolveSiteConfig, resolveSiteMetadata, type CatalogCounts } from "../../../../site.config";
-import { publicExamples } from "./catalog";
 
 export interface SeoMetaTag {
   /** 标签使用名称属性还是开放图谱属性。 */
@@ -17,7 +16,6 @@ export function resolvePageSeo(path: string, language: string, entryRoute: strin
   const metadata = resolveSiteMetadata(route, language, entryRoute, counts);
   const config = resolveSiteConfig(route);
   const exact = config?.route === route;
-  const content = exact ? config?.content : undefined;
   const url = `${base}${route}`;
   const robots = metadata.noindex ? "noindex,follow" : "index,follow";
   const tags: SeoMetaTag[] = [
@@ -82,15 +80,6 @@ export function resolvePageSeo(path: string, language: string, entryRoute: strin
           item: `${base}${item}`, // 导航目标地址。
         })),
       }] : []),
-      ...(content === "catalog" ? [{
-        "@type": "ItemList", // 页面可见的范本目录类型。
-        itemListElement: publicExamples.map((item, index) => ({
-          "@type": "ListItem", // 目录项类型。
-          position: index + 1, // 范本在目录中的顺序。
-          name: item.name, // 范本名称。
-          url: `${base}${item.path}`, // 范本详情地址。
-        })),
-      }] : []),
     ],
   };
   return {
@@ -98,7 +87,6 @@ export function resolvePageSeo(path: string, language: string, entryRoute: strin
     path: route, // 去除查询参数与末尾斜杠的路径。
     url, // 页面规范地址。
     language: language.startsWith("en") ? "en" : "zh-CN", // 网页语言。
-    content, // 当前配置声明的静态正文来源。
     tags, // 构建和浏览器共用的头部标签。
     schema, // 构建和浏览器共用的结构化数据。
   };

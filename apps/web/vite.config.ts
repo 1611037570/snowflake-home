@@ -164,7 +164,7 @@ export default ({ mode }: { mode: string }) => {
       // 站点地图与 robots 生成，路由清单来自 site.config.ts
       seoFilesPlugin(settings.siteUrl),
       // 公开页面在构建期生成完整正文，编辑器仍沿用客户端入口。
-      publicPagesPlugin(settings.siteUrl, settings.defaultLanguage, settings.defaultRoute, catalogCounts),
+      publicPagesPlugin(settings.siteUrl, settings.defaultLanguage, settings.defaultRoute, catalogCounts, settings.routerMode === "history"),
       // HTML插件配置
       createHtmlPlugin({
         minify: isProd, // 开启HTML压缩

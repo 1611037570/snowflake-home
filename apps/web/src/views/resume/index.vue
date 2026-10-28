@@ -51,7 +51,8 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
   </section>
   <LoadingComponent v-else-if="!resumeReady" class="h-svh w-full" />
   <router-view v-else-if="route.meta.hideResumeLayout" class="h-screen w-full" />
-  <main v-else class="relative flex h-screen min-w-full flex-col bg-sf-page">
+  <!-- 公开布局就绪标记供构建预渲染等待，不改变页面显示。 -->
+  <main v-else :data-prerender-route="route.path" class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <ResumeHeader />
     <!-- 公共布局只补偿固定导航高度，各页面自行控制内容间距。 -->
     <div

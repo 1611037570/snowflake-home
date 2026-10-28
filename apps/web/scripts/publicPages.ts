@@ -1,7 +1,6 @@
 import type { Plugin } from "vite";
 import { SITE_CONFIGS, type CatalogCounts } from "../site.config";
-import { publicExamples, type ExampleSection } from "../src/views/resume/seo/catalog";
-import { escapeHtml, renderPublicContent } from "../src/views/resume/seo/content";
+import type { ExampleSection } from "../src/views/resume/seo/catalog";
 import { resolvePageSeo } from "../src/views/resume/seo/page";
 import { replaceSeoHead } from "./seoHead";
 import { getExampleSourceFiles, readExampleSections } from "./exampleSections";
@@ -10,15 +9,17 @@ const virtualId = "virtual:resume-public-sections";
 const resolvedVirtualId = `\0${virtualId}`;
 
 /** 为公开页面输出独立网页，并为浏览器提供相同的范本正文。 */
-export function publicPagesPlugin(siteUrl: string, language: string, entryRoute: string, counts: CatalogCounts): Plugin {
+export function publicPagesPlugin(siteUrl: string, language: string, entryRoute: string, counts: CatalogCounts, historyMode = true): Plugin {
   let root = "";
   let sections: Record<string, ExampleSection[]>;
   const origin = siteUrl.replace(/\/+$/, "");
+  let base = "/";
   return {
     name: "resume-public-pages", // 静态正文与共享数据插件名称。
     enforce: "post", // 在通用入口网页生成后派生各路由网页。
     configResolved(config) {
       root = config.root;
+      base = config.base;
     },
     buildStart() {
       sections = readExampleSections(root);
@@ -49,21 +50,21 @@ export function publicPagesPlugin(siteUrl: string, language: string, entryRoute:
         const template = String(entry.source);
         for (const site of SITE_CONFIGS) {
           const page = resolvePageSeo(site.route, language, entryRoute, counts, origin);
-          const { metadata } = page;
-          const example = publicExamples.find((item) => item.path === site.route);
-          let html = replaceSeoHead(template, page)
+          const html = replaceSeoHead(template, page)
             // 仅移除旧正文兜底，保留页头的无脚本样式表。
             .replace(/(<body\b[^>]*>[\s\S]*?)<noscript>[\s\S]*?<\/noscript>/i, "$1");
-          if (page.content) {
-            html = html.replace(/<\/head>/i, '<style>.public-static{height:100svh;overflow:auto}</style></head>');
-            const title = example ? "" : `<header class="mx-auto max-w-7xl p-6 text-sf-text"><h1 class="text-3xl font-bold">${escapeHtml(metadata.title)}</h1><p class="mt-3 leading-7">${escapeHtml(metadata.description)}</p></header>`;
-            const content = `<main class="public-static bg-sf-page"><nav class="mx-auto flex max-w-7xl gap-6 p-6 text-sf-text"><a href="/resume">轻舟简历</a><a href="/resume/template">${language.startsWith("en") ? "Templates" : "简历模板"}</a></nav>${title}${renderPublicContent(site.route, example ? sections[example.slug] : [], language.startsWith("en"))}</main>`;
-            const app = /<div\s+id=(?:"app"|'app'|app)\s*><\/div>/i;
-            if (!app.test(html)) throw new Error("未找到静态正文挂载位置");
-            html = html.replace(app, () => `<div id="app">${content}</div>`);
-          }
           this.emitFile({ type: "asset", fileName: `${site.route.slice(1)}/index.html`, source: html });
         }
+        // 后续构建步骤读取清单，实际运行原页面后保存正文，不再拼接额外介绍。
+        this.emitFile({
+          type: "asset", // 预渲染清单产物类型。
+          fileName: "seo-prerender.json", // 构建后预渲染入口清单。
+          source: JSON.stringify({
+            base, // 静态资源与客户端路由的部署前缀。
+            language, // 构建时使用的界面语言。
+            routes: historyMode ? SITE_CONFIGS.filter((site) => site.prerender && !site.noindex).map((site) => site.route) : [], // 仅预渲染公开的历史路由页面。
+          }),
+        });
         // 不存在的范本使用独立错误网页，服务器以不存在状态返回，不回退到首页。
         this.emitFile({
           type: "asset", // 错误网页产物类型。

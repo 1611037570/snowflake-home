@@ -50,8 +50,6 @@ export const LEARNING_CATEGORIES: LearningCategory[] = [
 
 export const LEARNING_ARTICLES: LearningArticle[] = [
   { id: "workspace", category: "start" },
-  // 公开范本详情与模板预览共用已有创建流程。
-  { id: "examples", category: "start" },
   { id: "import", category: "start" },
   { id: "modules", category: "edit" },
   { id: "fields", category: "edit" },

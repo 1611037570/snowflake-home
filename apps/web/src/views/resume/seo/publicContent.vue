@@ -5,14 +5,12 @@ import i18n from "@/locales";
 import sections from "virtual:resume-public-sections";
 import { publicExamples } from "./catalog";
 import { renderPublicContent } from "./content";
-import { resolveSiteConfig } from "../../../../site.config";
 
 const route = useRoute();
-// 列表与详情共享构建期提取的公开范本段落，不读取用户本地简历。
+// 仅范本详情展示提取的公开段落，不向其他页面追加介绍区域。
 const html = computed(() => {
-  const page = resolveSiteConfig(route.path);
-  if (page?.route !== route.path || !page.content) return "";
   const example = publicExamples.find((item) => item.path === route.path);
+  if (!example) return "";
   return renderPublicContent(
     route.path,
     example ? sections[example.slug] : [],

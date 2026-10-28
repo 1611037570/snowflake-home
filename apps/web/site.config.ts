@@ -1,5 +1,4 @@
 import { publicExamples } from "./src/views/resume/seo/catalog";
-import type { InformationKind } from "./src/views/resume/seo/information";
 
 /** 全站统一的站点图标，避免每条路由重复声明。 */
 const FAVICON = "/favicon.ico";
@@ -29,8 +28,8 @@ export interface SiteConfig {
   changefreq?: "daily" | "weekly" | "monthly" | "yearly";
   /** 站点地图里的优先级，取值 0.0 到 1.0。 */
   priority?: number;
-  /** 静态正文来源：岗位目录、范本详情或功能说明，未声明时只输出页面信息。 */
-  content?: "catalog" | "example" | InformationKind;
+  /** 是否在构建时预渲染原有页面，未声明时只生成页面信息。 */
+  prerender?: boolean;
   /** 页面结构化数据类型，未声明时使用普通网页。 */
   schemaType?: "WebPage" | "CollectionPage" | "SoftwareApplication" | "WebApplication";
   /** 面包屑中的直接上级页面地址。 */
@@ -54,7 +53,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   // 公开范本与列表共用元信息，构建网页、站点地图及客户端导航保持一致。
   ...publicExamples.map((example): SiteConfig => ({
     route: example.path, // 范本详情的稳定地址。
-    content: "example", // 范本详情正文。
+    prerender: true, // 构建时预渲染原有公开页面。
     parentRoute: "/resume/template", // 范本所属目录。
     changefreq: "monthly", // 范本内容的建议抓取周期。
     priority: 0.7, // 详情页面的站点地图优先级。
@@ -91,7 +90,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume",
-    content: "catalog", // 首页公开范本目录。
+    prerender: true, // 构建时预渲染原有公开页面。
     schemaType: "SoftwareApplication", // 在线简历工具。
     changefreq: "weekly",
     priority: 1.0,
@@ -114,7 +113,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/template",
-    content: "catalog", // 模板页公开范本目录。
+    prerender: true, // 构建时预渲染原有公开页面。
     schemaType: "CollectionPage", // 模板集合页面。
     parentRoute: "/resume", // 所属产品首页。
     changefreq: "weekly",
@@ -137,7 +136,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/ai",
-    content: "ai", // 小舟能力与模型配置说明。
+    prerender: true, // 构建时预渲染原有公开页面。
     parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
     priority: 0.8,
@@ -158,7 +157,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/statistics",
-    content: "statistics", // 投递记录、跟进与趋势统计说明。
+    prerender: true, // 构建时预渲染原有公开页面。
     parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
     priority: 0.7,
@@ -178,7 +177,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/guide",
-    content: "guide", // 复用现有求职指南正文。
+    prerender: true, // 构建时预渲染原有公开页面。
     schemaType: "CollectionPage", // 求职指南集合。
     parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
@@ -200,7 +199,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/tools",
-    content: "tools", // 工具用途与可抓取入口。
+    prerender: true, // 构建时预渲染原有公开页面。
     schemaType: "CollectionPage", // 求职工具集合。
     parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
@@ -224,7 +223,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/tools/resignation-score",
-    content: "resignation", // 评分维度与操作说明。
+    prerender: true, // 构建时预渲染原有公开页面。
     schemaType: "WebApplication", // 在线工作评分工具。
     parentRoute: "/resume/tools", // 所属工具目录。
     changefreq: "monthly",
@@ -246,7 +245,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/tools/offer-comparison",
-    content: "offers", // 录用条件维度与对比说明。
+    prerender: true, // 构建时预渲染原有公开页面。
     schemaType: "WebApplication", // 在线录用条件比较工具。
     parentRoute: "/resume/tools", // 所属工具目录。
     changefreq: "monthly",
@@ -268,7 +267,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/tools/real-hourly-wage",
-    content: "hourly", // 休息制度与计算说明。
+    prerender: true, // 构建时预渲染原有公开页面。
     schemaType: "WebApplication", // 在线时薪计算工具。
     parentRoute: "/resume/tools", // 所属工具目录。
     applicationCategory: "FinanceApplication", // 时薪计算的财务用途。
@@ -291,7 +290,7 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/settings",
-    content: "settings", // 本地数据与备份设置说明。
+    prerender: true, // 构建时预渲染原有公开页面。
     parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
     priority: 0.5,

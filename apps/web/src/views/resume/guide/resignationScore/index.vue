@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import PublicContent from "../../seo/publicContent.vue";
 
 import { resignationScoreList, resignationScoreResults } from "./data";
 
@@ -205,8 +204,6 @@ function resetScore() {
           </SfButton>
         </section>
       </section>
-      <!-- 公开说明不依赖评分结果，和静态网页保持一致。 -->
-      <PublicContent />
     </main>
   </SfScrollbar>
 </template>

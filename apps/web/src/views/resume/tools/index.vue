@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import PublicContent from "../seo/publicContent.vue";
 // 求职工具入口：三个决策工具各自独立成页，这里只做导航入口，不承载工具内容。
 </script>
 
@@ -71,8 +70,6 @@ import PublicContent from "../seo/publicContent.vue";
           </RouterLink>
         </p>
       </footer>
-      <!-- 工具使用说明同时用于构建静态正文。 -->
-      <PublicContent />
     </main>
   </SfScrollbar>
 </template>

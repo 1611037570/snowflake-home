@@ -427,6 +427,9 @@ importers:
       oxlint:
         specifier: 1.11.2
         version: 1.11.2
+      playwright:
+        specifier: ^1.55.1
+        version: 1.63.0
       prettier:
         specifier: 'catalog:'
         version: 3.6.2
