@@ -56,6 +56,7 @@ export function expandConfigModules(modules: any[], data: any) {
     }
     appendUserCustomFields(field, item);
     restoreFieldOrder(field, item);
+    placeUserMedia(field);
     placeUserSubtitle(field);
     return field;
   });
@@ -83,6 +84,14 @@ export function ensureRuntimeFieldIds(fields: any[], parentPath: string[] = []) 
     if (field.itemSchema) ensureRuntimeFieldIds([field.itemSchema], [...childPath, "item"]);
   });
   return fields;
+}
+
+// 头像与校徽固定并排置顶，避免恢复字段顺序后被其他字段隔开。
+function placeUserMedia(field: any) {
+  if (field?.key !== "user" || !Array.isArray(field.fields)) return;
+  const keys = ["avatar", "logo"];
+  const mediaFields = keys.map((key) => field.fields.find((item: any) => item.key === key)).filter(Boolean);
+  field.fields = [...mediaFields, ...field.fields.filter((item: any) => !keys.includes(item.key))];
 }
 
 // 副标题分区固定跟随姓名之后：模板新增的分区不能按"追加到末尾"的默认规则落位

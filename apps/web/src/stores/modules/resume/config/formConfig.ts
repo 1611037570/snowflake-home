@@ -214,11 +214,12 @@ export const DEFAULT_USER_FORM = [
         label: "头像",
         component: "imageUpload",
         required: false,
-        span: 24,
-        // 头像与其他个人信息字段统一圆角边框及上下左右留白。
-        colClass: DEFAULT_COL_CLASS + " py-1 px-3!",
+        span: 12, // 头像与校徽各占半行，并排展示。
+        // 头像右侧留出卡片间距，并扣除对应宽度以保持与校徽同排。
+        colClass: DEFAULT_COL_CLASS + " py-1 px-3! mr-3 max-w-[calc(50%_-_0.75rem)]!",
         // 头像操作接入统一标题行，隐藏状态仍由表单项维护。
         ui: {
+          removable: true, // 删除入口统一放在标题行右侧，仅清除头像图片。
           labelActions: "avatarSettings", // 紧随头像标题的设置组件。
           hidden: { // 头像在简历预览中的隐藏状态绑定。
             source: ["ui", "avatar", "hidden"], // 沿用头像隐藏状态的存储路径。
@@ -232,6 +233,31 @@ export const DEFAULT_USER_FORM = [
             prop: "modelValue",
           },
         ],
+      },
+
+      // 校徽与头像同属个人信息，统一卡片与标题操作。
+      {
+        type: "object", // 使用独立图片字段。
+        key: "logo", // 校徽字段标识。
+        label: "校徽", // 校徽入口标题。
+        tip: "校徽位置随头像位置调整，可在「布局 → 头像位置」中修改。", // 提示校徽位置的调整入口。
+        component: "schoolLogo", // 独立校徽编辑组件。
+        span: 12, // 与头像同排，占半行宽度。
+        colClass: DEFAULT_COL_CLASS + " py-1 px-3!", // 与头像卡片保持相同样式。
+        required: false, // 校徽为可选内容。
+        ui: { // 校徽字段界面配置。
+          removable: true, // 标题右侧提供统一删除入口。
+          hidden: { // 控制校徽在个人信息区的显示状态。
+            source: ["ui", "logo", "hidden"], // 保存校徽隐藏状态。
+            prop: "hidden", // 使用统一隐藏开关绑定。
+            defaultValue: false, // 默认显示已上传的校徽。
+          },
+        },
+        model: { // 校徽图片绑定。
+          source: ["data", "logo"], // 保存个人信息区的校徽图片。
+          prop: "modelValue", // 双向绑定校徽图片。
+          defaultValue: "", // 默认不显示校徽。
+        },
       },
 
       // 姓名

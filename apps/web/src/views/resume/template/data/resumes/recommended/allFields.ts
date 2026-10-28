@@ -36,6 +36,7 @@ const resumeData: any = {
         measurements: { bust: "96", waist: "78", hip: "94" },
         sizes: { top: "L", bottom: "32", shoes: "42" },
         avatar: xiaoyang,
+        logo: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='210' height='210' viewBox='0 0 210 210'%3E%3Ccircle cx='105' cy='105' r='98' fill='white' stroke='%23245278' stroke-width='8'/%3E%3Cpath d='M45 85L105 50L165 85L105 120Z' fill='%23245278'/%3E%3Cpath d='M65 105V140Q105 170 145 140V105' fill='none' stroke='%23245278' stroke-width='10'/%3E%3C/svg%3E", // 个人信息校徽图片示例。
       },
     },
     account: {

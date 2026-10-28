@@ -13,6 +13,7 @@ const TEXT_KEYS_SOURCE = `
   请输入一句话标语: "sloganSubtitlePlaceholder",
   社交账号: "socialAccounts",
   教育经历: "educationExperience",
+  校徽: "schoolLogo",
   专业技能: "professionalSkills",
   个人优势: "personalAdvantages",
   工作经历: "workExperience",

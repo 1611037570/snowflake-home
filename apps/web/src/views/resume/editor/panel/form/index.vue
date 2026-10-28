@@ -11,6 +11,7 @@ import { useRuntimeData } from "../../hooks/useRuntimeData";
 import ModuleSidebar from "./moduleSidebar/index.vue";
 import HeightWeight from "./components/field/heightWeight.vue";
 import Portfolio from "./components/field/portfolio.vue";
+import SchoolLogo from "./components/field/schoolLogo.vue";
 import More from "./components/field/more.vue";
 import Measurements from "./components/field/measurements.vue";
 import PositionPicker from "./components/field/positionPicker.vue";
@@ -29,6 +30,7 @@ import AvatarDropdown from "./components/collapse/avatarDropdown.vue";
 import RowField from "./components/row/field.vue";
 import RowAccount from "./components/row/account.vue";
 import RowSkill from "./components/row/skill.vue";
+import FormActionIcon from "./components/icon.vue";
 import { localizeResumeOptions } from "@/stores/modules/resume/hooks/useResumeEditorLocale";
 import i18n from "@/locales";
 import { flushPendingEditorLocation } from "../../hooks/useModuleNav";
@@ -139,6 +141,7 @@ markEditorStart();
 // 折叠容器 collapseItem：数组模块中单条记录的标题 + 折叠/隐藏/删除，内容由插槽渲染
 // 行控件 rowField / rowAccount / rowSkill：一行内的字段编辑与隐藏/删除操作
 const dynamicComponents = {
+  formActionIcon: FormActionIcon, // 表单标题操作复用编辑区公共图标组件。
   collapseModule: CollapseModule,
   collapseItem: CollapseItem,
   collapseGroup: CollapseGroup, // 字段折叠分组：只收起字段，不做模块与记录操作
@@ -146,6 +149,7 @@ const dynamicComponents = {
   rowAccount: RowAccount,
   rowSkill: RowSkill,
   imageUpload: AsyncImageUpload,
+  schoolLogo: SchoolLogo, // 独立校徽上传入口。
   avatarSettings: AvatarDropdown, // 统一表单标题行的头像设置操作。
   portfolio: Portfolio,
   heightWeight: HeightWeight,

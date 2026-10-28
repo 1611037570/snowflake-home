@@ -17,6 +17,8 @@ type MediaFieldDecl = {
 export const RESUME_MEDIA_FIELDS: MediaFieldDecl[] = [
   // 个人信息头像：base64 Data URL，存于 user.data
   { moduleKey: "user", shape: "object", field: "avatar" },
+  // 个人信息校徽，沿用媒体池与智能体媒体保护。
+  { moduleKey: "user" /* 个人信息模块 */, shape: "object" /* 模块级数据 */, field: "logo" /* 校徽图片 */ },
   // 作品集图片：base64 Data URL，存于 portfolio.list[].data
   { moduleKey: "portfolio", shape: "array", field: "img" },
 ];

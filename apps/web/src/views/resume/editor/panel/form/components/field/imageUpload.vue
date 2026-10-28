@@ -245,10 +245,7 @@ const handleCancelCrop = () => {
   cropper = null;
 };
 
-// 清空图片值
-const removeImage = () => {
-  image.value = "";
-};
+// 图片删除由表单标题行的统一入口处理。
 </script>
 
 <template>
@@ -281,14 +278,6 @@ const removeImage = () => {
 
       <!-- 右侧垂直操作栏：图标加文字描述，参考 image 项目操作栏布局 -->
       <div v-if="image" class="flex h-full flex-col gap-1">
-        <div
-          class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-error"
-          @click="removeImage"
-        >
-          <!-- 头像删除入口仅在悬停时显示危险色。 -->
-          <SfIcon icon="ic:round-delete" size="5" />
-          <span class="text-xs">{{ $t("delete") }}</span>
-        </div>
         <div
           class="flex cursor-pointer items-center gap-1 rounded-md px-1 py-1 transition-colors hover:text-sf-theme"
           @click="openPicker"

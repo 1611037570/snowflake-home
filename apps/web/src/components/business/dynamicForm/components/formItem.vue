@@ -31,26 +31,28 @@
             <!-- 设置紧随字段标题，隐藏开关留在标题行最右侧。 -->
             <component v-if="labelActions" :is="labelActions" />
           </div>
-          <!-- 隐藏按钮沿用编辑器其他标题操作的悬浮提示。 -->
+          <!-- 隐藏与删除复用宿主提供的操作图标，统一交互与外观。 -->
           <SfTooltip
             v-if="currentForm.ui?.hidden"
             :content="hidden ? $t('show') : $t('hide')"
           >
-            <SfIcon
+            <component
+              :is="actionIcon || SfIcon"
               @pointerdown.stop.prevent
               @click.stop.prevent="toggleHidden"
               :icon="hidden ? 'lucide:eye' : 'lucide:eye-off'"
               size="4"
-              class="ml-auto shrink-0 cursor-pointer hover:text-sf-theme"
+              :class="actionIcon ? undefined : 'ml-auto shrink-0 cursor-pointer hover:text-sf-theme'"
             />
           </SfTooltip>
-          <SfIcon
+          <component
+            :is="actionIcon || SfIcon"
             v-if="currentForm.ui?.removable"
             @pointerdown.stop.prevent
             @click.stop.prevent="removeField"
             icon="ic:round-delete"
             size="4"
-            class="cursor-pointer hover:text-sf-theme"
+            :class="actionIcon ? undefined : 'cursor-pointer hover:text-sf-theme'"
           />
         </div>
       </template>
@@ -61,6 +63,7 @@
 
 <script setup lang="ts">
 import { computed, inject } from "vue";
+import SfIcon from "@/components/base/icon";
 import { getFieldDataPath } from "../code/fieldData";
 import { getComponent } from "../code/getComponent";
 import { isFieldHidden } from "../code/fieldVisible";
@@ -81,6 +84,8 @@ const rootData: any = inject(DF_ROOT_DATA);
 const useRules = inject(DF_USE_RULES, () => true);
 // 标题操作与输入控件共用实例组件注册机制，不在表单中写业务特例。
 const labelActions = computed(() => getComponent(currentForm.ui?.labelActions));
+// 操作图标由宿主注册，未提供时沿用通用图标。
+const actionIcon = getComponent("formActionIcon");
 const hiddenBinding = computed(() => currentForm?.ui?.hidden);
 // 表单项直接读取自身的隐藏绑定，避免把 UI 状态传给实际输入组件
 const hidden = computed(() => {
