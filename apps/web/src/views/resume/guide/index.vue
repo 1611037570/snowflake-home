@@ -43,7 +43,7 @@ function scrollToGuide(index: number) {
 
 <template>
   <SfScrollbar class="h-full bg-sf-page" flush>
-    <main class="mx-auto w-full max-w-7xl px-3 py-6 text-sf-text sm:px-6">
+    <main class="mx-auto w-full max-w-7xl p-3 text-sf-text">
       <!-- 标题与手册标记同行，压缩页头高度，把空间留给正文。 -->
       <header>
         <div class="flex flex-wrap items-center gap-3">
@@ -56,7 +56,7 @@ function scrollToGuide(index: number) {
       </header>
 
       <section
-        class="mt-6 grid items-start gap-6 lg:grid-cols-[12rem_minmax(0,1fr)]"
+        class="mt-3 grid items-start gap-3 lg:grid-cols-[12rem_minmax(0,1fr)]"
       >
         <!-- 目录保持吸顶，窄屏继续使用原有折叠入口。 -->
         <aside class="sticky top-3 z-10 self-start">
@@ -120,7 +120,7 @@ function scrollToGuide(index: number) {
             :id="`guide-section-${guideIndex}`"
             :ref="(element) => setGuideSection(element, guideIndex)"
             :key="guide.name"
-            class="scroll-mt-3 pb-6"
+            class="scroll-mt-3 pb-3"
             :aria-labelledby="`guide-heading-${guideIndex}`"
           >
             <!-- 章节名称与数量分层，正文仍保留独立卡片。 -->

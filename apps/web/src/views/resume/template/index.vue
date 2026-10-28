@@ -245,22 +245,26 @@ const closeFullscreen = () => {
 };
 // 详情页使用入口只打开对应范本预览，由用户确认后沿用现有新建流程。
 const route = useRoute();
-watch(() => route.query.example, async (slug) => {
-  const example = publicExamples.find((item) => item.slug === slug);
-  if (!example) return;
-  try {
-    const item = await loadResumeTemplateData(example.fileName);
-    // 切换地址后不弹出旧请求对应的范本。
-    if (route.query.example !== slug) return;
-    openFullscreen({
-      ...resumeTemplateList.find((entry) => entry.fileName === example.fileName),
-      type: "content", // 复用现有内容范本的创建流程。
-      item, // 当前范本的公开示例数据。
-    });
-  } catch {
-    if (route.query.example === slug) ElMessage.error($t("resumeTemplateLoadError"));
-  }
-}, { immediate: true });
+watch(
+  () => route.query.example,
+  async (slug) => {
+    const example = publicExamples.find((item) => item.slug === slug);
+    if (!example) return;
+    try {
+      const item = await loadResumeTemplateData(example.fileName);
+      // 切换地址后不弹出旧请求对应的范本。
+      if (route.query.example !== slug) return;
+      openFullscreen({
+        ...resumeTemplateList.find((entry) => entry.fileName === example.fileName),
+        type: "content", // 复用现有内容范本的创建流程。
+        item, // 当前范本的公开示例数据。
+      });
+    } catch {
+      if (route.query.example === slug) ElMessage.error($t("resumeTemplateLoadError"));
+    }
+  },
+  { immediate: true },
+);
 const useFullscreenTemplate = () => {
   if (fullscreenCard.value) useTemplateCard(fullscreenCard.value);
   closeFullscreen();
@@ -278,7 +282,9 @@ const setPreviewSize = (size) => {
 const gridClass = ref("default");
 // 卡片整体保持纸张比例，名称、说明和标签放回卡片底部。
 const cardSizeClass = computed(() =>
-  gridClass.value === "small" ? "w-full max-w-[378px] aspect-[794/1123]" : "w-full max-w-[236px] aspect-[794/1123]",
+  gridClass.value === "small"
+    ? "w-full max-w-[378px] aspect-[794/1123]"
+    : "w-full max-w-[236px] aspect-[794/1123]",
 );
 // 缩略图只消费简历内容与配置，不把卡片上的筛选信息传进渲染链路
 const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: item?.ui });
@@ -289,7 +295,7 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
     <ListScroll
       class="flex-1"
       flush
-      content-class="px-3 py-6 sm:px-6"
+      content-class="px-3 py-3"
       :loading="templateLoading"
       :has-more="hasMore"
       :count="displayedTemplates.length"
@@ -300,7 +306,12 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
       <header class="mb-3">
         <h1 class="text-lg font-semibold text-sf-text">{{ $t("resumeTemplateTitle") }}</h1>
         <p class="mt-[6px] max-w-3xl text-xs leading-6 text-sf-text-2">
-          {{ $t("resumeTemplateSeoIntro", { examples: resumeTemplateList.length, templates: resumeStyleTemplateList.length }) }}
+          {{
+            $t("resumeTemplateSeoIntro", {
+              examples: resumeTemplateList.length,
+              templates: resumeStyleTemplateList.length,
+            })
+          }}
         </p>
       </header>
       <TemplateCategory
@@ -311,7 +322,7 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
       <!-- 首批范本未就绪时按真实卡片尺寸占位，避免筛选栏下方整片空白。 -->
       <div
         v-if="templateLoading && (!displayedTemplates.length || !previewBase)"
-        class="grid grid-cols-1 gap-x-3 gap-y-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        class="grid grid-cols-1 gap-x-3 gap-y-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
         role="status"
         aria-busy="true"
         :aria-label="$t('resumeTemplateLoading')"
@@ -337,7 +348,7 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
       <RevealGrid
         v-else
         :key="templateGridKey"
-        class="gap-y-6! [&>div]:items-stretch"
+        class="gap-y-3! [&>div]:items-stretch"
         :items="displayedTemplates"
         :size="gridClass"
         :reveal="false"
@@ -347,7 +358,7 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
           <!-- 卡片外壳由模板页自己维护，缩略图仍复用懒加载预览组件 -->
           <div
             :class="cardSizeClass"
-            class="group relative flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-colors hover:border-sf-theme focus-within:border-sf-theme"
+            class="group relative flex cursor-pointer flex-col overflow-hidden rounded-[4px] border border-sf-b bg-sf-primary transition-colors focus-within:border-sf-theme hover:border-sf-theme"
             @click="openFullscreen(card)"
           >
             <!-- 预览铺满卡片，底部信息区覆盖在预览之上。 -->
@@ -357,7 +368,7 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
             <div class="relative min-h-0 flex-1">
               <!-- 悬浮遮罩：淡白蒙层不加模糊，简历内容仍可见，承载预览与使用按钮 -->
               <div
-                class="pointer-events-none absolute inset-0 flex items-center justify-center gap-3 bg-sf-transparent-3 opacity-0 transition-opacity duration-200 group-hover:pointer-events-auto group-hover:opacity-100 group-focus-within:pointer-events-auto group-focus-within:opacity-100"
+                class="pointer-events-none absolute inset-0 flex items-center justify-center gap-3 bg-sf-transparent-3 opacity-0 transition-opacity duration-200 group-focus-within:pointer-events-auto group-focus-within:opacity-100 group-hover:pointer-events-auto group-hover:opacity-100"
               >
                 <SfButton @click.stop="openFullscreen(card)">
                   {{ $t("resumeTemplatePreview") }}
@@ -389,7 +400,9 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
           </div>
         </template>
         <template #empty>
-          <div class="flex min-h-60 items-center justify-center rounded-xl border border-dashed border-sf-b text-sm text-sf-text-2">
+          <div
+            class="flex min-h-60 items-center justify-center rounded-xl border border-dashed border-sf-b text-sm text-sf-text-2"
+          >
             {{ $t("resumeTemplateEmpty") }}
           </div>
         </template>

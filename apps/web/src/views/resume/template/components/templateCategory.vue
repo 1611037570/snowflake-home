@@ -85,22 +85,29 @@ const getTemplateTypeCount = (key) =>
 
 <template>
   <!-- 分类和筛选收进同一面板，压缩空白并建立明确的内容边界。 -->
-  <section class="mb-6 rounded-xl border border-sf-b bg-sf-primary p-3 sm:px-6">
-    <div class="flex flex-col gap-3 border-b border-sf-b pb-3 md:flex-row md:items-center md:justify-between">
+  <section class="mb-3 rounded-xl border border-sf-b bg-sf-primary p-3">
+    <div
+      class="flex flex-col gap-3 border-b border-sf-b pb-3 md:flex-row md:items-center md:justify-between"
+    >
       <!-- 分类采用文字页签，数量作为小角标，不再占据独立卡片。 -->
-      <nav class="flex flex-wrap gap-6">
+      <nav class="flex flex-wrap gap-3">
         <button
           v-for="top in topCategoryCards"
           :key="top.key"
           type="button"
           class="relative flex h-9 cursor-pointer items-center gap-[6px] text-sm transition-colors after:absolute after:inset-x-0 after:-bottom-3 after:h-0.5 after:rounded-full after:bg-sf-theme"
           :class="
-            currentTopCategory === top.key ? 'font-semibold text-sf-theme after:opacity-100' : 'font-normal text-sf-text-2 after:opacity-0 hover:text-sf-text'
+            currentTopCategory === top.key
+              ? 'font-semibold text-sf-theme after:opacity-100'
+              : 'font-normal text-sf-text-2 after:opacity-0 hover:text-sf-text'
           "
           @click="selectTopCategory(top.key)"
         >
           <span>{{ $t(`resumeTemplateTopCategory_${top.key}`) }}</span>
-          <span class="rounded bg-sf-bg px-[6px] py-[3px] text-[11px] leading-none font-normal text-sf-text-3 tabular-nums">{{ top.count }}</span>
+          <span
+            class="rounded bg-sf-bg px-[6px] py-[3px] text-[11px] leading-none font-normal text-sf-text-3 tabular-nums"
+            >{{ top.count }}</span
+          >
         </button>
       </nav>
       <!-- 尺寸切换降低视觉权重，两档使用一致的点击区域。 -->
@@ -110,7 +117,11 @@ const getTemplateTypeCount = (key) =>
           <button
             type="button"
             class="h-6 cursor-pointer rounded px-3 text-xs transition-colors"
-            :class="previewSize === 'default' ? 'bg-sf-primary font-medium text-sf-text' : 'text-sf-text-2 hover:text-sf-text'"
+            :class="
+              previewSize === 'default'
+                ? 'bg-sf-primary font-medium text-sf-text'
+                : 'text-sf-text-2 hover:text-sf-text'
+            "
             :aria-pressed="previewSize === 'default'"
             @click="selectPreviewSize('default')"
           >
@@ -119,7 +130,11 @@ const getTemplateTypeCount = (key) =>
           <button
             type="button"
             class="h-6 cursor-pointer rounded px-3 text-xs transition-colors"
-            :class="previewSize === 'small' ? 'bg-sf-primary font-medium text-sf-text' : 'text-sf-text-2 hover:text-sf-text'"
+            :class="
+              previewSize === 'small'
+                ? 'bg-sf-primary font-medium text-sf-text'
+                : 'text-sf-text-2 hover:text-sf-text'
+            "
             :aria-pressed="previewSize === 'small'"
             @click="selectPreviewSize('small')"
           >
@@ -132,7 +147,7 @@ const getTemplateTypeCount = (key) =>
          该维度只有一个时不再重复展示，直接展示它的选项 -->
     <div
       v-if="currentTopCategory !== 'template' && currentCategories.length > 1"
-      class="mt-3 flex flex-wrap items-center gap-6 border-b border-sf-b"
+      class="mt-3 flex flex-wrap items-center gap-3 border-b border-sf-b"
     >
       <button
         v-for="category in currentCategories"
@@ -168,7 +183,11 @@ const getTemplateTypeCount = (key) =>
     </div>
     <!-- 标签与选项收紧横向留白，两行仍保持起点对齐。 -->
     <div v-else class="mt-3 flex flex-col gap-[6px]">
-      <div v-for="category in currentCategories" :key="category.key" class="flex items-center gap-[6px]">
+      <div
+        v-for="category in currentCategories"
+        :key="category.key"
+        class="flex items-center gap-[6px]"
+      >
         <span class="w-9 shrink-0 text-xs text-sf-text-3">
           {{ $t(`resumeTemplateCategory_${category.key}`) }}
         </span>
@@ -186,7 +205,11 @@ const getTemplateTypeCount = (key) =>
             @click="toggleTemplateOption(category.key, option.key)"
           >
             {{ $t(`resumeTemplateOption_design_${option.key}`) }}
-            <span v-if="category.key === 'tier'" class="ml-[6px] text-xs text-sf-text-3 tabular-nums">{{ getTemplateTypeCount(option.key) }}</span>
+            <span
+              v-if="category.key === 'tier'"
+              class="ml-[6px] text-xs text-sf-text-3 tabular-nums"
+              >{{ getTemplateTypeCount(option.key) }}</span
+            >
           </button>
         </div>
       </div>

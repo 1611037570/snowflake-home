@@ -65,7 +65,7 @@ watch([() => route.path, isMobile], () => {
     class="fixed top-0 right-0 left-0 z-50 h-12 w-full border-b-[0.5px] border-sf-b bg-sf-primary text-sf-text"
     x
   >
-    <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-3 px-3 sm:px-6 xl:gap-6">
+    <div class="mx-auto flex h-full w-full max-w-7xl items-center gap-3 px-3">
       <!-- 移动端左侧显示三横线导航入口，右侧保留功能按钮。 -->
       <button
         type="button"
@@ -86,7 +86,7 @@ watch([() => route.path, isMobile], () => {
       />
 
       <!-- 菜单占据中间区域，短下划线与文字居中对齐。 -->
-      <nav class="hidden h-full min-w-0 flex-1 items-center justify-center gap-6 overflow-x-auto xl:flex" :aria-label="$t('resumeNavTitle')">
+      <nav class="hidden h-full min-w-0 flex-1 items-center justify-center gap-3 overflow-x-auto xl:flex" :aria-label="$t('resumeNavTitle')">
         <!-- 使用 router-link 渲染为真实 a 标签，便于搜索引擎抓取站内链接 -->
         <router-link
           v-for="(item, index) in navList"
@@ -125,7 +125,7 @@ watch([() => route.path, isMobile], () => {
         v-for="(item, index) in navList"
         :key="item.path"
         :to="item.path"
-        class="relative flex cursor-pointer items-center rounded-lg px-6 py-3 text-left text-sm transition-colors before:absolute before:top-3 before:bottom-3 before:left-0 before:w-0.5 before:rounded-full before:bg-sf-theme hover:bg-sf-bg"
+        class="relative flex cursor-pointer items-center rounded-lg p-3 text-left text-sm transition-colors before:absolute before:top-3 before:bottom-3 before:left-0 before:w-0.5 before:rounded-full before:bg-sf-theme hover:bg-sf-bg"
         :class="index === activeNavIndex ? 'bg-sf-theme-3 font-medium text-sf-theme before:opacity-100' : 'font-normal text-sf-text-2 before:opacity-0'"
         :aria-current="index === activeNavIndex ? 'page' : undefined"
         @click="drawerVisible = false"
