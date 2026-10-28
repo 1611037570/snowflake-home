@@ -202,7 +202,7 @@ export const evaluateResumeAgentCompletion = (
         code: "missing_evidence",
         detail: missingNames,
         text: allowTaskPause
-          ? `本轮任务还缺少${missingNames}的成功证据。请继续使用可用工具完成任务；确实缺少必要事实时调用 request_resume_input，确认无法安全执行时调用 report_resume_blocker。`
+          ? `本轮任务还缺少${missingNames}的成功证据。请按当前入口和内容处理规则继续使用工具完成任务；确需补充时调用 request_resume_input，无法安全执行时调用 report_resume_blocker。`
           : `本轮任务还缺少${missingNames}的成功证据。请继续使用已有资料和可用工具完成任务；未知细节使用 XX 占位，不得冒充已确认事实。`,
       },
     };

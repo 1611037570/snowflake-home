@@ -67,6 +67,11 @@ export type ResumeOperationResult = {
 
 type OperationOutcome = "changed" | "unchanged" | "failed";
 
+// 操作前捕获快照，返回的回调仅在真实改动后执行；参数为新增记录的实际下标。
+export type ResumeOperationObserver = (
+  operation: ResumeWriteOp,
+) => ((addedIndex?: number) => void) | undefined;
+
 // 同值判断按可序列化结果比较，避免对象与数组按引用比较误判
 const isSameValue = (first: unknown, second: unknown) =>
   JSON.stringify(first ?? null) === JSON.stringify(second ?? null);
@@ -75,6 +80,7 @@ const isSameValue = (first: unknown, second: unknown) =>
 export const executeResumeOperations = (
   operations: ResumeWriteOp[],
   target: ResumeOperationTarget,
+  observe?: ResumeOperationObserver,
 ): ResumeOperationResult => {
   const changed: number[] = [];
   const unchanged: number[] = [];
@@ -84,6 +90,10 @@ export const executeResumeOperations = (
 
   operations.forEach((operation, operationIndex) => {
     let outcome: OperationOutcome = "failed";
+    let addedIndex: number | undefined;
+    let notifyChange: ReturnType<ResumeOperationObserver> = undefined;
+    // 展示层快照失败不能阻断既有写入。
+    try { notifyChange = observe?.(operation); } catch { /* 继续执行原操作 */ }
 
     if (operation.op === "updateModule") {
       const before = target.readModuleField?.(operation.module, operation.field);
@@ -114,6 +124,7 @@ export const executeResumeOperations = (
     } else if (operation.op === "addRecord") {
       const index = target.addDataRecord(operation.module);
       if (index >= 0) {
+        addedIndex = index;
         added.push({ module: operation.module, index });
         // 记录已创建即产生数据变化；字段写入失败通过 fieldFailures 单独上报，
         // 不能整条记为失败，否则调用方会重提同一条新增而产生重复记录
@@ -130,7 +141,11 @@ export const executeResumeOperations = (
       if (target.moveDataRecord(operation.module, operation.from, operation.to)) outcome = "changed";
     }
 
-    if (outcome === "changed") changed.push(operationIndex);
+    if (outcome === "changed") {
+      changed.push(operationIndex);
+      // 通知仅处理展示数据，失败不改变原接口执行结果。
+      try { notifyChange?.(addedIndex); } catch { /* 保留真实写入结果 */ }
+    }
     else if (outcome === "unchanged") unchanged.push(operationIndex);
     else failed.push(operationIndex);
   });

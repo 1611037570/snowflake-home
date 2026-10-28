@@ -17,7 +17,7 @@ import {
   compactConfigModules,
 } from "./hooks/useConfigTemplate";
 import { isEqual } from "lodash-es";
-import { executeResumeOperations, type ResumeWriteOp } from "./resumeOperations";
+import { executeResumeOperations, type ResumeWriteOp, type ResumeOperationObserver } from "./resumeOperations";
 import i18n from "@/locales";
 import { compactResumeUi, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
 
@@ -274,7 +274,7 @@ export const createResumeEditor = ({
     return records?.[index]?.data?.[field];
   };
   const readModuleTitle = (moduleKey: string) => currentData.value?.[moduleKey]?.ui?.title;
-  function applyResumeOperations(operations: ResumeWriteOp[]) {
+  function applyResumeOperations(operations: ResumeWriteOp[], observe?: ResumeOperationObserver) {
     return executeResumeOperations(operations, {
       addDataRecord,
       removeDataRecord,
@@ -285,7 +285,7 @@ export const createResumeEditor = ({
       readModuleField,
       readRecordField,
       readModuleTitle,
-    });
+    }, observe);
   }
 
   return {

@@ -307,6 +307,7 @@ const getMessageMemo = (msg: Message, index: number) => [
   msg.contentTime,
   msg.followQuestions?.join("\u0000"),
   msg.writeSummary,
+  getMessageChanges(msg),
   msg.agentRun?.steps?.length,
   msg.agentRun?.durationMs,
   msg.agentRun?.task?.phase,
@@ -330,7 +331,7 @@ const followContentScroll = async () => {
   await scrollToBottom();
 };
 
-const { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges } = useChatRequest({
+const { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges, getMessageChanges } = useChatRequest({
   chat,
   currentMessages,
   addMessage,
@@ -792,6 +793,7 @@ const handleCopyQuickAnswer = async () => {
           :data-msg-index="index"
           :is-last="index === displayMessages.length - 1"
           :can-withdraw="hasWriteChanges(msg)"
+          :change-state="getMessageChanges(msg)"
           @recall="handleRecall"
           @updateCollapsedStatus="updateCollapsedStatus"
           @sendFollowQuestion="handleSendFollowQuestion"

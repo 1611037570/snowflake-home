@@ -96,7 +96,7 @@ const generate = async () => {
     const skillLayout = sourceItem.value?.ui?.skill?.layout === "text" ? "text" : "proficiency";
     // 新建入口只组合通用写作能力所需的资料、目标模块与补充要求。
     const result = await runResumeDraftGeneration({
-      brief: `只生成工作经历、项目经历、教育经历和专业技能四个模块，每个模块都要有实际内容。专业技能遵循当前模板的${skillLayout === "text" ? "富文本正文" : "技能列表"}布局；富文本字段使用合法 HTML。根据岗位与职业阶段组织内容，用户提供的事实准确保留，未知具体信息在原位置使用 XX，未知月份留空。可选字段仅在补充资料有依据且有助于岗位表达时填写，不批量创建。`, // 新建简历对通用写作能力的补充要求。
+      brief: `只生成工作经历、项目经历、教育经历和专业技能四个模块，每个模块都要有实际内容。专业技能遵循当前模板的${skillLayout === "text" ? "富文本正文" : "技能列表"}布局；富文本字段使用合法 HTML。`, // 入口只声明生成模块与布局，通用规则由运行时提供。
       facts: `求职岗位：${input.position}\n工作年限：${input.workYears}\n更多补充：${input.supplement || "无"}`, // 用户提供的原始资料只通过读取工具传递。
       requiredModules: ["work", "project", "education", "skill"], // 本入口交由通用能力生成的业务模块。
       skillLayout, // 所选模板当前的专业技能布局。

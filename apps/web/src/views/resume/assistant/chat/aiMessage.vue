@@ -6,6 +6,7 @@ import { storeToRefs } from "pinia";
 import ToggleButton from "./toggleButton.vue";
 import ReportPanel from "./reportPanel.vue";
 import AgentRunPanel from "./agentRunPanel.vue";
+import ChangeList from "./changeList.vue";
 import { parseResumeReport, stripResumeReportBlock } from "@snowflake/resume-agent";
 import { onBeforeUnmount, ref, watch } from "vue";
 
@@ -25,6 +26,11 @@ const props = defineProps({
   canWithdraw: {
     type: Boolean,
     default: false,
+  },
+  // 当前回复对应的会话内改动详情。
+  changeState: {
+    type: /** @type {import("vue").PropType<import("../changes/types").ResumeChangeState>} */ (Object),
+    default: null,
   },
 });
 // 本轮是否已撤回：仅用于隐藏操作按钮，不写入消息数据
@@ -226,11 +232,13 @@ const animatedTokens = useTransition(
     />
     <!-- 本轮写入结果由运行时证据给出，避免只靠撤回按钮暗示成功 -->
     <div
-      v-if="msg.writeSummary && !withdrawn && msg.requestStatus !== 'error'"
+      v-if="msg.writeSummary && !changeState && !withdrawn && msg.requestStatus !== 'error'"
       class="mt-1 text-[12px] text-sf-text-2"
     >
       {{ msg.writeSummary }}
     </div>
+    <!-- 已成功写入的部分在停止或报错后仍然可查看。 -->
+    <ChangeList v-if="changeState && !withdrawn" :state="changeState" class="mt-3 w-full" />
     <!-- 错误状态：具体原因已在正文展示，此处只保留重试入口 -->
     <div
       v-if="msg.requestStatus === 'error'"

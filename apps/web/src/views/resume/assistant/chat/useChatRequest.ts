@@ -11,12 +11,13 @@ import { useAiStore, useResumeStore } from "@/stores";
 // 导入聊天和消息类型
 import type { Chat, Message } from "@/stores/modules/ai";
 // 导入Vue组合式API相关类型
-import { onUnmounted, type ComputedRef, type Ref } from "vue";
+import { onUnmounted, ref, watch, type ComputedRef, type Ref } from "vue";
 import { storeToRefs } from "pinia";
 // 宿主传入的请求配置：技能与工具由调用方组装，chat 不内置业务内容
 import type { AssistantConfig } from "../types";
 // 导入默认提示词，每次请求提级到用户消息前避免遗忘规则
 import { defaultPrompt } from "../routing/defaultPrompt";
+import type { ResumeChangeState } from "../changes/types";
 // 定义 useChatRequest 的配置选项接口
 interface UseChatRequestOptions {
   chat: Ref<Chat>; // 当前聊天会话
@@ -67,6 +68,10 @@ export const useChatRequest = ({
   const requestBackups = new WeakMap<object, unknown>();
   // 真实产生过写入的消息（用于控制“撤回修改”按钮显隐）
   const writeMessages = new WeakSet<object>();
+  // 详情按回复编号保存在当前会话内存，不写入消息或简历数据库。
+  const messageChanges = ref<Record<string, ResumeChangeState>>({});
+  const getMessageChanges = (msg: Message) => messageChanges.value[msg.id];
+  watch(() => resumeStore.currentItem?.id, () => { messageChanges.value = {}; }, { flush: "sync" });
   // 用于取消当前请求的函数引用
   let abortRequest: (() => void) | null = null;
   // 当前简历 Agent 会话引用，用于中止统一执行链。
@@ -252,7 +257,27 @@ export const useChatRequest = ({
       state.onReasoning();
 
       // 首次请求时才加载能力与简历工具清单，跨轮承接由任务状态负责。
-      const { tools: resolvedTools, capabilities: resolvedCapabilities, taskProfile } = await resolveTools(requestMessage?.requestContext);
+      const { tools: resolvedTools, capabilities: resolvedCapabilities, taskProfile } = await resolveTools(requestMessage?.requestContext, {
+        onChange: (change) => {
+          if (!isCurrentRequest() || !lastMsg) return;
+          const previous = messageChanges.value[lastMsg.id];
+          messageChanges.value[lastMsg.id] = {
+            items: [...(previous?.items ?? []), change], // 累积本轮所有成功操作
+            unavailable: previous?.unavailable ?? false, // 保留前序详情异常状态
+          };
+          writeMessages.add(lastMsg);
+          lastMsg.hasWriteChanges = true;
+        },
+        onError: () => {
+          if (!isCurrentRequest() || !lastMsg) return;
+          messageChanges.value[lastMsg.id] = {
+            items: messageChanges.value[lastMsg.id]?.items ?? [], // 已成功捕获的内容继续可查看
+            unavailable: true, // 只提示详情不可用，不改变写入状态
+          };
+          writeMessages.add(lastMsg);
+          lastMsg.hasWriteChanges = true;
+        },
+      });
       // 加载期间取消或切换会话时不再启动请求，工具执行前再次核对所属任务
       if (!isCurrentRequest()) return;
       // 简历 Agent 会话统一解析入口任务、装配工具并启动 ReAct。
@@ -462,6 +487,7 @@ export const useChatRequest = ({
     msg.hasWriteChanges = false;
     // 撤回后本轮改动已回滚，改动说明不能再保留
     msg.writeSummary = undefined;
+    delete messageChanges.value[msg.id];
     return true;
   }
 
@@ -471,5 +497,5 @@ export const useChatRequest = ({
     return !!msg?.hasWriteChanges && requestBackups.has(msg) && writeMessages.has(msg);
   }
 
-  return { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges };
+  return { handleAIResponse, stopGenerating, withdrawAI, hasWriteChanges, getMessageChanges };
 };

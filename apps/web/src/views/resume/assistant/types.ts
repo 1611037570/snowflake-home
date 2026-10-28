@@ -2,6 +2,7 @@
 import type { ReactConfig, ReactTool } from "@/apis/llm/react";
 import type { ResumeAgentTaskProfile, SkillResource } from "@snowflake/resume-agent";
 import type { Ref } from "vue";
+import type { ResumeChangeCallbacks } from "./changes/types";
 
 // 引导流程步骤：预设询问或自由输入；options 为函数时在步骤展示前求值（如按当前简历动态生成）
 export type FlowStep = {
@@ -58,8 +59,8 @@ export type AssistantResources = {
 export interface AssistantConfig {
   // 请求期间置为 true 的生成状态
   generating: Ref<boolean>;
-  // 首次请求时解析任务能力、参考知识与简历工具，避免进入 AI 面板时提前加载。
-  resolveTools: (context?: Record<string, unknown>) => Promise<AssistantResources>;
+  // 首次请求时解析工具与能力，可选回调仅接收本轮实际改动。
+  resolveTools: (context?: Record<string, unknown>, changes?: ResumeChangeCallbacks) => Promise<AssistantResources>;
   // 工具执行错误回调：由宿主决定恢复或中断，引擎只负责转交
   onToolError?: ReactConfig["onToolError"];
   // 请求前准备本轮读取范围，与 afterRequest 成对使用
