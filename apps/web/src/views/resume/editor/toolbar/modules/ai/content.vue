@@ -58,26 +58,36 @@ const modelOptions = computed(() =>
   modelList.value.map((model) => ({
     value: model.id,
     name: model.name || model.model || PROVIDER_NAMES[model.provider] || model.provider,
-    providerName: model.builtin ? "雪花服务" : model.provider === "ark" ? "豆包" : PROVIDER_NAMES[model.provider] || model.provider, // 选择栏右侧的服务商名称。
+    providerName: model.builtin
+      ? "雪花服务"
+      : model.provider === "ark"
+        ? "豆包"
+        : PROVIDER_NAMES[model.provider] || model.provider, // 选择栏右侧的服务商名称。
     icon: getProviderIcon(model.provider, model.builtin, model.model), // 当前选中项与下拉选项共用的品牌图标。
   })),
 );
 
 // 卡片展示直接从当前绑定派生，切换或删除模型后同步刷新。
-const agentViews = computed(() => agentCards.map((agent) => ({
-  ...agent,
-  selectedModel: modelOptions.value.find((model) => model.value === getAgentModel(agent.key)), // 当前角色选中的模型及展示信息。
-})));
+const agentViews = computed(() =>
+  agentCards.map((agent) => ({
+    ...agent,
+    selectedModel: modelOptions.value.find((model) => model.value === getAgentModel(agent.key)), // 当前角色选中的模型及展示信息。
+  })),
+);
 
 // 角色区固定在上方，添加和返回只切换下方模型工作区。
 const adding = computed(() => modelManagerTab.value === "add");
 const boundCount = computed(() => agentCards.filter((agent) => getAgentModel(agent.key)).length);
 // 模型库直接展示当前角色分配，复用上方角色声明而不再维护一份名称表。
 const modelBindings = computed<Record<string, string[]>>(() =>
-  Object.fromEntries(modelList.value.map((model) => [
-    model.id,
-    agentCards.filter((agent) => getAgentModel(agent.key) === model.id).map((agent) => agent.name),
-  ])),
+  Object.fromEntries(
+    modelList.value.map((model) => [
+      model.id,
+      agentCards
+        .filter((agent) => getAgentModel(agent.key) === model.id)
+        .map((agent) => agent.name),
+    ]),
+  ),
 );
 const addedNotice = ref("");
 
@@ -111,33 +121,44 @@ provide("bg", "bg-sf-primary");
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 flex-col gap-3">
-    <!-- 三个角色始终保留在上方，模型库和表单独立滚动。 -->
+  <div class="flex flex-col gap-3" :class="adding ? 'shrink-0' : 'h-full min-h-0'">
+    <!-- 角色保留在上方，添加表单自然展开，模型列表保留独立滚动。 -->
     <section class="shrink-0">
       <header class="mb-3 flex items-center justify-between gap-3">
         <h2 class="text-sm font-semibold text-sf-text">角色模型</h2>
         <span class="text-xs text-sf-text-2">已配置 {{ boundCount }}/3</span>
       </header>
-      <div class="grid grid-cols-[repeat(3,minmax(228px,1fr))] gap-3 overflow-x-auto pb-[3px] sm:grid-cols-3 sm:overflow-visible">
+      <div
+        class="grid grid-cols-[repeat(3,minmax(228px,1fr))] gap-3 overflow-x-auto pb-[3px] sm:grid-cols-3 sm:overflow-visible"
+      >
         <article
           v-for="agent in agentViews"
           :key="agent.key"
-          class="agent-card flex min-w-0 flex-col gap-[9px] rounded-3xl border bg-sf-primary p-[18px] transition-colors"
+          class="agent-card flex min-w-0 flex-col gap-[9px] rounded-3xl border bg-sf-primary p-3 transition-colors"
         >
           <header class="flex min-w-0 items-start gap-3">
-            <span class="agent-role-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-sf-bg text-sf-text-2">
+            <span
+              class="agent-role-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-sf-bg text-sf-text-2"
+            >
               <SfIcon :icon="agent.icon" size="5" />
             </span>
             <div class="min-w-0 flex-1">
               <div class="flex min-w-0 items-center justify-between gap-[6px]">
-                <h3 class="truncate text-base leading-6 font-semibold text-sf-text">{{ agent.name }}</h3>
-                <span v-if="agent.selectedModel" class="agent-bound-badge inline-flex shrink-0 items-center gap-[6px] rounded-full border px-[9px] py-[3px] text-[10px] leading-3 font-medium">
+                <h3 class="truncate text-base leading-6 font-semibold text-sf-text">
+                  {{ agent.name }}
+                </h3>
+                <span
+                  v-if="agent.selectedModel"
+                  class="agent-bound-badge inline-flex shrink-0 items-center gap-[6px] rounded-full border px-[9px] py-[3px] text-[10px] leading-3 font-medium"
+                >
                   <span class="h-[6px] w-[6px] rounded-full bg-current"></span>
                   已配置
                 </span>
               </div>
               <!-- 说明保持单行，不再预留第二行空白撑高卡片。 -->
-              <p class="mt-[3px] truncate text-xs leading-[18px] text-sf-text-2">{{ agent.description }}</p>
+              <p class="mt-[3px] truncate text-xs leading-[18px] text-sf-text-2">
+                {{ agent.description }}
+              </p>
             </div>
           </header>
           <!-- 保留原有选择器交互，用独立底栏突出当前模型与服务商。 -->
@@ -159,36 +180,54 @@ provide("bg", "bg-sf-primary");
                 </span>
               </template>
             </SfSelect>
-            <span v-if="agent.selectedModel" class="agent-provider-badge pointer-events-none absolute top-1/2 right-9 max-w-[72px] -translate-y-1/2 truncate rounded-full bg-sf-bg-2 px-[6px] py-[3px] text-[10px] leading-3 text-sf-text-2">
+            <span
+              v-if="agent.selectedModel"
+              class="agent-provider-badge pointer-events-none absolute top-1/2 right-9 max-w-[72px] -translate-y-1/2 truncate rounded-full bg-sf-bg-2 px-[6px] py-[3px] text-[10px] leading-3 text-sf-text-2"
+            >
               {{ agent.selectedModel.providerName }}
             </span>
           </div>
         </article>
       </div>
     </section>
-    <!-- 模型库以浅底承托条目，标题和角色卡片使用主要底色区分层级。 -->
-    <section class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-bg">
-      <header class="flex shrink-0 items-center justify-between gap-3 border-b border-sf-b bg-sf-primary px-3 py-3">
+    <!-- 两种状态共用主要底色与圆角裁切，避免标题背景盖住圆角边界。 -->
+    <section
+      class="flex flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-primary"
+      :class="adding ? 'shrink-0' : 'min-h-0 flex-1'"
+    >
+      <header
+        class="flex shrink-0 items-center justify-between gap-3 border-b border-sf-b bg-sf-primary px-3 py-3"
+      >
         <div class="min-w-0">
           <h2 class="text-sm font-semibold text-sf-text">{{ adding ? "添加模型" : "模型库" }}</h2>
           <p class="mt-[3px] text-xs text-sf-text-2">
-            {{ adding ? "选择服务商，填写配置后添加" : `共 ${modelList.length} 个模型，可分配给上方角色` }}
+            {{
+              adding
+                ? "选择服务商，填写配置后添加"
+                : `共 ${modelList.length} 个模型，可分配给上方角色`
+            }}
           </p>
         </div>
-        <SfButton v-if="adding" type="bg" border class="shrink-0" @click="jumpToAdded">返回模型库</SfButton>
+        <SfButton v-if="adding" type="bg" border class="shrink-0" @click="jumpToAdded"
+          >返回模型库</SfButton
+        >
         <SfButton v-else class="shrink-0 gap-[6px]" @click="jumpToAdd">
           <SfIcon icon="ic:round-add" size="4" />
           添加模型
         </SfButton>
       </header>
-      <p v-if="addedNotice && !adding" role="status" class="shrink-0 border-b border-sf-b bg-sf-success-2 px-3 py-3 text-xs text-sf-success">
+      <p
+        v-if="addedNotice && !adding"
+        role="status"
+        class="shrink-0 border-b border-sf-b bg-sf-success-2 px-3 py-3 text-xs text-sf-success"
+      >
         {{ addedNotice }}
       </p>
       <div v-show="!adding" class="flex min-h-0 flex-1 flex-col p-3">
         <AddedModels :bindings="modelBindings" class="h-full" @jump-add="jumpToAdd" />
       </div>
-      <div v-show="adding" class="flex min-h-0 flex-1 flex-col p-3">
-        <AddModel class="h-full" @add-success="finishAdd" />
+      <div v-show="adding" class="flex shrink-0 flex-col p-3">
+        <AddModel @add-success="finishAdd" />
       </div>
     </section>
   </div>

@@ -209,15 +209,15 @@ provide("bg", "bg-sf-bg");
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 flex-col gap-3">
-    <!-- 服务商改为顶部选择，填写配置时不再横跨侧栏与表单。 -->
+  <div class="flex shrink-0 flex-col gap-3">
+    <!-- 服务商与内容区域统一使用主要底色，选中项保留主题色反馈。 -->
     <div class="flex shrink-0 flex-wrap gap-[6px]" aria-label="选择服务商">
       <button
         v-for="item in providerList"
         :key="item.id"
         type="button"
         class="inline-flex cursor-pointer items-center gap-[6px] rounded-xl border px-3 py-[6px] text-xs font-medium transition-colors disabled:cursor-wait disabled:opacity-60"
-        :class="item.id === selectedProvider ? 'border-sf-theme bg-sf-theme-3 text-sf-theme' : 'border-sf-b text-sf-text-2 hover:border-sf-theme hover:bg-sf-bg'"
+        :class="item.id === selectedProvider ? 'border-sf-theme bg-sf-theme-3 text-sf-theme' : 'border-sf-b bg-sf-primary text-sf-text-2 hover:border-sf-theme hover:bg-sf-bg'"
         :aria-pressed="item.id === selectedProvider"
         :disabled="testing"
         @click="selectProvider(item)"
@@ -229,17 +229,17 @@ provide("bg", "bg-sf-bg");
       </button>
     </div>
 
-    <!-- 配置区域独立滚动，底部主操作在填写过程中始终可见。 -->
-    <SfScrollbar flush class="min-h-0 flex-1">
-      <div v-if="currentProvider?.preset" class="rounded-xl border border-sf-b bg-sf-bg p-6">
+    <!-- 配置区域随内容展开，不再单独滚动，输入控件保留次级底色。 -->
+    <div class="shrink-0">
+      <div v-if="currentProvider?.preset" class="rounded-xl border border-sf-b bg-sf-primary p-6">
         <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-sf-theme-3 text-sf-theme">
           <SfIcon icon="ph:snowflake-duotone" size="6" />
         </span>
         <h3 class="text-base font-semibold text-sf-text">{{ currentProvider.name }}</h3>
         <p class="mt-3 text-sm leading-6 text-sf-text-2">配置已准备好，无需填写 API Key 或接口地址，直接添加即可。</p>
-        <p class="mt-3 text-xs leading-5 text-sf-text-3">添加后，可在上方为小舟、简历解析和小羊选择使用的模型。</p>
+        <p class="mt-3 text-xs leading-5 text-sf-text-2">添加后，可在上方为小舟、简历解析和小羊选择使用的模型。</p>
       </div>
-      <div v-else class="flex flex-col gap-3">
+      <div v-else class="flex flex-col gap-3 rounded-xl border border-sf-b bg-sf-primary p-6">
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <label class="flex flex-col gap-[6px] text-xs font-medium text-sf-text-2">
             模型名称
@@ -258,7 +258,7 @@ provide("bg", "bg-sf-bg");
           <SfInput v-model="formSource.key" type="password" show-password class="w-full" placeholder="粘贴 API Key" aria-label="API Key" :disabled="testing" />
         </div>
         <!-- 官方地址保持默认，高级选项继续按需展开。 -->
-        <div class="rounded-xl border border-sf-b p-3">
+        <div class="rounded-xl border border-sf-b bg-sf-primary p-3">
           <button
             type="button"
             class="flex w-full cursor-pointer items-center justify-between gap-3 text-left text-xs font-medium text-sf-text-2 transition-colors hover:text-sf-theme"
@@ -270,7 +270,7 @@ provide("bg", "bg-sf-bg");
             <SfIcon icon="mingcute:down-line" size="4" :class="{ 'rotate-180': showAdvanced }" />
           </button>
           <div v-if="showAdvanced" id="ai-add-model-advanced" class="mt-3 flex flex-col gap-3">
-            <p class="text-xs leading-5 text-sf-text-3">默认使用官方接口，仅在使用代理或自定义服务时修改。</p>
+            <p class="text-xs leading-5 text-sf-text-2">默认使用官方接口，仅在使用代理或自定义服务时修改。</p>
             <label class="flex flex-col gap-[6px] text-xs text-sf-text-2">
               完整接口地址
               <SfInput v-model="formSource.url" :placeholder="currentProvider?.defaultUrl" :disabled="testing" />
@@ -278,10 +278,11 @@ provide("bg", "bg-sf-bg");
           </div>
         </div>
       </div>
-    </SfScrollbar>
+    </div>
 
-    <footer class="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-sf-b pt-3">
-      <p class="min-w-0 flex-1 text-xs leading-5 text-sf-text-3">
+    <!-- 底部操作区使用独立底板，避免说明文字与工作区背景混在一起。 -->
+    <footer class="flex shrink-0 flex-wrap items-center justify-between gap-3 rounded-xl border border-sf-b bg-sf-primary p-3">
+      <p class="min-w-0 flex-1 text-xs leading-5 text-sf-text-2">
         {{ currentProvider?.preset ? "添加后返回模型库，再为角色选择模型。" : "添加前会测试连接，可能消耗少量 Token。" }}
       </p>
       <SfButton
