@@ -19,7 +19,7 @@ defineProps({
     type="button"
     class="flex shrink-0 cursor-pointer items-center transition-colors"
     :class="[
-      compact ? 'h-[18px] gap-0 rounded-lg px-0 text-[11px] leading-none hover:bg-sf-bg' : 'h-6 gap-1.5 rounded-full border px-2 text-[11px]',
+      compact ? 'h-6 gap-0 rounded-lg px-0 text-[11px] leading-none hover:bg-sf-bg' : 'h-6 gap-1.5 rounded-full border px-2 text-[11px]',
       active
         ? compact ? 'bg-sf-bg text-sf-theme' : 'border-sf-theme text-sf-theme'
         : compact ? 'text-sf-text' : 'border-sf-b text-sf-text-2 hover:border-sf-theme hover:text-sf-theme',
