@@ -8,9 +8,10 @@ const visible = ref(false);
 
 <template>
   <SfTooltip :content="$t('learningCenterTitle')">
+    <!-- 完整沿用相邻入口的尺寸、图文间距、内边距与悬停样式。 -->
     <button
       type="button"
-      class="flex h-9 shrink-0 cursor-pointer items-center gap-3 rounded-3xl border border-sf-b bg-sf-page px-3 text-sm text-sf-text transition-colors hover:border-sf-theme hover:bg-sf-bg"
+      class="flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-page p-1 px-2 text-sm transition-colors hover:bg-sf-theme hover:text-white"
       :aria-label="$t('learningCenterTitle')"
       :aria-expanded="visible"
       @click="visible = true"

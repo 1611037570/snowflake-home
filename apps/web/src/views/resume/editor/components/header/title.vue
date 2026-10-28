@@ -39,7 +39,7 @@ function openModal() {
 
 <template>
   <div class="flex min-w-0 items-center gap-3">
-    <!-- 标题常显、字号加大；悬停区域沿用原来的 p-3 与 3xl 圆角，铅笔只在悬停时出现 -->
+    <!-- 标题与编辑铅笔始终显示，便于识别重命名入口。 -->
     <button
       type="button"
       class="group flex h-9 max-w-full min-w-0 cursor-pointer items-center gap-1.5 rounded-3xl p-3 text-sf-text transition-colors hover:bg-sf-bg-2 hover:text-sf-theme md:max-w-[320px]"
@@ -51,7 +51,7 @@ function openModal() {
       <SfIcon
         icon="solar:pen-linear"
         size="3"
-        class="shrink-0 text-sf-text-3 opacity-0 transition-opacity group-hover:opacity-100"
+        class="shrink-0 text-sf-text-3"
       />
     </button>
     <span
