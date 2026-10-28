@@ -223,62 +223,69 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
           <FontColor />
         </div>
       </div>
-      <!-- 上行：间距与缩放参数，宽度不足时向右滚动。 -->
-      <div class="toolbar-row flex min-h-0 flex-1 items-center overflow-x-auto">
-        <Spacing />
-        <SfDropdown
-          trigger="hover"
-          placement="bottom-start"
-          :show-arrow="false"
-          @visible-change="scaleDropdownVisible = $event"
-        >
-          <SettingPill
-            :label="$t('toolbarZoom')"
-            :value="scaleLabel"
-            :active="scaleDropdownVisible"
-          />
-          <template #dropdown>
-            <SfList
-              :list="SCALE_LIST"
-              class="w-[140px]"
-              :border="false"
-              :auto-close="false"
-              @onClick="handleScaleSelect"
-            >
-            </SfList>
-          </template>
-        </SfDropdown>
-        <span class="text-[11px] whitespace-nowrap text-sf-text-3">{{
-          $t("paperPageCount", { count: pageCount })
-        }}</span>
+      <!-- 上行左侧调整内容密度，右侧管理缩放与页数，避免描边入口和文字相互挤压。 -->
+      <div class="toolbar-row flex min-h-0 items-center justify-between gap-3 overflow-x-auto">
+        <div class="flex items-center">
+          <Spacing />
+          <OnePage />
+        </div>
+        <div class="ml-auto flex items-center">
+          <SfDropdown
+            trigger="hover"
+            placement="bottom-start"
+            :show-arrow="false"
+            @visible-change="scaleDropdownVisible = $event"
+          >
+            <SettingPill
+              :label="$t('toolbarZoom')"
+              :value="scaleLabel"
+              :active="scaleDropdownVisible"
+            />
+            <template #dropdown>
+              <SfList
+                :list="SCALE_LIST"
+                class="w-[140px]"
+                :border="false"
+                :auto-close="false"
+                @onClick="handleScaleSelect"
+              >
+              </SfList>
+            </template>
+          </SfDropdown>
+          <span class="px-3 text-[11px] whitespace-nowrap text-sf-text-3">{{
+            $t("paperPageCount", { count: pageCount })
+          }}</span>
+        </div>
       </div>
-      <!-- 下行：设计面板入口与整份简历的操作，同样从左侧排起 -->
-      <div class="toolbar-row flex min-h-0 flex-1 items-center overflow-x-auto">
-        <TemplateSettings />
-        <Settings />
-        <MoreSettings />
-        <Language />
-        <span class="mx-1 h-4 w-px shrink-0 bg-sf-b"></span>
-        <OnePage />
-        <PrintMode />
-        <!-- 全屏带文字标签，与相邻的整份简历操作保持同一种入口样式 -->
-        <button
-          type="button"
-          class="flex h-6 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2 text-[11px] text-sf-text-2 transition-colors hover:bg-sf-bg"
-          @click="$emit('fullscreen')"
-        >
-          <SfIcon icon="lucide:maximize" size="4" />
-          <span class="whitespace-nowrap">{{ $t("fullscreen") }}</span>
-        </button>
-        <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
-          <SfIcon
-            icon="lucide:circle-slash"
-            size="4"
-            boxSize="6"
-            class="cursor-pointer rounded-full text-sf-text-2 transition-colors hover:bg-sf-bg"
-            @click="clearSelectedModules"
-          />
-        </SfTooltip>
+      <!-- 下行设置与预览操作两端分组，按钮沿用自身内边距，移除分割线。 -->
+      <div class="toolbar-row flex min-h-0 items-center justify-between gap-3 overflow-x-auto">
+        <div class="flex items-center">
+          <TemplateSettings />
+          <Settings />
+          <MoreSettings />
+          <Language />
+        </div>
+        <div class="ml-auto flex items-center">
+          <PrintMode />
+          <!-- 全屏入口与配色切换归为预览操作。 -->
+          <button
+            type="button"
+            class="flex h-6 shrink-0 cursor-pointer items-center gap-1.5 rounded-full px-2 text-[11px] text-sf-text-2 transition-colors hover:bg-sf-bg"
+            @click="$emit('fullscreen')"
+          >
+            <SfIcon icon="lucide:maximize" size="4" />
+            <span class="whitespace-nowrap">{{ $t("fullscreen") }}</span>
+          </button>
+          <SfTooltip v-if="selectedModule.length" :content="$t('clearSelection')">
+            <SfIcon
+              icon="lucide:circle-slash"
+              size="4"
+              boxSize="6"
+              class="cursor-pointer rounded-full text-sf-text-2 transition-colors hover:bg-sf-bg"
+              @click="clearSelectedModules"
+            />
+          </SfTooltip>
+        </div>
       </div>
     </div>
     <!-- 预览滚动区外层：画布比面板低一档，纸张靠阴影浮起 -->
