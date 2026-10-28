@@ -213,12 +213,12 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
       class="grid h-14 shrink-0 grid-cols-[auto_minmax(0,1fr)] grid-rows-2 border-b border-sf-b bg-sf-primary select-none"
       v-show="showToolbar"
     >
-      <!-- 按参考图排列：字体名在上，字号与字体灰度在下。 -->
-      <div class="row-span-2 flex w-30 shrink-0 flex-col border-r border-sf-b">
-        <div class="flex min-h-0 flex-1 items-center justify-center">
+      <!-- 字体工具按内容紧凑居中，不拉伸两行或分散下方入口。 -->
+      <div class="row-span-2 flex w-24 shrink-0 flex-col justify-center border-r border-sf-b px-3">
+        <div class="flex items-center justify-center">
           <FontFamily />
         </div>
-        <div class="flex min-h-0 flex-1 items-center justify-between">
+        <div class="flex items-center justify-center gap-3">
           <FontSize />
           <FontColor />
         </div>
