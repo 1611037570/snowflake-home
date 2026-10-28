@@ -1,5 +1,5 @@
 /**
- * 收录提交脚本：一次把简历页链接分别推送给 IndexNow 与百度普通收录。
+ * 收录提交脚本：向 IndexNow 批量推送，向百度逐条推送并按配额停止。
  * 用法：node scripts/submit-search-urls.mjs [--dry-run]
  * 说明：--dry-run 只打印将要发送的内容、不发请求，避免消耗百度当日配额。
  */
@@ -74,17 +74,37 @@ async function submitBaidu() {
     console.log(`[Baidu] dry-run 将发送：POST ${BAIDU.endpoint}?${query}\n${body}`);
     return;
   }
-  try {
-    const response = await fetch(`${BAIDU.endpoint}?${query}`, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body,
-    });
-    const data = await response.json();
-    console.log("[Baidu] 响应：", JSON.stringify(data));
-  } catch (error) {
-    console.log(`[Baidu] 请求失败：${error.message}`);
+  // 剩余配额未知时逐条提交，避免整批链接超过余额而全部被拒绝。
+  let submitted = 0;
+  for (let index = 0; index < urlList.length; index += 1) {
+    try {
+      const response = await fetch(`${BAIDU.endpoint}?${query}`, {
+        method: "POST", // 百度普通收录的提交方式。
+        headers: { "Content-Type": "text/plain" }, // 每个请求只发送一条链接。
+        body: urlList[index], // 当前待提交地址。
+      });
+      const data = await response.json();
+      if (data.message === "over quota") {
+        console.log("[Baidu] 每日推送配额不足，已停止提交。请到百度搜索资源平台查看可用额度；重复执行不能解除限额。");
+      } else if (!response.ok || data.error !== undefined || data.success !== 1) {
+        console.log(`[Baidu] HTTP ${response.status}，当前链接未确认提交成功：${JSON.stringify(data)}`);
+      } else {
+        submitted += 1;
+        const remain = Number.isInteger(data.remain) && data.remain >= 0 ? data.remain : null;
+        console.log(`[Baidu] 已提交：${urlList[index]}，剩余配额：${remain ?? "未知"}`);
+        if (remain !== 0 || index === urlList.length - 1) continue;
+        console.log("[Baidu] 返回的剩余配额为零，已停止提交后续链接。");
+      }
+    } catch (error) {
+      // 请求结果不确定时不自动重试，避免重复占用配额。
+      console.log(`[Baidu] 请求失败，已停止提交：${error.message}`);
+    }
+    const pending = urlList.slice(submitted);
+    console.log(`[Baidu] 本次已确认提交 ${submitted} 条，未确认提交 ${pending.length} 条：\n${pending.join("\n")}`);
+    process.exitCode = 1;
+    return;
   }
+  console.log(`[Baidu] 本次全部提交完成，共 ${submitted} 条；提交成功不代表已被收录。`);
 }
 
 if (isDryRun) {
