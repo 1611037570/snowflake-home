@@ -12,6 +12,7 @@ import Icon from "../icon.vue";
 import EditableTitle from "./editableTitle.vue";
 import SkillDropdown from "./skillDropdown.vue";
 import HonorDropdown from "./honorDropdown.vue";
+import HelpCenter from "./helpCenter.vue";
 import { $t } from "@/locales";
 const { proxy } = getCurrentInstance();
 
@@ -39,6 +40,8 @@ const title = defineModel("title", {
 });
 const { currentForm, addItem } = useFormContext();
 const resumeStore = useResumeStore();
+// 帮助弹窗独立于模块折叠状态，仅在用户打开时挂载。
+const helpVisible = ref(false);
 // 仅在配置指定的布局下显示列表新增入口，正文布局保持原有编辑区。
 const showAdd = computed(() => {
   if (!props.add) return false;
@@ -131,6 +134,9 @@ function handleAdd() {
             </EditableTitle>
           </div>
           <div class="flex items-center">
+            <SfTooltip :content="$t('moduleHelpCenter')">
+              <Icon @click.stop="helpVisible = true" icon="mingcute:question-line" />
+            </SfTooltip>
             <SfTooltip :content="$t('locatePreview')" v-if="!hidden">
               <Icon @click.stop="handlePreviewJump" icon="mdi:map-search-outline" />
             </SfTooltip>
@@ -182,6 +188,12 @@ function handleAdd() {
       </template>
     </SfCollapseItem>
   </SfCollapse>
+  <HelpCenter
+    v-if="helpVisible"
+    v-model="helpVisible"
+    :module-key="currentForm.key"
+    :module-title="title"
+  />
 </template>
 
 <style scoped>
