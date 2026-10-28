@@ -16,8 +16,8 @@ const resumeStore = useResumeStore();
 const { runtimeConfig, currentData } = storeToRefs(resumeStore);
 defineOptions({ name: "AddModule" });
 
-// 实习经历与工作、教育等经历模块一起提供添加入口。
-const BASIC_MODULE_KEYS = ["skill", "education", "project", "work", "internship"];
+// 常用模块与一键添加共用此列表，实习经历保留在其他模块中手动添加。
+const BASIC_MODULE_KEYS = ["skill", "education", "project", "work"];
 
 // 不可手动添加的模块：user 为固定模块，slogan 由主题槽位决定是否渲染
 const EXCLUDED_MODULE_KEYS = ["user", "slogan"];
@@ -74,7 +74,7 @@ const handleAddAll = () => {
   let firstAdded = "";
   targets.forEach((module) => {
     if (!resumeStore.addModule(module.value)) return;
-    // 数组模块（教育/项目/工作/实习等）预建第一条子记录，打开即可直接填写
+    // 数组模块（教育/项目/工作等）预建第一条子记录，打开即可直接填写
     resumeStore.addDataRecord(module.value);
     firstAdded ||= module.value;
   });

@@ -315,6 +315,22 @@ export const DEFAULT_USER_FORM = [
         // 更多字段内部卡片保留纵向间距，避免边框紧贴。
         rowClass: "gap-y-3",
         fields: [
+          // 求职岗位归入常用，并作为默认首个可添加信息字段。
+          createMoreField({
+            key: "position",
+            label: "求职岗位",
+            category: "常用", // 常驻显示在常用字段入口。
+            component: "positionPicker",
+            iconKey: "work-briefcase",
+            tip: "推荐必填",
+            addable: true,
+            defaultAdded: true,
+            required: true,
+            dict: "position",
+            props: {
+              placeholder: "请选择或输入求职岗位",
+            },
+          }),
           // 年龄通过出生日期计算，也可切换为展示日期
           createMoreField({
             key: "birthday",
@@ -443,22 +459,6 @@ export const DEFAULT_USER_FORM = [
               placeholder: "请选择 MBTI",
               clearable: true,
               filterable: true,
-            },
-          }),
-          // 求职岗位
-          createMoreField({
-            key: "position",
-            label: "求职岗位",
-            category: "求职意向",
-            component: "positionPicker",
-            iconKey: "work-briefcase",
-            tip: "推荐必填",
-            addable: true,
-            defaultAdded: true,
-            required: true,
-            dict: "position",
-            props: {
-              placeholder: "请选择或输入求职岗位",
             },
           }),
           // 参加工作时间

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { $t } from "@/locales";
+import type { ContentAiAction } from "@snowflake/resume-agent";
+import { CONTENT_AI_LABELS } from "./contentAiActions";
 
 // 单个候选的展示状态
 type Candidate = {
@@ -12,8 +14,8 @@ type Candidate = {
 
 // 字段级正文 AI 结果卡片：流式展示多个候选，由用户确认后写入编辑器
 const props = defineProps<{
-  // 本次操作类型：generate 生成 / polish 润色 / simplify 简化
-  action: "generate" | "polish" | "simplify";
+  // 本次操作类型，与共用正文能力保持一致。
+  action: ContentAiAction;
   // 是否正在生成
   loading: boolean;
   // 候选列表，数量与生成数一致
@@ -24,13 +26,8 @@ const props = defineProps<{
 
 const emit = defineEmits(["apply", "regenerate", "discard", "select"]);
 
-// 操作类型与文案键的对应关系
-const ACTION_LABELS: Record<string, string> = {
-  generate: "resumeContentGenerate",
-  polish: "resumeContentPolish",
-  simplify: "resumeContentSimplify",
-};
-const actionName = computed(() => $t(ACTION_LABELS[props.action] || "resumeContentGenerate"));
+// 结果标题与工具栏共用同一份操作文案。
+const actionName = computed(() => $t(CONTENT_AI_LABELS[props.action]));
 // 当前展示的候选
 const activeCandidate = computed(() => props.candidates[props.activeIndex]);
 // 多个候选时显示切换

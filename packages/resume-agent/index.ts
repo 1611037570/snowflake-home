@@ -15,7 +15,7 @@ export type {
   RunResumeAiTaskOptions,
 } from "./request";
 export type { ResumeDataContext } from "./context/types";
-export { normalizeRichTextHtml } from "./format/normalizeRichText";
+export { normalizeRichTextHtml, richTextToPlainText } from "./format/normalizeRichText";
 export { RICH_TEXT_SANITIZE_CONFIG } from "./format/richTextSanitize";
 export {
   RESUME_SCHEMA,

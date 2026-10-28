@@ -2,6 +2,35 @@ import type { ContentAiAction } from "./types";
 
 // 简历正文共用写作口径；单字段任务取当前类型，助手技能按需注入全量规则。
 
+// 操作语义由字段任务与助手共用，界面入口不维护独立提示词。
+export const CONTENT_ACTION_RULES: Record<ContentAiAction, {
+  // 用于向模型说明用户选择的处理目标。
+  name: string;
+  // 与界面及输出格式无关的正文处理规则。
+  instruction: string;
+}> = {
+  generate: {
+    name: "生成", // 根据已有资料起草正文。
+    instruction: "根据已有资料重新组织正文，原文只作参考，不要照抄；可按候选内容规则补全。", // 起草时允许重组与补全。
+  },
+  continue: {
+    name: "续写", // 在已有正文后补充内容。
+    instruction: "保留原文的内容、顺序与结构，只在末尾接续新的内容，衔接原文语气与主题，不重复已有表述；新增内容按候选内容规则处理。写回完整字段时保留原文并追加续写部分。", // 续写不改写原文。
+  },
+  polish: {
+    name: "更专业", // 改善专业表达。
+    instruction: "保留原文已确认的事实与条目结构，改善专业用词、行动与成果的表达，避免术语堆砌和夸大；按候选内容规则补全可核实的贡献，不以增加篇幅为目标。", // 专业改写优先改善表达。
+  },
+  simplify: {
+    name: "更凝练", // 缩短已有正文。
+    instruction: "精简原文，保留关键事实、职责、行动与成果，删去套话和重复，保留条目结构；不新增职责、技术、成果或数值。", // 凝练仅处理已有内容。
+  },
+  expand: {
+    name: "更详细", // 展开已有正文中的信息。
+    instruction: "围绕原文展开背景、个人行动、方法与成果，保留已确认的事实和条目结构，增加有用细节而非重复改述；补充内容遵循候选内容规则，不引入无关经历。", // 扩写围绕已有主题补充细节。
+  },
+};
+
 // 标题已说明类别，引导句是对标题的重复；总结句同为无信息量表述。
 export const NO_INTRO_RULE =
   "正文直入主题，不重复模块标题或添加空泛开头、结尾。";
@@ -67,13 +96,15 @@ const CAR_MODULES = new Set(["work", "internship", "project", "portfolio"]);
 
 // 按操作与模块选择写作规则：生成经历类模块时灵活组织贡献，其余沿用字段类型规则。
 export const getWritingRule = (action: ContentAiAction, kindKey: string, moduleKey: string): string => {
+  // 操作规则与模块写法在同一出口组合，避免入口各自解释操作语义。
+  const actionRule = CONTENT_ACTION_RULES[action].instruction;
   if (action === "simplify" && CAR_MODULES.has(moduleKey)) {
-    return EXPERIENCE_SIMPLIFY_RULE;
+    return `${actionRule} ${EXPERIENCE_SIMPLIFY_RULE}`;
   }
   if (action === "generate" && CAR_MODULES.has(moduleKey)) {
-    return EXPERIENCE_GENERATE_RULE;
+    return `${actionRule} ${EXPERIENCE_GENERATE_RULE}`;
   }
-  return KIND_RULES[kindKey] || "围绕已有事实客观描述，篇幅与内容相称。";
+  return `${actionRule} ${KIND_RULES[kindKey] || "围绕已有事实客观描述，篇幅与内容相称。"}`;
 };
 
 // 类型规则按模块展示名编组，助手侧按当前模块标题选用
@@ -91,6 +122,10 @@ const KIND_MODULE_LABELS: Record<string, string> = {
 export const ASSISTANT_WRITING_RULES_TEXT = [
   `通用原则：${RESUME_WRITING_DISCIPLINE.join(" ")}`,
   `候选内容：${CANDIDATE_COMPLETION_RULE}`,
+  // 助手按用户意图选用同一套操作规则，不依赖富文本按钮。
+  `正文处理（按用户指定目标选用，未指定时根据本轮目标判断）：${Object.values(CONTENT_ACTION_RULES)
+    .map(({ name, instruction }) => `${name}：${instruction}`)
+    .join("；")}`,
   `各类型规则（按当前模块选用）：${Object.entries(KIND_RULES)
     .map(([key, rule]) => `${KIND_MODULE_LABELS[key] ?? key}：${rule}`)
     .join("；")}`,

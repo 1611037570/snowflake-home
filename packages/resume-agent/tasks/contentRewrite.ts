@@ -5,14 +5,6 @@ import type { ContentAiAction } from "../types";
 
 export type { ContentAiAction } from "../types";
 
-// 三种操作各自的处理方式，差异只体现在对待处理正文的改法
-const ACTION_INSTRUCTIONS: Record<ContentAiAction, string> = {
-  generate: "根据数据重写这段正文，currentText 只作参考，不要照抄",
-  // 条目结构不保留时，润色会把已有列表打散成段落
-  polish: "保留 currentText 中已确认的事实，改善专业表达与信息密度，并按候选内容规则补全可核实的贡献；currentText 的条目结构原样保留，列表仍是列表",
-  simplify: "精简 currentText，保留关键职责、行动与成果，删去套话与重复；currentText 的条目结构原样保留，列表仍是列表",
-};
-
 // 简历展示语言与输出语言名称的对应关系
 export const LANGUAGE_NAMES: Record<string, string> = {
   zh: "中文",
@@ -52,20 +44,21 @@ const buildSystemPrompt = (
     "【输入说明】",
     "- moduleTitle 是当前模块标题，position 是求职方向；record 是其他表单字段，已有字段不在正文重复。",
     `- record 字段含义：${buildFieldHint(moduleKey) || "按字段名理解"}。`,
-    "- currentText 是当前正文；生成时作参考，润色与精简时作为改写对象。",
+    "- currentText 是当前正文；生成时作参考，其余操作以此为处理对象。",
     "",
     "【写作要求】",
     "- 根据模块用途与求职方向决定侧重点；已确认的事实准确保留，未确认的候选内容明确标记。",
-    // 生成和润色允许主动补全候选，精简仍只处理已有内容。
+    // 除凝练外的操作共用候选规则，凝练仍只处理已有内容。
     ...(action === "simplify" ? [] : [`- ${CANDIDATE_COMPLETION_RULE}`]),
     // 写作纪律与 AI 助手链路共用同一份定义，禁止在提示词里另写一份
     ...RESUME_WRITING_DISCIPLINE.map((rule) => `- ${rule}`),
-    `- ${ACTION_INSTRUCTIONS[action]}`,
     `- 使用${language}输出，专有名词保留原文。`,
     `- ${getWritingRule(action, kindKey, moduleKey)}`,
     "",
     "【输出格式】",
     "只输出 HTML 片段，不加标题、说明或代码围栏；段落用 <p>，列表用 <ul>/<ol> 与 <li>，强调用 <strong>/<em>。",
+    // 续写任务只返回增量，调用方负责保留原文并组装完整预览。
+    ...(action === "continue" ? ["本次为续写，只输出追加的新增正文，不输出原文；原文由调用方保留。"] : []),
   ].join("\n");
 
 // 正文字段任务输入：业务侧收集的事实与本次操作

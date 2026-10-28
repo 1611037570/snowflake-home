@@ -8,6 +8,7 @@ import AiResultPanel from "./aiResultPanel.vue";
 import { loadResumeExamples } from "@/views/resume/template/data/resumeExamples";
 import { useFormContext } from "@/components/business/dynamicForm/api";
 import { useResumeContentAi } from "./useResumeContentAi";
+import { CONTENT_AI_GROUPS, CONTENT_AI_LABELS } from "./contentAiActions";
 
 defineOptions({ name: "ResumeContentEditor" });
 
@@ -116,37 +117,38 @@ const appendExample = (example) => {
         />
       </template>
       <template #bottom>
-        <div class="flex flex-wrap items-center gap-3 border-t border-sf-b bg-sf-module-header px-3 py-1 text-sf-text">
-          <span class="shrink-0 text-xs font-semibold">✦AI+</span>
-          <div class="flex flex-wrap items-center gap-3">
-            <button
-              v-for="(action, index) in [
-                $t('resumeContentGenerate'),
-                $t('resumeContentPolish'),
-                $t('resumeContentSimplify'),
-              ]"
-              :key="action"
-              type="button"
-              class="inline-flex h-6 cursor-pointer items-center rounded-3xl bg-sf-primary px-3 text-xs font-medium text-sf-text transition-colors hover:bg-sf-page"
-              :disabled="aiLoading"
-              @click="runAiContent(['generate', 'polish', 'simplify'][index], aiCount)"
-            >
-              {{ action }}
-            </button>
+        <!-- 收紧分组与按钮留白，优先并排展示，空间不足时再换行。 -->
+        <div class="flex flex-wrap gap-[6px] border-t border-sf-b bg-sf-module-header p-[6px] text-sf-text">
+          <div v-for="group in CONTENT_AI_GROUPS" :key="group.label" class="flex flex-col gap-[3px]">
+            <span class="text-xs font-semibold">{{ $t(group.label) }}</span>
+            <div class="flex flex-wrap items-center gap-[6px]">
+              <!-- 悬停使用主题强调底色，避免按钮背景与底栏融在一起。 -->
+              <button
+                v-for="item in group.actions"
+                :key="item.action"
+                type="button"
+                class="inline-flex h-6 shrink-0 cursor-pointer items-center gap-[3px] whitespace-nowrap rounded-3xl bg-sf-primary px-[6px] text-[11px] font-medium text-sf-text transition-colors hover:bg-sf-theme-2 disabled:cursor-not-allowed disabled:opacity-50"
+                :disabled="aiLoading"
+                @click="runAiContent(item.action, aiCount)"
+              >
+                <SfIcon :icon="item.icon" size="3" class="text-sf-theme" />
+                {{ $t(CONTENT_AI_LABELS[item.action]) }}
+              </button>
+            </div>
           </div>
         </div>
         <!-- 数量单独一行：一次请求产出多份候选供挑选 -->
         <div
-          class="flex items-center gap-3 bg-sf-module-header px-3 py-1"
+          class="flex items-center gap-[6px] bg-sf-module-header px-[6px] pb-[6px]"
           :class="aiVisible ? '' : 'rounded-b-3xl'"
         >
           <span class="text-xs text-sf-text-3">数量</span>
-          <div class="inline-flex items-center rounded-full border border-sf-b bg-sf-primary p-[2px]">
+          <div class="inline-flex items-center rounded-full border border-sf-b bg-sf-primary p-[3px]">
             <button
               v-for="option in aiCountOptions"
               :key="option"
               type="button"
-              class="inline-flex h-5 w-8 cursor-pointer items-center justify-center rounded-full text-xs transition-colors"
+              class="inline-flex h-5 w-6 cursor-pointer items-center justify-center rounded-full text-xs transition-colors"
               :class="option === aiCount ? 'bg-sf-base text-sf-primary' : 'text-sf-text-2 hover:text-sf-text'"
               @click="aiCount = option"
             >

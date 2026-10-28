@@ -8,6 +8,7 @@ import {
   LANGUAGE_NAMES,
   findResumeModuleSchema,
   normalizeRichTextHtml,
+  richTextToPlainText,
   runResumeAiTask,
   type ContentAiAction,
   type ContentRewriteInput,
@@ -23,15 +24,6 @@ type ContentCandidate = {
 
 // 去掉模型偶发输出的代码围栏
 const stripFence = (text: string) => text.trim().replace(/^```(?:html)?\s*|\s*```$/g, "");
-
-// 把已有正文转成纯文本，避免提示词里混入历史标签
-const toPlainText = (html: string) =>
-  html
-    .replace(/<\/(?:p|li|ul|ol)>/gi, "\n")
-    .replace(/<br\s*\/?>/gi, "\n")
-    .replace(/<[^>]+>/g, "")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
 
 // 流式预览刷新间隔，避免每个增量都触发整段 DOM 重建
 const PREVIEW_THROTTLE_MS = 100;
@@ -124,7 +116,8 @@ export const useResumeContentAi = (
       findResumeModuleSchema(moduleKey)?.title ||
       moduleKey;
     const currentText = stripFence(String(content.value ?? ""));
-    if (action !== "generate" && !currentText) {
+    // 续写与改写必须有实际正文，编辑器的空标签不作为有效输入。
+    if (action !== "generate" && !richTextToPlainText(currentText)) {
       ElMessage.warning("请先填写要处理的内容");
       return;
     }
@@ -132,6 +125,8 @@ export const useResumeContentAi = (
     const language = LANGUAGE_NAMES[item.ui?.content?.language] || "中文";
     const taskVersion = ++version;
     original = String(content.value ?? "");
+    // 原始快照仍用于改动校验；续写展示与采用只使用清洗后的原文。
+    const originalHtml = action === "continue" ? normalizeRichTextHtml(original) : "";
     factsKey = factsKeyOf(facts);
     activeAction.value = action;
     activeIndex.value = 0;
@@ -155,7 +150,7 @@ export const useResumeContentAi = (
       // 当前记录中除正文外的字段
       record: facts,
       // 当前正文，仅作参考
-      currentText: toPlainText(currentText),
+      currentText: richTextToPlainText(currentText),
     };
     // 任务输入一次组装，多个候选共用
     const taskInput: ContentRewriteInput = {
@@ -192,7 +187,14 @@ export const useResumeContentAi = (
         clearTimer();
         if (taskVersion !== version) return;
         // 模型返回 Markdown 或纯文本时同步转换为编辑器可用的富文本 HTML
-        candidate.html = normalizeRichTextHtml(raw);
+        const html = normalizeRichTextHtml(raw);
+        // 先校验新增正文，避免原文掩盖空白输出并被当作成功结果。
+        if (!richTextToPlainText(html)) {
+          candidate.html = "";
+          return;
+        }
+        // 原文与新增正文都经统一清洗后才能进入预览与采用流程。
+        candidate.html = action === "continue" ? originalHtml + html : html;
       };
       // 段落边界立即刷新，其余增量按固定间隔合并
       const schedule = (delta: string) => {
@@ -278,7 +280,7 @@ export const useResumeContentAi = (
     activeIndex,
     // 本次预览对应的操作
     activeAction,
-    // 发起生成、润色或简化，count 为本次生成数
+    // 发起通用正文操作，count 为本次生成数
     runAiContent,
     // 采用当前候选写入正文
     applyResult,

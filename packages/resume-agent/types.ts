@@ -51,5 +51,5 @@ export const loadSkillResource = async (resource: SkillResource): Promise<Skill>
   return skill;
 };
 
-// 正文 AI 支持的操作类型。
-export type ContentAiAction = "generate" | "polish" | "simplify";
+// 共用正文能力支持生成、续写、专业改写、凝练与扩写。
+export type ContentAiAction = "generate" | "continue" | "polish" | "simplify" | "expand";

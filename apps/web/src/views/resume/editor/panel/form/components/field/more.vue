@@ -25,7 +25,10 @@ const availableFields = computed(() =>
 const groupedFields = computed(() => {
   const groups = MORE_CATEGORIES.map((category) => ({
     category,
-    fields: availableFields.value.filter((field) => field.props?.category === category),
+    fields: availableFields.value
+      .filter((field) => field.props?.category === category)
+      // 求职岗位在常用入口置顶，不受已有简历保存的字段顺序影响。
+      .sort((left, right) => Number(right.key === "position") - Number(left.key === "position")),
   }));
   // 未声明分类的字段归入末尾兜底组，避免新增字段因漏标分类而不展示
   const rest = availableFields.value.filter(

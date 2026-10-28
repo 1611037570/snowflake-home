@@ -1,6 +1,21 @@
 import DOMPurify from "dompurify";
 import { RICH_TEXT_SANITIZE_CONFIG } from "./richTextSanitize";
 
+// 共用正文提取：安全解析并解码实体，空标签与不可见空白不视为有效内容。
+export const richTextToPlainText = (value: string): string => {
+  const fragment = DOMPurify.sanitize(value, {
+    ...RICH_TEXT_SANITIZE_CONFIG,
+    // 返回脱离页面的片段，读取正文时不会执行原文中的事件属性。
+    RETURN_DOM_FRAGMENT: true,
+  });
+  // 保留段落与列表边界，避免提供给模型的多条正文粘连。
+  fragment.querySelectorAll("p, li, ul, ol, br").forEach((element) => element.after("\n"));
+  return (fragment.textContent ?? "")
+    .replace(/[\u200B\uFEFF]/g, "")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+};
+
 // 转义模型返回的普通文本，避免转换 Markdown 时把文本内容当作标签执行
 const escapeHtml = (value: string) =>
   value
