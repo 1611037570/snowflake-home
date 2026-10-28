@@ -1,16 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { config } from '../../configs'
 
-export interface DeepSeekBalance {
-  is_available: boolean
-  balance_infos: Array<{
-    currency: string
-    total_balance: string
-    granted_balance: string
-    topped_up_balance: string
-  }>
-}
-
 @Injectable()
 export class LLMService {
 
@@ -58,19 +48,4 @@ export class LLMService {
     return response
   }
 
-  /**
-   * 查询 DeepSeek 余额
-   */
-  async getBalance() {
-    const apiKey = config.ai.apiKey
-    const url = 'https://api.deepseek.com/user/balance'
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    })
-    const data = (await response.json()) as DeepSeekBalance
-    return data
-  }
 }

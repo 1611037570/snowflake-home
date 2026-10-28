@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Res } from '@nestjs/common'
+import { Controller, Post, Body, Res } from '@nestjs/common'
 import { ApiOperation, ApiTags } from '@nestjs/swagger'
 import type { Response } from 'express'
 import { LLMService } from './llm.service'
@@ -56,9 +56,4 @@ export class LLMController {
     }
   }
 
-  @ApiOperation({ summary: '查询 DeepSeek 余额' })
-  @Get('balance')
-  async getBalance() {
-    return this.llmService.getBalance()
-  }
 }

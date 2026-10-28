@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { ElMessage } from "element-plus";
 import confirm from "@/components/business/confirm";
 import { PROVIDER_NAMES } from "@/configs";
 import { useAiStore } from "@/stores/modules/ai";
@@ -16,8 +15,6 @@ const props = defineProps<{
 
 const aiStore = useAiStore();
 const { modelList } = storeToRefs(aiStore);
-const balanceMap = ref<Record<string, string>>({});
-const balanceLoading = ref<Record<string, boolean>>({});
 // 每个已添加模型独立记录连接结果，重复测试时覆盖上次状态。
 const connectionStates = ref<Record<string, {
   // 当前连接测试阶段。
@@ -37,24 +34,9 @@ const displayList = computed(() =>
     key: m.key,
     url: m.url,
     protocol: m.protocol === "responses" ? "responses" : "chatCompletions",
-    balanceSupported: !m.builtin && m.name !== "雪花服务" && ["openai", "deepseek", "ark"].includes(m.provider), // 新增服务商没有余额接口时不展示查询按钮。
     bindings: props.bindings[m.id] ?? [], // 当前使用该模型的角色名称。
   })),
 );
-
-// 格式化不同供应商的余额响应
-function formatBalance(item: any, data: any) {
-  if (item.provider === "deepseek") {
-    const balances = (data.balance_infos || [])
-      .map((balance: any) => `${balance.currency} ${balance.total_balance}`)
-      .join(" / ");
-    return balances || "暂无余额";
-  }
-  if (item.provider === "ark") {
-    return data?.Result?.AvailableBalance ?? data?.result?.AvailableBalance ?? "暂无余额";
-  }
-  return data?.total_available ?? data?.totalAvailable ?? "暂无余额";
-}
 
 // 复用添加时的统一连接检测，使用该模型保存的地址、密钥和协议。
 async function testConnection(item: any) {
@@ -84,29 +66,6 @@ async function testConnection(item: any) {
       status: "error",
       message: error?.message || "连接失败，请检查模型配置后重试",
     };
-  }
-}
-
-// 查询已添加模型的账户余额
-async function queryBalance(item: any) {
-  if (!item.balanceSupported || balanceLoading.value[item.id]) return;
-  balanceLoading.value[item.id] = true;
-  try {
-    const llm = new LLM({
-      url: item.url,
-      apiKey: item.key,
-      provider: item.provider,
-      model: item.model,
-      protocol: item.protocol,
-    });
-    const data = await llm.getBalance();
-    const balance = formatBalance(item, data);
-    balanceMap.value[item.id] = balance;
-    ElMessage.success(`当前余额：${balance}`);
-  } catch (error: any) {
-    ElMessage.error(error?.message || "查询余额失败");
-  } finally {
-    balanceLoading.value[item.id] = false;
   }
 }
 
@@ -164,17 +123,6 @@ function removeModel(item: any) {
               {{ connectionStates[item.id]?.status === "testing" ? "测试中" : "测试连接" }}
             </SfButton>
             <button
-              v-if="item.balanceSupported"
-              type="button"
-              class="inline-flex cursor-pointer items-center gap-[6px] rounded-xl bg-sf-bg px-3 py-[6px] text-xs text-sf-text-2 transition-colors hover:bg-sf-theme-3 disabled:cursor-wait disabled:opacity-60"
-              :disabled="balanceLoading[item.id]"
-              :aria-busy="balanceLoading[item.id]"
-              @click="queryBalance(item)"
-            >
-              <SfIcon v-if="balanceLoading[item.id]" icon="line-md:loading-twotone-loop" size="3" />
-              {{ balanceLoading[item.id] ? "查询中" : "查询余额" }}
-            </button>
-            <button
               type="button"
               class="flex h-6 w-6 cursor-pointer items-center justify-center rounded-xl text-sf-text-3 transition-colors hover:bg-sf-error-2 hover:text-sf-error"
               :aria-label="`删除模型 ${item.name}`"
@@ -187,7 +135,6 @@ function removeModel(item: any) {
         <div class="mt-3 flex flex-wrap items-center gap-[6px]">
           <span v-for="name in item.bindings" :key="name" class="rounded-full bg-sf-theme-3 px-3 py-[3px] text-[11px] text-sf-theme">{{ name }}</span>
           <span v-if="!item.bindings.length" class="text-xs text-sf-text-2">暂未分配给角色</span>
-          <span v-if="balanceMap[item.id]" class="ml-auto text-xs text-sf-text-2">余额：{{ balanceMap[item.id] }}</span>
         </div>
         <p
           v-if="connectionStates[item.id]"
