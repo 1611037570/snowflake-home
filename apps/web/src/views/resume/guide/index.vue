@@ -43,67 +43,70 @@ function scrollToGuide(index: number) {
 
 <template>
   <SfScrollbar class="h-full bg-sf-page" flush>
-    <main class="mx-auto w-full max-w-screen-xl px-3 pt-3 text-sf-text sm:px-3">
+    <main class="mx-auto w-full max-w-7xl px-3 py-6 text-sf-text sm:px-6">
+      <!-- 标题与手册标记同行，压缩页头高度，把空间留给正文。 -->
       <header>
-        <p class="text-sm font-semibold text-sf-theme">
-          {{ $t("resumeGuideEyebrow") }}
-        </p>
-        <h1 class="mt-3 text-3xl font-black">
-          {{ $t("resumeGuideTitle") }}
-        </h1>
-        <p class="mt-3 max-w-3xl text-sm leading-normal text-sf-text-2">
+        <div class="flex flex-wrap items-center gap-3">
+          <h1 class="text-lg font-semibold">{{ $t("resumeGuideTitle") }}</h1>
+          <span class="text-xs text-sf-text-3">{{ $t("resumeGuideEyebrow") }}</span>
+        </div>
+        <p class="mt-[6px] max-w-3xl text-xs leading-6 text-sf-text-2">
           {{ $t("resumeGuideDescription") }}
         </p>
       </header>
 
       <section
-        class="mt-3 grid items-start gap-3 lg:grid-cols-[9rem_minmax(0,1fr)]"
+        class="mt-6 grid items-start gap-6 lg:grid-cols-[12rem_minmax(0,1fr)]"
       >
-        <aside class="sticky top-3 self-start">
+        <!-- 目录保持吸顶，窄屏继续使用原有折叠入口。 -->
+        <aside class="sticky top-3 z-10 self-start">
           <nav
-            class="rounded-3xl border border-sf-b bg-sf-primary p-3 lg:max-h-screen lg:overflow-y-auto"
+            class="rounded-xl border border-sf-b bg-sf-primary p-3 lg:max-h-[calc(100svh-96px)] lg:overflow-y-auto"
             :aria-label="$t('resumeGuideDirectory')"
           >
             <details ref="mobileDirectory" class="lg:hidden">
               <summary
-                class="cursor-pointer rounded-xl p-3 font-semibold text-sf-text transition-colors hover:bg-sf-bg"
+                class="cursor-pointer rounded-lg px-3 py-[6px] text-sm font-medium text-sf-text transition-colors hover:bg-sf-bg"
               >
                 {{ jobGuideList[activeGuideIndex]?.name }}
               </summary>
-              <ul class="mt-3 max-h-screen overflow-y-auto">
+              <ul class="mt-3 max-h-[60svh] overflow-y-auto">
                 <li v-for="(guide, guideIndex) in jobGuideList" :key="guide.name">
                   <button
                     type="button"
-                    class="w-full cursor-pointer whitespace-nowrap rounded-xl p-3 text-left text-sm font-semibold transition-colors hover:bg-sf-bg"
+                    class="flex min-h-9 w-full cursor-pointer items-center justify-between gap-3 whitespace-nowrap rounded-lg px-3 py-[6px] text-left text-sm transition-colors hover:bg-sf-bg"
                     :class="
                       activeGuideIndex === guideIndex
-                        ? 'bg-sf-theme-3 text-sf-theme'
-                        : 'text-sf-text-2'
+                        ? 'bg-sf-theme-3 font-medium text-sf-theme'
+                        : 'font-normal text-sf-text-2'
                     "
                     :aria-current="activeGuideIndex === guideIndex ? 'true' : undefined"
                     @click="scrollToGuide(guideIndex)"
                   >
-                    {{ guide.name }}
+                    <span>{{ guide.name }}</span>
+                    <span class="text-xs font-normal text-sf-text-3 tabular-nums">{{ guide.list.length }}</span>
                   </button>
                 </li>
               </ul>
             </details>
 
             <div class="hidden lg:block">
-              <ul>
+              <p class="border-b border-sf-b px-3 pb-3 text-xs text-sf-text-3">{{ $t("resumeGuideDirectory") }}</p>
+              <ul class="mt-3">
                 <li v-for="(guide, guideIndex) in jobGuideList" :key="guide.name">
                   <button
                     type="button"
-                    class="w-full cursor-pointer whitespace-nowrap rounded-xl p-3 text-left text-sm font-semibold transition-colors hover:bg-sf-bg"
+                    class="flex min-h-9 w-full cursor-pointer items-center justify-between gap-3 whitespace-nowrap rounded-lg px-3 py-[6px] text-left text-sm transition-colors hover:bg-sf-bg"
                     :class="
                       activeGuideIndex === guideIndex
-                        ? 'bg-sf-theme-3 text-sf-theme'
-                        : 'text-sf-text-2'
+                        ? 'bg-sf-theme-3 font-medium text-sf-theme'
+                        : 'font-normal text-sf-text-2'
                     "
                     :aria-current="activeGuideIndex === guideIndex ? 'true' : undefined"
                     @click="scrollToGuide(guideIndex)"
                   >
-                    {{ guide.name }}
+                    <span>{{ guide.name }}</span>
+                    <span class="text-xs font-normal text-sf-text-3 tabular-nums">{{ guide.list.length }}</span>
                   </button>
                 </li>
               </ul>
@@ -117,32 +120,33 @@ function scrollToGuide(index: number) {
             :id="`guide-section-${guideIndex}`"
             :ref="(element) => setGuideSection(element, guideIndex)"
             :key="guide.name"
-            class="scroll-mt-3 pb-3"
+            class="scroll-mt-3 pb-6"
             :aria-labelledby="`guide-heading-${guideIndex}`"
           >
+            <!-- 章节名称与数量分层，正文仍保留独立卡片。 -->
             <h2
               :id="`guide-heading-${guideIndex}`"
-              class="flex items-center gap-3 text-3xl font-black text-sf-theme"
+              class="flex items-center gap-3 border-b border-sf-b pb-3 text-base font-semibold text-sf-text"
             >
               <span>{{ guide.name }}</span>
-              <span class="rounded-full bg-sf-theme-3 px-3 text-sm font-semibold">
+              <span class="rounded bg-sf-primary px-[6px] py-[3px] text-xs font-normal text-sf-text-3 tabular-nums">
                 {{ guide.list.length }}条
               </span>
             </h2>
             <ol class="mt-3 grid gap-3 md:grid-cols-2">
               <li v-for="item in guide.list" :key="item.title" class="h-full">
                 <section
-                  class="h-full rounded-3xl border border-sf-b bg-sf-primary p-3 transition-colors hover:border-sf-theme hover:bg-sf-bg"
+                  class="h-full rounded-xl border border-sf-b bg-sf-primary p-3 transition-colors hover:border-sf-theme"
                 >
-                  <h3 class="pb-1 text-lg font-bold text-sf-text">{{ item.title }}</h3>
-                  <p class="leading-normal text-sf-text-2">{{ item.content }}</p>
+                  <h3 class="text-sm leading-6 font-medium text-sf-text">{{ item.title }}</h3>
+                  <p class="mt-[6px] text-sm leading-6 text-sf-text-2">{{ item.content }}</p>
                 </section>
               </li>
             </ol>
           </section>
 
           <footer
-            class="rounded-3xl border border-sf-b bg-sf-primary p-3 text-xs leading-normal text-sf-text-2"
+            class="rounded-xl border border-sf-b bg-sf-primary p-3 text-xs leading-6 text-sf-text-2"
           >
             <p class="font-semibold text-sf-text">
               {{ $t("resumeGuideDisclaimerTitle") }}
