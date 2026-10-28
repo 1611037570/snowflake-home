@@ -18,8 +18,8 @@ function openDrawer() {
   <div class="cursor-pointer text-sf-text hover:text-sf-theme" @click="openDrawer">
     <Icon content="AI 设置" icon="lucide:sparkles" :active="modelManagerVisible" />
   </div>
-  <!-- 设置弹窗 -->
-  <SfModal v-model="modelManagerVisible" title="AI 设置" width="840px">
+  <!-- 设置弹窗使用次级底色，与内部主要底色的角色卡片区分层次。 -->
+  <SfModal v-model="modelManagerVisible" title="AI 设置" width="840px" bg-class="bg-sf-bg">
     <ProviderSettingsContent class="h-[min(660px,calc(90svh-84px))]" />
   </SfModal>
 </template>

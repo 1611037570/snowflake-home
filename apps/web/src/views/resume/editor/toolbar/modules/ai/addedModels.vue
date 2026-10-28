@@ -130,24 +130,24 @@ function removeModel(item: any) {
       <SfIcon icon="lucide:sparkles" size="6" />
     </span>
     <h3 class="text-sm font-semibold text-sf-text">先添加一个模型</h3>
-    <p class="max-w-sm text-xs leading-5 text-sf-text-3">可直接添加内置服务，也可以接入自己的服务商。添加后，在上方为角色选择使用的模型。</p>
+    <p class="max-w-sm text-xs leading-5 text-sf-text-2">可直接添加内置服务，也可以接入自己的服务商。添加后，在上方为角色选择使用的模型。</p>
     <SfButton class="gap-[6px]" @click="emit('jumpAdd')">
       <SfIcon icon="ic:round-add" size="4" />
       添加第一个模型
     </SfButton>
   </div>
 
-  <!-- 模型信息、角色分配与管理操作分层展示，列表独立滚动。 -->
+  <!-- 模型条目使用主要底色，与模型库底色区分，说明文字保持可读对比。 -->
   <SfScrollbar v-else flush class="min-h-0 flex-1">
     <div class="flex flex-col gap-3">
-      <article v-for="item in displayList" :key="item.id" class="shrink-0 rounded-xl border border-sf-b p-3">
+      <article v-for="item in displayList" :key="item.id" class="shrink-0 rounded-xl border border-sf-b bg-sf-primary p-3">
         <div class="flex flex-wrap items-start justify-between gap-3">
           <span class="flex h-9 w-9 shrink-0 items-center justify-center text-sf-text">
             <SfIcon :icon="item.providerIcon" size="6" />
           </span>
           <div class="min-w-0 flex-1">
             <h3 class="truncate text-sm font-semibold text-sf-text">{{ item.name }}</h3>
-            <p class="mt-[3px] truncate text-xs text-sf-text-3">
+            <p class="mt-[3px] truncate text-xs text-sf-text-2">
               {{ PROVIDER_NAMES[item.provider] || item.provider }} · {{ item.model }}
             </p>
           </div>
@@ -186,7 +186,7 @@ function removeModel(item: any) {
         </div>
         <div class="mt-3 flex flex-wrap items-center gap-[6px]">
           <span v-for="name in item.bindings" :key="name" class="rounded-full bg-sf-theme-3 px-3 py-[3px] text-[11px] text-sf-theme">{{ name }}</span>
-          <span v-if="!item.bindings.length" class="text-xs text-sf-text-3">暂未分配给角色</span>
+          <span v-if="!item.bindings.length" class="text-xs text-sf-text-2">暂未分配给角色</span>
           <span v-if="balanceMap[item.id]" class="ml-auto text-xs text-sf-text-2">余额：{{ balanceMap[item.id] }}</span>
         </div>
         <p

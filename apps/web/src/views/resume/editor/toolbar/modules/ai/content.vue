@@ -116,16 +116,16 @@ provide("bg", "bg-sf-primary");
     <section class="shrink-0">
       <header class="mb-3 flex items-center justify-between gap-3">
         <h2 class="text-sm font-semibold text-sf-text">角色模型</h2>
-        <span class="text-xs text-sf-text-3">已配置 {{ boundCount }}/3</span>
+        <span class="text-xs text-sf-text-2">已配置 {{ boundCount }}/3</span>
       </header>
       <div class="grid grid-cols-[repeat(3,minmax(228px,1fr))] gap-3 overflow-x-auto pb-[3px] sm:grid-cols-3 sm:overflow-visible">
         <article
           v-for="agent in agentViews"
           :key="agent.key"
-          class="agent-card flex min-w-0 flex-col gap-[9px] rounded-3xl border bg-sf-bg p-[18px] transition-colors"
+          class="agent-card flex min-w-0 flex-col gap-[9px] rounded-3xl border bg-sf-primary p-[18px] transition-colors"
         >
           <header class="flex min-w-0 items-start gap-3">
-            <span class="agent-role-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-sf-bg-2 text-sf-text-2">
+            <span class="agent-role-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-sf-bg text-sf-text-2">
               <SfIcon :icon="agent.icon" size="5" />
             </span>
             <div class="min-w-0 flex-1">
@@ -137,7 +137,7 @@ provide("bg", "bg-sf-primary");
                 </span>
               </div>
               <!-- 说明保持单行，不再预留第二行空白撑高卡片。 -->
-              <p class="mt-[3px] truncate text-xs leading-[18px] text-sf-text-3">{{ agent.description }}</p>
+              <p class="mt-[3px] truncate text-xs leading-[18px] text-sf-text-2">{{ agent.description }}</p>
             </div>
           </header>
           <!-- 保留原有选择器交互，用独立底栏突出当前模型与服务商。 -->
@@ -166,11 +166,12 @@ provide("bg", "bg-sf-primary");
         </article>
       </div>
     </section>
-    <section class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-primary">
-      <header class="flex shrink-0 items-center justify-between gap-3 border-b border-sf-b bg-sf-bg px-3 py-3">
+    <!-- 模型库以浅底承托条目，标题和角色卡片使用主要底色区分层级。 -->
+    <section class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-bg">
+      <header class="flex shrink-0 items-center justify-between gap-3 border-b border-sf-b bg-sf-primary px-3 py-3">
         <div class="min-w-0">
           <h2 class="text-sm font-semibold text-sf-text">{{ adding ? "添加模型" : "模型库" }}</h2>
-          <p class="mt-[3px] text-xs text-sf-text-3">
+          <p class="mt-[3px] text-xs text-sf-text-2">
             {{ adding ? "选择服务商，填写配置后添加" : `共 ${modelList.length} 个模型，可分配给上方角色` }}
           </p>
         </div>
@@ -194,25 +195,24 @@ provide("bg", "bg-sf-primary");
 </template>
 
 <style scoped>
-/* 卡片、角色图标和模型栏使用不同明度，避免整块灰底缺少层次。 */
+/* 卡片使用主要底色，图标和选择栏使用次级底色，明暗主题均保持层次。 */
 .agent-card {
   container-type: inline-size;
 }
 
 .agent-card,
 .agent-role-icon {
-  border-color: color-mix(in oklab, var(--color-sf-text) 12%, transparent);
+  border-color: var(--color-sf-b);
 }
 
 .agent-card:hover {
-  border-color: color-mix(in oklab, var(--color-sf-text) 24%, transparent);
+  border-color: var(--color-sf-text-3);
 }
 
 .agent-bound-badge {
-  --agent-status: color-mix(in oklab, var(--color-sf-success) 70%, var(--color-sf-theme));
-  color: var(--agent-status);
-  border-color: color-mix(in oklab, var(--agent-status) 24%, transparent);
-  background-color: color-mix(in oklab, var(--agent-status) 10%, transparent);
+  color: var(--color-sf-success);
+  border-color: var(--color-sf-success-2);
+  background-color: var(--color-sf-success-2);
 }
 
 /* 样式只作用于角色模型栏，保留 SfSelect 的键盘选择与清空能力。 */
@@ -220,9 +220,9 @@ provide("bg", "bg-sf-primary");
   min-height: 42px;
   gap: 9px;
   padding: 6px 9px;
-  border: 1px solid color-mix(in oklab, var(--color-sf-text) 12%, transparent);
+  border: 1px solid var(--color-sf-b);
   border-radius: 12px;
-  background-color: color-mix(in oklab, var(--color-sf-page) 35%, var(--color-sf-bg));
+  background-color: var(--color-sf-bg);
   box-shadow: none;
 }
 

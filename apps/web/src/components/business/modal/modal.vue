@@ -15,8 +15,8 @@
         <div
           id="element"
           ref="elementRef"
-          class="flex flex-col border border-sf-b bg-sf-primary p-3"
-          :class="full ? 'h-screen w-screen rounded-none' : 'max-h-[90vh] max-w-[90vw] rounded-3xl'"
+          class="flex flex-col border border-sf-b p-3"
+          :class="[bgClass, full ? 'h-screen w-screen rounded-none' : 'max-h-[90vh] max-w-[90vw] rounded-3xl']"
           :style="[elementStyle, widthStyle]"
           @mouseenter="handleMouseEnter"
           @mouseleave="handleMouseLeave"
@@ -63,6 +63,8 @@ const props = defineProps({
   title: { type: String, default: "" },
   /** 弹窗标题自定义类名 */
   titleClass: { type: String, default: "" },
+  /** 弹窗主体背景类名，允许调用方调整底色，默认沿用主要背景。 */
+  bgClass: { type: String, default: "bg-sf-primary" },
   /** 弹窗宽度 */
   width: { type: String, default: "" },
   /** 是否全屏显示（默认 false） */
