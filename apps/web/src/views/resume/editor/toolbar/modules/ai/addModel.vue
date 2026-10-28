@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
+import { computed, provide, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { useAiStore } from "@/stores/modules/ai";
 import { LLM } from "@/apis";
-import { snowflake } from "@/configs";
+import { PROVIDER_NAMES, snowflake } from "@/configs";
+import { getProviderIcon } from "./providerIcons";
 
 const emit = defineEmits<{ addSuccess: [] }>();
 
@@ -51,19 +52,38 @@ const providerTemplates: ProviderTemplate[] = [
       protocol: snowflake.protocol,
     },
   },
-  { id: "openai", name: "OpenAI", defaultUrl: "https://api.openai.com/v1/chat/completions" },
+  { id: "openai", name: PROVIDER_NAMES.openai, defaultUrl: "https://api.openai.com/v1/chat/completions" },
+  // 豆包保留原先第三个预设的位置，新增服务商排在后面。
   {
     id: "ark",
-    name: "火山方舟 Ark",
+    name: PROVIDER_NAMES.ark,
     defaultUrl: "https://ark.cn-beijing.volces.com/api/v3/chat/completions",
   },
-  { id: "deepseek", name: "DeepSeek", defaultUrl: "https://api.deepseek.com/chat/completions" },
+  {
+    id: "gemini", // Gemini 使用官方 OpenAI 兼容入口。
+    name: PROVIDER_NAMES.gemini, // 服务商展示名称。
+    defaultUrl: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions", // 完整聊天请求地址。
+  },
+  { id: "deepseek", name: PROVIDER_NAMES.deepseek, defaultUrl: "https://api.deepseek.com/chat/completions" },
+  {
+    id: "claude", // Claude 使用官方 OpenAI 兼容入口。
+    name: PROVIDER_NAMES.claude, // 服务商展示名称。
+    defaultUrl: "https://api.anthropic.com/v1/chat/completions", // 完整聊天请求地址。
+  },
+  {
+    id: "qwen", // 千问通过阿里云百炼接入。
+    name: PROVIDER_NAMES.qwen, // 服务商展示名称。
+    defaultUrl: "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions", // 默认北京地域的完整请求地址。
+  },
 ];
 // 各服务商获取 Key 的链接
 const keyLinks: Record<string, string> = {
   openai: "https://platform.openai.com/api-keys",
   ark: "https://console.volcengine.com/ark",
   deepseek: "https://platform.deepseek.com/",
+  gemini: "https://aistudio.google.com/apikey", // Gemini 官方密钥管理页。
+  claude: "https://platform.claude.com/settings/keys", // Claude 官方密钥管理页。
+  qwen: "https://bailian.console.aliyun.com/", // 阿里云百炼控制台。
 };
 
 // 服务商列表：雪花服务已添加后从列表移除，避免重复添加（删除后可再次添加）
@@ -171,7 +191,7 @@ async function handleAdd() {
   testPassed.value = false;
   formSource.value = createFormSource();
   showAdvanced.value = false;
-  // 添加成功后切到「已添加模型」Tab，让用户看到新模型
+  // 添加成功后返回模型库，让用户继续为角色分配模型。
   emit("addSuccess");
 }
 
@@ -182,128 +202,104 @@ function handleAddBuiltin() {
   if (!validateAlias(preset.name)) return;
   aiStore.deployModel({ ...preset, builtin: true });
   ElMessage.success("模型添加成功");
-  // 添加成功后切到「已添加模型」Tab，让用户看到新模型
+  // 内置服务沿用同一条添加完成动线。
   emit("addSuccess");
 }
 provide("bg", "bg-sf-bg");
 </script>
 
 <template>
-  <div class="flex h-full min-h-0 gap-3">
-    <!-- 左侧：可添加服务商列表 -->
-    <div class="flex w-44 shrink-0 flex-col gap-3">
-      <div class="text-xs font-bold text-sf-text-2">服务商</div>
-      <SfList
-        :list="providerList"
-        active-key="id"
-        :active-value="selectedProvider"
-        @onClick="selectProvider"
+  <div class="flex h-full min-h-0 flex-col gap-3">
+    <!-- 服务商改为顶部选择，填写配置时不再横跨侧栏与表单。 -->
+    <div class="flex shrink-0 flex-wrap gap-[6px]" aria-label="选择服务商">
+      <button
+        v-for="item in providerList"
+        :key="item.id"
+        type="button"
+        class="inline-flex cursor-pointer items-center gap-[6px] rounded-xl border px-3 py-[6px] text-xs font-medium transition-colors disabled:cursor-wait disabled:opacity-60"
+        :class="item.id === selectedProvider ? 'border-sf-theme bg-sf-theme-3 text-sf-theme' : 'border-sf-b text-sf-text-2 hover:border-sf-theme hover:bg-sf-bg'"
+        :aria-pressed="item.id === selectedProvider"
+        :disabled="testing"
+        @click="selectProvider(item)"
       >
-        <template #default="{ item }">
-          <div class="flex min-w-0 flex-1 items-center gap-1">
-            <span class="truncate">{{ item.name }}</span>
-            <el-tag v-if="item.builtin" type="info" size="small" class="shrink-0">内置</el-tag>
-          </div>
-        </template>
-      </SfList>
+        <SfIcon :icon="getProviderIcon(item.id, item.builtin)" size="5" class="shrink-0" />
+        {{ item.name }}
+        <span v-if="item.builtin" class="text-[10px]">内置</span>
+        <SfIcon v-if="item.id === selectedProvider" icon="lucide:check" size="3" />
+      </button>
     </div>
 
-    <!-- 右侧：内置服务卡片 / 新增模型表单 -->
-    <div class="flex h-full min-h-0 flex-1 flex-col gap-3">
-      <!-- 内置服务卡片：配置已预置，直接添加 -->
-      <div v-if="currentProvider?.preset" class="flex min-h-0 flex-1 flex-col gap-3">
-        <div class="flex items-center justify-between">
-          <span class="font-bold text-sf-text">{{ currentProvider?.name }}</span>
-          <el-tag type="success">内置</el-tag>
+    <!-- 配置区域独立滚动，底部主操作在填写过程中始终可见。 -->
+    <SfScrollbar flush class="min-h-0 flex-1">
+      <div v-if="currentProvider?.preset" class="rounded-xl border border-sf-b bg-sf-bg p-6">
+        <span class="mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-sf-theme-3 text-sf-theme">
+          <SfIcon icon="ph:snowflake-duotone" size="6" />
+        </span>
+        <h3 class="text-base font-semibold text-sf-text">{{ currentProvider.name }}</h3>
+        <p class="mt-3 text-sm leading-6 text-sf-text-2">配置已准备好，无需填写 API Key 或接口地址，直接添加即可。</p>
+        <p class="mt-3 text-xs leading-5 text-sf-text-3">添加后，可在上方为小舟、简历解析和小羊选择使用的模型。</p>
+      </div>
+      <div v-else class="flex flex-col gap-3">
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <label class="flex flex-col gap-[6px] text-xs font-medium text-sf-text-2">
+            模型名称
+            <SfInput v-model="formSource.model" class="w-full" placeholder="填写服务商提供的模型名称" :disabled="testing" />
+          </label>
+          <label class="flex flex-col gap-[6px] text-xs font-medium text-sf-text-2">
+            别名（可选）
+            <SfInput v-model="formSource.name" class="w-full" placeholder="方便自己识别的名称" :disabled="testing" />
+          </label>
         </div>
-        <div class="text-sm text-sf-text-3">配置已内置，无需填写，添加后即可切换使用</div>
-        <div class="mt-auto pt-3">
-          <SfButton class="w-full" @click="handleAddBuiltin">添加模型</SfButton>
+        <div class="flex flex-col gap-[6px]">
+          <div class="flex items-center justify-between gap-3 text-xs font-medium text-sf-text-2">
+            <span>API Key</span>
+            <a v-if="keyLink" :href="keyLink" target="_blank" rel="noopener noreferrer" class="text-sf-theme hover:underline">获取 API Key</a>
+          </div>
+          <SfInput v-model="formSource.key" type="password" show-password class="w-full" placeholder="粘贴 API Key" aria-label="API Key" :disabled="testing" />
+        </div>
+        <!-- 官方地址保持默认，高级选项继续按需展开。 -->
+        <div class="rounded-xl border border-sf-b p-3">
+          <button
+            type="button"
+            class="flex w-full cursor-pointer items-center justify-between gap-3 text-left text-xs font-medium text-sf-text-2 transition-colors hover:text-sf-theme"
+            :aria-expanded="showAdvanced"
+            aria-controls="ai-add-model-advanced"
+            @click="showAdvanced = !showAdvanced"
+          >
+            <span>高级设置 · 接口地址</span>
+            <SfIcon icon="mingcute:down-line" size="4" :class="{ 'rotate-180': showAdvanced }" />
+          </button>
+          <div v-if="showAdvanced" id="ai-add-model-advanced" class="mt-3 flex flex-col gap-3">
+            <p class="text-xs leading-5 text-sf-text-3">默认使用官方接口，仅在使用代理或自定义服务时修改。</p>
+            <label class="flex flex-col gap-[6px] text-xs text-sf-text-2">
+              完整接口地址
+              <SfInput v-model="formSource.url" :placeholder="currentProvider?.defaultUrl" :disabled="testing" />
+            </label>
+          </div>
         </div>
       </div>
+    </SfScrollbar>
 
-      <!-- 新增模型表单 -->
-      <div v-else class="flex min-h-0 flex-1 flex-col gap-3">
-        <!-- 可滚动字段区 -->
-        <div class="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
-          <span class="font-bold text-sf-text">{{ currentProvider?.name }}</span>
-
-          <!-- 别名 -->
-          <div>
-            <label class="mb-1 block text-xs text-sf-text-2">别名（可选）</label>
-            <SfInput v-model="formSource.name" class="w-full" placeholder="如：我的 GPT-4" />
-          </div>
-
-          <!-- 模型标识 -->
-          <SfFormItem label="模型" prop="model">
-            <SfInput v-model="formSource.model" class="w-full" placeholder="请输入模型名称" />
-          </SfFormItem>
-
-          <!-- API Key -->
-          <div>
-            <div class="mb-1 flex h-5 w-full items-center justify-between">
-              <span class="pl-2 font-bold text-sf-text">API Key</span>
-              <a
-                :href="keyLink"
-                target="_blank"
-                rel="noopener"
-                class="cursor-pointer text-sf-theme hover:underline"
-                >获取key</a
-              >
-            </div>
-            <SfFormItem prop="key">
-              <SfInput
-                v-model="formSource.key"
-                type="password"
-                show-password
-                class="w-full"
-                placeholder="请输入 API Key"
-              />
-            </SfFormItem>
-          </div>
-
-          <!-- 官方接口已自动填写，自定义地址仅在高级设置中展示。 -->
-          <div class="rounded-2xl border border-sf-b p-3">
-            <button
-              type="button"
-              class="flex w-full cursor-pointer items-center justify-between gap-3 text-left text-sm text-sf-text-2 transition-colors hover:text-sf-theme"
-              :aria-expanded="showAdvanced"
-              aria-controls="ai-add-model-advanced"
-              @click="showAdvanced = !showAdvanced"
-            >
-              <span>高级设置</span>
-              <SfIcon
-                icon="mingcute:down-line"
-                size="4"
-                class="transition-transform"
-                :class="{ 'rotate-180': showAdvanced }"
-              />
-            </button>
-            <div v-if="showAdvanced" id="ai-add-model-advanced" class="mt-3 flex flex-col gap-3">
-              <p class="text-xs text-sf-text-3">
-                默认使用官方接口，仅在使用代理或自定义服务时修改。
-              </p>
-              <SfFormItem label="自定义接口地址（完整 URL）" prop="url">
-                <SfInput v-model="formSource.url" :placeholder="currentProvider?.defaultUrl" />
-              </SfFormItem>
-            </div>
-          </div>
-        </div>
-
-        <!-- 操作按钮：固定底部，始终可见 -->
-        <div class="text-xs text-sf-text-3">连通性测试会发起一次真实请求，会消耗少量模型Token</div>
-        <!-- 统一按钮组件，连接测试期间禁用并展示加载图标。 -->
-        <SfButton
-          class="w-full gap-3"
-          :type="canAdd ? 'theme' : 'bg'"
-          :disabled="testing || !canAdd"
-          :aria-busy="testing"
-          @click="handleAdd"
-        >
-          <SfIcon v-if="testing" icon="line-md:loading-twotone-loop" size="4" />
-          {{ testing ? "测试中..." : "添加模型" }}
-        </SfButton>
-      </div>
-    </div>
+    <footer class="flex shrink-0 flex-wrap items-center justify-between gap-3 border-t border-sf-b pt-3">
+      <p class="min-w-0 flex-1 text-xs leading-5 text-sf-text-3">
+        {{ currentProvider?.preset ? "添加后返回模型库，再为角色选择模型。" : "添加前会测试连接，可能消耗少量 Token。" }}
+      </p>
+      <SfButton
+        v-if="currentProvider?.preset"
+        class="shrink-0"
+        @click="handleAddBuiltin"
+      >添加模型</SfButton>
+      <SfButton
+        v-else
+        class="shrink-0 gap-[6px]"
+        :type="canAdd ? 'theme' : 'bg'"
+        :disabled="testing || !canAdd"
+        :aria-busy="testing"
+        @click="handleAdd"
+      >
+        <SfIcon v-if="testing" icon="line-md:loading-twotone-loop" size="4" />
+        {{ testing ? "正在测试连接" : "测试并添加" }}
+      </SfButton>
+    </footer>
   </div>
 </template>

@@ -29,13 +29,17 @@ type ReactProtocol = "chatCompletions" | "responses";
 // 响应接口没有 index，改按调用项标识合并，两个协议共用同一份累积结构。
 function mergeToolCall(map: Map<string | number, ToolCall>, tc: any) {
   const key = typeof tc.index === "number" ? tc.index : (tc.item_id ?? tc.id ?? 0);
-  const cur = map.get(key) || {
+  const cur: ToolCall = map.get(key) || {
     id: "",
     type: "function",
     function: { name: "", arguments: "" },
   };
   if (tc.id) cur.id = tc.id;
   if (tc.type) cur.type = tc.type;
+  // Gemini 等兼容接口在工具调用上附带思考签名，不能在合并增量时丢弃。
+  if (tc.extra_content && typeof tc.extra_content === "object") {
+    cur.extra_content = { ...cur.extra_content, ...tc.extra_content };
+  }
   // 响应接口把工具名放在调用项事件上，不在 function.name 里
   const name = tc.function?.name || tc.name;
   if (name) cur.function.name = name;

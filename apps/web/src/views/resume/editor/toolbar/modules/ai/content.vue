@@ -1,37 +1,55 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, inject, provide, ref } from "vue";
 import { storeToRefs } from "pinia";
 import AddedModels from "./addedModels.vue";
 import AddModel from "./addModel.vue";
 import { useAiStore } from "@/stores";
 import { PROVIDER_NAMES } from "@/configs";
+import { SF_ICON_LIST_KEY } from "@/components/base/icon";
+import { AI_BRAND_ICONS, getProviderIcon } from "./providerIcons";
+import PencilIcon from "@iconify-vue/lucide/pencil";
+import FileTextIcon from "@iconify-vue/lucide/file-text";
+import SparklesIcon from "@iconify-vue/lucide/sparkles";
 
 const aiStore = useAiStore();
 const { modelManagerTab, modelList } = storeToRefs(aiStore);
 
+// 本地加载角色与服务商图标，同时保留编辑器已经注入的图标。
+provide(SF_ICON_LIST_KEY, {
+  ...inject(SF_ICON_LIST_KEY, {}),
+  ...AI_BRAND_ICONS,
+  "lucide:pencil": PencilIcon, // 文字助手角色图标。
+  "lucide:file-text": FileTextIcon, // 文档解析角色图标。
+  "lucide:sparkles": SparklesIcon, // 面试辅导角色及其他服务商图标。
+});
+
 const agentCards: Array<{
+  // 角色使用的稳定标识。
   key: "xiaoZhou" | "xiaoYang" | "resumeParser";
+  // 角色展示名称。
   name: string;
+  // 角色的主要用途。
   description: string;
+  // 项目中已登记的角色图标。
   icon: string;
 }> = [
   {
     key: "xiaoZhou",
     name: "小舟",
-    description: "日常交流与通用问答，协助处理各类问题",
-    icon: "mdi:robot-outline",
+    description: "日常交流 · 内容润色 · Markdown 导入",
+    icon: "lucide:pencil",
   },
   {
     key: "resumeParser",
     name: "简历解析",
-    description: "识别简历文档，提取并整理字段内容",
-    icon: "mdi:file-document-outline",
+    description: "PDF 导入 · 页面识别与内容提取",
+    icon: "lucide:file-text",
   },
   {
     key: "xiaoYang",
     name: "小羊",
-    description: "面试辅导与模拟练习，帮助准备面试表达",
-    icon: "mdi:robot-excited-outline",
+    description: "模拟面试 · 回答辅导与表达练习",
+    icon: "lucide:sparkles",
   },
 ];
 
@@ -40,32 +58,45 @@ const modelOptions = computed(() =>
   modelList.value.map((model) => ({
     value: model.id,
     name: model.name || model.model || PROVIDER_NAMES[model.provider] || model.provider,
+    providerName: model.builtin ? "雪花服务" : model.provider === "ark" ? "豆包" : PROVIDER_NAMES[model.provider] || model.provider, // 选择栏右侧的服务商名称。
+    icon: getProviderIcon(model.provider, model.builtin, model.model), // 当前选中项与下拉选项共用的品牌图标。
   })),
 );
 
-// 内容区 Tab：已添加模型与添加模型共用同一状态。
-const tabList: Array<{ name: string; value: "added" | "add" }> = [
-  { name: "已添加模型", value: "added" },
-  { name: "添加模型", value: "add" },
-];
+// 卡片展示直接从当前绑定派生，切换或删除模型后同步刷新。
+const agentViews = computed(() => agentCards.map((agent) => ({
+  ...agent,
+  selectedModel: modelOptions.value.find((model) => model.value === getAgentModel(agent.key)), // 当前角色选中的模型及展示信息。
+})));
 
-// Tab 下标跟随 store 中的 Tab 值，供 SfTab 指示器动画使用。
-const activeIndex = computed({
-  get: () => tabList.findIndex((item) => item.value === modelManagerTab.value),
-  set: (index) => {
-    const tab = tabList[index];
-    if (tab) modelManagerTab.value = tab.value;
-  },
-});
+// 角色区固定在上方，添加和返回只切换下方模型工作区。
+const adding = computed(() => modelManagerTab.value === "add");
+const boundCount = computed(() => agentCards.filter((agent) => getAgentModel(agent.key)).length);
+// 模型库直接展示当前角色分配，复用上方角色声明而不再维护一份名称表。
+const modelBindings = computed<Record<string, string[]>>(() =>
+  Object.fromEntries(modelList.value.map((model) => [
+    model.id,
+    agentCards.filter((agent) => getAgentModel(agent.key) === model.id).map((agent) => agent.name),
+  ])),
+);
+const addedNotice = ref("");
 
-// 「去添加」：从已添加模型 Tab 跳转到添加模型 Tab。
+// 从模型库或未绑定角色进入添加表单。
 function jumpToAdd() {
+  addedNotice.value = "";
   modelManagerTab.value = "add";
 }
 
-// 「添加成功」：从添加模型 Tab 切回已添加模型 Tab。
+// 返回模型库不改动现有角色绑定。
 function jumpToAdded() {
+  addedNotice.value = "";
   modelManagerTab.value = "added";
+}
+
+// 添加完成后回到模型库，并明确下一步是在上方选择角色模型。
+function finishAdd() {
+  modelManagerTab.value = "added";
+  addedNotice.value = "模型已添加，可在上方为角色选择；同一个模型可以供多个角色使用。";
 }
 
 // 统一读写角色绑定模型，卡片只负责展示与选择
@@ -80,60 +111,144 @@ provide("bg", "bg-sf-primary");
 </script>
 
 <template>
-  <div class="flex h-full flex-col gap-3">
-    <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
-      <div
-        v-for="agent in agentCards"
-        :key="agent.key"
-        class="flex min-w-0 flex-col gap-3 rounded-3xl border border-sf-b bg-sf-transparent p-3"
-      >
-        <div class="flex min-w-0 items-center gap-3">
-          <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-sf-bg-3">
-            <SfIcon :icon="agent.icon" size="6" class="cursor-default text-sf-text-2" />
-          </div>
-          <div class="min-w-0 flex-1">
-            <!-- 绑定状态紧邻名称展示，不额外占用卡片底部。 -->
-            <div class="flex flex-wrap items-center justify-between gap-x-3">
-              <div class="text-base leading-6 font-bold text-sf-text">{{ agent.name }}</div>
-              <button
-                v-if="!modelList.length"
-                type="button"
-                class="cursor-pointer text-xs text-sf-warning hover:underline"
-                @click="jumpToAdd"
-              >
-                未绑定
-              </button>
-              <span
-                v-else
-                class="shrink-0 text-xs"
-                :class="getAgentModel(agent.key) ? 'text-sf-success' : 'text-sf-warning'"
-                >{{ getAgentModel(agent.key) ? "已绑定" : "未绑定" }}</span
-              >
+  <div class="flex h-full min-h-0 flex-col gap-3">
+    <!-- 三个角色始终保留在上方，模型库和表单独立滚动。 -->
+    <section class="shrink-0">
+      <header class="mb-3 flex items-center justify-between gap-3">
+        <h2 class="text-sm font-semibold text-sf-text">角色模型</h2>
+        <span class="text-xs text-sf-text-3">已配置 {{ boundCount }}/3</span>
+      </header>
+      <div class="grid grid-cols-[repeat(3,minmax(228px,1fr))] gap-3 overflow-x-auto pb-[3px] sm:grid-cols-3 sm:overflow-visible">
+        <article
+          v-for="agent in agentViews"
+          :key="agent.key"
+          class="agent-card flex min-w-0 flex-col gap-[9px] rounded-3xl border bg-sf-bg p-[18px] transition-colors"
+        >
+          <header class="flex min-w-0 items-start gap-3">
+            <span class="agent-role-icon flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border bg-sf-bg-2 text-sf-text-2">
+              <SfIcon :icon="agent.icon" size="5" />
+            </span>
+            <div class="min-w-0 flex-1">
+              <div class="flex min-w-0 items-center justify-between gap-[6px]">
+                <h3 class="truncate text-base leading-6 font-semibold text-sf-text">{{ agent.name }}</h3>
+                <span v-if="agent.selectedModel" class="agent-bound-badge inline-flex shrink-0 items-center gap-[6px] rounded-full border px-[9px] py-[3px] text-[10px] leading-3 font-medium">
+                  <span class="h-[6px] w-[6px] rounded-full bg-current"></span>
+                  已配置
+                </span>
+              </div>
+              <!-- 说明保持单行，不再预留第二行空白撑高卡片。 -->
+              <p class="mt-[3px] truncate text-xs leading-[18px] text-sf-text-3">{{ agent.description }}</p>
             </div>
-            <!-- 用途说明允许换行，超过两行再截断。 -->
-            <div class="line-clamp-2 text-xs leading-5 text-sf-text-3">{{ agent.description }}</div>
+          </header>
+          <!-- 保留原有选择器交互，用独立底栏突出当前模型与服务商。 -->
+          <div class="relative">
+            <SfSelect
+              :model-value="getAgentModel(agent.key)"
+              :list="modelOptions"
+              class="agent-model-select w-full flex-none!"
+              :class="{ 'agent-model-select--bound': agent.selectedModel }"
+              :aria-label="`为${agent.name}选择模型`"
+              :placeholder="modelOptions.length ? '未选择模型' : '先添加模型'"
+              clearable
+              :disabled="!modelOptions.length"
+              @update:model-value="setAgentModel(agent.key, $event)"
+            >
+              <template v-if="agent.selectedModel" #prefix>
+                <span class="flex h-6 w-6 shrink-0 items-center justify-center text-sf-text">
+                  <SfIcon :icon="agent.selectedModel.icon" size="5" />
+                </span>
+              </template>
+            </SfSelect>
+            <span v-if="agent.selectedModel" class="agent-provider-badge pointer-events-none absolute top-1/2 right-9 max-w-[72px] -translate-y-1/2 truncate rounded-full bg-sf-bg-2 px-[6px] py-[3px] text-[10px] leading-3 text-sf-text-2">
+              {{ agent.selectedModel.providerName }}
+            </span>
           </div>
-        </div>
-
-        <div class="flex items-center">
-          <SfSelect
-            :model-value="getAgentModel(agent.key)"
-            :list="modelOptions"
-            class="model-select w-full"
-            placeholder="未选择模型"
-            clearable
-            :disabled="!modelOptions.length"
-            @update:model-value="setAgentModel(agent.key, $event)"
-          />
-        </div>
+        </article>
       </div>
-    </div>
-    <SfTab :list="tabList" v-model="modelManagerTab" v-model:index="activeIndex" />
-    <div v-show="modelManagerTab === 'added'" class="flex min-h-0 flex-1 flex-col">
-      <AddedModels class="h-full" @jump-add="jumpToAdd" />
-    </div>
-    <div v-show="modelManagerTab === 'add'" class="flex min-h-0 flex-1 flex-col">
-      <AddModel class="h-full" @add-success="jumpToAdded" />
-    </div>
+    </section>
+    <section class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-primary">
+      <header class="flex shrink-0 items-center justify-between gap-3 border-b border-sf-b bg-sf-bg px-3 py-3">
+        <div class="min-w-0">
+          <h2 class="text-sm font-semibold text-sf-text">{{ adding ? "添加模型" : "模型库" }}</h2>
+          <p class="mt-[3px] text-xs text-sf-text-3">
+            {{ adding ? "选择服务商，填写配置后添加" : `共 ${modelList.length} 个模型，可分配给上方角色` }}
+          </p>
+        </div>
+        <SfButton v-if="adding" type="bg" border class="shrink-0" @click="jumpToAdded">返回模型库</SfButton>
+        <SfButton v-else class="shrink-0 gap-[6px]" @click="jumpToAdd">
+          <SfIcon icon="ic:round-add" size="4" />
+          添加模型
+        </SfButton>
+      </header>
+      <p v-if="addedNotice && !adding" role="status" class="shrink-0 border-b border-sf-b bg-sf-success-2 px-3 py-3 text-xs text-sf-success">
+        {{ addedNotice }}
+      </p>
+      <div v-show="!adding" class="flex min-h-0 flex-1 flex-col p-3">
+        <AddedModels :bindings="modelBindings" class="h-full" @jump-add="jumpToAdd" />
+      </div>
+      <div v-show="adding" class="flex min-h-0 flex-1 flex-col p-3">
+        <AddModel class="h-full" @add-success="finishAdd" />
+      </div>
+    </section>
   </div>
 </template>
+
+<style scoped>
+/* 卡片、角色图标和模型栏使用不同明度，避免整块灰底缺少层次。 */
+.agent-card {
+  container-type: inline-size;
+}
+
+.agent-card,
+.agent-role-icon {
+  border-color: color-mix(in oklab, var(--color-sf-text) 12%, transparent);
+}
+
+.agent-card:hover {
+  border-color: color-mix(in oklab, var(--color-sf-text) 24%, transparent);
+}
+
+.agent-bound-badge {
+  --agent-status: color-mix(in oklab, var(--color-sf-success) 70%, var(--color-sf-theme));
+  color: var(--agent-status);
+  border-color: color-mix(in oklab, var(--agent-status) 24%, transparent);
+  background-color: color-mix(in oklab, var(--agent-status) 10%, transparent);
+}
+
+/* 样式只作用于角色模型栏，保留 SfSelect 的键盘选择与清空能力。 */
+.agent-model-select :deep(.el-select__wrapper) {
+  min-height: 42px;
+  gap: 9px;
+  padding: 6px 9px;
+  border: 1px solid color-mix(in oklab, var(--color-sf-text) 12%, transparent);
+  border-radius: 12px;
+  background-color: color-mix(in oklab, var(--color-sf-page) 35%, var(--color-sf-bg));
+  box-shadow: none;
+}
+
+.agent-model-select :deep(.el-select__wrapper.is-hovering),
+.agent-model-select :deep(.el-select__wrapper.is-focused) {
+  border-color: var(--color-sf-theme);
+}
+
+.agent-model-select :deep(.el-select__selected-item) {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 为服务商徽标预留空间，不覆盖模型文字或原有的清空、展开按钮。 */
+.agent-model-select--bound :deep(.el-select__selection) {
+  padding-right: 78px;
+}
+
+/* 弹窗和窄屏优先留出模型名称空间，服务商品牌图标仍然保留。 */
+@container (max-width: 252px) {
+  .agent-provider-badge {
+    display: none;
+  }
+
+  .agent-model-select--bound :deep(.el-select__selection) {
+    padding-right: 0;
+  }
+}
+</style>

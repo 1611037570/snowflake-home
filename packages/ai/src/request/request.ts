@@ -1,6 +1,7 @@
 import { createStreamParser, getParser } from "../parser/index.js";
 import { processResult } from "../parser/stream.js";
 import { ApiError } from "../errors.js";
+import { getProviderHeaders } from "./providers.js";
 
 // 组装鉴权请求头
 function processToken(token: string) {
@@ -109,6 +110,7 @@ export function createRequest(token: string, isStream = true, observer: RequestO
         headers: {
           "Content-Type": "application/json",
           Authorization: processToken(token),
+          ...getProviderHeaders(provider, url), // 兼容入口需要的服务商请求头。
         },
         body: data,
       });

@@ -23,7 +23,7 @@
   "resumeGuideDisclaimer": "Based on current regulations and common hiring practices, reviewed as of October 2026. Enforcement varies by region; refer to your local human resources and social security authority. This page is not legal advice.",
   "resumeSettingsEyebrow": "Preferences & Data",
   "resumeSettingsTitle": "General Settings",
-  "resumeSettingsDescription": "Manage model configuration, plus how resume data is stored and backed up on this device. No account or cloud involved.",
+  "resumeSettingsDescription": "Manage how resume data is stored and backed up on this device. No account or cloud involved. Configure models in Skiff AI.",
   "resumeSettingsModelTitle": "Model Settings",
   "resumeSettingsModelDescription": "Assign a model to each assistant, or add your own model provider. Added models support balance checks and deletion.",
   "resumeSettingsBackupTitle": "Local backup folder",

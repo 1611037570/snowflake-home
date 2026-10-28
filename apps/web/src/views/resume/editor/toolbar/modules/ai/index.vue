@@ -16,11 +16,11 @@ function openDrawer() {
 
 <template>
   <div class="cursor-pointer text-sf-text hover:text-sf-theme" @click="openDrawer">
-    <Icon content="服务商设置" icon="lucide:sparkles" :active="modelManagerVisible" />
+    <Icon content="AI 设置" icon="lucide:sparkles" :active="modelManagerVisible" />
   </div>
   <!-- 设置弹窗 -->
-  <SfModal v-model="modelManagerVisible" title="服务商设置" width="720px">
-    <ProviderSettingsContent class="h-[460px]" />
+  <SfModal v-model="modelManagerVisible" title="AI 设置" width="840px">
+    <ProviderSettingsContent class="h-[min(660px,calc(90svh-84px))]" />
   </SfModal>
 </template>
 

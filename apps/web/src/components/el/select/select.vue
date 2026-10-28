@@ -21,7 +21,14 @@
       :label="item.name"
       :value="item.value"
       class="rounded-2xl!"
-    />
+    >
+      <!-- 选项可提供通用图标，模型列表与其他下拉共用展示能力。 -->
+      <span v-if="item.icon" class="flex min-w-0 items-center gap-[9px]">
+        <SfIcon :icon="item.icon" size="5" class="shrink-0" />
+        <span class="truncate">{{ item.name }}</span>
+      </span>
+      <template v-else>{{ item.name }}</template>
+    </ElOption>
     <template v-for="(item, name) in slots" #[name]>
       <slot :name="name" />
     </template>
@@ -47,9 +54,18 @@ const isAttrEnabled = (value: unknown) => value !== false && value !== undefined
 // 同时开启筛选与允许创建时，用户才可以在预置选项之外输入自定义值
 const canInputCustom = computed(() => isAttrEnabled(attrs.filterable) && isAttrEnabled(attrs.allowCreate));
 
+type SelectOption = {
+  // 选项对应的值。
+  value: string;
+  // 选项展示名称。
+  name: string;
+  // 可选图标标识，不提供时沿用纯文字展示。
+  icon?: string;
+};
+
 defineProps({
   list: {
-    type: Array as PropType<{ value: string; name: string }[]>,
+    type: Array as PropType<SelectOption[]>,
     default: () => [],
   },
 });

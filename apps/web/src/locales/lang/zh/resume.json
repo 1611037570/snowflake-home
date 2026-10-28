@@ -23,7 +23,7 @@
   "resumeGuideDisclaimer": "内容基于现行法规和公开招聘实践整理，法规核对至 2026 年 10 月。各地执行标准存在差异，具体以当地人力资源和社会保障部门的口径为准。本页不构成法律意见。",
   "resumeSettingsEyebrow": "偏好与数据",
   "resumeSettingsTitle": "通用设置",
-  "resumeSettingsDescription": "集中管理模型配置与简历数据的本地存放、备份方式，不涉及账号与云端。",
+  "resumeSettingsDescription": "管理简历数据的本地存放与备份方式，不涉及账号与云端。模型配置请前往小舟 AI。",
   "resumeSettingsModelTitle": "模型设置",
   "resumeSettingsModelDescription": "为小舟、简历解析、小羊分别指定使用的模型，也可以添加自己的模型服务，已添加的模型支持查询余额与删除。",
   "resumeSettingsBackupTitle": "本地备份目录",

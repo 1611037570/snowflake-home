@@ -60,6 +60,8 @@
 
 ### 唯一规则与职责
 
+- 模型配置集中在“小舟AI”页，编辑器右侧“AI 设置”复用 `editor/toolbar/modules/ai/content.vue`。顶部保留三个角色绑定，下方以模型库进入添加表单，添加完成返回模型库；已添加模型可逐项测试连接并查看结果。通用设置只保留本地数据与备份设置。
+- 服务商预设包含 OpenAI / 兼容服务、Gemini、DeepSeek、Claude、千问与豆包 / 火山方舟，预填官方兼容地址并提供密钥管理入口；豆包继续保存为 `ark`，兼容已有模型配置。服务商参数差异与工具调用元数据保留统一维护在 `packages/ai`，不在页面拼装专属请求逻辑。
 - 正文生成与改写统一使用 `packages/resume-agent/writingRules.ts`：`CONTENT_ACTION_RULES`（正文操作规则）、`getWritingRule`（按操作与类型取规则）和 `ASSISTANT_WRITING_RULES_TEXT`（助手写作约束）由同一事实源维护。
 - 导入解析忠实转换原文，面试快答生成口述答案；两者不按简历正文起草规则扩写。
 - Web 侧负责入口、引导和简历数据适配；请求、任务、技能与工具实现在智能体包中维护。页面不得直接调用模型实例。

@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import LocalBackupSettings from "../../components/localBackupSettings.vue";
-// 模型设置内容与编辑器工具栏共用同一份组件，避免两处各写一套。
-import AiProviderSettingsContent from "../../editor/toolbar/modules/ai/content.vue";
 </script>
 
 <template>
@@ -18,17 +16,6 @@ import AiProviderSettingsContent from "../../editor/toolbar/modules/ai/content.v
           {{ $t("resumeSettingsDescription") }}
         </p>
       </header>
-
-      <section class="mt-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
-        <h2 class="text-lg font-bold">{{ $t("resumeSettingsModelTitle") }}</h2>
-        <p class="mt-3 max-w-3xl text-sm leading-normal text-sf-text-2">
-          {{ $t("resumeSettingsModelDescription") }}
-        </p>
-        <!-- 模型联动的列表与表单自带内部滚动，外层给定高度避免撑破页面。 -->
-        <div class="mt-3 h-[36rem] min-h-0">
-          <AiProviderSettingsContent class="h-full" />
-        </div>
-      </section>
 
       <section class="mt-3 rounded-3xl border border-sf-b bg-sf-primary p-3">
         <h2 class="text-lg font-bold">{{ $t("resumeSettingsBackupTitle") }}</h2>

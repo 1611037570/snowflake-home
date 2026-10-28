@@ -10,6 +10,13 @@ interface IconItem {
 }
 
 export const ICON_LIST: Record<string, IconItem> = {
+  "simple-icons:openai": { icon: "simple-icons:openai", name: "OpenAI" }, // 随明暗主题适配的模型服务商品牌图标。
+  "logos:deepseek-icon": { icon: "logos:deepseek-icon", name: "DeepSeek" }, // 模型服务商品牌图标。
+  "logos:google-gemini-icon": { icon: "logos:google-gemini-icon", name: "Gemini" }, // Gemini 品牌图标。
+  "logos:claude-icon": { icon: "logos:claude-icon", name: "Claude" }, // Claude 品牌图标。
+  "logos:qwen-icon": { icon: "logos:qwen-icon", name: "千问" }, // 千问品牌图标。
+  "local:doubao": { icon: "local:doubao", name: "豆包" }, // 本地加载的豆包彩色品牌图标。
+  "local:volcengine": { icon: "local:volcengine", name: "火山引擎" }, // 本地加载的火山方舟服务商品牌图标。
   "qlementine-icons:light-bulb-on-16": {
     icon: "qlementine-icons:light-bulb-on-16", // 彩色预览状态图标。
     name: "彩色预览", // 图标说明。

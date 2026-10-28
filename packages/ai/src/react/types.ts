@@ -19,6 +19,8 @@ export interface ToolCall {
   id: string;
   // 函数类型，openai 协议固定为 function
   type: string;
+  // 服务商返回的工具扩展元数据，下一轮原样回传以保留思考签名。
+  extra_content?: Record<string, unknown>;
   function: {
     // 工具名
     name: string;

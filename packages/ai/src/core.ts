@@ -1,4 +1,5 @@
 import { createRequest } from "./request/request.js";
+import { prepareProviderOptions } from "./request/providers.js";
 import { prepareContext } from "./context.js";
 import { AbortError } from "./errors.js";
 import { noopLlmObserver, type LlmObserver } from "./observer.js";
@@ -185,11 +186,11 @@ class LLM {
     }
 
     // 默认模型由实例注入
-    const requestOptions = {
+    const requestOptions = prepareProviderOptions(this.provider, this.protocol, {
       ...options,
       model: this.model,
       // 已配置的聊天补全服务商共用流式用量参数，其他协议不附加该参数。
-      ...(isStream && this.protocol === "chatCompletions" && ["openai", "deepseek", "ark"].includes(this.provider)
+      ...(isStream && this.protocol === "chatCompletions" && ["openai", "deepseek", "ark", "gemini", "claude", "qwen"].includes(this.provider)
         ? {
             stream_options: {
               ...options.stream_options,
@@ -197,7 +198,7 @@ class LLM {
             },
           }
         : {}),
-    };
+    });
     // Create a trace only when the request is not part of a parent workflow.
     const traceId =
       parentTraceId ||
