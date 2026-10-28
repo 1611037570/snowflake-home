@@ -26,7 +26,13 @@ const helpKey = computed(() =>
     title-class="text-base! font-normal!"
     width="560px"
   >
-    <div class="flex max-h-[66vh] flex-col gap-3 overflow-y-auto text-sf-text">
+    <!-- 帮助内容使用统一滚动条，高度上限交由滚动容器控制。 -->
+    <SfScrollbar
+      max-height="66vh"
+      class="h-auto! flex-none!"
+      view-class="gap-3 text-sf-text"
+      flush
+    >
       <p class="text-base font-normal">
         {{ $t("moduleHelpTitle", { name: moduleTitle }) }}
       </p>
@@ -47,6 +53,6 @@ const helpKey = computed(() =>
           </p>
         </SfCollapseItem>
       </SfCollapse>
-    </div>
+    </SfScrollbar>
   </SfModal>
 </template>
