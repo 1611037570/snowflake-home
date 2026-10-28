@@ -210,21 +210,21 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
   <div class="group relative flex h-full flex-col self-stretch overflow-hidden">
     <!-- 字体工具组独立放在最左侧，其余参数与视图操作继续按两行排列。 -->
     <div
-      class="grid h-14 shrink-0 grid-cols-[auto_minmax(0,1fr)] grid-rows-2 gap-x-3 border-b border-sf-b bg-sf-primary px-3 select-none"
+      class="grid h-14 shrink-0 grid-cols-[auto_minmax(0,1fr)] grid-rows-2 border-b border-sf-b bg-sf-primary pr-3 select-none"
       v-show="showToolbar"
     >
-      <!-- 两行与右侧工具栏共用行高，统一左对齐，列间只保留一处间距。 -->
+      <!-- 两行统一左对齐，按钮靠自身内边距形成视觉间距，不再叠加容器间距。 -->
       <div class="row-span-2 grid grid-rows-2">
         <div class="flex items-center">
           <FontFamily />
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center">
           <FontSize />
           <FontColor />
         </div>
       </div>
       <!-- 上行：间距与缩放参数，宽度不足时向右滚动。 -->
-      <div class="toolbar-row flex min-h-0 flex-1 items-center gap-3 overflow-x-auto">
+      <div class="toolbar-row flex min-h-0 flex-1 items-center overflow-x-auto">
         <Spacing />
         <SfDropdown
           trigger="hover"
@@ -253,7 +253,7 @@ onUnmounted(() => eventBus.off("resume-standard-a4", setStandardA4));
         }}</span>
       </div>
       <!-- 下行：设计面板入口与整份简历的操作，同样从左侧排起 -->
-      <div class="toolbar-row flex min-h-0 flex-1 items-center gap-1 overflow-x-auto">
+      <div class="toolbar-row flex min-h-0 flex-1 items-center overflow-x-auto">
         <TemplateSettings />
         <Settings />
         <MoreSettings />

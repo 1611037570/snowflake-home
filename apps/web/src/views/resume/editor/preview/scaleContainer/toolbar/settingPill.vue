@@ -9,7 +9,7 @@ defineProps({
   active: { type: Boolean, default: false },
   /** 尾部状态：idle 显示箭头，loading 显示加载，error 显示失败提示 */
   status: { type: String, default: "idle" },
-  /** 紧凑入口只显示当前值，字号与相邻工具栏保持一致。 */
+  /** 紧凑入口只显示当前值，通过自身内边距保留悬停背景留白。 */
   compact: { type: Boolean, default: false },
 });
 </script>
@@ -19,7 +19,7 @@ defineProps({
     type="button"
     class="flex shrink-0 cursor-pointer items-center transition-colors"
     :class="[
-      compact ? 'h-6 gap-0 rounded-lg px-0 text-[11px] leading-none hover:bg-sf-bg' : 'h-6 gap-1.5 rounded-full border px-2 text-[11px]',
+      compact ? 'h-6 gap-0 rounded-full px-3 text-[11px] leading-none hover:bg-sf-bg' : 'h-6 gap-1.5 rounded-full border px-2 text-[11px]',
       active
         ? compact ? 'bg-sf-bg text-sf-theme' : 'border-sf-theme text-sf-theme'
         : compact ? 'text-sf-text' : 'border-sf-b text-sf-text-2 hover:border-sf-theme hover:text-sf-theme',
