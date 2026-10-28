@@ -1,6 +1,7 @@
 <script setup>
 // 小舟 AI 与编辑器弹窗复用同一份模型设置，绑定和添加状态保持一致。
 import AiProviderSettingsContent from "../../editor/toolbar/modules/ai/content.vue";
+import PublicContent from "../../seo/publicContent.vue";
 </script>
 
 <template>
@@ -23,6 +24,8 @@ import AiProviderSettingsContent from "../../editor/toolbar/modules/ai/content.v
         </RouterLink>
       </header>
       <AiProviderSettingsContent class="min-h-[540px] flex-1" />
+      <!-- 功能说明与静态网页共用正文，不包含模型密钥与配置值。 -->
+      <PublicContent class="shrink-0" />
     </main>
   </SfScrollbar>
 </template>

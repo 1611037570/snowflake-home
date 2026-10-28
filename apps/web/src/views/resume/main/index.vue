@@ -208,6 +208,8 @@
           </div>
         </div>
       </section>
+      <!-- 岗位范本目录与静态首屏共用内容，提供可直接抓取的详情链接。 -->
+      <PublicContent />
     </main>
   </SfScrollbar>
 </template>
@@ -223,6 +225,7 @@ import { $t } from "@/locales";
 import { resumeTemplateList } from "../template/data/list";
 import HeroSwitcher from "./heroSwitcher.vue";
 import ResumeHomeFaq from "./faq.vue";
+import PublicContent from "../seo/publicContent.vue";
 import OnlineWriters from "../components/onlineWriters.vue";
 // 首页展示区共用真实截图，切换入口后展示对应功能页面。
 import editorShot from "@/assets/images/resume/editor.webp";

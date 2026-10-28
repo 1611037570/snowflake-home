@@ -6,13 +6,12 @@ const trimTrailingSlash = (value: string) => value.replace(/\/+$/, "");
 
 /**
  * 站点地图与 robots 生成插件
- * 路由清单只在 site.config.ts 维护一份，sitemap 收录与 Disallow 都由它派生，
- * 避免新增页面时漏改其中一处，造成页面不被收录或私有页被收录。
+ * 路由清单只在 site.config.ts 维护一份，站点地图排除声明禁止收录的页面；
+ * robots 保持可抓取，以便搜索引擎读取网页中的禁止收录指令。
  */
 export function seoFilesPlugin(siteUrl: string): Plugin {
   const origin = trimTrailingSlash(siteUrl);
   const indexable = SITE_CONFIGS.filter((item) => !item.noindex);
-  const blocked = SITE_CONFIGS.filter((item) => item.noindex);
 
   const urlEntries = indexable
     .map((item) => {
@@ -30,10 +29,9 @@ ${urlEntries}
 </urlset>
 `;
 
-  const disallow = blocked.map((item) => `Disallow: ${item.route}`).join("\n");
+  // 私有页面通过网页中的 noindex 排除收录，允许抓取才能读取该指令。
   const robots = `User-agent: *
 Allow: /
-${blocked.length ? `\n# 工具页与用户私有页不参与收录，与页面内输出的 noindex 指令同源\n${disallow}\n` : ""}
 Sitemap: ${origin}/sitemap.xml
 `;
 

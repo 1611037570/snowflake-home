@@ -6,6 +6,7 @@ import ApplicationList from "./applicationList/index.vue";
 import StatCards from "./components/statCards.vue";
 import TrendChart from "./components/trendChart.vue";
 import LandedPage from "./components/landedPage.vue";
+import PublicContent from "../seo/publicContent.vue";
 
 const statisticsStore = useResumeStatisticsStore();
 const { applications, followUps, isLanded } = storeToRefs(statisticsStore);
@@ -25,6 +26,8 @@ const { applications, followUps, isLanded } = storeToRefs(statisticsStore);
 
           <TrendChart v-if="applications.length || followUps.length" />
         </template>
+        <!-- 静态说明与构建正文共用内容，不读取个人投递记录。 -->
+        <PublicContent class="shrink-0" />
       </div>
     </SfScrollbar>
   </div>

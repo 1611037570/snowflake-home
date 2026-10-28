@@ -44,8 +44,10 @@ const navList = [
     path: "/resume/settings", // 导航目标路径
   },
 ];
-// 当前高亮导航，以当前路由路径为准。
-const activeNavIndex = computed(() => navList.findIndex((item) => route.path === item.path));
+// 匹配前忽略末尾斜杠，兼容服务器返回目录地址时的导航高亮。
+const activeNavIndex = computed(() =>
+  navList.findIndex((item) => route.path.replace(/\/+$/, "") === item.path),
+);
 
 // 路由切换或恢复桌面宽度时收起移动导航。
 watch([() => route.path, isMobile], () => {

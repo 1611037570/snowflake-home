@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import PublicContent from "../../seo/publicContent.vue";
 
 import {
   offerComparisonMetrics,
@@ -648,6 +649,8 @@ function formatScore(score: number) {
 
         <SfButton plain class="mx-auto mt-3" @click="resetComparison">重新对比</SfButton>
       </section>
+      <!-- 对比维度说明复用工具数据，和静态网页保持一致。 -->
+      <PublicContent />
     </main>
   </SfScrollbar>
 </template>

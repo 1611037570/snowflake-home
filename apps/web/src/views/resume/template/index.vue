@@ -15,6 +15,9 @@ import { darkThemeColors, lightThemeColors } from "@/configs/modules/theme";
 import { useThemeStore } from "@/stores/modules/theme";
 import { storeToRefs } from "pinia";
 import { $t } from "@/locales";
+import { useRoute } from "vue-router";
+import { publicExamples } from "../seo/catalog";
+import PublicContent from "../seo/publicContent.vue";
 
 // 模板页专用全屏预览组件：异步加载，避免首屏打包体积过大
 const TemplatePreview = markRaw(defineAsyncComponent(() => import("./templatePreview.vue")));
@@ -244,6 +247,24 @@ const openFullscreen = (card) => {
 const closeFullscreen = () => {
   fullscreenCard.value = null;
 };
+// 详情页使用入口只打开对应范本预览，由用户确认后沿用现有新建流程。
+const route = useRoute();
+watch(() => route.query.example, async (slug) => {
+  const example = publicExamples.find((item) => item.slug === slug);
+  if (!example) return;
+  try {
+    const item = await loadResumeTemplateData(example.fileName);
+    // 切换地址后不弹出旧请求对应的范本。
+    if (route.query.example !== slug) return;
+    openFullscreen({
+      ...resumeTemplateList.find((entry) => entry.fileName === example.fileName),
+      type: "content", // 复用现有内容范本的创建流程。
+      item, // 当前范本的公开示例数据。
+    });
+  } catch {
+    if (route.query.example === slug) ElMessage.error($t("resumeTemplateLoadError"));
+  }
+}, { immediate: true });
 const useFullscreenTemplate = () => {
   if (fullscreenCard.value) useTemplateCard(fullscreenCard.value);
   closeFullscreen();
@@ -388,6 +409,8 @@ const tagTextClass = computed(() => (isDark.value ? "text-sf-theme-text" : "text
           </div>
         </template>
       </RevealGrid>
+      <!-- 目录始终可见，不受交互筛选与触底加载影响。 -->
+      <PublicContent />
     </ListScroll>
     <!-- 模板页专用全屏预览：左侧展示简历，右侧展示模板文字信息 -->
     <TemplatePreview

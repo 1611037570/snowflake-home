@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
+import PublicContent from "../../seo/publicContent.vue";
 
 import {
   holidayRestOptions,
@@ -431,6 +432,8 @@ function formatHourlyWage(value: number) {
           <SfButton plain @click="resetCalculator">重新计算</SfButton>
         </section>
       </section>
+      <!-- 计算说明不包含用户录入值，和静态网页保持一致。 -->
+      <PublicContent />
     </main>
   </SfScrollbar>
 </template>

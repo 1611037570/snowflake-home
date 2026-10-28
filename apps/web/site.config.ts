@@ -1,3 +1,6 @@
+import { publicExamples } from "./src/views/resume/seo/catalog";
+import type { InformationKind } from "./src/views/resume/seo/information";
+
 /** 全站统一的站点图标，避免每条路由重复声明。 */
 const FAVICON = "/favicon.ico";
 
@@ -17,7 +20,7 @@ interface LocaleMetadata {
 }
 
 /** 产品路由及其收录属性。 */
-interface SiteConfig {
+export interface SiteConfig {
   /** 页面路径，子路由可单独配置以覆盖产品默认信息。 */
   route: string;
   /** 是否禁止搜索引擎收录：工具页与用户私有页需要设为 true。 */
@@ -26,12 +29,20 @@ interface SiteConfig {
   changefreq?: "daily" | "weekly" | "monthly" | "yearly";
   /** 站点地图里的优先级，取值 0.0 到 1.0。 */
   priority?: number;
+  /** 静态正文来源：岗位目录、范本详情或功能说明，未声明时只输出页面信息。 */
+  content?: "catalog" | "example" | InformationKind;
+  /** 页面结构化数据类型，未声明时使用普通网页。 */
+  schemaType?: "WebPage" | "CollectionPage" | "SoftwareApplication" | "WebApplication";
+  /** 面包屑中的直接上级页面地址。 */
+  parentRoute?: string;
+  /** 应用类型页面的用途分类。 */
+  applicationCategory?: "BusinessApplication" | "FinanceApplication";
   /** 中文与英文页面信息。 */
   locales: Record<"zh" | "en", LocaleMetadata>;
 }
 
 /** 解析后的页面信息：在语言信息基础上补上全站统一字段与收录标记。 */
-interface SiteMetadata extends LocaleMetadata {
+export interface SiteMetadata extends LocaleMetadata {
   /** 网站图标地址。 */
   favicon: string;
   /** 是否禁止搜索引擎收录。 */
@@ -40,6 +51,26 @@ interface SiteMetadata extends LocaleMetadata {
 
 /** 产品入口与可独立收录的子页面信息，子页面单独维护标题描述以避免整站共用一套元数据。 */
 export const SITE_CONFIGS: SiteConfig[] = [
+  // 公开范本与列表共用元信息，构建网页、站点地图及客户端导航保持一致。
+  ...publicExamples.map((example): SiteConfig => ({
+    route: example.path, // 范本详情的稳定地址。
+    content: "example", // 范本详情正文。
+    parentRoute: "/resume/template", // 范本所属目录。
+    changefreq: "monthly", // 范本内容的建议抓取周期。
+    priority: 0.7, // 详情页面的站点地图优先级。
+    locales: { // 两种界面语言下的页面信息。
+      zh: { // 中文页面信息。
+        title: `${example.name}范本 - 在线编辑与免费下载 | 轻舟简历`, // 搜索标题。
+        description: `${example.description} 查看技能、教育、工作和项目经历示例，在线编辑并导出无水印 PDF。`, // 内容摘要。
+        keywords: `${example.name},简历范本,简历模板,在线编辑,免费简历`, // 内容主题关键词。
+      },
+      en: { // 英文界面的页面信息，正文仍为中文范本。
+        title: `${example.name} - Resume Example | Skiff Resume`, // 搜索标题。
+        description: `${example.description} Review this Chinese resume example, edit online and export a watermark-free PDF.`, // 内容摘要。
+        keywords: `${example.name},resume example,resume template`, // 内容主题关键词。
+      },
+    },
+  })),
   {
     route: "/home",
     noindex: true, // 雪花起始页脱离简历域名收录范围，不再进入 sitemap
@@ -60,6 +91,8 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume",
+    content: "catalog", // 首页公开范本目录。
+    schemaType: "SoftwareApplication", // 在线简历工具。
     changefreq: "weekly",
     priority: 1.0,
     locales: {
@@ -81,6 +114,9 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/template",
+    content: "catalog", // 模板页公开范本目录。
+    schemaType: "CollectionPage", // 模板集合页面。
+    parentRoute: "/resume", // 所属产品首页。
     changefreq: "weekly",
     priority: 0.9,
     locales: {
@@ -101,6 +137,8 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/ai",
+    content: "ai", // 小舟能力与模型配置说明。
+    parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
     priority: 0.8,
     locales: {
@@ -120,6 +158,8 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/statistics",
+    content: "statistics", // 投递记录、跟进与趋势统计说明。
+    parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
     priority: 0.7,
     locales: {
@@ -138,6 +178,9 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/guide",
+    content: "guide", // 复用现有求职指南正文。
+    schemaType: "CollectionPage", // 求职指南集合。
+    parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
     priority: 0.8,
     locales: {
@@ -157,6 +200,9 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/tools",
+    content: "tools", // 工具用途与可抓取入口。
+    schemaType: "CollectionPage", // 求职工具集合。
+    parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
     priority: 0.8,
     locales: {
@@ -178,6 +224,9 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/tools/resignation-score",
+    content: "resignation", // 评分维度与操作说明。
+    schemaType: "WebApplication", // 在线工作评分工具。
+    parentRoute: "/resume/tools", // 所属工具目录。
     changefreq: "monthly",
     priority: 0.8,
     locales: {
@@ -197,6 +246,9 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/tools/offer-comparison",
+    content: "offers", // 录用条件维度与对比说明。
+    schemaType: "WebApplication", // 在线录用条件比较工具。
+    parentRoute: "/resume/tools", // 所属工具目录。
     changefreq: "monthly",
     priority: 0.8,
     locales: {
@@ -216,6 +268,10 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/tools/real-hourly-wage",
+    content: "hourly", // 休息制度与计算说明。
+    schemaType: "WebApplication", // 在线时薪计算工具。
+    parentRoute: "/resume/tools", // 所属工具目录。
+    applicationCategory: "FinanceApplication", // 时薪计算的财务用途。
     changefreq: "monthly",
     priority: 0.8,
     locales: {
@@ -235,20 +291,22 @@ export const SITE_CONFIGS: SiteConfig[] = [
   },
   {
     route: "/resume/settings",
+    content: "settings", // 本地数据与备份设置说明。
+    parentRoute: "/resume", // 所属产品首页。
     changefreq: "monthly",
     priority: 0.5,
     locales: {
       zh: {
-        title: "通用设置 - 模型配置与本地备份 | 轻舟简历",
+        title: "通用设置 - 本地数据与简历备份 | 轻舟简历",
         description:
-          "在通用设置里选择每个助手使用的模型、添加自有模型服务，并绑定本地备份目录，编辑简历时自动把 JSON 草稿写进该目录。",
-        keywords: "轻舟简历设置,模型配置,API 模型,本地备份,简历备份目录,数据存放",
+          "管理轻舟简历的本地数据与备份设置，绑定本地备份目录，将简历草稿备份到自己的设备；模型配置请前往小舟人工智能页面。",
+        keywords: "轻舟简历设置,本地数据,本地备份,简历备份目录,简历备份,数据存放",
       },
       en: {
-        title: "General Settings - Model Configuration and Local Backup | Skiff Resume",
+        title: "General Settings - Local Data and Resume Backup | Skiff Resume",
         description:
-          "Choose which model each assistant uses, add your own model provider, and bind a local backup folder that receives a JSON draft whenever you edit a resume.",
-        keywords: "Skiff Resume settings,model configuration,API model,local backup,resume backup folder",
+          "Manage local data and backup settings, and choose a local folder for resume backups. Configure models on the Skiff AI page.",
+        keywords: "Skiff Resume settings,local data,local backup,resume backup folder,resume backup",
       },
     },
   },
@@ -307,7 +365,7 @@ const matchesRoute = (route: string, value: string) =>
   value === route || value.startsWith(`${route}/`) || value.startsWith(`${route}?`) || value.startsWith(`${route}#`);
 
 // 同一路径会同时命中产品入口与子页面两条配置，取路径最长的一条，子页面才能覆盖产品默认信息。
-const pickSite = (value: string): SiteConfig | undefined =>
+export const resolveSiteConfig = (value: string): SiteConfig | undefined =>
   SITE_CONFIGS.filter((item) => matchesRoute(item.route, value)).reduce<SiteConfig | undefined>(
     (longest, item) => (!longest || item.route.length > longest.route.length ? item : longest),
     undefined,
@@ -321,7 +379,7 @@ export const resolveSiteMetadata = (
   entryRoute: string,
   counts: CatalogCounts, // 构建或运行时从实际清单取得的范本与模板数量。
 ): SiteMetadata => {
-  const site = pickSite(path) || pickSite(entryRoute) || SITE_CONFIGS[0]!;
+  const site = resolveSiteConfig(path) || resolveSiteConfig(entryRoute) || SITE_CONFIGS[0]!;
   const localized = site.locales[language.startsWith("en") ? "en" : "zh"];
   const fillCounts = (value: string) =>
     value
@@ -332,6 +390,7 @@ export const resolveSiteMetadata = (
     title: fillCounts(localized.title),
     description: fillCounts(localized.description),
     favicon: FAVICON,
-    noindex: site.noindex ?? false,
+    // 未登记的范本地址不继承产品首页的收录许可。
+    noindex: (path.startsWith("/resume/example/") && !publicExamples.some((item) => item.path === path)) || (site.noindex ?? false),
   };
 };

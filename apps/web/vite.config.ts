@@ -34,10 +34,12 @@ import { dynamicComponentResolver } from "./src/components";
 import ElementPlus from "unplugin-element-plus/vite";
 // Tiny Vue 组件解析器
 import { TinyVueSingleResolver } from "@opentiny/unplugin-tiny-vue";
-import { resolveSiteMetadata } from "./site.config";
 // 站点地图与 robots 的构建期生成插件
 import { seoFilesPlugin } from "./scripts/seoFiles";
 import { getCatalogCounts } from "./scripts/catalogCounts";
+import { publicPagesPlugin } from "./scripts/publicPages";
+import { renderSeoHead } from "./scripts/seoHead";
+import { resolvePageSeo } from "./src/views/resume/seo/page";
 
 /**
  * 版本注入插件
@@ -125,6 +127,14 @@ export default ({ mode }: { mode: string }) => {
   const settings = readEnvironment(env);
   // 每次启动构建都从范本与主题注册清单重新统计 SEO 数量。
   const catalogCounts = getCatalogCounts();
+  // 默认入口也使用完整的共享解析结果，避免重复组装页面信息。
+  const initialSeo = resolvePageSeo(
+    settings.defaultRoute,
+    settings.defaultLanguage,
+    settings.defaultRoute,
+    catalogCounts,
+    settings.siteUrl,
+  );
   return defineConfig({
     // 将 .awebp（动画 webp）视为静态资源
     assetsInclude: ["**/*.awebp"],
@@ -153,39 +163,19 @@ export default ({ mode }: { mode: string }) => {
       tailwindcss(),
       // 站点地图与 robots 生成，路由清单来自 site.config.ts
       seoFilesPlugin(settings.siteUrl),
+      // 公开页面在构建期生成完整正文，编辑器仍沿用客户端入口。
+      publicPagesPlugin(settings.siteUrl, settings.defaultLanguage, settings.defaultRoute, catalogCounts),
       // HTML插件配置
       createHtmlPlugin({
         minify: isProd, // 开启HTML压缩
         // 注入 HTML 变量（HTML 中通过 <%= 变量名 %> 使用）
         inject: {
           data: {
-            defaultLang: settings.defaultLanguage, // 默认语言
-            siteUrl: settings.siteUrl, // 站点绝对地址，用于 og 卡片与结构化数据
-            defaultRoute: settings.defaultRoute, // 产品入口路由，根路径按它输出页面信息与 canonical
+            defaultLang: initialSeo.language, // 默认页面语言。
             // 初始 HTML 与客户端按同一入口路由选择产品信息。
-            siteMetadata: resolveSiteMetadata(
-              settings.defaultRoute,
-              settings.defaultLanguage,
-              settings.defaultRoute,
-              catalogCounts,
-            ),
-            // 同一份 index.html 在应用加载前按公开路由设置构建期页面信息。
-            resumeSeoMetadata: JSON.stringify(Object.fromEntries(
-              [
-                "/resume",
-                "/resume/template",
-                "/resume/ai",
-                "/resume/guide",
-                "/resume/tools",
-                "/resume/tools/resignation-score",
-                "/resume/tools/offer-comparison",
-                "/resume/tools/real-hourly-wage",
-                "/resume/settings",
-              ].map((route) => [
-                route,
-                resolveSiteMetadata(route, settings.defaultLanguage, settings.defaultRoute, catalogCounts),
-              ]),
-            )).replaceAll("<", "\\u003c"),
+            siteMetadata: initialSeo.metadata, // 默认入口的标题、描述与站点图标。
+            // 默认入口和各路由网页共享标签与结构化数据，无需另列公开地址。
+            seoHead: renderSeoHead(initialSeo), // 默认入口的完整搜索标签。
           },
         },
       }),
