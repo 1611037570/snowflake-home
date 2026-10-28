@@ -16,6 +16,8 @@ node_modules
 .DS_Store
 dist
 dist-ssr
+# 根目录构建产物及其全部子文件不纳入版本控制。
+/build/
 coverage
 *.local
 test
@@ -42,6 +44,9 @@ test
 .workbuddy
 
 # 本地独立应用目录
+# 忽略本地共享文件目录。
+/share/
+/apps/apply-extension/
 /apps/job-extension/
 /apps/resume-showcase/
 
