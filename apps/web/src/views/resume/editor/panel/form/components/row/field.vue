@@ -183,9 +183,9 @@ const clearField = () => {
         />
       </div>
     </div>
-    <!-- 展示形态切换：仅声明了展示选项的字段渲染 -->
+    <!-- 展示形态切换使用中性色，仅声明了展示选项的字段渲染。 -->
     <div v-if="displayOptions?.length" class="w-full max-w-60">
-      <SfTab v-model="display" :list="displayList" class="h-8!" />
+      <SfTab v-model="display" :list="displayList" class="display-tabs h-8!" />
     </div>
   </div>
   <!-- 重命名弹窗：仅自定义字段需要 -->
@@ -200,4 +200,19 @@ const clearField = () => {
   </SfModal>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+/* 字段展示形态的选中与悬停反馈使用中性色。 */
+.display-tabs {
+  :deep(.bg-sf-theme) {
+    background-color: var(--color-sf-primary);
+  }
+
+  :deep(.text-sf-theme-text) {
+    color: var(--color-sf-text);
+  }
+
+  :deep(.tab-item:hover) {
+    background-color: var(--color-sf-bg-2);
+  }
+}
+</style>

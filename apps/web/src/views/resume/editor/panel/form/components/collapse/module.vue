@@ -200,13 +200,9 @@ function handleAdd() {
 <style scoped>
 @reference "@/styles/tailwind.css";
 
-/* 模块外框包裹头部与内容，统一方角边界 */
+/* 模块外框包裹头部与内容，悬停时保持原有边框。 */
 .resume-module-box {
   @apply overflow-hidden border border-sf-b transition-colors;
-}
-/* 悬停时只强化边框，不增加背景色。 */
-.resume-module-box:hover {
-  border-color: var(--color-sf-theme);
 }
 /* 折叠项经过组件转发，直接命中模块内容节点以清除默认下内边距。 */
 :global(.resume-module-box .el-collapse-item__content) {
