@@ -1,5 +1,6 @@
 import type { LayoutColumns } from "@/domain/resume/theme/layouts";
 import type { ResumeAvatarAppearance } from "@/domain/resume/theme/avatar";
+import type { ResumeSchoolLogoAppearance } from "@/domain/resume/theme/schoolLogo";
 
 // 页尾模板编号，新增模板时统一扩展此类型与模板登记。
 export type FooterTemplateId = "total" | "number" | "page";
@@ -53,6 +54,7 @@ export interface ResumeUi {
     avatarPosition: string; // 头像位置
     infoPosition: string; // 资料水平对齐位置
     avatar: ResumeAvatarAppearance; // 头像比例、形状、圆角与用户尺寸覆盖设置
+    logo: ResumeSchoolLogoAppearance; // 校徽展示宽度与上传时确定的裁切比例
   };
   skill: { // 专业技能展示方式
     layout: string; // 正文或技能评分列表布局

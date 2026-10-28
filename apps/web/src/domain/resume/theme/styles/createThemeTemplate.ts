@@ -89,6 +89,7 @@ export const resolveThemeTemplate = (definition: ResumeThemeDefinition): ResumeT
       ...DEFAULT_UI.user,
       ...ui.user,
       avatar: { ...DEFAULT_UI.user.avatar, ...ui.user?.avatar }, // 头像外观按字段合并，主题可只覆盖其中一项
+      logo: { ...DEFAULT_UI.user.logo, ...ui.user?.logo }, // 校徽大小与裁切比例按字段合并
     },
     skill: { ...DEFAULT_UI.skill, ...ui.skill },
     honor: { ...DEFAULT_UI.honor, ...ui.honor }, // 荣誉布局沿用主题或默认展示方式。

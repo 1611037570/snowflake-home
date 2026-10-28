@@ -27,6 +27,7 @@ import CollapseModule from "./components/collapse/module.vue";
 import CollapseItem from "./components/collapse/item.vue";
 import CollapseGroup from "./components/collapse/group.vue";
 import AvatarDropdown from "./components/collapse/avatarDropdown.vue";
+import SchoolLogoDropdown from "./components/collapse/schoolLogoDropdown.vue";
 import RowField from "./components/row/field.vue";
 import RowAccount from "./components/row/account.vue";
 import RowSkill from "./components/row/skill.vue";
@@ -150,6 +151,7 @@ const dynamicComponents = {
   rowSkill: RowSkill,
   imageUpload: AsyncImageUpload,
   schoolLogo: SchoolLogo, // 独立校徽上传入口。
+  schoolLogoSettings: SchoolLogoDropdown, // 校徽标题行仅提供大小设置。
   avatarSettings: AvatarDropdown, // 统一表单标题行的头像设置操作。
   portfolio: Portfolio,
   heightWeight: HeightWeight,

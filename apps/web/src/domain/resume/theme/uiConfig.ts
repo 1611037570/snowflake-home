@@ -1,5 +1,6 @@
 import { darkThemeColors } from "@/configs";
 import { DEFAULT_AVATAR_APPEARANCE } from "@/domain/resume/theme/avatar";
+import { DEFAULT_SCHOOL_LOGO_APPEARANCE } from "@/domain/resume/theme/schoolLogo";
 // ===========列表=====================
 // 主题色列表
 export const themeColors = [
@@ -355,6 +356,7 @@ export const DEFAULT_UI = {
     avatarPosition: defaultAvatarPosition,
     infoPosition: defaultInfoPosition,
     avatar: { ...DEFAULT_AVATAR_APPEARANCE }, // 头像外观默认跟随主题，用户调整后写入覆盖值
+    logo: { ...DEFAULT_SCHOOL_LOGO_APPEARANCE }, // 校徽大小与裁切比例随简历保存
   },
   skill: {
     layout: "text", // 默认使用富文本正文布局

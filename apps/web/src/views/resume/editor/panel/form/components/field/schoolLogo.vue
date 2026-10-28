@@ -1,17 +1,49 @@
 <script setup>
 import { useImageUpload } from "@/hooks";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { useResumeStore } from "@/stores";
+import { DEFAULT_SCHOOL_LOGO_APPEARANCE, SCHOOL_LOGO_PRESET_WIDTHS } from "@/domain/resume/theme/schoolLogo";
+import ImageCropModal from "./imageCropModal.vue";
 
-// 校徽独立保存，上传时保留原始比例，不使用头像裁剪设置。
+// 校徽独立保存，仅在确认裁切后写回图片。
 const image = defineModel("modelValue", {
   type: String, // 校徽图片地址。
   default: "", // 未上传时不显示校徽。
 });
-const { openPicker, loading } = useImageUpload({
-  crop: false, // 保留校徽完整图案。
-  maxWidth: 800, // 限制图片宽度，控制存储体积。
+const cropRatio = ref("1:1");
+const resumeStore = useResumeStore();
+const cropAspectRatio = computed(() => cropRatio.value === "3:1" ? 3 : 1);
+const { openPicker, loading, cropVisible, cropSrc, confirmCrop, closeCrop } = useImageUpload({
+  crop: true, // 上传后使用与头像相同的裁切流程。
   quality: 1, // 保留校徽细节。
   onResult: (dataUrl) => { image.value = dataUrl; }, // 写回校徽图片。
 });
+// 再次上传时默认选中此前确认的裁切比例，取消裁切不改写配置。
+watch(cropVisible, (visible) => {
+  if (visible) cropRatio.value = resumeStore.currentUI?.user?.logo?.ratio ?? DEFAULT_SCHOOL_LOGO_APPEARANCE.ratio;
+});
+// 按所选比例输出，校徽设置不修改头像的比例或外观。
+const handleConfirmCrop = async (cropper) => {
+  if (!cropper) return;
+  const ratio = cropRatio.value;
+  try {
+    await confirmCrop(cropper, {
+      width: 800, // 校徽裁切输出宽度。
+      height: Math.round(800 / (ratio === "3:1" ? 3 : 1)), // 按本次确认的裁切比例计算输出高度。
+    });
+    if (resumeStore.currentUI) {
+      resumeStore.currentUI.user.logo = {
+        ...DEFAULT_SCHOOL_LOGO_APPEARANCE,
+        ...resumeStore.currentUI.user.logo,
+        width: SCHOOL_LOGO_PRESET_WIDTHS[ratio], // 确认上传时按正方形或横版应用对应默认尺寸。
+        ratio, // 保存本次确认的裁切比例，展示时保持一致。
+      };
+    }
+  } catch (error) {
+    console.error("校徽裁切压缩失败:", error);
+  }
+};
+onBeforeUnmount(closeCrop);
 </script>
 
 <template>
@@ -42,4 +74,20 @@ const { openPicker, loading } = useImageUpload({
       </button>
     </div>
   </div>
+  <ImageCropModal
+    :model-value="cropVisible"
+    :src="cropSrc"
+    :aspect-ratio="cropAspectRatio"
+    @update:model-value="closeCrop"
+    @confirm="handleConfirmCrop"
+  >
+    <div class="mt-3 grid grid-cols-2 gap-3">
+      <SfButton size="small" border :type="cropRatio === '1:1' ? 'theme' : 'bg'" @click="cropRatio = '1:1'">
+        {{ $t("schoolLogoSquareRatio") }}
+      </SfButton>
+      <SfButton size="small" border :type="cropRatio === '3:1' ? 'theme' : 'bg'" @click="cropRatio = '3:1'">
+        {{ $t("schoolLogoWideRatio") }}
+      </SfButton>
+    </div>
+  </ImageCropModal>
 </template>

@@ -324,7 +324,7 @@ const resumeData: any = {
     content: { language: "zh", textAlign: "auto", infoSeparator: "dot", linkUnderline: false, dateStyle: "dot", datePosition: "right" },
     theme: { template: "colorDotNotes", color: "#2563EB", titleIconMode: "none" }, // 产品经理范本改用彩点便签主题
     layout: { leftColumnWidth: 40 },
-    user: { infoMode: "text", infoLayout: "grid" /* 个人资料按网格排列 */, avatarPosition: "right", infoPosition: "left" },
+    user: { infoMode: "text", infoLayout: "grid" /* 个人资料按网格排列 */, avatarPosition: "right", infoPosition: "left", logo: { width: 70 /* 校徽展示宽度 */, ratio: "1:1" /* 上传裁切比例 */ } },
   },
 };
 

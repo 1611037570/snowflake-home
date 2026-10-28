@@ -246,6 +246,7 @@ export const DEFAULT_USER_FORM = [
         colClass: DEFAULT_COL_CLASS + " py-1 px-3!", // 与头像卡片保持相同样式。
         required: false, // 校徽为可选内容。
         ui: { // 校徽字段界面配置。
+          labelActions: "schoolLogoSettings", // 校徽标题旁提供大小调节入口。
           removable: true, // 标题右侧提供统一删除入口。
           hidden: { // 控制校徽在个人信息区的显示状态。
             source: ["ui", "logo", "hidden"], // 保存校徽隐藏状态。

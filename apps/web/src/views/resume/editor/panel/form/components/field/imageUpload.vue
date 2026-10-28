@@ -1,7 +1,6 @@
 <script setup>
-import { loadCropper } from "./cropperLoader";
-import { ElMessage } from "element-plus";
-import { computed, onBeforeUnmount, ref, watch } from "vue";
+import ImageCropModal from "./imageCropModal.vue";
+import { computed, ref, watch } from "vue";
 import { useImageUpload } from "@/hooks";
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
@@ -97,9 +96,6 @@ const pickFromModal = () => {
 };
 
 // ===== 裁切弹窗状态 =====
-const cropImgRef = ref(null);
-let cropper = null;
-const cropperReady = ref(false);
 const cropRatio = ref("5:7");
 const cropCustomRatioWidth = ref(5);
 const cropCustomRatioHeight = ref(7);
@@ -120,17 +116,8 @@ const cropAspectRatio = computed(() =>
     ? themeAvatarSize.value.width / themeAvatarSize.value.height
     : resolveAvatarAspectRatio(cropAppearance.value),
 );
-let cropVersion = 0;
-// 字段卸载时释放裁剪器，避免旧弹窗的监听与图片节点继续占用内存
-onBeforeUnmount(() => {
-  cropVersion++;
-  cropper?.destroy();
-  cropper = null;
-});
-
-// 弹窗关闭时同步销毁裁切器（含右上角关闭等场景）
+// 打开共用裁切弹窗时恢复当前头像的比例设置。
 watch(cropVisible, (visible) => {
-  // 弹窗打开即开始加载，与图片解码并行；创建时统一处理加载失败。
   if (visible) {
     cropRatio.value =
       avatarAppearance.value.ratio === "theme"
@@ -140,76 +127,27 @@ watch(cropVisible, (visible) => {
     cropCustomRatioHeight.value = avatarAppearance.value.customRatioHeight;
     cropUsesOneInchPreset.value = false;
     cropRatioChanged.value = false;
-    void loadCropper().catch(() => {});
-  }
-  if (!visible) {
-    // 关闭时使仍在下载中的裁剪任务失效。
-    cropVersion++;
-    cropperReady.value = false;
-    cropper?.destroy();
-    cropper = null;
   }
 });
-
-// 图片加载完成后初始化裁切器，裁切框锁定为组件宽高比
-const initCropper = async () => {
-  const version = ++cropVersion;
-  const imageElement = cropImgRef.value;
-  cropperReady.value = false;
-  let Cropper;
-  try {
-    Cropper = await loadCropper();
-  } catch (error) {
-    if (version === cropVersion && cropVisible.value) ElMessage.error("裁剪组件加载失败，请重新选择图片");
-    return;
-  }
-  // 图片替换、关闭或卸载后不创建过期裁剪器。
-  if (version !== cropVersion || !cropVisible.value || cropImgRef.value !== imageElement || !imageElement) return;
-  if (cropper) cropper.destroy();
-  cropper = new Cropper(imageElement, {
-    // 裁剪框读取本次选择的头像比例，允许在弹窗内切换
-    aspectRatio: cropAspectRatio.value,
-    // 最大化利用空间，裁剪区域不超出图片
-    viewMode: 2,
-    guides: true,
-    center: true,
-    autoCropArea: 0.8,
-    movable: true,
-    zoomable: true,
-    cropBoxMovable: true,
-    cropBoxResizable: true,
-    // 开启背景棋盘格，图片未覆盖区域显示透明格纹
-    background: true,
-  });
-  cropperReady.value = true;
-};
-
-// 重置裁切框位置与大小
-const resetCrop = () => {
-  cropper?.reset();
-};
 
 // 裁剪比例先保存在弹窗内，确认后才写入简历视觉配置
 const applyCropRatio = (value) => {
   cropRatio.value = value;
   cropUsesOneInchPreset.value = false;
   cropRatioChanged.value = true;
-  cropper?.setAspectRatio(cropAspectRatio.value);
 };
 const applyOneInchCrop = () => {
   cropRatio.value = "5:7";
   cropUsesOneInchPreset.value = true;
   cropRatioChanged.value = true;
-  cropper?.setAspectRatio(cropAspectRatio.value);
 };
 const applyCustomCropRatio = () => {
   cropUsesOneInchPreset.value = false;
   cropRatioChanged.value = true;
-  cropper?.setAspectRatio(cropAspectRatio.value);
 };
 
-// 确认裁切：hook 内部压缩并写入结果，组件负责销毁裁切器
-const handleConfirmCrop = async () => {
+// 共用弹窗返回裁切器，上传逻辑仍负责压缩与头像设置保存。
+const handleConfirmCrop = async (cropper) => {
   if (!cropper) return;
   try {
     const ratio = cropAspectRatio.value;
@@ -232,17 +170,7 @@ const handleConfirmCrop = async () => {
     }
   } catch (err) {
     console.error("图片裁切压缩失败:", err);
-  } finally {
-    cropper?.destroy();
-    cropper = null;
   }
-};
-
-// 取消裁切：关闭弹窗并销毁裁切器
-const handleCancelCrop = () => {
-  closeCrop();
-  cropper?.destroy();
-  cropper = null;
 };
 
 // 图片删除由表单标题行的统一入口处理。
@@ -353,21 +281,14 @@ const handleCancelCrop = () => {
       </SfCollapse>
     </SfModal>
 
-    <!-- 裁切弹窗：上传后先按组件宽高比裁切，确认后再压缩 -->
-    <SfModal v-model="cropVisible" :title="$t('cropImage')" width="720px">
-      <!-- 裁剪区域：最大化利用空间 -->
-      <div
-        class="cropper-box flex w-full items-center justify-center overflow-hidden rounded-3xl bg-sf-bg"
-      >
-        <img
-          v-if="cropSrc"
-          ref="cropImgRef"
-          :src="cropSrc"
-          :alt="$t('cropImageAlt')"
-          class="max-w-full"
-          @load="initCropper"
-        />
-      </div>
+    <!-- 头像与校徽复用裁切弹窗，头像保留现有比例选项。 -->
+    <ImageCropModal
+      :model-value="cropVisible"
+      :src="cropSrc"
+      :aspect-ratio="cropAspectRatio"
+      @update:model-value="closeCrop"
+      @confirm="handleConfirmCrop"
+    >
       <div class="mt-3 flex flex-col gap-3">
         <div class="flex flex-col gap-3">
           <span class="text-sm text-sf-text-2">{{ $t("avatarRatio") }}</span>
@@ -425,19 +346,7 @@ const handleCancelCrop = () => {
           </div>
         </div>
       </div>
-      <!-- 底部操作栏 -->
-      <footer class="mt-4 flex justify-end gap-3">
-        <el-button :disabled="!cropperReady" @click="resetCrop">{{ $t("resetCrop") }}</el-button>
-        <el-button @click="handleCancelCrop">{{ $t("cancel") }}</el-button>
-        <el-button type="primary" :disabled="!cropperReady" @click="handleConfirmCrop">{{ $t("confirmAction") }}</el-button>
-      </footer>
-    </SfModal>
+    </ImageCropModal>
   </div>
 </template>
 
-<style lang="scss" scoped>
-/* 裁切器可视区域高度 */
-.cropper-box {
-  height: 480px;
-}
-</style>
