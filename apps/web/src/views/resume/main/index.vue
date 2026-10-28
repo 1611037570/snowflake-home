@@ -62,7 +62,7 @@
             >
               <dt class="flex flex-col items-center gap-1">
                 <span class="text-2xl font-black text-sf-theme">{{
-                  Math.round(animatedHeadlineStats[index])
+                  stat.display ?? Math.round(animatedHeadlineStats[index])
                 }}</span>
                 <span class="text-xs font-medium text-sf-text-2">{{ stat.label }}</span>
               </dt>
@@ -218,7 +218,8 @@ import { useResumeStore } from "@/stores";
 import { trackResumeAction } from "@/hooks";
 import { resumeStyleTemplateList } from "@/views/resume/theme";
 import { $t } from "@/locales";
-import { getStatsOverview } from "@/apis";
+// 真实访客与创建量暂不读取，恢复时启用统计接口。
+// import { getStatsOverview } from "@/apis";
 import { resumeTemplateList } from "../template/data/list";
 import HeroSwitcher from "./heroSwitcher.vue";
 import ResumeHomeFaq from "./faq.vue";
@@ -260,13 +261,13 @@ const heroSwitcherItems = HERO_PREVIEW_FILES.map((fileName) => ({
 const revealSections = ref([]);
 
 // 站点统计概览：累计访客与简历生成量，加载失败保持为空
-const overview = ref(null);
+// const overview = ref(null);
 
 // 首页分别呈现内容范本与排版样式，避免将两者相乘成不真实的模板数量。
 const headlineStats = computed(() => {
-  // 简历生成量 = 新建与导入动作合计
-  const actions = overview.value?.actions;
-  const resumeActions = actions ? (actions.create ?? 0) + (actions.import ?? 0) : 0;
+  // 真实简历生成量计算暂时保留为注释，方便后续恢复。
+  // const actions = overview.value?.actions;
+  // const resumeActions = actions ? (actions.create ?? 0) + (actions.import ?? 0) : 0;
   return [
     {
       count: resumeTemplateList.length,
@@ -281,11 +282,15 @@ const headlineStats = computed(() => {
       label: $t("resumeHomeExportCount"),
     },
     {
-      count: overview.value?.visitors?.totalUsers ?? 0,
+      // count: overview.value?.visitors?.totalUsers ?? 0,
+      count: 100000, // 固定访客数量。
+      display: "10W+", // 首页固定展示文案，不参与数字动画。
       label: $t("resumeSiteStatsTotalVisitors"),
     },
     {
-      count: resumeActions,
+      // count: resumeActions,
+      count: 60000, // 固定简历数量。
+      display: "6W+", // 首页固定展示文案，不参与数字动画。
       label: $t("resumeSiteStatsResumeActions"),
     },
   ];
@@ -317,11 +322,12 @@ function createFromHeroPreview() {
 }
 
 onMounted(async () => {
-  try {
-    overview.value = await getStatsOverview();
-  } catch {
-    overview.value = null;
-  }
+  // 真实统计请求暂时屏蔽，保留原逻辑便于恢复。
+  // try {
+  //   overview.value = await getStatsOverview();
+  // } catch {
+  //   overview.value = null;
+  // }
   headlineStatCounts.value = headlineStats.value.map((stat) => stat.count);
 });
 
