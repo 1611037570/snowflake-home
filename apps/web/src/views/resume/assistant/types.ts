@@ -30,19 +30,19 @@ export type Flow = {
 
 // 建议卡片：由调用方注入，Chat 只负责展示与转发
 export type SuggestCard = {
-  icon: string;
-  title: string;
-  flow: string;
-  // 功能分类用于保持简历编辑入口简洁，并为面试模块独立展示预留边界
-  category: "resume" | "interview";
+  icon: string; // 建议卡片图标。
+  title: string; // 建议操作名称。
+  flow: string; // 对应简历引导流程。
+  // 编辑器建议仅保留简历功能，面试由独立栏目承接。
+  category: "resume";
   // 功能介绍用于建议卡片启动前展示能力、耗时与适用场景
   intro?: {
-    badge?: string;
-    duration: string;
-    description: string;
-    features: string[];
-    scene: string;
-    action: string;
+    badge?: string; // 功能介绍标签。
+    duration: string; // 预计耗时说明。
+    description: string; // 功能用途。
+    features: string[]; // 能力说明列表。
+    scene: string; // 适用场景。
+    action: string; // 开始操作文案。
   };
 };
 

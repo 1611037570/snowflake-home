@@ -1,8 +1,6 @@
 // 引导式 AI 流程配置：点击建议卡片后，先通过预设问答收集信息，再发起真实请求
 import { useResumeStore } from "@/stores";
 import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
-import { interviewFlows } from "./interview/flows";
-import { interviewSuggestions } from "./interview/suggestions";
 import type { Flow, SuggestCard } from "./types";
 import { collectResumeAdjustmentIssues, useProgress } from "../editor/hooks/useProgress";
 
@@ -71,8 +69,6 @@ export const flows: Record<string, Flow> = {
       };
     },
   },
-  // 面试域流程集中维护，简历助手仅负责合并入口
-  ...interviewFlows,
   // JD 对标优化：等用户在输入框输入 JD 后执行对标优化
   jdOptimize: {
     userContent: "帮我进行JD对标优化",
@@ -267,8 +263,6 @@ export const suggestions: SuggestCard[] = [
     flow: "greeting",
     category: "resume",
   },
-  // 面试域卡片集中维护，后续可直接迁移到独立页面
-  ...interviewSuggestions,
   {
     icon: "ph:star-duotone",
     title: "AI简历评估",

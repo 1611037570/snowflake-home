@@ -21,11 +21,15 @@
 | `editor/` | 表单编辑、预览、排版、导出与编辑器工具 |
 | `editor/components/header/learningCenter/` | 学习中心入口、分类与教程展示 |
 | `assistant/` | AI 助手的入口、流程、会话与改动展示，详见 [助手说明](assistant/README.md) |
+| `interview/` | 独立面试训练、准备、复盘与记录，详见 [面试说明](interview/README.md) |
 | `template/data/` | 模板列表、范本数据与对应文案 |
 | `theme/` | 主题绘图与渲染接入，详见 [主题规范](theme/README.md) |
 | `editor/preview/resumePages/engine/` | 测量、分页与布局，详见 [引擎说明](editor/preview/resumePages/engine/README.md) |
 | `guide/` | 求职中心手册与决策工具 |
-| `packages/resume-agent/`（项目根目录） | AI 请求、任务、技能、字段契约和写入校验，详见 [智能体说明](../../../../../packages/resume-agent/README.md) |
+| `packages/resume-agent/`（项目根目录） | 简历任务、技能、写入工具和完成校验，详见 [智能体说明](../../../../../packages/resume-agent/README.md) |
+| `packages/interview-agent/`（项目根目录） | 独立面试技能、只读工具与评价，详见 [面试智能体说明](../../../../../packages/interview-agent/README.md) |
+| `packages/resume-core/`（项目根目录） | 公共简历字段、格式、脱敏、媒体与快照，详见 [公共数据说明](../../../../../packages/resume-core/README.md) |
+| `packages/agent/`（项目根目录） | 通用智能体组装，不包含业务规则，详见 [组装说明](../../../../../packages/agent/README.md) |
 
 ## 学习中心同步要求
 
@@ -47,7 +51,7 @@
 
 ## 字段与范本
 
-业务字段以 `apps/web/src/stores/modules/resume/config/formConfig.ts` 为准；字段契约由 `packages/resume-agent/schema/resumeSchemaRegistry.ts` 生成。范本不能反过来定义字段。
+业务字段以 `apps/web/src/stores/modules/resume/config/formConfig.ts` 为准；Web 侧生成字段契约后注册到 `packages/resume-core/schema/resumeSchemaRegistry.ts`，供两个智能体共用。范本不能反过来定义字段。
 
 | 字段变化 | 必须同步 |
 | --- | --- |
@@ -64,11 +68,11 @@
 
 ### 唯一规则与职责
 
-- 模型配置集中在“小舟AI”页，编辑器右侧“AI 设置”复用 `editor/toolbar/modules/ai/content.vue`。顶部保留三个角色绑定，下方统一为服务商配置界面，不再切换模型库与添加页。桌面左侧选择服务商，右侧填写 API 密钥和接口地址后自动保存；窄屏服务商横向排列。已添加模型直接在所属服务商下检测、查看绑定角色和删除，点击“添加模型”通过弹窗填写模型与别名，沿用已保存的服务商凭据并检测后添加。密钥独立持久化到 `providerCredentials`（服务商凭据表），兼容旧模型中已有的密钥；密钥与有效接口地址随输入自动保存，清空密钥后不能添加模型，无需手动确认。切换服务商保留本次草稿，密钥或地址变化时清除检测结果。通用设置只保留本地数据与备份设置。
+- 模型配置集中在“小舟AI”页，编辑器右侧“AI 设置”复用 `editor/toolbar/modules/ai/content.vue`。顶部保留四个角色绑定，面试官独立选择模型，不继承或回退到小舟、小羊；下方统一为服务商配置界面，不再切换模型库与添加页。桌面左侧选择服务商，右侧填写 API 密钥和接口地址后自动保存；窄屏服务商横向排列。已添加模型直接在所属服务商下检测、查看绑定角色和删除，点击“添加模型”通过弹窗填写模型与别名，沿用已保存的服务商凭据并检测后添加。密钥独立持久化到 `providerCredentials`（服务商凭据表），兼容旧模型中已有的密钥；密钥与有效接口地址随输入自动保存，清空密钥后不能添加模型，无需手动确认。切换服务商保留本次草稿，密钥或地址变化时清除检测结果。通用设置只保留本地数据与备份设置。
 - 服务商预设包含 OpenAI / 兼容服务、Gemini、DeepSeek、Claude、千问与豆包 / 火山方舟，预填官方兼容地址并提供密钥管理入口；豆包继续保存为 `ark`，兼容已有模型配置。服务商参数差异与工具调用元数据保留统一维护在 `packages/ai`，不在页面拼装专属请求逻辑。
 - 常用模型统一维护在 `editor/toolbar/modules/ai/modelPresets.ts`，仅在添加弹窗中按服务商提供快捷填写，也允许手动输入。点击预设填入模型 ID，别名为空时补充名称；不提供未收录或下线判断，添加仍需连接检测。添加后的配置及后续型号变更由用户自行维护，预设更新不修改已有模型和角色绑定。
 - 正文生成与改写统一使用 `packages/resume-agent/writingRules.ts`：`CONTENT_ACTION_RULES`（正文操作规则）、`getWritingRule`（按操作与类型取规则）和 `ASSISTANT_WRITING_RULES_TEXT`（助手写作约束）由同一事实源维护。
-- 导入解析忠实转换原文，面试快答生成口述答案；两者不按简历正文起草规则扩写。
+- 导入解析忠实转换原文；面试内容由独立面试智能体按真实作答生成，不加载简历正文起草规则。
 - Web 侧负责入口、引导和简历数据适配；请求、任务、技能与工具实现在智能体包中维护。页面不得直接调用模型实例。
 - AI 生成简历的输入、生成、预览与取消维护在 `components/aiGenerate/`，`components/aiResumeGenerator.vue` 提供弹窗形态、`generate/` 提供页面形态，两者共用同一流程；入口只负责带入来源样式与创建简历，不另写生成逻辑。
 - `assistant/useResumeAssistant.ts` 组装本轮能力，`assistant/flows.ts` 维护功能引导；任务规则和技能不能在页面重复定义。
@@ -78,7 +82,7 @@
 - 每次基于简历作答或修改都重新读取真实数据。默认读取所选模块，无选择时读取整份简历；整份任务显式固定本轮范围。
 - `resumeModuleKeys`（本轮模块范围）、`resumeScope`（本轮读取范围）与脱敏设置在请求期间固定；旧请求结束不得清除新请求上下文。
 - AI 读取返回 `title`（模块展示标题）与 `data`（业务数据），不携带编辑器状态；写操作使用稳定模块标识，不用展示标题代替。
-- 媒体处理以 `stores/modules/resume/config/mediaFields.ts` 为准，只裁剪读取副本；请求前后不得删除、还原或覆盖原简历媒体。
+- 媒体处理以 `packages/resume-core/mediaFields.ts` 为准，只裁剪读取副本；请求前后不得删除、还原或覆盖原简历媒体。
 - AI 与导出共用脱敏配置；隐私标记和受保护字段保持只读，不猜测真实内容，也不把脱敏标记写回原数据。
 - `propose_resume_edits` 校验后执行完整语义操作；校验失败不写入，执行部分失败时重新读取，仅重试未成功操作。
 - 写入、改动清单和撤回都以实际成功结果为依据。取消、切换简历或切换会话后，旧请求不得继续写入或覆盖新状态。

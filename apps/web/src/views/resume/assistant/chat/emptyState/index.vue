@@ -14,19 +14,9 @@ const props = defineProps<{
 }>();
 const emit = defineEmits(["switch-mode", "suggest"]);
 
-// 默认突出简历编辑能力，面试训练通过次级分类按需展示
-const activeCategory = ref<"resume" | "interview">("resume");
-const categories = [
-  { value: "resume" as const, name: "简历工具" },
-  { value: "interview" as const, name: "面试训练" },
-];
+// 编辑器只展示简历能力，面试训练由工作区独立栏目承接。
 const visibleSuggestions = computed(() =>
-  props.suggestions.filter((card) => card.category === activeCategory.value),
-);
-const assistantDescription = computed(() =>
-  activeCategory.value === "resume"
-    ? "能通过对话帮你打造受HR青睐的专业简历。"
-    : "基于你的简历开展岗位准备与模拟训练。",
+  props.suggestions.filter((card) => card.category === "resume"),
 );
 
 // 一键优化与一键调整并排置顶，其余建议保持原有网格布局
@@ -82,10 +72,8 @@ const startFeature = () => {
       <SfIcon icon="lucide:sparkles" class="text-sf-theme" size="6" />
     </div>
     <div class="flex flex-wrap items-center justify-center gap-3 text-sm font-medium text-sf-base">
-      <span>{{ assistantDescription }}</span>
+      <span>能通过对话帮你打造受HR青睐的专业简历。</span>
     </div>
-    <!-- 两个轻量分类保持当前页面以简历编辑为主，面试功能按需展开 -->
-    <SfTab v-model="activeCategory" :list="categories" />
     <div class="flex flex-wrap items-center justify-center gap-x-3 text-sm">✨📄你可以这样问</div>
     <!-- 一键优化与一键调整并排置顶并突出主题色 -->
     <div
@@ -136,7 +124,7 @@ const startFeature = () => {
           @click="props.removeModule?.(item.key)"
         />
       </div>
-      {{ activeCategory === "resume" ? "一键操作" : "开展训练" }}
+      一键操作
     </div>
 
     <OneKeyIntro v-model="introVisible" :flow="introFlow" @confirm="confirmOneKeyIntro" />

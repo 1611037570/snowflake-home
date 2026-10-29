@@ -41,7 +41,6 @@ export { MARKDOWN_IMPORT_TASK, PDF_IMPORT_TASK } from "./tasks/importResume";
 export { MAX_PDF_REQUEST_BYTES } from "./tasks/pdfLimits";
 export { GENERAL_CHAT_TASK, RESUME_CHAT_TASK } from "./tasks/chat";
 export type { ResumeChatInput } from "./tasks/chat";
-export { useInterviewQuickAnswer } from "./tasks/interviewQuickAnswer";
 export { resolveResumeAgentTaskProfile } from "./tasks/registry";
 export { createDefaultAssistantPrompt } from "./prompts/defaultAssistant";
 export { createResumeTools, RESUME_LANG_CODES } from "./tools";

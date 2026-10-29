@@ -77,7 +77,7 @@
   "learningCenter_assistant_title": "使用 AI 助手",
   "learningCenter_assistant_summary": "生成、优化、翻译简历，或按岗位要求调整内容。",
   "learningCenter_assistant_step1": "在右侧“AI 设置”的“角色模型”中，为小舟选择模型。",
-  "learningCenter_assistant_step2": "在左侧“AI”标签选择功能或输入需求；只想处理局部时，先选中目标模块。",
+  "learningCenter_assistant_step2": "在左侧“AI”标签选择简历功能或输入需求；只想处理局部时，先选中目标模块。面试训练请返回工作区，进入“AI 面试”，并为“面试官”独立选择模型。",
   "learningCenter_assistant_step3": "完成后点击“查看更改”核对内容，需要恢复时使用会话撤回。",
   "learningCenter_assistant_tip": "在 AI 设置中选择服务商，填写 API 密钥与接口地址，配置会自动保存。点击“添加模型”，在弹窗选择常用模型或输入完整模型 ID（接口调用名），可选填别名，检测通过后添加。预设仅辅助填写，后续模型变更由用户自行维护。已有模型直接在所属服务商下管理，添加后在上方为角色选择；未选模块时默认处理整份简历，整份任务以范围说明为准。",
   "learningCenter_contentAi_title": "处理一段正文",

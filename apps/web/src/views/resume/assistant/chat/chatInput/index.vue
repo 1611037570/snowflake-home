@@ -1,6 +1,5 @@
 <script setup>
-import { ElMessage } from "element-plus";
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 import AiNotice from "../aiNotice.vue";
 import DesensitizeMode from "./desensitizeMode.vue";
 import ModuleSelect from "./moduleSelect.vue";
@@ -12,86 +11,14 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  voiceEnabled: {
-    type: Boolean,
-    default: false,
-  },
-  earlyEndEnabled: {
-    type: Boolean,
-    default: false,
-  },
-  quickAnswerEnabled: {
-    type: Boolean,
-    default: false,
-  },
-  quickAnswerLoading: {
-    type: Boolean,
-    default: false,
-  },
 });
 
 // 发送 / 停止事件
-const emit = defineEmits(["send", "stop", "early-end", "quick-answer"]);
+const emit = defineEmits(["send", "stop"]);
 
 // 输入框绑定的值
 const modelValue = ref("");
 const inputRef = ref(null);
-const recognition = ref(null);
-const isListening = ref(false);
-const speechBaseValue = ref("");
-
-// 浏览器提供语音识别能力时，专项面试可将语音实时转写到输入框
-const getSpeechRecognition = () => window.SpeechRecognition || window.webkitSpeechRecognition;
-const isVoiceSupported = computed(() => props.voiceEnabled && !!getSpeechRecognition());
-
-const stopVoiceInput = () => {
-  recognition.value?.stop();
-  recognition.value = null;
-  isListening.value = false;
-};
-
-const toggleVoiceInput = () => {
-  if (isListening.value) {
-    stopVoiceInput();
-    return;
-  }
-  const SpeechRecognition = getSpeechRecognition();
-  if (!SpeechRecognition) {
-    ElMessage.warning("当前浏览器不支持语音输入，请使用文字作答");
-    return;
-  }
-  // 每次开始录音时保留已有文字，识别结果仅追加到本轮输入
-  const instance = new SpeechRecognition();
-  speechBaseValue.value = modelValue.value.trim();
-  instance.lang = navigator.language || "zh-CN";
-  instance.continuous = true;
-  instance.interimResults = true;
-  instance.onresult = (event) => {
-    const transcript = Array.from(event.results)
-      .map((result) => result[0]?.transcript || "")
-      .join("")
-      .trim();
-    modelValue.value = [speechBaseValue.value, transcript].filter(Boolean).join(" ");
-  };
-  instance.onerror = () => {
-    ElMessage.warning("语音识别失败，请重试或使用文字作答");
-  };
-  instance.onend = () => {
-    recognition.value = null;
-    isListening.value = false;
-  };
-  recognition.value = instance;
-  isListening.value = true;
-  instance.start();
-};
-
-// 离开专项面试输入模式时立即停止仍在进行的语音识别
-watch(
-  () => props.voiceEnabled,
-  (enabled) => {
-    if (!enabled && isListening.value) stopVoiceInput();
-  },
-);
 
 // 计算是否可以发送消息
 const canSend = computed(() => !!modelValue.value.trim() && !props.isGenerating);
@@ -158,45 +85,15 @@ onMounted(() => {
   focus();
 });
 
-// 组件销毁时结束录音，避免语音识别继续占用麦克风
-onBeforeUnmount(() => {
-  stopVoiceInput();
-});
 </script>
 
 <template>
   <footer class="relative flex w-full flex-col items-center px-3 pt-3">
     <div class="relative z-10 w-full max-w-4xl">
-      <!-- 读取范围、脱敏和面试操作统一放在输入框上方右侧。 -->
+      <!-- 编辑器输入区只保留简历读取范围与脱敏设置。 -->
       <div class="mb-1 flex flex-wrap items-center justify-end gap-1">
         <ModuleSelect />
         <DesensitizeMode />
-        <!-- 面试问题使用独立单次请求生成回答，不写入原对话 -->
-        <SfButton
-          v-if="props.quickAnswerEnabled"
-          class="shrink-0 whitespace-nowrap"
-          title="为最近一道面试题生成回答方案"
-          type="theme"
-          size="small"
-          plain
-          :disabled="props.isGenerating || props.quickAnswerLoading"
-          @click="emit('quick-answer')"
-        >
-          {{ props.quickAnswerLoading ? "生成中" : "帮我答" }}
-        </SfButton>
-        <!-- 长时评估允许随时结束，并交由面试技能生成保守的阶段性报告 -->
-        <SfButton
-          v-if="props.earlyEndEnabled"
-          class="shrink-0 whitespace-nowrap"
-          title="提前结束并生成阶段性报告"
-          type="error"
-          size="small"
-          plain
-          :disabled="props.isGenerating"
-          @click="emit('early-end')"
-        >
-          提前结束
-        </SfButton>
       </div>
       <!-- 主输入容器：增强阴影与圆角细节 -->
       <div
@@ -215,27 +112,9 @@ onBeforeUnmount(() => {
           @keydown.enter="handleKeydown"
         />
 
-        <!-- 底部保留模型选择与语音、发送操作。 -->
+        <!-- 底部保留简历模型选择与发送操作。 -->
         <div class="flex items-center justify-end gap-1 px-3 pb-1">
           <ModelSelect />
-          <!-- 专项面试语音入口：识别结果先进入输入框，确认后再发送 -->
-          <button
-            v-if="props.voiceEnabled"
-            data-test="voice-input"
-            class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500"
-            :class="
-              isListening
-                ? 'bg-sf-error-2 text-sf-error'
-                : 'bg-sf-bg-3 text-sf-text hover:bg-sf-bg-2'
-            "
-            type="button"
-            @click="toggleVoiceInput"
-          >
-            <SfIcon
-              :icon="isListening ? 'ph:stop-circle-fill' : 'ph:microphone-duotone'"
-              size="4"
-            />
-          </button>
           <!--动态动作按钮 (发送/停止) -->
           <button
             class="flex h-[30px] w-8 items-center justify-center rounded-xl transition-all duration-500 ease-out"

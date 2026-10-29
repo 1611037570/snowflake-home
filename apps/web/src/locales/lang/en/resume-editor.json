@@ -77,7 +77,7 @@
   "learningCenter_assistant_title": "Use the AI assistant",
   "learningCenter_assistant_summary": "Draft, optimize, translate, or tailor your resume to a job.",
   "learningCenter_assistant_step1": "In AI Settings on the right, select a model for Skiff under Role Models.",
-  "learningCenter_assistant_step2": "Choose a task or type a request in the AI tab on the left. Select target sections first for local changes.",
+  "learningCenter_assistant_step2": "Choose a resume task or type a request in the AI tab on the left. Select target sections first for local changes. For interview practice, return to the workspace, open AI Interview, and assign a model independently to Interviewer.",
   "learningCenter_assistant_step3": "Review View Changes afterward, or use conversation undo to restore content.",
   "learningCenter_assistant_tip": "In AI Settings, select a provider and enter its API key and endpoint URL. Configuration is saved automatically. Click Add Model to select a common model or enter its full API model ID and an optional display alias, then test the connection to add it. Presets only help fill the form; users maintain subsequent model changes themselves. Manage existing models under their provider and assign models to roles above. The default scope is the whole resume; check scope instructions for whole-resume tasks.",
   "learningCenter_contentAi_title": "Work on one description",

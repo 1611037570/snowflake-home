@@ -9,7 +9,6 @@
   "exports": {
     ".": "./index.ts",
     "./request": "./request/index.ts",
-    "./skills/interview": "./skills/interview/index.ts",
     "./*": "./*.ts"
   },
   "dependencies": {

@@ -6,7 +6,7 @@ import {
   type Message,
   type ResumeAssistantChatRecord,
 } from "@/stores";
-import { useClipboard, useScroll } from "@vueuse/core";
+import { useScroll } from "@vueuse/core";
 import { ElMessage } from "element-plus";
 import { computed, inject, nextTick, onActivated, onBeforeUnmount, ref, watch } from "vue";
 import { storeToRefs } from "pinia";
@@ -16,8 +16,6 @@ import { ALL_MODULE_KEY, ALL_MODULE_NAME } from "@/stores/modules/resume/config/
 import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
 import { flows, suggestions } from "../flows";
 import type { Flow, FlowStep, SuggestCard } from "../types";
-import { supportsInterviewEarlyEnd } from "../interview/flows";
-import { supportsQuickAnswer, useInterviewQuickAnswer } from "../interview/quickAnswer";
 import { useResumeAssistant } from "../useResumeAssistant";
 
 import AiMessage from "./aiMessage.vue";
@@ -51,10 +49,6 @@ type ActiveFlowState = {
   stepIndex: number;
   // 已收集的业务答案
   answers: string[];
-  // 是否支持提前结束
-  allowEarlyEnd: boolean;
-  // 是否支持独立快速回答
-  allowQuickAnswer: boolean;
 };
 
 const aiStore = useAiStore();
@@ -64,8 +58,6 @@ const { createDefaultMessage } = aiStore;
 const { ensureAiAvailable } = useResumeAiAvailability();
 // 组装简历域技能、工具与对话创建方法
 const { config: assistantConfig, createChat: createAssistantChat } = useResumeAssistant();
-// 面试回答使用独立的一次性请求，不进入主对话的技能与工具循环
-const { requestQuickAnswer } = useInterviewQuickAnswer();
 // 把会话工厂注册到 ai store，供新建话题入口调用
 aiStore.registerResumeAssistantChatFactory(createAssistantChat);
 const { resumeAssistantChat } = storeToRefs(aiStore);
@@ -104,25 +96,10 @@ const isGenerating = computed(() => generating.value);
 const pendingAssistantFlow = inject("resumeAssistantPendingFlow", ref(""));
 // 控制会话记录第二页的显示状态
 const chatListVisible = ref(false);
-// 专项面试期间开放语音转文字入口，其余简历任务保持原输入方式
-const voiceInputEnabled = ref(false);
-// 长时面试流程启动后持续提供提前结束入口
-const earlyEndEnabled = ref(false);
-// 面试流程启动后开放快速回答，结果通过独立弹窗展示
-const quickAnswerEnabled = ref(false);
-const quickAnswerLoading = ref(false);
-const quickAnswerVisible = ref(false);
-const quickAnswerContent = ref("");
-const quickAnswerError = ref("");
-const { copy: copyQuickAnswer, isSupported: quickAnswerCopySupported } = useClipboard();
 
 function createNewChat() {
-  if (generating.value || quickAnswerLoading.value) return;
+  if (generating.value) return;
   draftChat.value = aiStore.createNewResumeAssistantChat() ?? null;
-  voiceInputEnabled.value = false;
-  earlyEndEnabled.value = false;
-  quickAnswerEnabled.value = false;
-  quickAnswerVisible.value = false;
   chatListVisible.value = false;
 }
 
@@ -133,7 +110,7 @@ onActivated(() => {
 });
 
 async function selectChat(id: string) {
-  if (generating.value || quickAnswerLoading.value) return;
+  if (generating.value) return;
   const draft = aiStore.createNewResumeAssistantChat() ?? null;
   draftChat.value = draft;
   isChatLoading.value = true;
@@ -142,12 +119,7 @@ async function selectChat(id: string) {
   if (token !== chatLoadToken) return;
   if (selected) draftChat.value = null;
   isChatLoading.value = false;
-  voiceInputEnabled.value = false;
-  earlyEndEnabled.value = false;
-  quickAnswerEnabled.value = false;
-  quickAnswerVisible.value = false;
   chatListVisible.value = false;
-  restoreInterviewState();
 }
 
 // currentMessages：从 chat.messages 派生
@@ -156,20 +128,6 @@ const currentMessages = computed(() => chat.value?.messages ?? []);
 const displayMessages = computed(() => {
   return currentMessages.value.filter((m) => m.role !== "system");
 });
-// 快速回答只读取最近一条真实 AI 回复，忽略流程引导消息
-const latestInterviewQuestion = computed(
-  () =>
-    [...currentMessages.value]
-      .reverse()
-      .find(
-        (message) =>
-          message.role === "assistant" &&
-          !message.skipContext &&
-          message.requestStatus === "success" &&
-          !!message.content?.trim(),
-      )
-      ?.content.trim() || "",
-);
 // 消息导航仅展示用户消息
 const navMessages = computed(() => displayMessages.value.filter((msg) => msg.role === "user"));
 // 切换消息折叠状态
@@ -363,7 +321,7 @@ const handleSend = (content: string) => {
   // 确保输入内容不为空
   if (!content?.trim()) return;
   // 确保当前没有正在发送的消息
-  if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  if (generating.value || isChatLoading.value) return;
   // 发起聊天前先判断是否已绑定 AI 模型，未绑定则不进入请求
   if (!ensureAiAvailable()) return;
   // 引导流程的自由输入步骤：把输入内容作为答案推进流程
@@ -373,30 +331,11 @@ const handleSend = (content: string) => {
     handleFlowAnswer(content.trim());
     return;
   }
-  // 普通聊天由任务运行时结合历史状态判断意图；这里只保留面试专用的读取范围。
-  const previousContext = [...currentMessages.value]
-    .reverse()
-    .find((message) => message.role === "user" && !message.skipContext)?.requestContext;
-  const requestContext = previousContext?.interviewFlow
-    ? {
-        resumeScope: previousContext.resumeScope, // 面试续轮沿用原读取范围。
-        // 面试结束时关闭专用流程标识，其余面试续轮保持原读取范围。
-        interviewFlow: content.trim() === "提前结束" ? "" : previousContext.interviewFlow,
-      }
-    : undefined;
-  // 用户结束长时评估后关闭专用操作入口，后续仅保留普通对话输入
-  if (earlyEndEnabled.value && content.trim() === "提前结束") {
-    earlyEndEnabled.value = false;
-    voiceInputEnabled.value = false;
-    quickAnswerEnabled.value = false;
-  }
   generating.value = true;
   addMessage({
     role: "user",
     content,
     typing: false,
-    // 面试续轮的完整经历范围与流程标识
-    requestContext,
   });
   scrollToBottom();
   // 触发真实请求
@@ -438,7 +377,7 @@ function removeMessage(msg: Message, count?: number) {
  * 撤回用户消息：删除该消息及其后的所有消息，并将内容回填到输入框
  */
 const handleRecall = (msg: Message) => {
-  if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  if (generating.value || isChatLoading.value) return;
   // 撤回引导消息后取消尚未完成的流程，避免继续使用旧答案
   activeFlow.value = null;
   // 删除该消息及其后的所有消息
@@ -453,7 +392,7 @@ const handleRecall = (msg: Message) => {
  * 重试生成：删除失败消息后重新发起请求
  */
 const handleRetry = (msg: Message) => {
-  if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  if (generating.value || isChatLoading.value) return;
   // 只重试当前轮，已写入内容先撤回，避免重复新增或重复删除
   if (msg !== displayMessages.value.at(-1)) return;
   if (msg.hasWriteChanges && !withdrawAI(msg)) {
@@ -468,7 +407,7 @@ const handleRetry = (msg: Message) => {
 // 重新生成：回滚本轮修改并删除回复，复用上一轮请求重新发起
 function handleRegenerate(index: number) {
   const msg = displayMessages.value[index];
-  if (!msg || generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  if (!msg || generating.value || isChatLoading.value) return;
   // 历史写入没有内存备份时不能重新执行，避免累积重复修改
   if (msg.hasWriteChanges && !withdrawAI(msg)) {
     ElMessage.warning("本轮修改备份已失效，请核对简历后重新发送请求");
@@ -481,7 +420,7 @@ function handleRegenerate(index: number) {
 // 撤回修改：恢复请求前备份，回复文字保留、操作按钮消失
 function handleWithdrawModify(index: number) {
   const msg = displayMessages.value[index];
-  if (!msg || generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  if (!msg || generating.value || isChatLoading.value) return;
   // 仅恢复成功时提示撤回完成
   if (withdrawAI(msg)) ElMessage.success("已撤回 AI 修改");
 }
@@ -490,23 +429,11 @@ provide("retry", handleRetry);
 
 // 引导式流程状态：记录当前流程、步骤与已收集的选项
 const activeFlow = ref<ActiveFlowState | null>(null);
-// 会话切换清除未完成引导，历史面试按最后一条真实用户消息恢复操作入口
-const restoreInterviewState = () => {
-  const flowKey = [...currentMessages.value]
-    .reverse()
-    .find((message) => message.role === "user" && !message.skipContext)
-    ?.requestContext?.interviewFlow;
-  const key = typeof flowKey === "string" ? flowKey : "";
-  voiceInputEnabled.value = key === "specializedInterview";
-  earlyEndEnabled.value = supportsInterviewEarlyEnd(key);
-  quickAnswerEnabled.value = supportsQuickAnswer(key);
-};
+// 会话切换清除未完成的简历引导。
 watch(
   () => chat.value?.id,
   () => {
     activeFlow.value = null;
-    quickAnswerVisible.value = false;
-    restoreInterviewState();
   },
 );
 
@@ -514,17 +441,11 @@ watch(
  * 点击建议卡片：启动引导式对话流程
  */
 const handleSuggest = (payload: Pick<SuggestCard, "flow">) => {
-  if (generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  if (generating.value || isChatLoading.value) return;
   // 选择工作流一键操作前先判断是否已绑定 AI 模型，未绑定则不启动流程
   if (!ensureAiAvailable()) return;
   const flow = flows[payload?.flow];
   if (!flow) return;
-  const allowQuickAnswer = supportsQuickAnswer(payload.flow);
-  const allowEarlyEnd = supportsInterviewEarlyEnd(payload.flow);
-  // 仅专项面试模拟启用语音输入，启动其他流程时同步关闭
-  voiceInputEnabled.value = payload.flow === "specializedInterview";
-  earlyEndEnabled.value = false;
-  quickAnswerEnabled.value = false;
   // 记录流程状态并展示初始用户消息
   // 流程启动时固化条件步骤，保证本轮授权判断与入口状态一致
   const steps = flow.steps.filter((step) => step.when?.() ?? true);
@@ -546,13 +467,8 @@ const handleSuggest = (payload: Pick<SuggestCard, "flow">) => {
       requestContext: {
         ...requestContext,
         entryFlow: payload.flow, // 用户点击的功能入口。
-        ...(allowQuickAnswer ? { interviewFlow: payload.flow } : {}),
       },
     });
-    // 无引导步骤的长时流程在真实请求开始后开放提前结束
-    earlyEndEnabled.value = allowEarlyEnd;
-    // 真实面试请求开始后才开放快速回答，避免回答入口配置问题
-    quickAnswerEnabled.value = allowQuickAnswer;
     generating.value = true;
     scrollToBottom();
     handleAIResponse();
@@ -569,10 +485,6 @@ const handleSuggest = (payload: Pick<SuggestCard, "flow">) => {
     stepIndex: 0,
     // 已收集的业务答案
     answers: [],
-    // 是否支持提前结束
-    allowEarlyEnd,
-    // 是否支持独立快速回答
-    allowQuickAnswer,
   };
   // 引导对话仅作界面展示，不加入请求上下文
   addMessage({
@@ -614,7 +526,7 @@ const runFlowStep = () => {
  */
 const handleFlowAnswer = (answer: string) => {
   const state = activeFlow.value;
-  if (!state || generating.value || quickAnswerLoading.value || isChatLoading.value) return;
+  if (!state || generating.value || isChatLoading.value) return;
   const step = state.steps[state.stepIndex];
   if (!step || !answer?.trim()) return;
   // 选择步骤只接受本轮有效选项，拒绝旧按钮或自由输入跳过授权
@@ -655,9 +567,6 @@ const handleFlowAnswer = (answer: string) => {
   }
   // 收集完成：最后一步答案并入真实请求，不再单独展示，避免出现两条 user 消息
   const { prompt, userContent, requestContext } = state.flow.build(state.answers);
-  // 完成入口问答后再展示提前结束，避免尚未开始评估时误触
-  earlyEndEnabled.value = state.allowEarlyEnd;
-  quickAnswerEnabled.value = state.allowQuickAnswer;
   activeFlow.value = null;
   // 所有请求统一走 React 编排
   if (prompt) {
@@ -675,7 +584,6 @@ const handleFlowAnswer = (answer: string) => {
     requestContext: {
       ...requestContext,
       entryFlow: state.flowKey, // 用户点击的功能入口。
-      ...(state.allowQuickAnswer ? { interviewFlow: state.flowKey } : {}),
     },
   });
   generating.value = true;
@@ -699,9 +607,9 @@ const handleFlowInput = (content: string) => {
 
 // 等待助手空闲后为一键任务创建独立对话，避免继承已有聊天上下文。
 watch(
-  [pendingAssistantFlow, generating, quickAnswerLoading, isChatLoading],
-  ([flow, isGeneratingNow, isQuickAnswerLoading, isLoading]) => {
-    if (!flow || isGeneratingNow || isQuickAnswerLoading || isLoading) return;
+  [pendingAssistantFlow, generating, isChatLoading],
+  ([flow, isGeneratingNow, isLoading]) => {
+    if (!flow || isGeneratingNow || isLoading) return;
     pendingAssistantFlow.value = "";
     createNewChat();
     handleSuggest({ flow });
@@ -709,59 +617,6 @@ watch(
   { immediate: true, flush: "post" },
 );
 
-// 提前结束使用普通用户消息触发技能收尾与阶段性评分
-const handleEarlyEnd = () => {
-  if (!earlyEndEnabled.value || generating.value) return;
-  handleSend("提前结束");
-};
-
-// 执行单次回答请求；换一个时仅把上一版作为差异化参考
-const generateQuickAnswer = async (previousAnswer = "") => {
-  quickAnswerLoading.value = true;
-  quickAnswerError.value = "";
-  const requestResumeId = resumeId.value;
-  const requestChatId = chat.value?.id;
-  const isCurrent = () => resumeId.value === requestResumeId && chat.value?.id === requestChatId;
-  try {
-    const answer = await requestQuickAnswer(latestInterviewQuestion.value, previousAnswer);
-    // 简历或会话切换后丢弃旧回答，避免展示上一份简历的内容
-    if (isCurrent()) quickAnswerContent.value = answer;
-  } catch (error: any) {
-    if (!isCurrent()) return;
-    quickAnswerError.value = error?.message || "回答生成失败";
-  } finally {
-    quickAnswerLoading.value = false;
-  }
-};
-
-// 为最近一道真实面试题生成一个独立回答方案，不写入当前会话消息
-const handleQuickAnswer = async () => {
-  if (!quickAnswerEnabled.value || generating.value || quickAnswerLoading.value) return;
-  if (!latestInterviewQuestion.value) {
-    ElMessage.warning("暂无可回答的面试题");
-    return;
-  }
-  quickAnswerVisible.value = true;
-  quickAnswerContent.value = "";
-  await generateQuickAnswer();
-};
-
-// 保留同一道题与简历事实，以不同表达重新生成单个回答方案
-const handleReplaceQuickAnswer = async () => {
-  if (quickAnswerLoading.value) return;
-  await generateQuickAnswer(quickAnswerContent.value);
-};
-
-// 复制当前回答方案，失败时提供明确反馈
-const handleCopyQuickAnswer = async () => {
-  if (!quickAnswerContent.value) return;
-  if (!quickAnswerCopySupported.value) {
-    ElMessage.error("当前浏览器不支持复制");
-    return;
-  }
-  await copyQuickAnswer(quickAnswerContent.value);
-  ElMessage.success("回答方案已复制");
-};
 </script>
 
 <template>
@@ -826,44 +681,9 @@ const handleCopyQuickAnswer = async () => {
     <ChatInput
       ref="chatInputRef"
       :is-generating="isGenerating"
-      :voice-enabled="voiceInputEnabled"
-      :early-end-enabled="earlyEndEnabled"
-      :quick-answer-enabled="quickAnswerEnabled"
-      :quick-answer-loading="quickAnswerLoading"
       @send="handleSend"
       @stop="stopGenerating"
-      @early-end="handleEarlyEnd"
-      @quick-answer="handleQuickAnswer"
     />
-
-    <SfModal v-model="quickAnswerVisible" title="面试回答方案" width="560px">
-      <div class="flex min-h-30 w-full flex-col gap-3 text-left">
-        <!-- 单次请求加载期间只展示状态，不产生主对话消息 -->
-        <div
-          v-if="quickAnswerLoading"
-          class="flex min-h-30 items-center justify-center gap-3 text-sm text-sf-text-2"
-        >
-          <SfIcon icon="eos-icons:loading" size="5" class="text-sf-theme" />
-          正在生成回答方案
-        </div>
-        <p
-          v-else-if="quickAnswerError"
-          class="rounded-xl bg-sf-error-2 p-3 text-sm leading-relaxed text-sf-error"
-        >
-          {{ quickAnswerError }}
-        </p>
-        <p v-else class="text-sm leading-relaxed whitespace-pre-wrap text-sf-text">
-          {{ quickAnswerContent }}
-        </p>
-        <div v-if="!quickAnswerLoading" class="flex justify-end gap-3 pt-3">
-          <SfButton v-if="quickAnswerContent" type="bg" size="large" @click="handleCopyQuickAnswer">
-            复制
-          </SfButton>
-          <SfButton type="bg" size="large" @click="handleReplaceQuickAnswer">换一个</SfButton>
-          <SfButton size="large" @click="quickAnswerVisible = false">关闭</SfButton>
-        </div>
-      </div>
-    </SfModal>
 
     <Transition
       enter-active-class="transition duration-200 ease-out"
