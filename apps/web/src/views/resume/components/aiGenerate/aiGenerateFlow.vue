@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { $t } from "@/locales";
 import ThumbPreview from "@/views/resume/editor/preview/modes/thumb.vue";
 import { useAiResumeDraft } from "./useAiResumeDraft";
+import { WORK_YEAR_OPTIONS } from "./workYears";
 
 defineOptions({ name: "AiGenerateFlow" });
 
@@ -27,6 +28,14 @@ const {
 // 结果存在时入口需要更宽的画布展示预览。
 const hasResult = computed(() => !!pendingItem.value);
 const generationStatus = computed(() => $t(`resumeAiGenerateStage_${generationStage.value}`));
+
+// 工作年限固定从选项中选择，展示文案跟随当前语言。
+const workYearOptions = computed(() =>
+  WORK_YEAR_OPTIONS.map((option) => ({
+    value: option.value, // 选中后写入生成资料的年限文本。
+    name: $t(option.labelKey, option.params ?? {}), // 下拉里展示的年限文案。
+  })),
+);
 
 // 预览确认后才由入口创建简历并跳转，生成阶段不修改用户数据。
 const confirmGenerated = () => {
@@ -98,10 +107,12 @@ defineExpose({ start, reset, hasResult });
       </label>
       <label class="flex flex-col gap-3 text-sm text-sf-text">
         <span>{{ $t("resumeAiGenerateWorkYearsTitle") }}</span>
-        <SfInput
+        <SfSelect
           v-model="generationInput.workYears"
+          :list="workYearOptions"
           :disabled="generating"
           :placeholder="$t('resumeAiGenerateWorkYearsPlaceholder')"
+          class="w-full"
         />
       </label>
       <label class="flex min-h-0 flex-1 flex-col gap-3 text-sm text-sf-text">
