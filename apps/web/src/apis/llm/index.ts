@@ -30,6 +30,9 @@ const getXiaoYangLLM = () => getAgentLLM("xiaoYang");
 // 简历解析模型供后续解析流程调用
 const getResumeParseLLM = () => getAgentLLM("resumeParser");
 
-export { getResumeParseLLM, getXiaoYangLLM, getXiaoZhouLLM, LLM };
+// 面试独立选择模型，复用服务商配置而不共用其他业务角色绑定。
+const getInterviewerLLM = () => getAgentLLM("interviewer");
+
+export { getInterviewerLLM, getResumeParseLLM, getXiaoYangLLM, getXiaoZhouLLM, LLM };
 // 错误类型统一出口：供调用方区分主动中止与真实请求失败
 export { ApiError, AbortError, ToolNotFoundError, isAbortError } from "./errors";

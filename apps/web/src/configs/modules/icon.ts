@@ -10,6 +10,10 @@ interface IconItem {
 }
 
 export const ICON_LIST: Record<string, IconItem> = {
+  "ph:microphone-duotone": { icon: "ph:microphone-duotone" /* 面试语音图标标识。 */, name: "面试训练" /* 图标中文用途。 */ },
+  "ph:microphone-stage-duotone": { icon: "ph:microphone-stage-duotone" /* 专项模拟图标标识。 */, name: "专项面试" /* 图标中文用途。 */ },
+  "ph:crosshair-duotone": { icon: "ph:crosshair-duotone" /* 岗位押题图标标识。 */, name: "岗位押题" /* 图标中文用途。 */ },
+  "ph:exam-duotone": { icon: "ph:exam-duotone" /* 行测图标标识。 */, name: "行测面试" /* 图标中文用途。 */ },
   "simple-icons:openai": { icon: "simple-icons:openai", name: "OpenAI" }, // 随明暗主题适配的模型服务商品牌图标。
   "logos:deepseek-icon": { icon: "logos:deepseek-icon", name: "DeepSeek" }, // 模型服务商品牌图标。
   "logos:google-gemini-icon": { icon: "logos:google-gemini-icon", name: "Gemini" }, // Gemini 品牌图标。

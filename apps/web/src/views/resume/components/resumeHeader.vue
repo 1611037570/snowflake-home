@@ -36,6 +36,11 @@ const navGroups = [
         icon: "lucide:wand-sparkles", // AI 生成导航图标。
       },
       {
+        key: "resumeNavInterview", // 面试栏目文案标识。
+        path: "/resume/interview", // 独立面试训练页面。
+        icon: "ph:microphone-duotone", // 面试训练图标。
+      },
+      {
         key: "resumeNavAi", // 导航文案标识
         path: "/resume/ai", // 导航目标路径
         icon: "lucide:sparkles", // 人工智能导航图标。

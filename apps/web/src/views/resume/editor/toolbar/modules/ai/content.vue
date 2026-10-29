@@ -24,7 +24,7 @@ provide(SF_ICON_LIST_KEY, {
 
 const agentCards: Array<{
   // 角色使用的稳定标识。
-  key: "xiaoZhou" | "xiaoYang" | "resumeParser";
+  key: "xiaoZhou" | "xiaoYang" | "resumeParser" | "interviewer";
   // 角色展示名称。
   name: string;
   // 角色的主要用途。
@@ -47,8 +47,14 @@ const agentCards: Array<{
   {
     key: "xiaoYang",
     name: "小羊",
-    description: "模拟面试 · 回答辅导与表达练习",
+    description: "回答辅导与表达练习",
     icon: "lucide:sparkles",
+  },
+  {
+    key: "interviewer", // 面试官专属模型绑定。
+    name: "面试官", // 独立面试智能体的展示名称。
+    description: "AI 面试 · 追问评分与复盘", // 面试官承担的业务能力。
+    icon: "lucide:sparkles", // 复用已登记的辅导图标。
   },
 ];
 
@@ -103,10 +109,10 @@ provide("bg", "bg-sf-primary");
     <section class="shrink-0">
       <header class="mb-3 flex items-center justify-between gap-3">
         <h2 class="text-sm font-semibold text-sf-text">角色模型</h2>
-        <span class="text-xs text-sf-text-2">已配置 {{ boundCount }}/3</span>
+        <span class="text-xs text-sf-text-2">已配置 {{ boundCount }}/{{ agentCards.length }}</span>
       </header>
       <div
-        class="grid grid-cols-[repeat(3,minmax(228px,1fr))] gap-3 overflow-x-auto pb-[3px] sm:grid-cols-3 sm:overflow-visible"
+        class="grid grid-cols-[repeat(4,minmax(228px,1fr))] gap-3 overflow-x-auto pb-[3px] sm:grid-cols-2 sm:overflow-visible xl:grid-cols-4"
       >
         <article
           v-for="agent in agentViews"

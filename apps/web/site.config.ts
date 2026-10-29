@@ -173,6 +173,23 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
+    route: "/resume/interview", // 独立面试训练栏目。
+    noindex: true, // 包含用户私有面试记录，不进入公开收录。
+    parentRoute: "/resume", // 所属产品首页。
+    locales: { // 两种界面语言的页面信息。
+      zh: { // 中文页面信息。
+        title: "AI 面试 - 模拟训练与面试复盘 | 轻舟简历", // 浏览器标题。
+        description: "基于真实简历与目标岗位进行逐题模拟，支持专项、行测与人事面试、岗位押题、自我介绍、暂停继续和独立训练记录。", // 页面功能说明。
+        keywords: "AI面试,模拟面试,简历深挖,面试复盘,面试押题", // 页面关键词。
+      },
+      en: { // 英文页面信息。
+        title: "AI Interview - Practice and Review | Skiff Resume", // 浏览器标题。
+        description: "Practice role-specific interviews with resume-based follow-ups, preparation materials, pause and resume, and separate interview records.", // 页面功能说明。
+        keywords: "AI interview,mock interview,interview practice,interview review", // 页面关键词。
+      },
+    },
+  },
+  {
     route: "/resume/statistics",
     prerender: true, // 构建时预渲染原有公开页面。
     parentRoute: "/resume", // 所属产品首页。

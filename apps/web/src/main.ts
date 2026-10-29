@@ -18,6 +18,7 @@ import { globalComponentInstaller } from "./components";
 // 导入默认事件加载器
 import { loadEvent, loadTheme } from "./utils";
 import { registerResumeAgentHost } from "./apis/llm/resumeAgentProvider";
+import { registerInterviewAgentHost } from "./apis/llm/interviewAgentProvider";
 import { registerResumeSchema } from "./views/resume/shared/resumeSchemaProvider";
 // 创建 Vue 应用实例
 const app = createApp(App);
@@ -29,6 +30,7 @@ app.use(pinia);
 // 公共简历数据与两个业务智能体分别注册，避免通过一个智能体初始化另一个。
 registerResumeSchema();
 registerResumeAgentHost();
+registerInterviewAgentHost();
 // 注册路由
 app.use(router);
 // 仅在当前路由与语言确定后更新页面信息，避免未完成导航覆盖当前页面。
