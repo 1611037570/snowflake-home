@@ -48,8 +48,12 @@ export const validateGeneratedResume = (value: unknown): string | null => {
   if (!RESUME_SCHEMA.length) return "简历字段契约尚未就绪";
   for (const [moduleKey, moduleValue] of Object.entries(value)) {
     const moduleSchema = getResumeModuleSchema(RESUME_SCHEMA, moduleKey);
-    if (!moduleSchema || moduleSchema.kind === "custom" || !isRecord(moduleValue) || !("data" in moduleValue)) {
+    if (!moduleSchema || moduleSchema.kind === "custom") {
       return `简历草稿模块 ${moduleKey} 不符合字段契约`;
+    }
+    // 模块必须包一层 data，模型偶尔直接交裸数组，明确提示改写形式便于同轮修正。
+    if (!isRecord(moduleValue) || !("data" in moduleValue)) {
+      return `简历草稿模块 ${moduleKey} 缺少 data 外壳，请按 { "data": ... } 提交`;
     }
     const data = moduleValue.data;
     const activeSchema = resolveResumeModuleSchema(moduleSchema, data);
@@ -58,7 +62,16 @@ export const validateGeneratedResume = (value: unknown): string | null => {
       : activeSchema?.kind === "array" && Array.isArray(data) && data.every(isRecord)
         ? data
         : null;
-    if (!records || !activeSchema) return `简历草稿模块 ${moduleKey} 的数据形态无效`;
+    if (!records || !activeSchema) {
+      // 直接把契约允许的形态回给模型，避免只回「无效」导致下一轮继续猜。
+      const forms = (moduleSchema.variants?.length ? moduleSchema.variants : [moduleSchema])
+        .map((variant) => {
+          const requiredKeys = variant.fields.filter((field) => field.required).map((field) => field.key);
+          const shownKeys = requiredKeys.length ? requiredKeys : variant.fields.map((field) => field.key);
+          return variant.kind === "array" ? `记录数组 [{ ${shownKeys.join(", ")} }]` : `字段对象 { ${shownKeys.join(", ")} }`;
+        });
+      return `简历草稿模块 ${moduleKey} 的数据形态无效，请提交 ${[...new Set(forms)].join(" 或 ")}`;
+    }
     const fields = new Map(activeSchema.fields.map((field) => [field.key, field]));
     for (const record of records) {
       for (const [fieldKey, fieldValue] of Object.entries(record)) {
@@ -113,7 +126,17 @@ const createSubmitTool = (
     properties: {
       resume: {
         type: "object",
-        description: "按稳定模块 key 组织的完整简历草稿，每个模块包含 data 字段。",
+        description: '按稳定模块 key 组织的完整简历草稿，形如 {"work":{"data":[{"name":"XX公司"}]},"education":{"data":{}}}；每个模块必须是对象且包含 data 字段，不能直接提交数组或字段对象。',
+        // 模块键由本轮目标模块决定，统一约束为带 data 的对象，避免模型提交裸数组。
+        additionalProperties: {
+          type: "object",
+          properties: {
+            data: {
+              description: "模块业务数据：字段对象（如 { content: \"<p>…</p>\" }）或记录数组（如 [{ name: \"…\" }]），不要直接传字符串。",
+            },
+          },
+          required: ["data"],
+        },
       },
     },
     required: ["resume"],

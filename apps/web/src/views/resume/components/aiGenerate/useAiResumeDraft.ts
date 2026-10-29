@@ -1,5 +1,6 @@
 import { useAiStore, useResumeStore } from "@/stores";
 import { $t } from "@/locales";
+import { resolveResumeUi } from "@/domain/resume/theme/resumeUi";
 import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
 import { normalizeResumeData } from "@/views/resume/mine/resumeImportNormalizer";
 import { initializeDefaultAddedFields } from "@/stores/modules/resume/hooks/useConfigTemplate";
@@ -98,10 +99,15 @@ export const useAiResumeDraft = () => {
     generationWarnings.value = [];
     generating.value = true;
     try {
-      const skillLayout = sourceItem.value?.ui?.skill?.layout === "text" ? "text" : "proficiency";
+      // 入口没有来源样式时按默认主题展开，避免技能布局落到与主题不一致的形态。
+      const skillLayout = resolveResumeUi(sourceItem.value?.ui).skill.layout === "text" ? "text" : "proficiency";
+      // 技能两种形态的 data 结构不同，直接在要求里写明，避免模型把正文当成 data 本身。
+      const skillBrief = skillLayout === "text"
+        ? "专业技能使用富文本正文布局，data 为 { content: 富文本 HTML }"
+        : "专业技能使用技能列表布局，data 为 [{ name: 技能名称 }] 记录数组";
       // 新建入口只组合通用写作能力所需的资料、目标模块与补充要求。
       const result = await runResumeDraftGeneration({
-        brief: `只生成工作经历、项目经历、教育经历和专业技能四个模块，每个模块都要有实际内容。专业技能遵循当前模板的${skillLayout === "text" ? "富文本正文" : "技能列表"}布局；富文本字段使用合法 HTML。`, // 入口只声明生成模块与布局，通用规则由运行时提供。
+        brief: `只生成工作经历、项目经历、教育经历和专业技能四个模块，每个模块都要有实际内容。${skillBrief}；富文本字段使用合法 HTML。`, // 入口只声明生成模块与布局，通用规则由运行时提供。
         facts: `求职岗位：${input.position}\n工作年限：${input.workYears}\n更多补充：${input.supplement || "无"}`, // 用户提供的原始资料只通过读取工具传递。
         requiredModules: ["work", "project", "education", "skill"], // 本入口交由通用能力生成的业务模块。
         skillLayout, // 所选模板当前的专业技能布局。
