@@ -32,6 +32,8 @@ const resumeChildren: RouteRecordRaw[] = [
   // 我的简历页内嵌导入流程，预览按编辑器字段契约展示模块与字段名，需一并加载编辑器语言包
   { path: "mine", component: () => import("@/views/resume/mine/index.vue"), meta: { localeFiles: ["resume", "resume-editor"] } },
   { path: "ai", component: () => import("@/views/resume/settings/ai/index.vue") },
+  // AI 生成简历使用独立页面，复用弹窗入口的同一套生成流程。
+  { path: "generate", component: () => import("@/views/resume/generate/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },
   { path: "guide", component: () => import("@/views/resume/guide/index.vue") },
   // 求职工具从指南拆出独立入口，两个页面各自收录。

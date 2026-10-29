@@ -56,16 +56,21 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
   <router-view v-else-if="route.meta.hideResumeLayout" class="h-screen w-full" />
   <!-- 公开布局就绪标记供构建预渲染等待，不改变页面显示。 -->
   <main v-else :data-prerender-route="route.path" class="relative flex h-screen min-w-full flex-col bg-sf-page">
-    <!-- 首页使用独立顶部导航，其他页面使用工作区侧栏。 -->
-    <HomeNavigation v-if="isResumeHome" />
-    <ResumeHeader v-else />
-    <!-- 首页保持全宽，工作区为固定侧栏和窄屏顶部入口留出空间。 -->
-    <div
-      class="flex h-full min-w-0 w-full flex-1 flex-col overflow-hidden bg-sf-page text-sf-text"
-      :class="{ 'pt-12 md:pt-0 md:pl-54': !isResumeHome }"
-    >
-      <router-view class="flex-1 overflow-hidden" />
-      <!-- <SfFooter /> -->
+    <!-- 首页使用独立顶部导航，保持全宽。 -->
+    <template v-if="isResumeHome">
+      <HomeNavigation />
+      <div class="flex h-full min-w-0 w-full flex-1 flex-col overflow-hidden bg-sf-page text-sf-text">
+        <router-view class="flex-1 overflow-hidden" />
+        <!-- <SfFooter /> -->
+      </div>
+    </template>
+    <!-- 工作区由侧栏与内容并排撑开，侧栏宽度跟随内容，窄屏顶部入口在内容上留出高度。 -->
+    <div v-else class="flex min-h-0 flex-1 overflow-hidden bg-sf-page text-sf-text">
+      <ResumeHeader />
+      <div class="flex min-w-0 flex-1 flex-col overflow-hidden pt-12 md:pt-0">
+        <router-view class="flex-1 overflow-hidden" />
+        <!-- <SfFooter /> -->
+      </div>
     </div>
   </main>
   <!-- 编辑器由右侧工具轨承接分享与反馈入口，避免重复显示悬浮操作；打印预览页不挂悬浮入口。 -->

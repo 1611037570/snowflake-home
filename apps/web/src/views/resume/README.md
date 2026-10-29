@@ -11,12 +11,13 @@
 
 ## 目录职责
 
-- 简历首页独立使用 `main/homeNavigation.vue` 顶部导航并保持全宽，不复用工作区侧栏。其他非编辑器页面在桌面默认使用宽 216px 的固定左侧导航，功能按钮集中在侧栏底部；窄屏通过左侧抽屉访问同一组导航与底部功能。公共布局负责导航占位，各页面保留自身内容间距。
+- 简历首页独立使用 `main/homeNavigation.vue` 顶部栏并保持全宽，不复用工作区侧栏；顶部栏只保留品牌、功能按钮与右侧「开始使用」入口，栏目导航统一由工作区侧栏承担。其他非编辑器页面在桌面与侧栏并排展示，侧栏宽度由内容撑开，公共布局按 flex 分配空间、不写死侧栏宽度与内容偏移；功能按钮集中在侧栏底部；窄屏通过左侧抽屉访问同一组导航与底部功能。公共布局负责导航占位，各页面保留自身内容间距。
 - 工作区入口页标题统一使用 `text-lg font-semibold text-sf-text`，不额外展示栏目小字；说明文字统一使用 `mt-[6px] text-xs leading-6 text-sf-text-2`。
 
 | 位置 | 职责 |
 | --- | --- |
 | `main/`、`mine/` | 简历首页、列表、新建、导入与管理 |
+| `generate/` | AI 生成简历独立页面，生成流程与弹窗入口共用 `components/aiGenerate/` |
 | `editor/` | 表单编辑、预览、排版、导出与编辑器工具 |
 | `editor/components/header/learningCenter/` | 学习中心入口、分类与教程展示 |
 | `assistant/` | AI 助手的入口、流程、会话与改动展示，详见 [助手说明](assistant/README.md) |
@@ -69,6 +70,7 @@
 - 正文生成与改写统一使用 `packages/resume-agent/writingRules.ts`：`CONTENT_ACTION_RULES`（正文操作规则）、`getWritingRule`（按操作与类型取规则）和 `ASSISTANT_WRITING_RULES_TEXT`（助手写作约束）由同一事实源维护。
 - 导入解析忠实转换原文，面试快答生成口述答案；两者不按简历正文起草规则扩写。
 - Web 侧负责入口、引导和简历数据适配；请求、任务、技能与工具实现在智能体包中维护。页面不得直接调用模型实例。
+- AI 生成简历的输入、生成、预览与取消维护在 `components/aiGenerate/`，`components/aiResumeGenerator.vue` 提供弹窗形态、`generate/` 提供页面形态，两者共用同一流程；入口只负责带入来源样式与创建简历，不另写生成逻辑。
 - `assistant/useResumeAssistant.ts` 组装本轮能力，`assistant/flows.ts` 维护功能引导；任务规则和技能不能在页面重复定义。
 
 ### 读取、写入与撤回

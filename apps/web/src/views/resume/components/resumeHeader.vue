@@ -23,6 +23,11 @@ const navList = [
     icon: "mdi:file-document-outline", // 我的简历导航图标。
   },
   {
+    key: "resumeNavAiGenerate", // AI 生成入口文案标识。
+    path: "/resume/generate", // 独立生成页面，与新建入口共用同一套流程。
+    icon: "lucide:wand-sparkles", // AI 生成导航图标。
+  },
+  {
     key: "resumeNavAi", // 导航文案标识
     path: "/resume/ai", // 导航目标路径
     icon: "lucide:sparkles", // 人工智能导航图标。
@@ -64,27 +69,30 @@ watch([() => route.path, isMobile], () => {
 </script>
 
 <template>
-  <!-- 桌面侧栏固定为紧凑宽度，导航滚动与底部功能区分开。 -->
-  <aside class="fixed inset-y-0 left-0 z-50 hidden w-54 flex-col border-r border-sf-b bg-sf-primary text-sf-text md:flex">
+  <!-- 桌面侧栏宽度随内容撑开，导航滚动与底部功能区分开。 -->
+  <aside class="relative z-50 hidden h-full w-fit shrink-0 flex-col border-r border-sf-b bg-sf-primary text-sf-text md:flex">
+    <!-- 品牌区与顶部栏同高，标识在整条内居中，保留组件自带的圆角悬停底色。 -->
     <ProjectTitle
-      class="flex h-18 shrink-0 items-center border-b border-sf-b px-3 [&_.animate-pulse]:animate-none [&_a]:gap-3 [&_a]:rounded-none [&_a]:px-0 [&_a]:hover:bg-transparent [&_a>span]:font-semibold [&_a>span]:tracking-normal"
+      class="flex h-12 shrink-0 items-center justify-center border-b border-sf-b px-3 [&_.animate-pulse]:animate-none [&_a]:gap-3 [&_a>span]:font-semibold [&_a>span]:tracking-normal"
       url="/resume"
     />
-    <nav class="flex min-h-0 flex-1 flex-col gap-[6px] overflow-y-auto p-3" :aria-label="$t('resumeNavTitle')">
+    <!-- 栏目增至九项，压缩行高与间距让整列保持原有密度。 -->
+    <nav class="flex min-h-0 flex-1 flex-col gap-[3px] overflow-y-auto p-3" :aria-label="$t('resumeNavTitle')">
       <router-link
         v-for="(item, index) in navList"
         :key="item.path"
         :to="item.path"
-        class="flex shrink-0 items-center gap-3 rounded-lg px-3 py-3 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-sf-theme"
+        class="flex shrink-0 items-center justify-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-sf-theme"
         :class="index === activeNavIndex ? 'bg-sf-bg font-medium text-sf-text' : 'text-sf-text-2 hover:bg-sf-bg hover:text-sf-text'"
         :aria-current="index === activeNavIndex ? 'page' : undefined"
       >
-        <SfIcon :icon="item.icon" size="5" box-size="6" class="shrink-0 text-inherit!" />
+        <!-- 图标与文字保持小于品牌区，整项居中与品牌标识对齐。 -->
+        <SfIcon :icon="item.icon" size="4" box-size="5" class="shrink-0 text-inherit!" />
         <span class="min-w-0 break-words">{{ $t(item.key) }}</span>
       </router-link>
     </nav>
-    <!-- 完整交互区域继续由图标盒子承接，功能按钮统一放在侧栏底部。 -->
-    <footer class="flex shrink-0 items-center justify-between gap-3 border-t border-sf-b p-3">
+    <!-- 完整交互区域继续由图标盒子承接，功能按钮统一放在侧栏底部，由两端对齐分配间距。 -->
+    <footer class="flex shrink-0 items-center justify-between border-t border-sf-b p-3">
       <GithubStars size="5" :box-size="9" class="rounded-lg" />
       <SfTheme size="5" :box-size="9" class="flex h-9 w-9 items-center justify-center" />
       <SfLocale size="5" :box-size="9" class="flex h-9 w-9 items-center justify-center" />

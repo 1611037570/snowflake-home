@@ -156,6 +156,23 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
+    route: "/resume/generate", // 独立 AI 生成简历页面。
+    noindex: true, // 用户生成流程页面，不进入公开收录。
+    parentRoute: "/resume", // 所属产品首页。
+    locales: { // 两种界面语言的页面信息。
+      zh: { // 中文页面信息。
+        title: "AI 生成简历 - 填写岗位即可生成草稿 | 轻舟简历", // 浏览器标题。
+        description: "填写目标岗位与工作年限，AI 生成工作、项目、教育与技能等完整内容，确认后创建可编辑简历并继续排版。", // 页面功能说明。
+        keywords: "AI生成简历,简历生成器,在线简历制作", // 页面关键词。
+      },
+      en: { // 英文页面信息。
+        title: "AI Resume Generator - Draft from Your Target Role | Skiff Resume", // 浏览器标题。
+        description: "Describe your target role and work experience, let AI draft the main resume sections, then start editing after confirmation.", // 页面功能说明。
+        keywords: "AI resume generator,resume builder,online resume", // 页面关键词。
+      },
+    },
+  },
+  {
     route: "/resume/statistics",
     prerender: true, // 构建时预渲染原有公开页面。
     parentRoute: "/resume", // 所属产品首页。
