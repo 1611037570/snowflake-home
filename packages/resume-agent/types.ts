@@ -1,4 +1,5 @@
 import type { ResumeAgentCompletionPolicy } from "./runtime/types";
+import type { AgentSkill } from "@snowflake/agent";
 
 export type SkillRole =
   // 每轮对话始终提供的基础规则。
@@ -9,12 +10,7 @@ export type SkillRole =
   | "reference";
 
 // AI 技能定义：能力正文由 AI 层维护，助手仅负责选择和装配。
-export interface Skill {
-  id: string; // 技能稳定标识。
-  role: SkillRole; // 技能在任务规划与执行阶段承担的职责。
-  name: string; // 技能展示名称。
-  description: string; // 技能用途说明。
-  instructions: string; // 提供给模型的技能正文。
+export interface Skill extends AgentSkill {
   completionPolicy?: ResumeAgentCompletionPolicy; // 由运行时执行的任务完成策略。
 }
 

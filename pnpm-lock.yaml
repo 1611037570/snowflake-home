@@ -499,6 +499,9 @@ importers:
 
   packages/resume-agent:
     dependencies:
+      '@snowflake/agent':
+        specifier: workspace:*
+        version: link:../agent
       '@snowflake/ai':
         specifier: workspace:*
         version: link:../ai

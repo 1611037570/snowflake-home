@@ -1,6 +1,8 @@
 import type { ChatMessage, ReactConfig, ReactTool } from "@snowflake/ai";
 import type { SkillResource } from "../types";
-import { createResumeAiReactRunner } from "../request";
+import { createAgent } from "@snowflake/agent";
+import { getResumeAiModel } from "../request/client";
+import { getResumeAiMessage } from "../request/messages";
 import type { ResumeAiAgent } from "../request";
 import { resolveResumeAgentTaskProfile } from "../tasks/registry";
 import { createResumeAgentTaskRuntime } from "./resumeAgentTask";
@@ -65,16 +67,8 @@ export const createResumeAgentSession = async (
   options.assertActive?.();
   const taskProfile = options.taskProfile ?? await resolveResumeAgentTaskProfile(options.source);
   options.assertActive?.();
-  const guardTool = (tool: ReactTool): ReactTool => ({
-    ...tool,
-    // 失效请求不得继续读取或修改当前业务状态。
-    execute: (args) => {
-      options.assertActive?.();
-      return tool.execute(args);
-    },
-  });
   // 业务工具先于任务运行时准备好，规划阶段即可读到工具约束并据此推导验收要求。
-  const businessTools = options.tools.map(guardTool);
+  const businessTools = options.tools;
   const taskRuntime = createResumeAgentTaskRuntime({
     taskId: options.taskId,
     source: options.source,
@@ -92,32 +86,28 @@ export const createResumeAgentSession = async (
     onTrace: options.onTrace,
   });
   const tools = [
-    ...taskRuntime.controlTools.map(guardTool),
+    ...taskRuntime.controlTools,
     ...taskRuntime.wrapTools(businessTools),
   ];
-  const runner = createResumeAiReactRunner(options.agent ?? "xiaoZhou", {
-    ...options.reactConfig,
-    tools,
-    initialTool: "plan_resume_task",
-    beforeFinal: taskRuntime.beforeFinal,
-    onIncomplete: taskRuntime.onIncomplete,
-    onFinal: (answer) => options.onFinal?.(answer, taskRuntime.getTask()),
+  const model = getResumeAiModel(options.agent ?? "xiaoZhou");
+  if (!model?.apiKey || !model.url || !model.model) throw new Error(getResumeAiMessage("modelUnset"));
+  // 通用层只负责运行，简历专用的上下文、规划与完成证据仍由本包提供。
+  const runner = createAgent({
+    model, // 保留简历助手原有模型绑定与未配置提示。
+    tools, // 当前授权的简历业务工具及任务控制工具。
+    assertActive: options.assertActive, // 统一阻止失效请求调用工具。
+    instructions: taskRuntime.buildContext, // 仅简历智能体注入字段与写作规则。
+    reactConfig: {
+      ...options.reactConfig,
+      initialTool: "plan_resume_task", // 保留原有简历任务规划入口。
+      beforeFinal: taskRuntime.beforeFinal, // 保留简历业务完成证据校验。
+      onIncomplete: taskRuntime.onIncomplete, // 保留简历未完成结果处理。
+      onFinal: (answer) => options.onFinal?.(answer, taskRuntime.getTask()), // 保留任务快照回调。
+    }, // 简历行为不迁入通用智能体。
   });
 
   return {
-    run: (messages) => {
-      options.assertActive?.();
-      const requestMessages = messages.map((message) => ({ ...message }));
-      const requestIndex = requestMessages.map((message) => message.role).lastIndexOf("user");
-      if (requestIndex !== -1) {
-        // 任务运行上下文紧邻本轮用户消息，避免由页面层重复处理注入顺序。
-        requestMessages.splice(requestIndex, 0, {
-          role: "system",
-          content: taskRuntime.buildContext(),
-        });
-      }
-      return runner.run(requestMessages);
-    },
+    run: runner.run,
     abort: () => runner.abort(),
     getTask: taskRuntime.getTask,
   };

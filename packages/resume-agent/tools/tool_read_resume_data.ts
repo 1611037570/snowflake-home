@@ -3,7 +3,7 @@ import { defineTool } from "./defineTool";
 import type { ResumeToolContext } from "./tool_types";
 
 // 创建读取简历数据工具
-export const createReadResumeDataTool = (ctx: ResumeToolContext): ResumeAgentTool =>
+export const createReadResumeDataTool = (ctx: Pick<ResumeToolContext, "getResumeData">): ResumeAgentTool =>
   defineTool({
   name: "read_resume_data",
   description:

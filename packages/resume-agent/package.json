@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@snowflake/ai": "workspace:*",
+    "@snowflake/agent": "workspace:*",
     "@snowflake/resume-core": "workspace:*"
   },
   "devDependencies": {
