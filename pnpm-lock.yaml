@@ -497,6 +497,18 @@ importers:
         specifier: 5.9.3
         version: 5.9.3
 
+  packages/interview-agent:
+    dependencies:
+      '@snowflake/agent':
+        specifier: workspace:*
+        version: link:../agent
+      '@snowflake/ai':
+        specifier: workspace:*
+        version: link:../ai
+      '@snowflake/resume-core':
+        specifier: workspace:*
+        version: link:../resume-core
+
   packages/resume-agent:
     dependencies:
       '@snowflake/agent':
