@@ -3,16 +3,8 @@ import { ElMessage } from "element-plus";
 import { isAbortError } from "@/apis";
 import { useResumeStore } from "@/stores";
 import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailability";
-import {
-  CONTENT_REWRITE_TASK,
-  LANGUAGE_NAMES,
-  findResumeModuleSchema,
-  normalizeRichTextHtml,
-  richTextToPlainText,
-  runResumeAiTask,
-  type ContentAiAction,
-  type ContentRewriteInput,
-} from "@snowflake/resume-agent";
+import { CONTENT_REWRITE_TASK, LANGUAGE_NAMES, runResumeAiTask, type ContentAiAction, type ContentRewriteInput } from "@snowflake/resume-agent";
+import { findResumeModuleSchema, normalizeRichTextHtml, richTextToPlainText } from "@snowflake/resume-core";
 
 // 单个候选的生成状态
 type ContentCandidate = {

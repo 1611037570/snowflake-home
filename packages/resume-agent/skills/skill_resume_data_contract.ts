@@ -1,11 +1,11 @@
-import { isResumeMediaField } from "../schema/resumeMedia";
+import { isResumeMediaField } from "@snowflake/resume-core/schema/resumeMedia";
 import type {
   ResumeFieldSchema,
   ResumeModuleKind,
   ResumeModuleSchema,
   ResumeModuleVariantSchema,
-} from "../schema/resumeSchema";
-import { RESUME_SCHEMA } from "../schema/resumeSchemaRegistry";
+} from "@snowflake/resume-core/schema/resumeSchema";
+import { RESUME_SCHEMA } from "@snowflake/resume-core/schema/resumeSchemaRegistry";
 
 const DESCRIPTION =
   "本技能提供由当前简历表单结构自动生成的数据契约。当 AI 需要了解模块、字段、可添加字段、枚举值与时间或富文本格式时必须加载；不得臆造未声明字段。";

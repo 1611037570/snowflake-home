@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { findResumeModuleSchema, RESUME_SCHEMA } from "@snowflake/resume-agent";
-import { registerResumeAgentSchema } from "./resumeSchemaProvider";
+import { findResumeModuleSchema, RESUME_SCHEMA } from "@snowflake/resume-core";
+import { registerResumeSchema } from "@/views/resume/shared/resumeSchemaProvider";
 
 // 测试直接运行时显式装配 Web 表单字段契约。
-registerResumeAgentSchema();
+registerResumeSchema();
 
 describe("resumeSchemaRegistry", () => {
   it("从真实表单配置生成对象模块字段", () => {

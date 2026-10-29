@@ -7,7 +7,7 @@ import {
   DESENSITIZE_FIELD_OPTIONS,
   DESENSITIZE_PRESET_OPTIONS,
   normalizeDesensitizeFields,
-} from "@/stores/modules/resume/config/desensitizeConfig";
+} from "@snowflake/resume-core/privacy";
 
 const props = defineProps({
   modelValue: {

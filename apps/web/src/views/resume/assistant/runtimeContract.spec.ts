@@ -3,9 +3,9 @@ import { createResumeAgentTaskRuntime } from "@snowflake/resume-agent/runtime/re
 import { createProposeResumeEditsTool } from "@snowflake/resume-agent/tools/tool_propose_resume_edits";
 import { defineTool } from "@snowflake/resume-agent/tools/defineTool";
 import type { ResumeWriteOp } from "@snowflake/resume-agent";
-import { registerResumeAgentSchema } from "./context/resumeSchemaProvider";
+import { registerResumeSchema } from "@/views/resume/shared/resumeSchemaProvider";
 
-registerResumeAgentSchema();
+registerResumeSchema();
 
 // 运行内核测试：不调用模型，只用工具事实验证任务契约与验收口径
 const createRuntime = (options: Record<string, unknown> = {}) =>

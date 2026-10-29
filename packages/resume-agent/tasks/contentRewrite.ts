@@ -1,6 +1,6 @@
 import type { ResumeAiMessage, ResumeAiTask } from "../request/types";
 import { CANDIDATE_COMPLETION_RULE, RESUME_WRITING_DISCIPLINE, getWritingRule } from "../writingRules";
-import { findResumeModuleSchema } from "../schema/resumeSchemaRegistry";
+import { findResumeModuleSchema } from "@snowflake/resume-core/schema/resumeSchemaRegistry";
 import type { ContentAiAction } from "../types";
 
 export type { ContentAiAction } from "../types";

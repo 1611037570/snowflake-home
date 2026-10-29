@@ -16,7 +16,7 @@ import type { PagePlan } from "../engine/paginate/pagePlan";
 import { getExportLayoutStatus, type ExportLayoutMode } from "./exportLayout";
 import { trackResumeAction } from "@/hooks";
 import type { ResumeExportSource, ResumeFileType } from "@/apis";
-import type { DesensitizeField } from "@/stores/modules/resume/config/desensitizeConfig";
+import type { DesensitizeField } from "@snowflake/resume-core/privacy";
 /** useResumeExport 入参 */
 interface UseResumeExportOptions {
   /** 编辑态才注册导出事件，其余模式（缩略图/全屏预览）不注册 */

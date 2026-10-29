@@ -5,7 +5,7 @@ import { useResumeStore } from "@/stores";
 import {
   getDesensitizeSelectionName,
   normalizeDesensitizeFields,
-} from "@/stores/modules/resume/config/desensitizeConfig";
+} from "@snowflake/resume-core/privacy";
 import DesensitizeConfigModal from "@/views/resume/editor/components/desensitizeConfigModal.vue";
 
 const resumeStore = useResumeStore();

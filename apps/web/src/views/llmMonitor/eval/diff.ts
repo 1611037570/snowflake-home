@@ -1,4 +1,4 @@
-import { findResumeModuleSchema } from "@snowflake/resume-agent";
+import { findResumeModuleSchema } from "@snowflake/resume-core";
 import type { EvalChange, EvalResumeView } from "./types";
 
 // 单个值的展示长度上限，避免整段正文把对比面板撑爆

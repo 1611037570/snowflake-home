@@ -5,7 +5,7 @@ import {
   getValueAtPath,
   isMediaMark,
   mediaMark,
-} from "./config/mediaFields";
+} from "@snowflake/resume-core/mediaFields";
 
 type ResumeHistoryOptions = {
   currentItem: ComputedRef<any>;

@@ -1,14 +1,11 @@
-import {
-  configureResumeMediaFields,
-  configureResumeSchema,
-} from "@snowflake/resume-agent/host";
+import { configureResumeMediaFields, configureResumeSchema } from "@snowflake/resume-core/host";
 import { allConfig } from "@/stores/modules/resume/config/formConfig";
 import { RESUME_VALUE_OPTIONS } from "@/stores/modules/resume/config/resumeOptions";
-import { RESUME_MEDIA_FIELDS } from "@/stores/modules/resume/config/mediaFields";
-import { buildResumeSchema } from "./resumeSchemaSource";
+import { RESUME_MEDIA_FIELDS } from "@snowflake/resume-core/mediaFields";
+import { buildResumeSchema } from "@/views/resume/shared/resumeSchemaSource";
 
-// 从 Web 表单配置生成简历 Agent 使用的字段契约。
-export const registerResumeAgentSchema = () => {
+// 从 Web 表单配置生成公共简历字段契约，不依赖任何业务智能体。
+export const registerResumeSchema = () => {
   // 表单 DSL 只在 Web 侧解析，领域包只接收已经生成的简历 Schema。
   configureResumeSchema(
     buildResumeSchema(
@@ -16,7 +13,7 @@ export const registerResumeAgentSchema = () => {
       RESUME_VALUE_OPTIONS,
     ),
   );
-  // 媒体字段沿用简历 Store 的唯一声明，供 Agent 统一禁止读写。
+  // 媒体裁剪与智能体只读判断共用公共字段声明。
   configureResumeMediaFields(
     RESUME_MEDIA_FIELDS.map(({ moduleKey, field }) => ({ moduleKey, field })),
   );

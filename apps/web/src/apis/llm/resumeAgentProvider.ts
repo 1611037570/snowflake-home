@@ -7,9 +7,8 @@ import type { ResumeAiAgent } from "@snowflake/resume-agent";
 import { useAiStore } from "@/stores";
 import { $t } from "@/locales";
 import { getResumeParseLLM, getXiaoYangLLM, getXiaoZhouLLM } from ".";
-import { registerResumeAgentSchema } from "@/views/resume/assistant/context/resumeSchemaProvider";
 
-// 宿主接管简历 Agent 的模型、文案、字段契约与媒体声明，领域包不反向读取 Web 实现。
+// 宿主只接管简历智能体的模型与文案，公共简历字段独立注册。
 export const registerResumeAgentHost = () => {
   configureResumeAiModelProvider({
     getModel: (agent: ResumeAiAgent) => {
@@ -47,5 +46,4 @@ export const registerResumeAgentHost = () => {
   configureResumeAiMessageProvider({
     translate: (key, params) => $t(localeKeys[key], params),
   });
-  registerResumeAgentSchema();
 };

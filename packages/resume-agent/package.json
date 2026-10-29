@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@snowflake/ai": "workspace:*",
-    "dompurify": "3.4.13"
+    "@snowflake/resume-core": "workspace:*"
   },
   "devDependencies": {
     "vitest": "^4.0.14"

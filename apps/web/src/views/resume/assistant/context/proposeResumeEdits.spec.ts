@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { createProposeResumeEditsTool } from "@snowflake/resume-agent/tools/tool_propose_resume_edits";
-import { registerResumeAgentSchema } from "./resumeSchemaProvider";
+import { registerResumeSchema } from "@/views/resume/shared/resumeSchemaProvider";
 
-registerResumeAgentSchema();
+registerResumeSchema();
 
 describe("createProposeResumeEditsTool", () => {
   it("校验通过后只向领域入口提交一次完整操作列表", () => {

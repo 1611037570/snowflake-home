@@ -1,4 +1,5 @@
-import { findResumeModuleSchema, parseResumeReport } from "@snowflake/resume-agent";
+import { findResumeModuleSchema } from "@snowflake/resume-core";
+import { parseResumeReport } from "@snowflake/resume-agent";
 import type { EvalAssertion, EvalAssertionContext, EvalAssertionResult } from "./types";
 
 // 身份资料字段：这些值只能来自用户原始简历，模型不得自行创造

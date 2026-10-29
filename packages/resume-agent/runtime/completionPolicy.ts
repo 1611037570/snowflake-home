@@ -6,7 +6,7 @@ import type {
   ResumeAgentToolRuntimeMeta,
 } from "./types";
 import type { ResumeAgentIncompleteReason, ResumeAgentTaskEvidence } from "./taskTypes";
-import { findResumeModuleSchema } from "../schema/resumeSchemaRegistry";
+import { findResumeModuleSchema } from "@snowflake/resume-core/schema/resumeSchemaRegistry";
 import {
   collectLatestSuccessfulFacts,
   findLatestActualChangeEvidence,

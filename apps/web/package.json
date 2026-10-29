@@ -31,6 +31,7 @@
   "dependencies": {
     "@snowflake/ai": "workspace:*",
     "@snowflake/resume-agent": "workspace:*",
+    "@snowflake/resume-core": "workspace:*",
     "@iconify-vue/akar-icons": "^1.0.3",
     "@iconify-vue/basil": "^1.0.3",
     "@iconify-vue/bi": "^1.0.4",

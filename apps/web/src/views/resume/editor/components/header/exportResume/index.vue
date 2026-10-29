@@ -10,7 +10,7 @@ import { $t } from "@/locales";
 import {
   getDesensitizeSelectionName,
   normalizeDesensitizeFields,
-} from "@/stores/modules/resume/config/desensitizeConfig";
+} from "@snowflake/resume-core/privacy";
 import DesensitizeConfigModal from "@/views/resume/editor/components/desensitizeConfigModal.vue";
 
 const visible = ref(false);

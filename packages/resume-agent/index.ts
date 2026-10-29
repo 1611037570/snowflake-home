@@ -15,22 +15,6 @@ export type {
   RunResumeAiTaskOptions,
 } from "./request";
 export type { ResumeDataContext } from "./context/types";
-export { normalizeRichTextHtml, richTextToPlainText } from "./format/normalizeRichText";
-export { RICH_TEXT_SANITIZE_CONFIG } from "./format/richTextSanitize";
-export {
-  RESUME_SCHEMA,
-  findResumeModuleSchema,
-} from "./schema/resumeSchemaRegistry";
-export { getResumeModuleSchema, resolveResumeModuleSchema } from "./schema/resumeSchema";
-export { isResumeMediaField } from "./schema/resumeMedia";
-export type {
-  ResumeFieldFormat,
-  ResumeFieldSchema,
-  ResumeFieldValueType,
-  ResumeModuleKind,
-  ResumeModuleSchema,
-  ResumeModuleVariantSchema,
-} from "./schema/resumeSchema";
 export { CONTENT_REWRITE_TASK, LANGUAGE_NAMES } from "./tasks/contentRewrite";
 export type { ContentRewriteInput } from "./tasks/contentRewrite";
 export { runResumeDraftGeneration } from "./tasks/resumeDraftGeneration";

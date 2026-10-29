@@ -2,7 +2,8 @@ import {
   executeResumeOperations,
   type ResumeOperationTarget,
 } from "@/stores/modules/resume/resumeOperations";
-import { findResumeModuleSchema, type ResumeToolContext } from "@snowflake/resume-agent";
+import { findResumeModuleSchema } from "@snowflake/resume-core";
+import { type ResumeToolContext } from "@snowflake/resume-agent";
 import type { EvalResumeView } from "./types";
 
 // 评测沙箱：所有读写只落在快照副本上，不影响用户正在编辑的简历

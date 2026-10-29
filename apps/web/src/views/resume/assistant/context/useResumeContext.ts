@@ -1,11 +1,12 @@
 import { useResumeStore } from "@/stores";
 import { storeToRefs } from "pinia";
-import { omitMediaFromData } from "@/stores/modules/resume/config/mediaFields";
+import { omitMediaFromData } from "@snowflake/resume-core/mediaFields";
 import {
   normalizeDesensitizeFields,
   type DesensitizeField,
-} from "@/stores/modules/resume/config/desensitizeConfig";
-import { findResumeModuleSchema, type ResumeDataContext } from "@snowflake/resume-agent";
+} from "@snowflake/resume-core/privacy";
+import { findResumeModuleSchema } from "@snowflake/resume-core";
+import { type ResumeDataContext } from "@snowflake/resume-agent";
 import { isContentEmpty } from "@/views/resume/shared/validData";
 
 // 按字段路径读取模块当前生效的数据形态

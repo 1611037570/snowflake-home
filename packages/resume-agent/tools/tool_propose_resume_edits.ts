@@ -1,6 +1,6 @@
 import type { ResumeWriteOp } from "./resumeOperations";
 import { RESUME_AGENT_FACTS, type ResumeAgentTool, type ResumeAgentVerifiedChange } from "../runtime/types";
-import { findResumeModuleSchema } from "../schema/resumeSchemaRegistry";
+import { findResumeModuleSchema } from "@snowflake/resume-core/schema/resumeSchemaRegistry";
 import { defineTool } from "./defineTool";
 import { getResumeEditValidationIssues, normalizeResumeEdits } from "./resumeEdits";
 import { PROPOSE_RESUME_EDITS_RULE, TOOL_ARGUMENT_RULE } from "./promptRules";

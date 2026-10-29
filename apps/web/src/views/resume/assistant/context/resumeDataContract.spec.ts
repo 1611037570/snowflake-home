@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { resumeDataContract } from "@snowflake/resume-agent/skills/skill_resume_data_contract";
-import { registerResumeAgentSchema } from "./resumeSchemaProvider";
+import { registerResumeSchema } from "@/views/resume/shared/resumeSchemaProvider";
 
-registerResumeAgentSchema();
+registerResumeSchema();
 
 describe("resumeDataContract", () => {
   it("从当前领域结构生成模块和字段契约", () => {

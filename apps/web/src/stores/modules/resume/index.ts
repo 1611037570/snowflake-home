@@ -18,7 +18,7 @@ import type { ResumeListItem } from "./resumeCatalog";
 import { createResumeListItem } from "./resumeCatalog";
 import { loadResumeTemplateData } from "@/views/resume/template/data/resumeData";
 import { compactResumeUi, resolveResumeUi } from "@/domain/resume/theme/resumeUi";
-import type { DesensitizeConfig } from "./config/desensitizeConfig";
+import type { DesensitizeConfig } from "@snowflake/resume-core/privacy";
 
 export const useResumeStore = defineStore(
   "resume",

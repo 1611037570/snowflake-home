@@ -3,7 +3,7 @@ import { createResumeAgentToolExecution } from "../runtime/toolExecution";
 import type { ResumeAgentTaskState } from "../runtime/taskTypes";
 import type { ResumeAgentTool } from "../runtime/types";
 import { validateResumeReportChanges } from "../reports/resumeReport";
-import { configureResumeSchema, RESUME_SCHEMA } from "../schema/resumeSchemaRegistry";
+import { configureResumeSchema, RESUME_SCHEMA } from "@snowflake/resume-core/schema/resumeSchemaRegistry";
 import { validateGeneratedResume } from "../tasks/resumeDraftGeneration";
 
 describe("简历智能体执行边界", () => {

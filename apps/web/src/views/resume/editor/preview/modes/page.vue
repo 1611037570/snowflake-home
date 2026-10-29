@@ -17,7 +17,7 @@ import {
 import eventBus from "@/utils/modules/eventBus";
 import { layoutUsesColumns, resolveLayoutColumns } from "@/domain/resume/theme/layouts";
 import { resolveThemeDecisions } from "@/views/resume/theme";
-import { createDesensitizedResumeItem } from "@/stores/modules/resume/config/desensitizeConfig";
+import { createDesensitizedResumeItem } from "@snowflake/resume-core/privacy";
 
 defineOptions({ name: "ResumePage" });
 

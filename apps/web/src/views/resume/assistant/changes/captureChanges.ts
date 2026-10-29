@@ -1,5 +1,5 @@
-import { findResumeModuleSchema } from "@snowflake/resume-agent";
-import { isResumeMediaField } from "@/stores/modules/resume/config/mediaFields";
+import { findResumeModuleSchema } from "@snowflake/resume-core";
+import { isResumeMediaField } from "@snowflake/resume-core/mediaFields";
 import type { ResumeOperationObserver } from "@/stores/modules/resume/resumeOperations";
 import type { ResumeChange, ResumeChangeCallbacks, ResumeFieldChange } from "./types";
 import { toChangeText } from "./textDiff";

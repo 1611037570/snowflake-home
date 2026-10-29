@@ -1,8 +1,8 @@
-import { isResumeMediaField } from "../schema/resumeMedia";
-import type { ResumeFieldSchema } from "../schema/resumeSchema";
-import { findResumeModuleSchema } from "../schema/resumeSchemaRegistry";
+import { isResumeMediaField } from "@snowflake/resume-core/schema/resumeMedia";
+import type { ResumeFieldSchema } from "@snowflake/resume-core/schema/resumeSchema";
+import { findResumeModuleSchema } from "@snowflake/resume-core/schema/resumeSchemaRegistry";
 import type { ResumeWriteOp } from "./resumeOperations";
-import { normalizeRichTextHtml } from "../format/normalizeRichText";
+import { normalizeRichTextHtml } from "@snowflake/resume-core/format/normalizeRichText";
 
 export type ResumeEditValidationIssue = {
   // 原始写操作下标，从零开始；无法定位时为空

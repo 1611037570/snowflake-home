@@ -5,9 +5,9 @@ import type { ResumeAgentTool } from "../runtime/types";
 import { resumeDataContract } from "../skills/skill_resume_data_contract";
 import { resumeWriting } from "../skills/skill_resume_writing";
 import { createSkillReferenceTool } from "../tools/skillLoader";
-import { isResumeMediaField } from "../schema/resumeMedia";
-import { getResumeModuleSchema, resolveResumeModuleSchema } from "../schema/resumeSchema";
-import { RESUME_SCHEMA } from "../schema/resumeSchemaRegistry";
+import { isResumeMediaField } from "@snowflake/resume-core/schema/resumeMedia";
+import { getResumeModuleSchema, resolveResumeModuleSchema } from "@snowflake/resume-core/schema/resumeSchema";
+import { RESUME_SCHEMA } from "@snowflake/resume-core/schema/resumeSchemaRegistry";
 import { validateFieldValue } from "../tools/resumeEdits";
 
 // 通用简历草稿输入：由功能入口组合生成要求与目标模块。

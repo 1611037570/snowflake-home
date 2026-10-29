@@ -1,5 +1,5 @@
 import DOMPurify from "dompurify";
-import { RICH_TEXT_SANITIZE_CONFIG } from "@snowflake/resume-agent";
+import { RICH_TEXT_SANITIZE_CONFIG } from "@snowflake/resume-core";
 import type { BreakPoint } from "../types";
 
 /** 富文本块的基础信息 */

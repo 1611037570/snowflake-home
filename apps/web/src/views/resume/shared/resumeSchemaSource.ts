@@ -4,14 +4,7 @@ import {
   unwrapField,
 } from "@/components/business/dynamicForm/api";
 import type { FormField, ModelBinding } from "@/components/business/dynamicForm/api";
-import type {
-  ResumeFieldFormat,
-  ResumeFieldSchema,
-  ResumeFieldValueType,
-  ResumeModuleKind,
-  ResumeModuleSchema,
-  ResumeModuleVariantSchema,
-} from "@snowflake/resume-agent";
+import type { ResumeFieldFormat, ResumeFieldSchema, ResumeFieldValueType, ResumeModuleKind, ResumeModuleSchema, ResumeModuleVariantSchema } from "@snowflake/resume-core";
 
 export type ResumeSchemaSource = {
   // 模块稳定标识
