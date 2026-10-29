@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@snowflake/ai": "workspace:*",
+    "@snowflake/interview-agent": "workspace:*",
     "@snowflake/resume-agent": "workspace:*",
     "@snowflake/resume-core": "workspace:*",
     "@iconify-vue/akar-icons": "^1.0.3",

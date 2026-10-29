@@ -267,6 +267,9 @@ importers:
       '@snowflake/ai':
         specifier: workspace:*
         version: link:../../packages/ai
+      '@snowflake/interview-agent':
+        specifier: workspace:*
+        version: link:../../packages/interview-agent
       '@snowflake/resume-agent':
         specifier: workspace:*
         version: link:../../packages/resume-agent
