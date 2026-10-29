@@ -13,8 +13,8 @@ const { applications, followUps, isLanded } = storeToRefs(statisticsStore);
 
 <template>
   <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
-    <div class="mt-2 flex w-full min-w-0 items-center justify-between px-3 sm:px-6">
-      <h2 class="text-[20px] font-black text-sf-theme">{{ $t("resumeStatisticsTitle") }}</h2>
+    <div class="mt-3 flex w-full min-w-0 items-center justify-between px-3">
+      <h1 class="text-lg font-semibold text-sf-text">{{ $t("resumeStatisticsTitle") }}</h1>
     </div>
     <SfScrollbar class="flex-1" flush>
       <div class="flex h-full flex-col gap-3 px-3 py-1">

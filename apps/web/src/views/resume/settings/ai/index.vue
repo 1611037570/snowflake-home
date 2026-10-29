@@ -8,9 +8,8 @@ import AiProviderSettingsContent from "../../editor/toolbar/modules/ai/content.v
     <main class="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 p-3 text-sf-text">
       <header class="flex shrink-0 flex-wrap items-center justify-between gap-3">
         <div>
-          <p class="text-xs font-semibold text-sf-theme">{{ $t("resumeSettingsModelTitle") }}</p>
-          <h1 class="mt-3 text-2xl font-bold">{{ $t("resumeNavAi") }}</h1>
-          <p class="mt-3 max-w-3xl text-sm leading-6 text-sf-text-2">
+          <h1 class="text-lg font-semibold text-sf-text">{{ $t("resumeNavAi") }}</h1>
+          <p class="mt-[6px] max-w-3xl text-xs leading-6 text-sf-text-2">
             {{ $t("resumeSettingsModelDescription") }}
           </p>
         </div>

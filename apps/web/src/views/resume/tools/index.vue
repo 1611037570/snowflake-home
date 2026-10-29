@@ -8,8 +8,7 @@
     <main class="mx-auto w-full max-w-7xl p-3 text-sf-text">
       <header>
         <div class="flex flex-wrap items-center gap-3">
-          <h1 class="text-lg font-semibold">{{ $t("resumeGuideToolsTitle") }}</h1>
-          <span class="text-xs text-sf-text-3">{{ $t("resumeToolsEyebrow") }}</span>
+          <h1 class="text-lg font-semibold text-sf-text">{{ $t("resumeGuideToolsTitle") }}</h1>
         </div>
         <p class="mt-[6px] max-w-3xl text-xs leading-6 text-sf-text-2">
           {{ $t("resumeGuideToolsDescription") }}

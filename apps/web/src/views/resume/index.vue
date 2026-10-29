@@ -3,6 +3,7 @@ import { useResumeStatisticsStore, useResumeStore } from "@/stores";
 import LoadingComponent from "@views/status/loading.vue";
 import { useRoute, useRouter } from "vue-router";
 import ResumeHeader from "./components/resumeHeader.vue";
+import HomeNavigation from "./main/homeNavigation.vue";
 import IssueFeedback from "./components/issueFeedback.vue";
 import Share from "./components/share.vue";
 import { $t } from "@/locales";
@@ -53,11 +54,13 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
   <router-view v-else-if="route.meta.hideResumeLayout" class="h-screen w-full" />
   <!-- 公开布局就绪标记供构建预渲染等待，不改变页面显示。 -->
   <main v-else :data-prerender-route="route.path" class="relative flex h-screen min-w-full flex-col bg-sf-page">
-    <ResumeHeader />
-    <!-- 公共布局只补偿固定导航高度，各页面自行控制内容间距。 -->
+    <!-- 首页使用独立顶部导航，其他页面使用工作区侧栏。 -->
+    <HomeNavigation v-if="route.path === '/resume'" />
+    <ResumeHeader v-else />
+    <!-- 首页保持全宽，工作区为固定侧栏和窄屏顶部入口留出空间。 -->
     <div
-      class="flex h-full w-full flex-1 flex-col overflow-hidden bg-sf-page text-sf-text"
-      :class="{ 'pt-12': route.path !== '/resume' }"
+      class="flex h-full min-w-0 w-full flex-1 flex-col overflow-hidden bg-sf-page text-sf-text"
+      :class="{ 'pt-12 md:pt-0 md:pl-54': route.path !== '/resume' }"
     >
       <router-view class="flex-1 overflow-hidden" />
       <!-- <SfFooter /> -->

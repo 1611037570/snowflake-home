@@ -44,11 +44,10 @@ function scrollToGuide(index: number) {
 <template>
   <SfScrollbar class="h-full bg-sf-page" flush>
     <main class="mx-auto w-full max-w-7xl p-3 text-sf-text">
-      <!-- 标题与手册标记同行，压缩页头高度，把空间留给正文。 -->
+      <!-- 页头统一使用正文色标题与次级说明，不额外展示栏目小字。 -->
       <header>
         <div class="flex flex-wrap items-center gap-3">
-          <h1 class="text-lg font-semibold">{{ $t("resumeGuideTitle") }}</h1>
-          <span class="text-xs text-sf-text-3">{{ $t("resumeGuideEyebrow") }}</span>
+          <h1 class="text-lg font-semibold text-sf-text">{{ $t("resumeGuideTitle") }}</h1>
         </div>
         <p class="mt-[6px] max-w-3xl text-xs leading-6 text-sf-text-2">
           {{ $t("resumeGuideDescription") }}
