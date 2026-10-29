@@ -25,6 +25,11 @@ export const getInterviewSessionState = (session: InterviewSession) => {
   const remainingSeconds = Math.max(0, Math.ceil(INTERVIEW_INTRO_SECONDS - (latestTurn?.durationSeconds || 0)));
   const canSubmit = session.status === "active" && answerReady && !generating && session.pendingAction === null;
   const canAnswer = canSubmit && (!introduction || remainingSeconds > 0);
+  // 推进与请求权限使用同一份状态，避免操作入口再次遍历历史并重复判断。
+  const nextAction: InterviewAction | null = session.status === "completed" ? null
+    : preparation ? "preparation"
+    : reviewing || isInterviewComplete(session.config, submittedTurns) ? "report"
+    : answerReady ? null : "question";
   return {
     latestTurn, // 当前待完成或最近提交的轮次。
     submittedTurns, // 唯一允许进入模型历史的已提交轮次。
@@ -37,26 +42,9 @@ export const getInterviewSessionState = (session: InterviewSession) => {
     canSubmit, // 是否允许确认提交或明确跳过，到时后仍可提交。
     canAnswer, // 是否允许文字或语音继续写入草稿。
     canUseHelp: canAnswer && !introduction, // 正式作答时才能打开辅助。
+    canRequestHelp: answerReady && !introduction && (session.pendingAction === null || isInterviewHelperAction(session.pendingAction)), // 当前题就绪时可请求或重试辅助。
+    nextAction, // 开始、提交、恢复共用的下一步动作，已就绪题目直接作答。
   };
-};
-
-// 开始、提交与恢复共用下一步决策，避免重出已就绪的题目。
-export const getNextInterviewAction = (session: InterviewSession): InterviewAction | null => {
-  if (session.status === "completed") return null;
-  const state = getInterviewSessionState(session);
-  if (state.preparation) return "preparation";
-  if (state.reviewing || isInterviewComplete(session.config, state.submittedTurns)) return "report";
-  return !state.latestTurn || state.latestTurn.submitted || state.latestTurn.question.status !== "complete" ? "question" : null;
-};
-
-// 辅助可以在暂停后重试；进入复盘或当前题未就绪时不允许穿插其他请求。
-export const canRequestInterviewAction = (session: InterviewSession, action: InterviewAction) => {
-  const state = getInterviewSessionState(session);
-  if (session.status === "completed" || state.generating) return false;
-  if (isInterviewHelperAction(action)) {
-    return state.answerReady && !state.introduction && (session.pendingAction === null || isInterviewHelperAction(session.pendingAction));
-  }
-  return getNextInterviewAction(session) === action;
 };
 
 // 只提交实际完成的历史，未提交题目与草稿不混入复盘或能力评价。

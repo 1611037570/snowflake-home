@@ -6,7 +6,7 @@ import type { InterviewAction, InterviewConfig } from "@snowflake/interview-agen
 import type { ResumeSnapshot } from "@snowflake/resume-core";
 import { getUUID } from "@/utils";
 import { INTERVIEW_INTRO_PHASE, INTERVIEW_INTRO_SECONDS, createInterviewOutput, createInterviewTurn, getInterviewLocalReply, getInterviewCompletedCount, getInterviewPhase, getModeLabel, isInterviewComplete } from "./config";
-import { canRequestInterviewAction, createInterviewTaskInput, getInterviewOutput, getInterviewSessionState, getNextInterviewAction, isInterviewHelperAction } from "./sessionFlow";
+import { createInterviewTaskInput, getInterviewOutput, getInterviewSessionState, isInterviewHelperAction } from "./sessionFlow";
 import { useInterviewStore } from "./storage";
 import type { InterviewOutput, InterviewSession } from "./types";
 
@@ -76,7 +76,9 @@ export const useInterviewSession = () => {
   const request = async (action: InterviewAction) => {
     const session = current.value;
     const sessionState = state.value;
-    if (disposed || !session || !sessionState || !canRequestInterviewAction(session, action)) return;
+    if (disposed || !session || !sessionState || session.status === "completed" || sessionState.generating) return;
+    // 当前动作只读取已派生的权限，不再另算一套推进状态。
+    if (isInterviewHelperAction(action) ? !sessionState.canRequestHelp : sessionState.nextAction !== action) return;
     settleTime();
     let turn = session.turns.at(-1);
     if (action === "question" && (!turn || turn.submitted)) {
@@ -170,7 +172,7 @@ export const useInterviewSession = () => {
       pendingAction: null, // 初始动作由统一流程决策后写入。
       endedEarly: false, // 尚未提前结束。
     };
-    const action = getNextInterviewAction(session);
+    const action = getInterviewSessionState(session).nextAction;
     session.pendingAction = action;
     store.sessions.unshift(session);
     currentId.value = session.id;
@@ -192,7 +194,7 @@ export const useInterviewSession = () => {
     lastTick = Date.now();
     // 辅助生成中断后可以直接继续作答，需要时再打开辅助重新生成。
     if (isInterviewHelperAction(session.pendingAction)) session.pendingAction = null;
-    const action = getNextInterviewAction(session);
+    const action = state.value?.nextAction;
     if (action) await request(action);
     else save(session);
   };
@@ -208,7 +210,7 @@ export const useInterviewSession = () => {
     turn.skipped = skip;
     turn.submitted = true;
     session.draft = "";
-    session.pendingAction = getNextInterviewAction(session);
+    session.pendingAction = state.value?.nextAction ?? null;
     save(session);
     if (session.pendingAction) await request(session.pendingAction);
   };
