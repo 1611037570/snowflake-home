@@ -9,6 +9,8 @@ import Share from "./components/share.vue";
 import { $t } from "@/locales";
 
 const route = useRoute();
+// 忽略地址末尾斜杠，首页导航与内容占位使用同一判断。
+const isResumeHome = computed(() => route.path.replace(/\/+$/, "") === "/resume");
 const router = useRouter();
 const resumeStore = useResumeStore();
 const resumeReady = ref(false);
@@ -55,12 +57,12 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
   <!-- 公开布局就绪标记供构建预渲染等待，不改变页面显示。 -->
   <main v-else :data-prerender-route="route.path" class="relative flex h-screen min-w-full flex-col bg-sf-page">
     <!-- 首页使用独立顶部导航，其他页面使用工作区侧栏。 -->
-    <HomeNavigation v-if="route.path === '/resume'" />
+    <HomeNavigation v-if="isResumeHome" />
     <ResumeHeader v-else />
     <!-- 首页保持全宽，工作区为固定侧栏和窄屏顶部入口留出空间。 -->
     <div
       class="flex h-full min-w-0 w-full flex-1 flex-col overflow-hidden bg-sf-page text-sf-text"
-      :class="{ 'pt-12 md:pt-0 md:pl-54': route.path !== '/resume' }"
+      :class="{ 'pt-12 md:pt-0 md:pl-54': !isResumeHome }"
     >
       <router-view class="flex-1 overflow-hidden" />
       <!-- <SfFooter /> -->

@@ -81,7 +81,8 @@ try {
   } catch (error) {
     throw new Error(`无法启动预渲染浏览器，请先执行 pnpm --filter @snowflake/web exec playwright install chromium。${error.message}`);
   }
-  for (const route of manifest.routes) {
+  // 同时最多渲染两个页面，减少串行等待并限制浏览器内存占用。
+  const renderRoute = async (route) => {
     // 每个页面使用全新上下文，不载入用户配置、目录授权、模型或投递记录。
     const context = await browser.newContext({
       viewport: { width: 1440, height: 900 }, // 统一公开页面的初始布局尺寸。
@@ -103,12 +104,18 @@ try {
       });
       const page = await context.newPage();
       await page.goto(`${origin}${base}${route}`, { waitUntil: "domcontentloaded", timeout: 60000 });
-      // 等待真实路由、数据初始化和模板首批加载完成，不把加载骨架保存为正文。
+      // 等待真实路由及可见内容加载完成，屏幕外的懒加载缩略图不阻塞预渲染。
       await page.waitForFunction((path) => {
         const layout = document.querySelector("[data-prerender-route]");
         return layout?.getAttribute("data-prerender-route") === path
           && document.querySelector("#app h1, #app h2")
-          && !document.querySelector('#app [aria-busy="true"]');
+          && [...layout.querySelectorAll('[aria-busy="true"]')].every((element) => {
+            const bounds = element.getBoundingClientRect();
+            // 未显示或尚未进入视口的加载占位不会影响当前首屏内容。
+            return bounds.width <= 0 || bounds.height <= 0
+              || bounds.bottom <= 0 || bounds.top >= window.innerHeight
+              || bounds.right <= 0 || bounds.left >= window.innerWidth;
+          });
       }, route, { timeout: 60000 });
       const snapshot = await page.evaluate(async () => {
         await document.fonts.ready;
@@ -144,6 +151,12 @@ try {
     } finally {
       await context.close();
     }
+  };
+  for (let index = 0; index < manifest.routes.length; index += 2) {
+    // 同批页面全部结束后再继续或退出，避免失败时提前关闭仍在使用的浏览器。
+    const results = await Promise.allSettled(manifest.routes.slice(index, index + 2).map(renderRoute));
+    const failure = results.find((result) => result.status === "rejected");
+    if (failure) throw failure.reason;
   }
 } finally {
   await browser?.close();
