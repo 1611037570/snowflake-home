@@ -143,7 +143,7 @@ const openTrash = async () => {
   await resumeStore.loadTrashResumes();
   trashReady.value = true;
 };
-// 顶部入口样式：沿用编辑器「导出简历」入口的胶囊与悬停手感，底色改用卡片色以免与页底同色
+// 页头按钮恢复原有胶囊外观与主题色悬停反馈。
 const entryButtonClass =
   "flex h-9 cursor-pointer items-center gap-1 rounded-3xl border border-sf-b bg-sf-primary p-1 px-2 text-sm transition-colors hover:bg-sf-theme hover:text-white";
 
@@ -179,35 +179,36 @@ const handleClearTrash = () => {
 </script>
 
 <template>
-  <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
-    <!-- 标题与操作栏：回收站收进右侧弹窗入口，不再与草稿并列成标签 -->
-    <div class="mt-2 flex w-full min-w-0 flex-wrap items-center justify-between gap-3 px-3 sm:flex-nowrap sm:px-6">
-      <SfSpan :active="true" class="flex-c h-10 text-[15px] font-extrabold">
-        {{ $t("resumeMineDraftsCount", { current: list.length, max: maxCount }) }}
-      </SfSpan>
-      <div class="flex flex-wrap gap-3">
-        <div :class="[entryButtonClass, 'group']" @click="openTrash">
-          <SfIcon icon="lucide:trash-2" size="4" />
-          <span>{{ $t("resumeMineTrash") }}</span>
-          <span class="text-xs opacity-70 group-hover:opacity-100">{{ trashCount }}</span>
-        </div>
-        <!-- 走组件插槽覆盖入口样式，避免改动组件内部默认按钮影响编辑器侧栏 -->
+  <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col">
+    <!-- 页头直接展示操作，自身内边距承担列表间距，避免额外间隙叠加。 -->
+    <header class="flex min-w-0 flex-wrap items-center justify-between gap-3 p-3">
+      <div class="flex min-w-0 flex-wrap items-center gap-3">
+        <h1 class="text-lg font-semibold text-sf-text">{{ $t("resumeNavMyResumes") }}</h1>
+        <!-- 草稿数量使用主文字色，保证深色背景下的对比度。 -->
+        <span class="border-l border-sf-b pl-3 text-sm text-sf-text">{{ $t("resumeMineDraftsCount", { current: list.length, max: maxCount }) }}</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
         <ImportResume>
           <template #trigger="{ open }">
-            <div :class="entryButtonClass" @click="open">
+            <button type="button" :class="entryButtonClass" @click="open">
               <SfIcon icon="fa6-solid:file-import" size="4" />
               <span>{{ $t("resumeImportResume") }}</span>
-            </div>
+            </button>
           </template>
         </ImportResume>
         <SendResume>
-          <div :class="entryButtonClass">
+          <button type="button" :class="entryButtonClass">
             <SfIcon icon="ph:paper-plane-right-fill" size="4" class="rotate-180" />
             <span>{{ $t("resumeSendResume") }}</span>
-          </div>
+          </button>
         </SendResume>
+        <button type="button" :class="entryButtonClass" @click="openTrash">
+          <SfIcon icon="lucide:trash-2" size="4" />
+          <span>{{ $t("resumeMineTrash") }}</span>
+          <span class="tabular-nums">{{ trashCount }}</span>
+        </button>
       </div>
-    </div>
+    </header>
     <SfScrollbar class="flex-1" flush>
       <div class="flex h-full flex-col px-3 py-1">
         <!-- 简历草稿列表 -->
