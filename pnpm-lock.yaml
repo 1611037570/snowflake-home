@@ -482,6 +482,12 @@ importers:
         specifier: 3.1.1
         version: 3.1.1(typescript@5.9.3)
 
+  packages/agent:
+    dependencies:
+      '@snowflake/ai':
+        specifier: workspace:*
+        version: link:../ai
+
   packages/ai:
     devDependencies:
       typescript:
