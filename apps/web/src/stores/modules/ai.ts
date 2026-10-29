@@ -107,6 +107,15 @@ export type Message = {
   requestContext?: Record<string, unknown>;
 };
 export type ModelProtocol = "chatCompletions" | "responses";
+// 服务商密钥独立于模型保存，配置好密钥后才能读取目录或添加模型。
+export type ProviderCredential = {
+  /** 当前服务商的访问密钥。 */
+  key: string;
+  /** 当前服务商的完整请求地址。 */
+  url: string;
+  /** 新添加模型默认使用的请求协议。 */
+  protocol: ModelProtocol;
+};
 // 已添加的模型（用户实际使用的模型配置）
 export type ModelItem = {
   // 模型唯一标识
@@ -146,6 +155,8 @@ export const useAiStore = defineStore(
   () => {
     // 已添加的用户模型列表（持久化到 localStorage）
     const modelList = ref<ModelItem[]>([]);
+    // 服务商凭据单独持久化，尚未添加模型也能保存密钥。
+    const providerCredentials = ref<Record<string, ProviderCredential>>({});
     // 三个业务角色分别绑定模型
     const agentModels = ref<AiAgentModels>({
       xiaoZhou: "",
@@ -392,6 +403,15 @@ export const useAiStore = defineStore(
 
     // ========== 模型管理方法 ==========
 
+    // 保存用户明确提交的服务商配置，不覆盖已有模型的独立配置。
+    function saveProviderCredential(provider: string, credential: ProviderCredential) {
+      providerCredentials.value[provider] = {
+        key: credential.key.trim(), // 去除复制密钥时带入的空白。
+        url: credential.url.trim(), // 保存本服务商完整请求地址。
+        protocol: credential.protocol, // 新模型沿用该服务商选择的协议。
+      };
+    }
+
     /** 部署表单或内置模板提交的配置到已添加列表 */
     function deployModel(draft: ModelDraft) {
       const deployed: ModelItem = {
@@ -448,6 +468,7 @@ export const useAiStore = defineStore(
       currentChat,
       currentMessages,
       modelList,
+      providerCredentials,
       agentModels,
       thinkMode,
       resumeAssistantChat,
@@ -470,6 +491,7 @@ export const useAiStore = defineStore(
       delChat,
       addMessage,
       deployModel,
+      saveProviderCredential,
       deleteModel,
       getAgentModelId,
       setAgentModel,
@@ -486,6 +508,7 @@ export const useAiStore = defineStore(
         "sidebarMode",
         "currentChatId",
         "modelList",
+        "providerCredentials",
         "agentModels",
         "thinkMode",
       ],

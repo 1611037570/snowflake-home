@@ -5,7 +5,7 @@ import AiProviderSettingsContent from "../../editor/toolbar/modules/ai/content.v
 
 <template>
   <SfScrollbar class="h-full bg-sf-page" flush>
-    <main class="mx-auto flex h-full min-h-0 w-full max-w-[1080px] flex-col gap-6 px-3 py-6 text-sf-text">
+    <main class="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-3 p-3 text-sf-text">
       <header class="flex shrink-0 flex-wrap items-center justify-between gap-3">
         <div>
           <p class="text-xs font-semibold text-sf-theme">{{ $t("resumeSettingsModelTitle") }}</p>
@@ -22,7 +22,7 @@ import AiProviderSettingsContent from "../../editor/toolbar/modules/ai/content.v
           <SfIcon icon="mingcute:right-line" size="4" />
         </RouterLink>
       </header>
-      <AiProviderSettingsContent class="min-h-[540px] flex-1" />
+      <AiProviderSettingsContent class="min-h-[540px]" />
     </main>
   </SfScrollbar>
 </template>

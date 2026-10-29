@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import { computed, inject, provide, ref } from "vue";
+import { computed, inject, provide } from "vue";
 import { storeToRefs } from "pinia";
-import AddedModels from "./addedModels.vue";
 import AddModel from "./addModel.vue";
 import { useAiStore } from "@/stores";
 import { PROVIDER_NAMES } from "@/configs";
@@ -12,7 +11,7 @@ import FileTextIcon from "@iconify-vue/lucide/file-text";
 import SparklesIcon from "@iconify-vue/lucide/sparkles";
 
 const aiStore = useAiStore();
-const { modelManagerTab, modelList } = storeToRefs(aiStore);
+const { modelList } = storeToRefs(aiStore);
 
 // 本地加载角色与服务商图标，同时保留编辑器已经注入的图标。
 provide(SF_ICON_LIST_KEY, {
@@ -75,8 +74,6 @@ const agentViews = computed(() =>
   })),
 );
 
-// 角色区固定在上方，添加和返回只切换下方模型工作区。
-const adding = computed(() => modelManagerTab.value === "add");
 const boundCount = computed(() => agentCards.filter((agent) => getAgentModel(agent.key)).length);
 // 模型库直接展示当前角色分配，复用上方角色声明而不再维护一份名称表。
 const modelBindings = computed<Record<string, string[]>>(() =>
@@ -89,26 +86,6 @@ const modelBindings = computed<Record<string, string[]>>(() =>
     ]),
   ),
 );
-const addedNotice = ref("");
-
-// 从模型库或未绑定角色进入添加表单。
-function jumpToAdd() {
-  addedNotice.value = "";
-  modelManagerTab.value = "add";
-}
-
-// 返回模型库不改动现有角色绑定。
-function jumpToAdded() {
-  addedNotice.value = "";
-  modelManagerTab.value = "added";
-}
-
-// 添加完成后回到模型库，并明确下一步是在上方选择角色模型。
-function finishAdd() {
-  modelManagerTab.value = "added";
-  addedNotice.value = "模型已添加，可在上方为角色选择；同一个模型可以供多个角色使用。";
-}
-
 // 统一读写角色绑定模型，卡片只负责展示与选择
 function getAgentModel(agent: (typeof agentCards)[number]["key"]) {
   return aiStore.getAgentModelId(agent);
@@ -121,8 +98,8 @@ provide("bg", "bg-sf-primary");
 </script>
 
 <template>
-  <div class="flex flex-col gap-3" :class="adding ? 'shrink-0' : 'h-full min-h-0'">
-    <!-- 角色保留在上方，添加表单自然展开，模型列表保留独立滚动。 -->
+  <div class="flex min-w-0 flex-col gap-3">
+    <!-- 角色绑定保留在上方，服务商与模型管理在同一界面直接展示。 -->
     <section class="shrink-0">
       <header class="mb-3 flex items-center justify-between gap-3">
         <h2 class="text-sm font-semibold text-sf-text">角色模型</h2>
@@ -190,46 +167,8 @@ provide("bg", "bg-sf-primary");
         </article>
       </div>
     </section>
-    <!-- 两种状态共用主要底色与圆角裁切，避免标题背景盖住圆角边界。 -->
-    <section
-      class="flex flex-col overflow-hidden rounded-2xl border border-sf-b bg-sf-primary"
-      :class="adding ? 'shrink-0' : 'min-h-0 flex-1'"
-    >
-      <header
-        class="flex shrink-0 items-center justify-between gap-3 border-b border-sf-b bg-sf-primary px-3 py-3"
-      >
-        <div class="min-w-0">
-          <h2 class="text-sm font-semibold text-sf-text">{{ adding ? "添加模型" : "模型库" }}</h2>
-          <p class="mt-[3px] text-xs text-sf-text-2">
-            {{
-              adding
-                ? "选择服务商，填写配置后添加"
-                : `共 ${modelList.length} 个模型，可分配给上方角色`
-            }}
-          </p>
-        </div>
-        <SfButton v-if="adding" type="bg" border class="shrink-0" @click="jumpToAdded"
-          >返回模型库</SfButton
-        >
-        <SfButton v-else class="shrink-0 gap-[6px]" @click="jumpToAdd">
-          <SfIcon icon="ic:round-add" size="4" />
-          添加模型
-        </SfButton>
-      </header>
-      <p
-        v-if="addedNotice && !adding"
-        role="status"
-        class="shrink-0 border-b border-sf-b bg-sf-success-2 px-3 py-3 text-xs text-sf-success"
-      >
-        {{ addedNotice }}
-      </p>
-      <div v-show="!adding" class="flex min-h-0 flex-1 flex-col p-3">
-        <AddedModels :bindings="modelBindings" class="h-full" @jump-add="jumpToAdd" />
-      </div>
-      <div v-show="adding" class="flex shrink-0 flex-col p-3">
-        <AddModel @add-success="finishAdd" />
-      </div>
-    </section>
+    <!-- 不再切换模型库与添加页面，添加模型由服务商工作区的弹窗承接。 -->
+    <AddModel :bindings="modelBindings" />
   </div>
 </template>
 

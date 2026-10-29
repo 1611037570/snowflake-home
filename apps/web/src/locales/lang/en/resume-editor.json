@@ -79,7 +79,7 @@
   "learningCenter_assistant_step1": "In AI Settings on the right, select a model for Skiff under Role Models.",
   "learningCenter_assistant_step2": "Choose a task or type a request in the AI tab on the left. Select target sections first for local changes.",
   "learningCenter_assistant_step3": "Review View Changes afterward, or use conversation undo to restore content.",
-  "learningCenter_assistant_tip": "The Model Library includes presets for OpenAI / compatible services, Gemini, DeepSeek, Claude, Qwen, and Doubao. Enter a model name and its provider's API key, then test and add it. The default scope is the whole resume; check scope instructions for whole-resume tasks.",
+  "learningCenter_assistant_tip": "In AI Settings, select a provider and enter its API key and endpoint URL. Configuration is saved automatically. Click Add Model to select a common model or enter its full API model ID and an optional display alias, then test the connection to add it. Presets only help fill the form; users maintain subsequent model changes themselves. Manage existing models under their provider and assign models to roles above. The default scope is the whole resume; check scope instructions for whole-resume tasks.",
   "learningCenter_contentAi_title": "Work on one description",
   "learningCenter_contentAi_summary": "Generate, continue, or rewrite the current text field.",
   "learningCenter_contentAi_step1": "Open the field's AI menu and choose Generate or Continue.",

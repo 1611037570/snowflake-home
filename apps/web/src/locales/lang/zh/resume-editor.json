@@ -79,7 +79,7 @@
   "learningCenter_assistant_step1": "在右侧“AI 设置”的“角色模型”中，为小舟选择模型。",
   "learningCenter_assistant_step2": "在左侧“AI”标签选择功能或输入需求；只想处理局部时，先选中目标模块。",
   "learningCenter_assistant_step3": "完成后点击“查看更改”核对内容，需要恢复时使用会话撤回。",
-  "learningCenter_assistant_tip": "模型库支持 OpenAI / 兼容服务、Gemini、DeepSeek、Claude、千问和豆包预设，填写模型名称与对应 API Key 后测试并添加；未选模块时默认处理整份简历，整份任务以范围说明为准。",
+  "learningCenter_assistant_tip": "在 AI 设置中选择服务商，填写 API 密钥与接口地址，配置会自动保存。点击“添加模型”，在弹窗选择常用模型或输入完整模型 ID（接口调用名），可选填别名，检测通过后添加。预设仅辅助填写，后续模型变更由用户自行维护。已有模型直接在所属服务商下管理，添加后在上方为角色选择；未选模块时默认处理整份简历，整份任务以范围说明为准。",
   "learningCenter_contentAi_title": "处理一段正文",
   "learningCenter_contentAi_summary": "在正文字段内生成、续写或改写当前内容。",
   "learningCenter_contentAi_step1": "打开正文的 AI 菜单，选择“生成”或“续写”。",
