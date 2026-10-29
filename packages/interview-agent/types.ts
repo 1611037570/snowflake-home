@@ -4,6 +4,9 @@ import type { ResumeSnapshot } from "@snowflake/resume-core";
 export type InterviewMode = "resume" | "specialized" | "hr" | "prediction" | "intro";
 export type InterviewAction = "question" | "report" | "preparation" | "hint" | "reference";
 
+// 面试技能只维护各动作的规则，不携带简历规划器使用的技能元数据。
+export type InterviewSkillPrompts = Partial<Record<InterviewAction, string>>;
+
 export interface InterviewConfig {
   mode: InterviewMode; // 本次训练类型。
   position: string; // 目标岗位。
