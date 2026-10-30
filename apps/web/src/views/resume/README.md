@@ -22,6 +22,7 @@
 | `editor/components/header/learningCenter/` | 学习中心入口、分类与教程展示 |
 | `assistant/` | AI 助手的入口、流程、会话与改动展示，详见 [助手说明](assistant/README.md) |
 | `interview/` | 独立面试训练、准备、复盘与记录，详见 [面试说明](interview/README.md) |
+| `aiUsage/` | 个人模型、Token 用量与近期记录，详见 [使用情况说明](aiUsage/README.md)；首页服务次数为独立固定展示值，不采集或上报 |
 | `template/data/` | 模板列表、范本数据与对应文案 |
 | `theme/` | 主题绘图与渲染接入，详见 [主题规范](theme/README.md) |
 | `editor/preview/resumePages/engine/` | 测量、分页与布局，详见 [引擎说明](editor/preview/resumePages/engine/README.md) |

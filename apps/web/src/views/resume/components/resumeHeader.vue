@@ -51,6 +51,11 @@ const navGroups = [
         path: "/resume/ai", // 导航目标路径
         icon: "lucide:sparkles", // 人工智能导航图标。
       },
+      {
+        key: "resumeNavAiUsage", // 用户个人使用情况入口文案。
+        path: "/resume/ai-usage", // 个人完成次数与近期记录页面。
+        icon: "tabler:history", // 使用记录图标。
+      },
     ],
   },
   {

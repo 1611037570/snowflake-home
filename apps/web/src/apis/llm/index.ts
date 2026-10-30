@@ -13,6 +13,7 @@ const getAgentLLM = (agent: AiAgentKey) => {
   }
 
   return new LLM({
+    usageAgent: agent, // 仅真实业务调用进入个人使用统计，模型连接检测不计入。
     url: config.url,
     apiKey: config.key,
     provider: config.provider,

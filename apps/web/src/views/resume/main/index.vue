@@ -61,9 +61,8 @@
               class="flex flex-col items-center justify-center text-center"
             >
               <dt class="flex flex-col items-center gap-1">
-                <span class="text-2xl font-black text-sf-theme">{{
-                  stat.display ?? Math.round(animatedHeadlineStats[index])
-                }}</span>
+                <!-- 数字始终交给动画处理，加号独立渲染，避免固定文案覆盖滚动效果。 -->
+                <span class="text-2xl font-black tabular-nums text-sf-theme">{{ stat.count === null ? '—' : Math.round(animatedHeadlineStats[index] ?? 0).toLocaleString() }}<span v-if="stat.suffix && stat.count !== null">{{ stat.suffix }}</span></span>
                 <span class="text-xs font-medium text-sf-text-2">{{ stat.label }}</span>
               </dt>
             </div>
@@ -218,6 +217,7 @@ import { useResumeStore } from "@/stores";
 import { trackResumeAction } from "@/hooks";
 import { resumeStyleTemplateList } from "@/views/resume/theme";
 import { $t } from "@/locales";
+import { getAiServiceOverview } from "@/apis/llm/usage/storage";
 // 真实访客与创建量暂不读取，恢复时启用统计接口。
 // import { getStatsOverview } from "@/apis";
 import { resumeTemplateList } from "../template/data/list";
@@ -241,6 +241,7 @@ const activeEditorShowcaseIndex = ref(0);
 const activeEditorShowcase = computed(() => editorShowcaseItems.value[activeEditorShowcaseIndex.value]);
 
 const resumeStore = useResumeStore();
+const aiServiceCount = ref(null);
 // 深拷贝：套用范本时隔离示例数据，避免与预览共享引用导致互相串改
 const deepClone = (value) => JSON.parse(JSON.stringify(value));
 
@@ -278,19 +279,20 @@ const headlineStats = computed(() => {
       label: $t("resumeHomeStyleCount"),
     },
     {
-      count: 5,
-      label: $t("resumeHomeExportCount"),
+      count: aiServiceCount.value, // AI 固定服务次数读入后参与数字动画，未读取时保留空值。
+      suffix: "+", // 加号独立显示，不干扰数值插值。
+      label: $t("resumeHomeAiServiceCount"), // 首页 AI 服务指标名称。
     },
     {
       // count: overview.value?.visitors?.totalUsers ?? 0,
-      count: 100000, // 固定访客数量。
-      display: "10W+", // 首页固定展示文案，不参与数字动画。
+      count: 108429, // 固定访客数量。
+      suffix: "+", // 固定累计数量也使用数字动画，加号单独显示。
       label: $t("resumeSiteStatsTotalVisitors"),
     },
     {
       // count: resumeActions,
-      count: 60000, // 固定简历数量。
-      display: "6W+", // 首页固定展示文案，不参与数字动画。
+      count: 63751, // 固定简历数量。
+      suffix: "+", // 固定累计数量也使用数字动画，加号单独显示。
       label: $t("resumeSiteStatsResumeActions"),
     },
   ];
@@ -328,7 +330,11 @@ onMounted(async () => {
   // } catch {
   //   overview.value = null;
   // }
-  headlineStatCounts.value = headlineStats.value.map((stat) => stat.count);
+  // 读取当前固定展示值，后续只替换存储适配入口即可接入后端。
+  try { aiServiceCount.value = (await getAiServiceOverview()).serviceCount; }
+  catch { aiServiceCount.value = null; }
+  // 三项累计数据就绪后一起启动，避免 AI 次数仍是空值时提前锁定零目标。
+  headlineStatCounts.value = headlineStats.value.map((stat) => stat.count ?? 0);
 });
 
 // 页面每次进出视口都切换入场状态，让长页面滚动保持节奏感。
