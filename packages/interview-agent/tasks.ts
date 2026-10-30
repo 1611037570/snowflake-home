@@ -32,8 +32,11 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
   assertActive();
   const intro = input.config.mode === "intro";
   // 自我介绍直接使用输入资料生成，不经过参考资料工具循环。
-  const hasResume = !intro && Object.keys(input.resume).length > 0;
-  let resumeRead = !hasResume;
+  const hasResume = !intro && action !== "hint" && action !== "clarification" && Object.keys(input.resume).length > 0;
+  // 逐题回看按需核对个人事实，题意澄清与答题思路不装配资料工具。
+  const focused = action === "hint" || action === "reference" || action === "clarification";
+  const requireResume = hasResume && !focused;
+  let resumeRead = !requireResume;
   const tools: ReactTool[] = [];
   if (hasResume) tools.push({
     name: "read_interview_resume", // 只读取本场参考简历，不调用简历助手工具。
@@ -45,7 +48,7 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
       return snapshot;
     }, // 返回独立业务副本，不提供写入或编辑器访问能力。
   });
-  if (!intro) tools.push(createReferenceTool({
+  if (!intro && !focused) tools.push(createReferenceTool({
     name: "read_interview_guidance", // 面试专属的资料读取入口。
     description: "按当前面试题型读取一项行业参考资料。", // 资料仅用于考察角度，不替代真实经历。
     resources: resumeIndustryKnowledge, // 公共资料不经过简历智能体注册表。
@@ -57,7 +60,7 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
     instructions, // 当前动作只接收所需的公共规则与本类技能。
     reactConfig: {
       maxSteps: 12, // 允许读取参考资料与修正本轮内容。
-      initialTool: hasResume ? "read_interview_resume" : undefined, // 逐轮面试有简历时先读取，自我介绍直接生成。
+      initialTool: requireResume ? "read_interview_resume" : undefined, // 正式出题与复盘先读简历，逐题参考回答按需读取。
       thinking: { type: "disabled" /* 不展示内部思考。 */ }, // 保持面试文本响应方式。
       beforeFinal: (answer) => {
         // 只核对读取与有效正文，不用问号数量限制自然表达或触发重写。
@@ -68,7 +71,7 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
       onIncomplete: () => {
         throw new Error(!resumeRead ? "未能读取本场参考简历，请重试" : action === "question" ? "本轮未能完成出题，请重新生成本题" : "本轮内容未能完成，请重试");
       }, // 重试耗尽按失败处理，不将未完成内容当成可作答题目。
-      onContent: (delta) => { if (resumeRead) options.onContent?.(delta); }, // 逐轮面试完成简历读取后展示，自我介绍直接展示增量。
+      onContent: (delta) => { if (resumeRead) options.onContent?.(delta); }, // 必须读取简历的动作等读取完成后展示，其他动作直接展示增量。
       onToken: options.onToken, // 本轮独立令牌统计。
       onAct: () => options.onReset?.(), // 清除工具调用前的临时文字。
       onFinalRetry: () => options.onReset?.(), // 不叠加校验重试的正文。
@@ -83,8 +86,6 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
       content: JSON.stringify(intro ? {
         resume: input.resume, // 本次选定的脱敏简历内容。
         background: input.config.background, // 用户提供的经历或补充要求。
-        wordCount: input.config.introWordCount, // 口头稿的目标字数。
-        style: input.config.introStyle, // 口头稿的表达风格。
         language: input.config.language, // 本次生成使用的语言。
       } : {
         // 只提供当前类型使用的设置，避免口头稿参数干扰模拟面试。
@@ -97,11 +98,12 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
           language: input.config.language, // 本轮输出语言。
           jobDescription: input.config.jobDescription, // 可选岗位要求。
           background: input.config.background, // 已确认的补充背景。
-        }, // 不携带自我介绍的字数与风格参数。
-        history: input.turns, // 已提交问答与辅助标记。
-        currentQuestion: action === "hint" || action === "reference" ? input.question || undefined : undefined, // 结束后回看时提供所选题目。
+        }, // 仅提供本场使用的业务设置。
+        history: input.turns, // 出题与复盘提供已提交历史，逐题任务只提供所选题目上下文。
+        currentQuestion: focused ? input.question || undefined : undefined, // 澄清与回看时明确提供所选题目。
+        clarificationRequest: action === "clarification" ? input.clarificationRequest : undefined, // 澄清疑问不混作正式回答。
         previousReference: action === "reference" ? input.previousReference || undefined : undefined, // 只有更换参考回答时提供上一版。
-      }), // 自我介绍直接携带资料，其余任务通过只读工具读取简历。
+      }), // 自我介绍直接携带资料，其他动作按权限读取参考简历。
     }])).trim();
   } finally { options.signal?.removeEventListener("abort", abort); }
 };

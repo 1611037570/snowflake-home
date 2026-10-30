@@ -14,7 +14,11 @@ export interface InterviewTurn {
   answer: string; // 已提交的真实作答。
   submitted: boolean; // 是否已经提交或跳过，防止重复计题。
   skipped: boolean; // 是否主动跳过本题。
-  assisted: boolean; // 是否使用过提示或参考回答。
+  clarifications?: {
+    id: string; // 同一题内澄清记录的稳定编号。
+    request: string; // 用户提交的题意疑问，不属于正式作答。
+    reply: InterviewOutput; // 题意说明及其可停止、重试的生成状态。
+  }[]; // 仅在用户请求澄清时保存，不参与题数与能力评价。
   durationSeconds: number; // 本题累计思考与作答时长。
   hint: InterviewOutput; // 结束后独立保存的本题答题思路。
   reference: InterviewOutput; // 本题独立保存的参考回答。

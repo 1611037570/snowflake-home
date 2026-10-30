@@ -71,6 +71,8 @@ export const useInterviewSession = () => {
     if (output?.status === "generating") output.status = "interrupted";
     if (!session) return;
     if (session.status === "completed") { if (output) save(session); return; }
+    // 题意说明属于可选帮助，停止后允许直接继续原题，不强制重新生成。
+    if (session.pendingAction === "clarification") session.pendingAction = null;
     session.status = "paused";
     save(session);
   };
@@ -85,13 +87,14 @@ export const useInterviewSession = () => {
     if (reviewingAnswer) {
       if (!sessionState.canReviewAnswers || !turn?.submitted || turn.phase === INTERVIEW_INTRO_PHASE || turn.question.status !== "complete") return;
     } else if (session.status === "completed" || sessionState.nextAction !== action) return;
+    if (action === "clarification" && (!turn || turn.submitted || turn.phase === INTERVIEW_INTRO_PHASE || !turn.clarifications?.length)) return;
     settleTime();
     if (action === "question" && (!turn || turn.submitted)) {
       const phase = session.turns.length
         ? getInterviewPhase(session.config, getInterviewCompletedCount(session.config, sessionState.submittedTurns))
         : INTERVIEW_INTRO_PHASE;
       session.turns.push(createInterviewTurn(phase));
-      // 始终使用仓库中的响应式轮次，辅助标记与计时才能同步到界面。
+      // 始终使用仓库中的响应式轮次，使生成与计时同步到界面。
       turn = session.turns.at(-1);
     }
     const output = getInterviewOutput(session, action, turnId);
@@ -111,6 +114,7 @@ export const useInterviewSession = () => {
     }
     if (!hasInterviewModel()) {
       if (!reviewingAnswer) session.status = "paused";
+      if (action === "clarification") session.pendingAction = null;
       save(session);
       ElMessage.warning("请先为面试官小羊配置模型，再继续面试");
       return;
@@ -142,6 +146,7 @@ export const useInterviewSession = () => {
       output.status = abortController.signal.aborted ? "interrupted" : "error";
       output.error = abortController.signal.aborted ? "" : error instanceof Error ? error.message : "生成失败，请重试";
       if (!reviewingAnswer) session.status = "paused";
+      if (action === "clarification") session.pendingAction = null;
     } finally {
       if (isCurrent()) {
         controller = null;
@@ -225,6 +230,27 @@ export const useInterviewSession = () => {
     if (session.pendingAction) await request(session.pendingAction);
   };
 
+  // 澄清只写入原题对话，不提交回答、不创建新题，也不触发阶段完成。
+  const clarify = async () => {
+    const session = current.value;
+    const turn = state.value?.latestTurn;
+    if (disposed || !session || !turn || !state.value?.canSubmit || turn.phase === INTERVIEW_INTRO_PHASE) return;
+    settleTime();
+    const previous = turn.clarifications?.at(-1);
+    // 没有新疑问时复用未完成的说明；继续原题不依赖这次重试成功。
+    if (session.draft.trim() || !previous || previous.reply.status === "complete") {
+      (turn.clarifications ||= []).push({
+        id: getUUID(), // 同题内每次澄清都有独立输出标识。
+        request: session.draft.trim() || (session.config.language === "英语" ? "Please clarify what this question is asking." : "请解释这道题的意思和作答范围。"), // 可直接澄清，也可使用用户填写的具体疑问。
+        reply: createInterviewOutput(), // 澄清输出支持停止和原地重试。
+      });
+    }
+    session.draft = "";
+    session.pendingAction = "clarification";
+    save(session);
+    await request("clarification");
+  };
+
   // 结束允许在生成期间执行，先中止当前输出，再基于已提交的问答复盘。
   const finish = async () => {
     const session = current.value;
@@ -250,5 +276,5 @@ export const useInterviewSession = () => {
   // 页面离开后使尚未确认的异步操作失效，避免后台重新启动面试请求。
   onBeforeUnmount(() => { disposed = true; pause(); });
 
-  return { store, current, select, start, pause, resume, submit, finish, request };
+  return { store, current, select, start, pause, resume, submit, clarify, finish, request };
 };

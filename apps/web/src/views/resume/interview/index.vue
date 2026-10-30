@@ -10,7 +10,7 @@ import type { InterviewSession } from "./types";
 import SetupPanel from "./setupPanel.vue";
 import InterviewRoom from "./interviewRoom.vue";
 
-const { store, current, select, start, pause, resume, submit, finish, request } = useInterviewSession();
+const { store, current, select, start, pause, resume, submit, clarify, finish, request } = useInterviewSession();
 const historyVisible = ref(false);
 const search = ref("");
 const historyMode = ref("");
@@ -72,7 +72,7 @@ const deleteSession = async (session: InterviewSession) => {
   catch { ElMessage.error("删除失败，请重试"); }
 };
 
-// 导出可读记录，保留辅助、跳过、未完成输出与草稿的真实标记。
+// 导出可读记录，澄清与正式回答分开，保留停止、跳过和草稿的真实状态。
 const exportSession = () => {
   const session = current.value;
   if (!session) return;
@@ -83,7 +83,8 @@ const exportSession = () => {
     ...session.turns.map((turn, index) => [
       `## ${turn.phase === INTERVIEW_INTRO_PHASE ? "开场自我介绍 · 限时两分钟" : `第 ${session.turns.slice(0, index + 1).filter((item) => item.phase !== INTERVIEW_INTRO_PHASE).length} 题 · ${turn.phase}`}${turn.question.status === "complete" ? "" : "（未完成）"}`, turn.question.content,
       `作答用时：${formatInterviewDuration(turn.durationSeconds * 1000)}`,
-      turn.submitted ? `### 你的回答${turn.assisted ? "（使用过辅助）" : ""}\n\n${turn.skipped ? "已跳过" : turn.answer}` : "尚未提交回答",
+      ...(turn.clarifications?.map((item) => `### 题意澄清${item.reply.status === "complete" ? "" : "（未完成）"}\n\n你的疑问：${item.request}\n\n${item.reply.content}`) || []),
+      turn.submitted ? `### 你的回答\n\n${turn.skipped ? "已跳过" : turn.answer}` : "尚未提交回答",
       ...(turn.hint.content ? [`### 答题思路（面试后回看）\n\n${turn.hint.content}`] : []),
       ...(turn.reference.content ? [`### 参考回答（面试后回看）\n\n${turn.reference.content}`] : []),
     ].join("\n\n")),
@@ -115,7 +116,7 @@ const exportSession = () => {
     <section v-if="initializing" class="flex min-h-60 flex-1 items-center justify-center gap-3 text-sm text-sf-text-2"><SfIcon icon="eos-icons:loading" size="6" />正在读取面试记录…</section>
     <section v-else-if="store.loadError" class="flex flex-1 flex-col items-center justify-center gap-3"><p class="text-sf-error">面试记录读取失败：{{ store.loadError }}</p><InterviewButton @click="initialize">重新读取</InterviewButton></section>
     <!-- 面试中将记录与新建入口合入会话工具栏，避免上下两条导航重复占位。 -->
-    <InterviewRoom v-else-if="current" :key="current.id" :session="current" @pause="pause" @resume="resume" @finish="endSession" @submit="submit" @request="request" @again="newSession(true)" @export="exportSession">
+    <InterviewRoom v-else-if="current" :key="current.id" :session="current" @pause="pause" @resume="resume" @finish="endSession" @submit="submit" @clarify="clarify" @request="request" @again="newSession(true)" @export="exportSession">
       <template #navigation>
         <InterviewButton type="bg" @click="historyVisible = true"><SfIcon icon="tabler:history" size="4" />训练记录 {{ sessions.length }}</InterviewButton>
         <InterviewButton type="bg" @click="newSession()">新建训练</InterviewButton>

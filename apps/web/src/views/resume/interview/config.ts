@@ -1,5 +1,5 @@
 import type { InterviewAction, InterviewConfig, InterviewMode } from "@snowflake/interview-agent";
-export { INTERVIEW_INTRO_PHASE, INTERVIEW_INTRO_SECONDS, getInterviewLocalReply, getInterviewQuestionLimit, getInterviewCompletedCount, getInterviewPhase, getInterviewStages, isInterviewComplete } from "@snowflake/interview-agent";
+export { INTERVIEW_INTRO_PHASE, INTERVIEW_INTRO_SECONDS, getInterviewLocalReply, getInterviewQuestionLimit, getInterviewCompletedCount, getInterviewAnsweredTurns, getInterviewPhase, getInterviewStages, isInterviewComplete } from "@snowflake/interview-agent";
 import { getUUID } from "@/utils";
 import type { InterviewOutput, InterviewTurn } from "./types";
 
@@ -31,8 +31,6 @@ export const createInterviewConfig = (): InterviewConfig => ({
   language: "中文", // 默认使用中文训练。
   jobDescription: "", // 可补充真实岗位要求。
   background: "", // 可补充个人真实背景。
-  introWordCount: 200, // 原自我介绍技能的缺省字数。
-  introStyle: "简洁", // 默认自我介绍口头稿风格。
 });
 
 export const createInterviewOutput = (): InterviewOutput => ({
@@ -49,7 +47,6 @@ export const createInterviewTurn = (phase: string): InterviewTurn => ({
   answer: "", // 尚未提交回答。
   submitted: false, // 当前轮次尚未完成。
   skipped: false, // 尚未主动跳过。
-  assisted: false, // 尚未使用辅助内容。
   durationSeconds: 0, // 尚未累计作答时间。
   hint: createInterviewOutput(), // 结束后回看本题的答题思路。
   reference: createInterviewOutput(), // 结束后回看本题的参考回答。
@@ -59,6 +56,7 @@ export const isPreparationMode = (mode: InterviewMode) => mode === "intro" || mo
 export const getModeLabel = (mode: InterviewMode) => INTERVIEW_MODES.find((item) => item.value === mode)?.label || "面试训练";
 
 export const INTERVIEW_ACTION_LABELS: Record<InterviewAction, string> = {
+  clarification: "题意说明", // 当前题目的澄清内容，不推进题数。
   question: "面试题", // 当前题目的生成内容。
   report: "复盘报告", // 本场实际作答的复盘内容。
   preparation: "准备材料", // 岗位押题或自我介绍内容。

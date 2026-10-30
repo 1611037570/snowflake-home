@@ -6,7 +6,7 @@ import { hasInterviewModel } from "@snowflake/interview-agent";
 import type { InterviewAction } from "@snowflake/interview-agent";
 import type { InterviewSession } from "./types";
 import confirm from "@/components/business/confirm";
-import { INTERVIEW_ACTION_LABELS, INTERVIEW_INTRO_PHASE, INTERVIEW_INTRO_SECONDS, formatInterviewDuration, getInterviewCompletedCount, getInterviewQuestionLimit, getInterviewStages, getModeLabel } from "./config";
+import { INTERVIEW_ACTION_LABELS, INTERVIEW_INTRO_PHASE, INTERVIEW_INTRO_SECONDS, formatInterviewDuration, getInterviewCompletedCount, getInterviewAnsweredTurns, getInterviewQuestionLimit, getInterviewStages, getModeLabel } from "./config";
 import { getInterviewSessionState } from "./sessionFlow";
 import OutputContent from "./outputContent.vue";
 import InterviewButton from "./interviewButton.vue";
@@ -20,6 +20,7 @@ const emit = defineEmits<{
   resume: []; // 继续训练或重试中断任务。
   finish: []; // 结束提问并生成真实复盘。
   submit: [skip: boolean]; // 提交回答或主动跳过。
+  clarify: []; // 针对原题澄清题意，不提交回答或推进阶段。
   request: [action: InterviewAction, turnId?: string]; // 结束后生成所选题目的思路或参考回答。
   again: []; // 复用当前设置新建一场。
   export: []; // 导出本场可读记录。
@@ -30,7 +31,7 @@ const preparation = computed(() => state.value.preparation);
 const introGeneration = computed(() => props.session.config.mode === "intro");
 const generating = computed(() => state.value.generating);
 const submittedCount = computed(() => state.value.submittedTurns.filter((turn) => turn.phase !== INTERVIEW_INTRO_PHASE).length);
-const answeredCount = computed(() => state.value.submittedTurns.filter((turn) => turn.phase !== INTERVIEW_INTRO_PHASE && !turn.skipped).length);
+const answeredCount = computed(() => getInterviewAnsweredTurns(state.value.submittedTurns).length);
 const introduction = computed(() => state.value.introduction);
 const remainingSeconds = computed(() => state.value.remainingSeconds);
 const introExpired = computed(() => introduction.value && remainingSeconds.value === 0);
@@ -54,7 +55,7 @@ const firstReviewTurn = computed(() => props.session.turns.find((turn) => turn.s
 // 面试资料与题目导航按需查看，不占用对话区域。
 const informationVisible = ref(false);
 const modelSettingsVisible = ref(false);
-const resumeAfterModel = ref(false);
+const afterModel = ref<"resume" | "clarification" | null>(null);
 // 输入区随内容适度增长，保持对话始终有可阅读的空间。
 const answerAutosize = {
   minRows: 2, // 空草稿时保持紧凑的两行高度。
@@ -96,13 +97,13 @@ const introductionNotice = computed(() => {
 // 作答框说明当前为何不可输入，保留草稿而不让用户误以为控件失效。
 const answerPlaceholder = computed(() => {
   if (props.session.status === "paused") return "面试已暂停，继续后即可作答。";
-  if (generating.value) return "面试官正在准备题目，请稍候…";
+  if (generating.value) return props.session.pendingAction === "clarification" ? "面试官正在解释题意，请稍候…" : "面试官正在准备题目，请稍候…";
   if (introExpired.value) return "自我介绍时间已到，请确认提交已保留的回答，或选择跳过。";
   return introduction.value ? "简单介绍你的背景和相关经历…" : "围绕当前问题作答…";
 });
 // 在作答位置解释当前真实状态，生成、暂停和到时不再共用普通作答提示。
 const answerNotice = computed(() => {
-  if (generating.value) return "正在准备下一道题，可随时停止。";
+  if (generating.value) return props.session.pendingAction === "clarification" ? "正在澄清原题，不计作答，可随时停止。" : "正在准备下一道题，可随时停止。";
   if (props.session.status === "paused") return state.value.answerReady ? "已暂停，草稿与剩余时间保留，继续后即可作答。" : "生成尚未完成，重试后继续本场面试。";
   if (isListening.value) return "正在转写，确认内容后再提交。";
   if (introduction.value) return introductionNotice.value;
@@ -165,7 +166,7 @@ const followLatest = () => {
 const scrollToLatest = () => { followOutput.value = true; followLatest(); };
 // Markdown 异步渲染后高度仍会变化，保持处于底部时继续跟随。
 useResizeObserver(contentContainer, followLatest);
-watch(() => [latest.value?.question.content, props.session.report.content, props.session.preparation.content, props.session.turns.length], followLatest, { flush: "post" });
+watch(() => [latest.value?.question.content, latest.value?.clarifications?.at(-1)?.reply.content, props.session.report.content, props.session.preparation.content, props.session.turns.length], followLatest, { flush: "post" });
 onBeforeUnmount(() => { if (scrollFrame) cancelAnimationFrame(scrollFrame); });
 
 const send = async (skip = false) => {
@@ -182,19 +183,28 @@ const send = async (skip = false) => {
   emit("submit", skip);
 };
 // 模型配置原地完成，重试不会离开当前面试或丢失已提交内容。
-const openModelSettings = (resume = false) => {
+const openModelSettings = (next: "resume" | "clarification" | null = null) => {
   informationVisible.value = false;
-  resumeAfterModel.value = resume;
+  afterModel.value = next;
   modelSettingsVisible.value = true;
 };
 const continueSession = () => {
-  if (!hasInterviewModel()) { openModelSettings(true); return; }
+  if (!hasInterviewModel()) { openModelSettings("resume"); return; }
   emit("resume");
 };
 const modelConfigured = () => {
-  if (resumeAfterModel.value) emit("resume");
+  if (afterModel.value === "resume") emit("resume");
+  else if (afterModel.value === "clarification") emit("clarify");
   else if (helper.value) generateHelper();
-  resumeAfterModel.value = false;
+  afterModel.value = null;
+};
+// 用明确入口区分题意疑问与正式作答，不按用户输入关键词猜测意图。
+const clarifyQuestion = () => {
+  if (!canSubmit.value || introduction.value) return;
+  stopVoice();
+  if (!hasInterviewModel()) { openModelSettings("clarification"); return; }
+  followOutput.value = true;
+  emit("clarify");
 };
 // 输入组件也可能派发普通事件，仅处理键盘确认并避开输入法组合输入。
 const handleKeydown = (event: Event | KeyboardEvent) => {
@@ -219,7 +229,7 @@ const closeHelper = () => {
   helper.value = null;
   void focusAnswer();
 };
-// 生成稿与辅助回答共用复制操作，不自动提交为候选人的作答。
+// 生成稿与回看回答共用复制操作，不自动提交为候选人的作答。
 const copyContent = async (content: string) => {
   if (!content) return;
   try { await copy(content); ElMessage.success("已复制"); }
@@ -288,9 +298,15 @@ const navigateQuestion = (id: string) => {
               </section>
             </div>
 
+            <!-- 澄清始终归在原题下方，说明与用户疑问不冒充正式作答。 -->
+            <section v-for="item in turn.clarifications" :key="item.id" class="ml-9 flex min-w-0 flex-col gap-3 rounded-xl border border-sf-b bg-sf-bg p-3">
+              <p class="whitespace-pre-wrap break-words text-xs leading-6 text-sf-text-2">题意澄清 · {{ item.request }}</p>
+              <OutputContent :id="item.id + '-clarification'" :output="item.reply" compact loading-text="正在说明题意…" />
+            </section>
+
             <div v-if="turn.submitted" class="ml-auto flex w-full max-w-[87%] items-start justify-end gap-3">
               <section class="min-w-0">
-                <header class="flex min-h-6 flex-wrap items-center justify-end gap-3 text-xs text-sf-text-2"><span v-if="turn.assisted" class="text-sf-warning">使用过辅助</span><span>{{ turn.skipped ? '已跳过' : formatInterviewDuration(turn.durationSeconds * 1000) + ' · 已提交' }}</span><span class="font-semibold text-sf-text">你</span></header>
+                <header class="flex min-h-6 flex-wrap items-center justify-end gap-3 text-xs text-sf-text-2"><span>{{ turn.skipped ? '已跳过' : formatInterviewDuration(turn.durationSeconds * 1000) + ' · 已提交' }}</span><span class="font-semibold text-sf-text">你</span></header>
                 <p class="whitespace-pre-wrap break-words rounded-2xl rounded-tr-none border border-sf-b bg-sf-bg p-3 text-sm leading-6" :class="{ 'text-sf-text-2': turn.skipped }">{{ turn.skipped ? '已跳过这道题。' : turn.answer }}</p>
                 <nav v-if="copySupported && !turn.skipped" class="mt-3 flex justify-end" aria-label="回答操作">
                   <SfTooltip content="复制回答"><button type="button" class="flex h-6 w-6 cursor-pointer items-center justify-center rounded text-sf-text-3 hover:text-sf-theme focus-visible:outline-2 focus-visible:outline-sf-theme" aria-label="复制你的回答" @click="copyContent(turn.answer)"><SfIcon icon="ph:copy-duotone" size="4" /></button></SfTooltip>
@@ -310,7 +326,7 @@ const navigateQuestion = (id: string) => {
             <OutputContent :id="session.id + '-report'" :output="session.report" loading-text="正在根据你的回答整理复盘…" />
           </article>
           <details v-if="reviewing && session.draft" class="rounded-xl border border-sf-b p-3 text-sm leading-6"><summary class="cursor-pointer text-sf-text-2">未提交草稿 · 未参与复盘</summary><p class="mt-3 whitespace-pre-wrap break-words">{{ session.draft }}</p></details>
-          <section v-if="session.status === 'completed' && !preparation" class="flex flex-wrap items-center justify-center gap-3 text-xs leading-6 text-sf-text-2"><p>本场面试已结束，可逐题查看思路与参考回答。</p><InterviewButton v-if="firstReviewTurn" type="bg" @click="navigateQuestion(firstReviewTurn.id)">逐题回看</InterviewButton></section>
+          <section v-if="session.status === 'completed' && !preparation" class="flex flex-wrap items-center justify-center gap-3 text-xs leading-6 text-sf-text-2"><p>{{ firstReviewTurn ? '本场面试已结束，可逐题查看思路与参考回答。' : '本场面试已结束。' }}</p><InterviewButton v-if="firstReviewTurn" type="bg" @click="navigateQuestion(firstReviewTurn.id)">逐题回看</InterviewButton></section>
         </div>
       </SfScrollbar>
       <!-- 与简历编辑器保持相同的圆形图标入口，点击后恢复跟随最新消息。 -->
@@ -334,6 +350,7 @@ const navigateQuestion = (id: string) => {
             <nav class="flex flex-wrap items-center gap-3" aria-label="作答工具">
               <InterviewButton v-if="isSupported" type="bg" :disabled="!canAnswer" :aria-pressed="isListening" :class="{ 'text-sf-error!': isListening }" @click="toggleVoice"><SfIcon :icon="isListening ? 'ph:stop-circle-fill' : 'ph:microphone-duotone'" size="4" />{{ isListening ? '结束转写' : '语音输入' }}</InterviewButton>
               <span v-else class="text-xs text-sf-text-2">文字作答</span>
+              <SfTooltip v-if="!introduction" content="解释原题，不计作答；可先在输入框填写具体疑问。"><InterviewButton type="bg" :disabled="!canSubmit" @click="clarifyQuestion">澄清题意</InterviewButton></SfTooltip>
             </nav>
             <div class="ml-auto flex items-center gap-3">
               <InterviewButton type="bg" :disabled="!canSubmit" @click="send(true)">{{ introduction ? '跳过开场' : '跳过本题' }}</InterviewButton>

@@ -12,13 +12,17 @@ export const getInterviewLocalReply = (action: InterviewAction, input: Interview
       : `请用${INTERVIEW_INTRO_SECONDS / 60}分钟简单介绍一下自己。`;
   }
   // 跳过记录只用于保留流程，不能作为可评分或可复盘的真实回答。
-  if (action === "report" && !input.turns.some((turn) => !turn.skipped && turn.answer.trim())) {
+  if (action === "report" && !getInterviewAnsweredTurns(input.turns).length) {
     return input.config.language === "英语"
-      ? "The interview has ended. There are no substantive answers to assess or score. Your unsubmitted draft is saved."
-      : "面试已结束。尚无实际作答，暂不评价或评分。未提交草稿已保留。";
+      ? "The interview has ended. There are no formal answers to assess or score."
+      : "面试已结束。尚无正式作答，暂不评价或评分。";
   }
   return null;
 };
+
+// 计数、空样本结束与评价共用正式回答口径，开场和跳过不提供能力证据。
+export const getInterviewAnsweredTurns = <T extends Pick<InterviewHistoryTurn, "phase" | "skipped" | "answer">>(turns: T[]) =>
+  turns.filter((turn) => turn.phase !== INTERVIEW_INTRO_PHASE && !turn.skipped && !!turn.answer.trim());
 
 // 保留各类面试自己的完成规则，简历面试不设置固定总题数。
 export const getInterviewQuestionLimit = (config: InterviewConfig): number | null =>
@@ -26,10 +30,10 @@ export const getInterviewQuestionLimit = (config: InterviewConfig): number | nul
 
 export const getInterviewCompletedCount = (
   config: InterviewConfig,
-  turns: Pick<InterviewHistoryTurn, "phase" | "skipped">[],
-) => turns.filter((turn) => turn.phase !== INTERVIEW_INTRO_PHASE && (config.mode !== "specialized" || !turn.skipped)).length;
+  turns: Pick<InterviewHistoryTurn, "phase" | "skipped" | "answer">[],
+) => config.mode === "specialized" ? getInterviewAnsweredTurns(turns).length : turns.filter((turn) => turn.phase !== INTERVIEW_INTRO_PHASE).length;
 
-export const isInterviewComplete = (config: InterviewConfig, turns: Pick<InterviewHistoryTurn, "phase" | "skipped">[]) => {
+export const isInterviewComplete = (config: InterviewConfig, turns: Pick<InterviewHistoryTurn, "phase" | "skipped" | "answer">[]) => {
   const limit = getInterviewQuestionLimit(config);
   return limit !== null && getInterviewCompletedCount(config, turns) >= limit;
 };

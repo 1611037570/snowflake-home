@@ -9,6 +9,7 @@ export const isInterviewHelperAction = (action: InterviewAction | null): action 
 export const getInterviewOutput = (session: InterviewSession, action: InterviewAction, turnId?: string) => {
   if (action === "preparation") return session.preparation;
   if (action === "report") return session.report;
+  if (action === "clarification") return session.turns.at(-1)?.clarifications?.at(-1)?.reply;
   const turn = isInterviewHelperAction(action) ? session.turns.find((item) => item.id === turnId) : session.turns.at(-1);
   return action === "question" ? turn?.question : turn?.[action];
 };
@@ -29,6 +30,7 @@ export const getInterviewSessionState = (session: InterviewSession) => {
   const nextAction: InterviewAction | null = session.status === "completed" ? null
     : preparation ? "preparation"
     : reviewing || isInterviewComplete(session.config, submittedTurns) ? "report"
+    : session.pendingAction === "clarification" ? "clarification"
     : answerReady ? null : "question";
   return {
     latestTurn, // 当前待完成或最近提交的轮次。
@@ -50,19 +52,25 @@ export const getInterviewSessionState = (session: InterviewSession) => {
 export const createInterviewTaskInput = (session: InterviewSession, action: InterviewAction, turnId?: string): InterviewTaskInput => {
   const state = getInterviewSessionState(session);
   // 回看明确选择的题目，不能默认使用最后一题或把未提交题纳入评价。
-  const reviewTurn = isInterviewHelperAction(action) ? session.turns.find((turn) => turn.id === turnId) : undefined;
+  const reviewTurn = isInterviewHelperAction(action) ? session.turns.find((turn) => turn.id === turnId) : action === "clarification" ? state.latestTurn : undefined;
+  // 思路与澄清不需要候选人简历；逐题任务仅携带当前题，不发送整场历史。
+  const history = reviewTurn ? [reviewTurn] : state.submittedTurns;
   return {
     config: session.config, // 本场固定的岗位、年限与训练设置。
-    resume: session.resumeSnapshot, // 可选的脱敏参考简历。
-    turns: state.submittedTurns.map((turn) => ({
+    resume: action === "hint" || action === "clarification" ? {} : session.resumeSnapshot, // 通用思路与题意澄清不加载个人资料。
+    turns: history.map((turn) => ({
       phase: turn.phase, // 本轮实际所属阶段。
       question: turn.question.content, // 本轮实际提出的题目。
       answer: turn.answer, // 用户确认提交的回答。
       skipped: turn.skipped, // 是否主动跳过。
-      assisted: turn.assisted, // 是否实际看过辅助内容。
+      clarifications: turn.clarifications?.filter((item) => item.reply.status === "complete").map((item) => ({
+        request: item.request, // 已解释过的题意疑问。
+        explanation: item.reply.content, // 仅作理解上下文，不是用户作答。
+      })), // 失败或停止的说明不作为已经澄清的内容。
       durationSeconds: Math.round(turn.durationSeconds), // 实际作答秒数。
-    })), // 历史包含开场，但正式题数由各类流程独立统计。
+    })), // 正式历史可包含开场，逐题任务不包含其他轮次。
     question: reviewTurn?.question.content || "", // 回看只提供选中题目的题面。
+    clarificationRequest: action === "clarification" ? reviewTurn?.clarifications?.at(-1)?.request || "" : "", // 本次请求的题意疑问与正式作答分开。
     previousReference: action === "reference" ? reviewTurn?.reference.content || "" : "", // 更换所选题目的参考表达时提供上一版。
     phase: action === "report" ? state.submittedTurns.at(-1)?.phase || "尚未作答" : reviewTurn?.phase || state.latestTurn?.phase || "面试准备", // 回看沿用所选题型，复盘只采用已提交阶段。
     endedEarly: session.endedEarly, // 是否未达到本类规定轮次便结束。

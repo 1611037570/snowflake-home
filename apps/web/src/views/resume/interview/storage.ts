@@ -27,8 +27,10 @@ export const useInterviewStore = defineStore("interview", () => {
         sessions.value = records.map(([, session]) => {
           // 刷新后的旧请求已经失效，保留草稿与部分输出并等待用户继续。
           if (session.status === "active") session.status = "paused";
-          const outputs = [session.preparation, session.report, ...session.turns.flatMap((turn) => [turn.question, turn.hint, turn.reference])];
+          const outputs = [session.preparation, session.report, ...session.turns.flatMap((turn) => [turn.question, turn.hint, turn.reference, ...(turn.clarifications?.map((item) => item.reply) || [])])];
           outputs.forEach((output) => { if (output.status === "generating") output.status = "interrupted"; });
+          // 可选题意说明中断后回到原题，避免恢复面试必须先重新生成说明。
+          if (session.pendingAction === "clarification") session.pendingAction = null;
           return session;
         }).sort((a, b) => b.updatedAt - a.updatedAt);
         ready.value = true;
