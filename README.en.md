@@ -1,4 +1,4 @@
-# Snowflake Start Page — A pure browsing start like snow
+# Skiff Resume
 
 [Simplified Chinese](README.md) | [English](README.en.md)
 
@@ -6,46 +6,34 @@
 
 ## 📌 Project Introduction
 
-The main body of the project is the Snowflake Start Page, based on which many small tools and infrastructure features are derived and expanded.
+Skiff Resume is a free online resume builder · _With one light skiff, cross a thousand mountains_
+
+It offers two editing modes — a custom visual editor and AI — with live rendering and true WYSIWYG, then exports straight to PDF.
 
 Through this project, you can learn the practical applications of modern frontend and backend technologies such as **Vue3**, **Vite**, and **NestJS**.
 
-Launched on September 3, 2020, reconstructed and open-sourced on November 22, 2025.
+Reconstructed and open-sourced on November 22, 2025.
 
 ## 🔗 Live Demo
 
-- 📄 **Resume Generator** · _With this resume, cross a thousand mountains_
-
-  Benchmarking BOSS Zhipin and Zhijue, with AI-assisted writing, visual editing, PDF export, etc. ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
+- 📄 **Skiff Resume** · Build a resume online for free ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
 
   Preview: https://qzcv.net
 
-- ❄️ **Snowflake Start Page** · _A pure browsing start like snow_
+## ✨ Features
 
-  Core project carrier, providing a personalized and customizable website start page and project infrastructure ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
-
-  Preview: http://nannan.work
-
-- 🛣️ **Image Processing Tool**: quickly process image formats and sizes ![Under Maintenance](https://img.shields.io/badge/Status-Under%20Maintenance-brightgreen)
-
-  Preview: http://nannan.work/#/image
-
-## Star History
-
-<a href="https://www.star-history.com/?repos=1611037570%2Fsnowflake-home&type=timeline&logscale=&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&theme=dark&logscale&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&logscale&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&logscale&legend=top-left" />
- </picture>
-</a>
+- **Editor**: edit the form on the left and watch the paginated result update live on the right, with multiple layout themes and role-based examples.
+- **AI capabilities**: one-click resume generation, content improvement, and a chat assistant whose edits you confirm one by one.
+- **Interview training**: a dedicated section for interview preparation, mock sessions and retrospectives.
+- **Job-search tools**: resignation decision scoring, offer comparison, real hourly wage conversion and other small decision helpers.
+- **Export**: PDF, image and Markdown export, no watermark.
 
 ## 🚀 Install & Run
 
 The project is managed based on **pnpm monorepo**, with sub-packages located under the `apps` directory:
 
-- **web**: Main body of the project, developed and maintained by the author ![Author-led](https://img.shields.io/badge/Maintenance-Author--led-blue)
-- **server**: Backend service, developed and maintained by AI ![AI-led](https://img.shields.io/badge/Maintenance-AI--led-purple)
+- **web**: Frontend, resume editor, templates and pages, developed and maintained by the author ![Author-led](https://img.shields.io/badge/Maintenance-Author--led-blue)
+- **server**: Backend service, AI features and data APIs, developed and maintained by AI ![AI-led](https://img.shields.io/badge/Maintenance-AI--led-purple)
 
 **Environment Requirements**
 

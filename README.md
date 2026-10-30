@@ -1,4 +1,4 @@
-# 轻舟简历、雪花起始页多项目仓库
+# 轻舟简历
 
 [简体中文](README.md) | [English](README.en.md)
 
@@ -6,46 +6,34 @@
 
 ## 📌 项目介绍
 
-项目主体为雪花起始页，基于起始页衍生了两个项目以及基建。
+轻舟简历是一个免费在线简历工具 · _一叶轻舟 渡你过万重山_
+
+提供自定义编辑器与 AI 两套编辑模式，实时渲染所见即所得，写完即可导出 PDF。
 
 通过本项目，您可以学习 **Vue3**、**Vite**、**NestJS** 等现代前后端技术的实战应用。
 
-于2020年9月3日上线，2025年11月22日开始重构并开源。
+2025年11月22日开始重构并开源。
 
 ## 🔗 在线体验
 
-- 📄 **轻舟简历** · _一叶轻舟 渡你过万重山_
-
-  自定义编辑器+AI两套编辑模式、实时渲染所见即所得、PDF导出等 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
+- 📄 **轻舟简历** · 免费在线制作简历 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
 
   预览：https://qzcv.net
 
-- ❄️ **雪花起始页** · _如雪纯净的浏览器起点_
+## ✨ 主要功能
 
-  项目核心载体，提供个性化自定义的网站起始页和项目基建 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
-
-  预览：http://nannan.work
-
-- 🛣️ **图省事**：快速处理图片格式与大小 ![维护中](https://img.shields.io/badge/状态-维护中-brightgreen)
-
-  预览：http://nannan.work/#/image
-
-## Star History
-
-<a href="https://www.star-history.com/?repos=1611037570%2Fsnowflake-home&type=timeline&logscale=&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&theme=dark&logscale&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&logscale&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=1611037570/snowflake-home&type=timeline&logscale&legend=top-left" />
- </picture>
-</a>
+- **编辑器**：左侧表单编辑，右侧实时预览分页效果，支持多种排版主题与行业范本。
+- **AI 能力**：一键生成简历、内容优化、AI 助手对话式修改，改动逐条可确认。
+- **面试训练**：独立面试栏目，支持面试准备、模拟与复盘记录。
+- **求职工具**：离职决策评分、Offer 对比、真实时薪换算等决策小工具。
+- **导出**：PDF、图片与 Markdown 导出，无水印。
 
 ## 🚀 安装运行
 
 项目基于 **pnpm monorepo** 管理，子包位于 `apps` 目录下：
 
-- **web**：项目主体 作者主导开发维护 ![作者主导](https://img.shields.io/badge/维护-作者主导-blue)
-- **server**：后端服务 AI主导开发维护 ![AI主导](https://img.shields.io/badge/维护-AI主导-purple)
+- **web**：前端主体，简历编辑器、模板与页面 作者主导开发维护 ![作者主导](https://img.shields.io/badge/维护-作者主导-blue)
+- **server**：后端服务，AI 能力与数据接口 AI主导开发维护 ![AI主导](https://img.shields.io/badge/维护-AI主导-purple)
 
 **环境要求**
 
