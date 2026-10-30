@@ -6,13 +6,13 @@ import {
 import type { ResumeAiAgent } from "@snowflake/resume-agent";
 import { useAiStore } from "@/stores";
 import { $t } from "@/locales";
-import { getResumeParseLLM, getXiaoYangLLM, getXiaoZhouLLM } from ".";
+import { getResumeParseLLM, getXiaoZhouLLM } from ".";
 
 // 宿主只接管简历智能体的模型与文案，公共简历字段独立注册。
 export const registerResumeAgentHost = () => {
   configureResumeAiModelProvider({
     getModel: (agent: ResumeAiAgent) => {
-      if (agent === "xiaoYang") return getXiaoYangLLM();
+      // 简历业务只使用小舟与解析角色，不接入面试官小羊。
       if (agent === "resumeParser") return getResumeParseLLM();
       return getXiaoZhouLLM();
     },

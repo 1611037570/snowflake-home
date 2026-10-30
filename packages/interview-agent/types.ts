@@ -12,8 +12,7 @@ export interface InterviewConfig {
   position: string; // 目标岗位。
   experienceYears: string; // 用户确认的工作年限，可描述应届或具体年数。
   company: string; // 目标公司或行业背景。
-  direction: string; // 技术、业务或项目等考察重点。
-  feedback: "打分并给改进建议" | "只继续追问"; // 简历面试的逐轮反馈选择，专项与人事面试沿用固定即时评分。
+  direction: string; // 专项面试的训练重点，综合面试由模型结合岗位与经历安排。
   language: "中文" | "英语"; // 面试与报告使用的语言。
   jobDescription: string; // 可选的目标岗位要求，未提供时按岗位常见考察方向提问。
   background: string; // 本场已确认的补充背景，不作为开始面试的必填项。
@@ -34,8 +33,8 @@ export interface InterviewTaskInput {
   config: InterviewConfig; // 开始时固定的面试设置。
   resume: ResumeSnapshot; // 只读的脱敏简历快照，未关联简历时为空对象。
   turns: InterviewHistoryTurn[]; // 已完成的真实问答记录。
-  question: string; // 提示或参考回答所针对的当前题目。
-  previousReference: string; // 更换参考回答时的上一版，仅用于避免重复表达。
-  phase: string; // 应用控制的当前考察阶段。
+  question: string; // 结束后答题思路或参考回答所针对的选中题目。
+  previousReference: string; // 更换所选题目的参考回答时提供上一版，保留正确结论并调整表达。
+  phase: string; // 应用控制的考察阶段，逐题回看沿用选中题目的阶段。
   endedEarly: boolean; // 专项或行测与人事面试是否未完成规定轮次便结束。
 }

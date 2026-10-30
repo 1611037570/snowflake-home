@@ -16,6 +16,7 @@ export const useInterviewSession = () => {
   const current = computed(() => store.sessions.find((session) => session.id === currentId.value));
   const state = computed(() => current.value ? getInterviewSessionState(current.value) : null);
   let controller: AbortController | null = null;
+  let activeOutput: InterviewOutput | null = null;
   let requestVersion = 0;
   let lastTick = Date.now();
   let disposed = false;
@@ -64,23 +65,27 @@ export const useInterviewSession = () => {
     ++requestVersion;
     controller?.abort();
     controller = null;
-    if (!session || session.status === "completed") return;
-    if (session.pendingAction) {
-      const output = getInterviewOutput(session, session.pendingAction);
-      if (output?.status === "generating") output.status = "interrupted";
-    }
+    // 逐题回看可在面试结束后单独停止，不改变已完成的复盘状态。
+    const output = activeOutput;
+    activeOutput = null;
+    if (output?.status === "generating") output.status = "interrupted";
+    if (!session) return;
+    if (session.status === "completed") { if (output) save(session); return; }
     session.status = "paused";
     save(session);
   };
 
-  const request = async (action: InterviewAction) => {
+  const request = async (action: InterviewAction, turnId?: string) => {
     const session = current.value;
     const sessionState = state.value;
-    if (disposed || !session || !sessionState || session.status === "completed" || sessionState.generating) return;
-    // 当前动作只读取已派生的权限，不再另算一套推进状态。
-    if (isInterviewHelperAction(action) ? !sessionState.canRequestHelp : sessionState.nextAction !== action) return;
+    if (disposed || !session || !sessionState || sessionState.generating || controller) return;
+    const reviewingAnswer = isInterviewHelperAction(action);
+    let turn = reviewingAnswer ? session.turns.find((item) => item.id === turnId) : session.turns.at(-1);
+    // 面试中禁止辅助；结束后只允许回看实际提交过的正式题。
+    if (reviewingAnswer) {
+      if (!sessionState.canReviewAnswers || !turn?.submitted || turn.phase === INTERVIEW_INTRO_PHASE || turn.question.status !== "complete") return;
+    } else if (session.status === "completed" || sessionState.nextAction !== action) return;
     settleTime();
-    let turn = session.turns.at(-1);
     if (action === "question" && (!turn || turn.submitted)) {
       const phase = session.turns.length
         ? getInterviewPhase(session.config, getInterviewCompletedCount(session.config, sessionState.submittedTurns))
@@ -89,12 +94,14 @@ export const useInterviewSession = () => {
       // 始终使用仓库中的响应式轮次，辅助标记与计时才能同步到界面。
       turn = session.turns.at(-1);
     }
-    const output = getInterviewOutput(session, action);
+    const output = getInterviewOutput(session, action, turnId);
     if (!output) return;
-    const input = createInterviewTaskInput(session, action);
-    session.pendingAction = action;
-    session.status = "active";
-    lastTick = Date.now();
+    const input = createInterviewTaskInput(session, action, turnId);
+    if (!reviewingAnswer) {
+      session.pendingAction = action;
+      session.status = "active";
+      lastTick = Date.now();
+    }
     // 固定开场与未作答结束不经过模型请求，也不进入正在生成的中间状态。
     const localReply = getInterviewLocalReply(action, input);
     if (localReply !== null) {
@@ -103,14 +110,15 @@ export const useInterviewSession = () => {
       return;
     }
     if (!hasInterviewModel()) {
-      session.status = "paused";
+      if (!reviewingAnswer) session.status = "paused";
       save(session);
-      ElMessage.warning("请先为面试官配置模型，再继续面试");
+      ElMessage.warning("请先为面试官小羊配置模型，再继续面试");
       return;
     }
     const version = ++requestVersion;
     const abortController = new AbortController();
     controller = abortController;
+    activeOutput = output;
     output.content = "";
     output.error = "";
     output.status = "generating";
@@ -123,8 +131,6 @@ export const useInterviewSession = () => {
         onContent: (delta) => {
           if (!isCurrent()) return;
           output.content += delta;
-          // 实际看到辅助内容才标记使用辅助，网络失败不误扣作答依据。
-          if (isInterviewHelperAction(action) && turn && delta.trim()) turn.assisted = true;
         }, // 旧请求不能覆盖新会话。
       });
       if (!isCurrent()) return;
@@ -135,10 +141,11 @@ export const useInterviewSession = () => {
       settleTime();
       output.status = abortController.signal.aborted ? "interrupted" : "error";
       output.error = abortController.signal.aborted ? "" : error instanceof Error ? error.message : "生成失败，请重试";
-      session.status = "paused";
+      if (!reviewingAnswer) session.status = "paused";
     } finally {
       if (isCurrent()) {
         controller = null;
+        activeOutput = null;
         save(session);
       }
     }
@@ -156,7 +163,7 @@ export const useInterviewSession = () => {
     pause();
     const session: InterviewSession = {
       id: getUUID(), // 面试独立编号。
-      title: `${config.position} · ${getModeLabel(config.mode)}`, // 历史记录标题。
+      title: config.mode === "intro" ? getModeLabel(config.mode) : `${config.position} · ${getModeLabel(config.mode)}`, // 自我介绍无需岗位，直接使用功能名称。
       createdAt: Date.now(), // 面试创建时间。
       updatedAt: Date.now(), // 初始更新时间。
       config: JSON.parse(JSON.stringify(config)), // 固定用户确认的训练设置。
@@ -190,10 +197,13 @@ export const useInterviewSession = () => {
   const resume = async () => {
     const session = current.value;
     if (disposed || !session || session.status === "completed" || state.value?.generating) return;
+    // 继续前先确认当前记录可保存，等待期间切换、暂停或再次继续会使本次操作失效。
+    const version = ++requestVersion;
+    try { await store.save(session); }
+    catch { return; }
+    if (disposed || version !== requestVersion || currentId.value !== session.id) return;
     session.status = "active";
     lastTick = Date.now();
-    // 辅助生成中断后可以直接继续作答，需要时再打开辅助重新生成。
-    if (isInterviewHelperAction(session.pendingAction)) session.pendingAction = null;
     const action = state.value?.nextAction;
     if (action) await request(action);
     else save(session);
@@ -219,7 +229,8 @@ export const useInterviewSession = () => {
   const finish = async () => {
     const session = current.value;
     const sessionState = state.value;
-    if (disposed || !session || !sessionState || session.status === "completed" || sessionState.preparation) return;
+    if (disposed || !session || !sessionState || session.status === "completed" || sessionState.preparation || sessionState.reviewing) return;
+    // 已进入复盘时只能继续或重试原任务，重复结束不能中止并重开复盘请求。
     pause();
     session.endedEarly = session.config.mode !== "resume" && !isInterviewComplete(session.config, sessionState.submittedTurns);
     session.pendingAction = "report";
@@ -231,8 +242,11 @@ export const useInterviewSession = () => {
   useIntervalFn(settleTime, 1000);
 
   useEventListener(window, "pagehide", pause);
-  // 隐藏页面时保存当前草稿，页面切回仍保持原有训练节奏。
-  useEventListener(document, "visibilitychange", () => { if (document.hidden && current.value) save(current.value); });
+  // 切换可见性时先结算真实经过的时间，后台计时被节流后也不能短暂恢复过期输入。
+  useEventListener(document, "visibilitychange", () => {
+    settleTime();
+    if (document.hidden && current.value) save(current.value);
+  });
   // 页面离开后使尚未确认的异步操作失效，避免后台重新启动面试请求。
   onBeforeUnmount(() => { disposed = true; pause(); });
 

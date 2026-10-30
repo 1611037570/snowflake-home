@@ -12,6 +12,6 @@ export const configureInterviewModelProvider = (provider: InterviewModelProvider
 export const hasInterviewModel = () => modelProvider?.hasModel() ?? false;
 export const getInterviewModel = () => {
   const model = modelProvider?.getModel();
-  if (!model?.apiKey || !model.url || !model.model) throw new Error("请先为面试官配置模型");
+  if (!model?.apiKey || !model.url || !model.model) throw new Error("请先为面试官小羊配置模型");
   return model;
 };

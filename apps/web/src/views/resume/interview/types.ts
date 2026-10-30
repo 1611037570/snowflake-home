@@ -16,7 +16,7 @@ export interface InterviewTurn {
   skipped: boolean; // 是否主动跳过本题。
   assisted: boolean; // 是否使用过提示或参考回答。
   durationSeconds: number; // 本题累计思考与作答时长。
-  hint: InterviewOutput; // 本题独立保存的思考提示。
+  hint: InterviewOutput; // 结束后独立保存的本题答题思路。
   reference: InterviewOutput; // 本题独立保存的参考回答。
 }
 

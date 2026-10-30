@@ -6,10 +6,10 @@ export const isInterviewHelperAction = (action: InterviewAction | null): action 
   action === "hint" || action === "reference";
 
 // 请求、暂停与界面展示始终定位同一份输出。
-export const getInterviewOutput = (session: InterviewSession, action: InterviewAction) => {
+export const getInterviewOutput = (session: InterviewSession, action: InterviewAction, turnId?: string) => {
   if (action === "preparation") return session.preparation;
   if (action === "report") return session.report;
-  const turn = session.turns.at(-1);
+  const turn = isInterviewHelperAction(action) ? session.turns.find((item) => item.id === turnId) : session.turns.at(-1);
   return action === "question" ? turn?.question : turn?.[action];
 };
 
@@ -41,15 +41,16 @@ export const getInterviewSessionState = (session: InterviewSession) => {
     remainingSeconds, // 开场剩余秒数，暂停后沿用累计用时。
     canSubmit, // 是否允许确认提交或明确跳过，到时后仍可提交。
     canAnswer, // 是否允许文字或语音继续写入草稿。
-    canUseHelp: canAnswer && !introduction, // 正式作答时才能打开辅助。
-    canRequestHelp: answerReady && !introduction && (session.pendingAction === null || isInterviewHelperAction(session.pendingAction)), // 当前题就绪时可请求或重试辅助。
+    canReviewAnswers: !preparation && session.status === "completed" && session.report.status === "complete", // 复盘完成后才开放逐题思路与参考回答。
     nextAction, // 开始、提交、恢复共用的下一步动作，已就绪题目直接作答。
   };
 };
 
 // 只提交实际完成的历史，未提交题目与草稿不混入复盘或能力评价。
-export const createInterviewTaskInput = (session: InterviewSession, action: InterviewAction): InterviewTaskInput => {
+export const createInterviewTaskInput = (session: InterviewSession, action: InterviewAction, turnId?: string): InterviewTaskInput => {
   const state = getInterviewSessionState(session);
+  // 回看明确选择的题目，不能默认使用最后一题或把未提交题纳入评价。
+  const reviewTurn = isInterviewHelperAction(action) ? session.turns.find((turn) => turn.id === turnId) : undefined;
   return {
     config: session.config, // 本场固定的岗位、年限与训练设置。
     resume: session.resumeSnapshot, // 可选的脱敏参考简历。
@@ -61,9 +62,9 @@ export const createInterviewTaskInput = (session: InterviewSession, action: Inte
       assisted: turn.assisted, // 是否实际看过辅助内容。
       durationSeconds: Math.round(turn.durationSeconds), // 实际作答秒数。
     })), // 历史包含开场，但正式题数由各类流程独立统计。
-    question: isInterviewHelperAction(action) ? state.latestTurn?.question.content || "" : "", // 辅助只针对当前已就绪的题目。
-    previousReference: action === "reference" ? state.latestTurn?.reference.content || "" : "", // 更换参考回答时避免重复上一版。
-    phase: action === "report" ? state.submittedTurns.at(-1)?.phase || "尚未作答" : state.latestTurn?.phase || "面试准备", // 复盘仅采用已提交阶段。
+    question: reviewTurn?.question.content || "", // 回看只提供选中题目的题面。
+    previousReference: action === "reference" ? reviewTurn?.reference.content || "" : "", // 更换所选题目的参考表达时提供上一版。
+    phase: action === "report" ? state.submittedTurns.at(-1)?.phase || "尚未作答" : reviewTurn?.phase || state.latestTurn?.phase || "面试准备", // 回看沿用所选题型，复盘只采用已提交阶段。
     endedEarly: session.endedEarly, // 是否未达到本类规定轮次便结束。
   };
 };

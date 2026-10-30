@@ -1,7 +1,7 @@
 import type { LLM } from "@snowflake/ai";
 
-// 简历业务可用模型角色；独立面试官由面试智能体单独接线。
-export type ResumeAiAgent = "xiaoZhou" | "xiaoYang" | "resumeParser";
+// 简历业务仅使用小舟与解析角色，面试官小羊由面试智能体单独接线。
+export type ResumeAiAgent = "xiaoZhou" | "resumeParser";
 
 // 模型接口协议：对话补全与响应接口
 export type ResumeAiProtocol = "chatCompletions" | "responses";

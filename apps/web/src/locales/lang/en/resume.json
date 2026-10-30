@@ -29,7 +29,7 @@
   "resumeSettingsTitle": "General Settings",
   "resumeSettingsDescription": "Manage how resume data is stored and backed up on this device. No account or cloud involved. Configure models in Skiff AI.",
   "resumeSettingsModelTitle": "Model Settings",
-  "resumeSettingsModelDescription": "Assign a model to each assistant, or add your own model provider. Added models support connection tests and deletion.",
+  "resumeSettingsModelDescription": "Assign models to Resume Assistant Xiaozhou, Resume Parser, and Interviewer Xiaoyang, or add your own model provider. Added models support connection tests and deletion.",
   "resumeSettingsBackupTitle": "Local backup folder",
   "resumeSettingsBackupHint": "Once a local folder is bound, editing a resume in the editor writes it into that folder as one JSON file per resume. Repeated backups overwrite the same file.",
   "resumeSettingsBackupLocation": "Backup folder",

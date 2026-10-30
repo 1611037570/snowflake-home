@@ -59,7 +59,8 @@ export const useInterviewStore = defineStore("interview", () => {
   };
 
   const retrySave = async () => {
-    await Promise.allSettled(sessions.value.map(save));
+    // 只重试失败记录，避免一次重试把全部历史重新排队写入。
+    await Promise.allSettled(sessions.value.filter((session) => saveErrors.value[session.id]).map(save));
   };
 
   const remove = async (id: string) => {

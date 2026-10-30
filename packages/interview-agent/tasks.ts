@@ -30,7 +30,9 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
   }
   const instructions = await createInterviewPrompt(action, input);
   assertActive();
-  const hasResume = Object.keys(input.resume).length > 0;
+  const intro = input.config.mode === "intro";
+  // 自我介绍直接使用输入资料生成，不经过参考资料工具循环。
+  const hasResume = !intro && Object.keys(input.resume).length > 0;
   let resumeRead = !hasResume;
   const tools: ReactTool[] = [];
   if (hasResume) tools.push({
@@ -43,30 +45,30 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
       return snapshot;
     }, // 返回独立业务副本，不提供写入或编辑器访问能力。
   });
-  tools.push(createReferenceTool({
+  if (!intro) tools.push(createReferenceTool({
     name: "read_interview_guidance", // 面试专属的资料读取入口。
     description: "按当前面试题型读取一项行业参考资料。", // 资料仅用于考察角度，不替代真实经历。
     resources: resumeIndustryKnowledge, // 公共资料不经过简历智能体注册表。
   }));
   const agent = createAgent({
     model: getInterviewModel(), // 面试官角色独立绑定模型，不回退到简历助手。
-    tools, // 仅提供本场快照和行业参考资料。
+    tools, // 自我介绍不提供工具，模拟面试只提供只读资料工具。
     assertActive, // 停止后不再执行工具或接收结果。
     instructions, // 当前动作只接收所需的公共规则与本类技能。
     reactConfig: {
       maxSteps: 12, // 允许读取参考资料与修正本轮内容。
-      initialTool: hasResume ? "read_interview_resume" : undefined, // 有简历时优先读取，无简历时直接作答。
+      initialTool: hasResume ? "read_interview_resume" : undefined, // 逐轮面试有简历时先读取，自我介绍直接生成。
       thinking: { type: "disabled" /* 不展示内部思考。 */ }, // 保持面试文本响应方式。
       beforeFinal: (answer) => {
+        // 只核对读取与有效正文，不用问号数量限制自然表达或触发重写。
         if (!resumeRead) return "请先调用 read_interview_resume 读取本场参考简历，再完成当前动作。";
         if (!answer.trim()) return "本轮必须返回有效面试内容，请按当前动作重新生成。";
-        if (action === "question" && (answer.match(/[?？]/g)?.length || 0) > 1) return "本轮只提出一个考察问题，保留必要反馈后提出唯一问题，不合并多个问题。";
         return null;
       }, // 面试只核对实际读取与当前内容，不经过简历任务账本。
       onIncomplete: () => {
         throw new Error(!resumeRead ? "未能读取本场参考简历，请重试" : action === "question" ? "本轮未能完成出题，请重新生成本题" : "本轮内容未能完成，请重试");
       }, // 重试耗尽按失败处理，不将未完成内容当成可作答题目。
-      onContent: (delta) => { if (resumeRead) options.onContent?.(delta); }, // 有简历时真实读取后才展示正文。
+      onContent: (delta) => { if (resumeRead) options.onContent?.(delta); }, // 逐轮面试完成简历读取后展示，自我介绍直接展示增量。
       onToken: options.onToken, // 本轮独立令牌统计。
       onAct: () => options.onReset?.(), // 清除工具调用前的临时文字。
       onFinalRetry: () => options.onReset?.(), // 不叠加校验重试的正文。
@@ -78,12 +80,28 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
     assertActive();
     return (await agent.run([{
       role: "user", // 本轮固定设置与真实作答。
-      content: JSON.stringify({
-        config: input.config, // 开始时确认的训练设置。
+      content: JSON.stringify(intro ? {
+        resume: input.resume, // 本次选定的脱敏简历内容。
+        background: input.config.background, // 用户提供的经历或补充要求。
+        wordCount: input.config.introWordCount, // 口头稿的目标字数。
+        style: input.config.introStyle, // 口头稿的表达风格。
+        language: input.config.language, // 本次生成使用的语言。
+      } : {
+        // 只提供当前类型使用的设置，避免口头稿参数干扰模拟面试。
+        config: {
+          mode: input.config.mode, // 本场训练类型。
+          position: input.config.position, // 已确认的目标岗位。
+          experienceYears: input.config.experienceYears, // 已确认的工作年限。
+          company: input.config.company, // 可选目标公司或行业。
+          direction: input.config.mode === "specialized" ? input.config.direction : undefined, // 只有专项面试提供本场训练重点。
+          language: input.config.language, // 本轮输出语言。
+          jobDescription: input.config.jobDescription, // 可选岗位要求。
+          background: input.config.background, // 已确认的补充背景。
+        }, // 不携带自我介绍的字数与风格参数。
         history: input.turns, // 已提交问答与辅助标记。
-        currentQuestion: input.question || undefined, // 辅助所针对的题目，无题目时省略。
-        previousReference: input.previousReference || undefined, // 更换表达时提供上一版，其余请求省略。
-      }), // 参考简历只由只读工具提供。
+        currentQuestion: action === "hint" || action === "reference" ? input.question || undefined : undefined, // 结束后回看时提供所选题目。
+        previousReference: action === "reference" ? input.previousReference || undefined : undefined, // 只有更换参考回答时提供上一版。
+      }), // 自我介绍直接携带资料，其余任务通过只读工具读取简历。
     }])).trim();
   } finally { options.signal?.removeEventListener("abort", abort); }
 };

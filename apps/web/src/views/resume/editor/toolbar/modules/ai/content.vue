@@ -24,7 +24,7 @@ provide(SF_ICON_LIST_KEY, {
 
 const agentCards: Array<{
   // 角色使用的稳定标识。
-  key: "xiaoZhou" | "xiaoYang" | "resumeParser" | "interviewer";
+  key: "xiaoZhou" | "xiaoYang" | "resumeParser";
   // 角色展示名称。
   name: string;
   // 角色的主要用途。
@@ -34,8 +34,8 @@ const agentCards: Array<{
 }> = [
   {
     key: "xiaoZhou",
-    name: "小舟",
-    description: "日常交流 · 内容润色 · Markdown 导入",
+    name: "简历助手小舟",
+    description: "简历制作 · 内容润色 · Markdown 导入",
     icon: "lucide:pencil",
   },
   {
@@ -46,15 +46,9 @@ const agentCards: Array<{
   },
   {
     key: "xiaoYang",
-    name: "小羊",
-    description: "回答辅导与表达练习",
+    name: "面试官小羊",
+    description: "AI 面试 · 追问评分与复盘",
     icon: "lucide:sparkles",
-  },
-  {
-    key: "interviewer", // 面试官专属模型绑定。
-    name: "面试官", // 独立面试智能体的展示名称。
-    description: "AI 面试 · 追问评分与复盘", // 面试官承担的业务能力。
-    icon: "lucide:sparkles", // 复用已登记的辅导图标。
   },
 ];
 
@@ -111,8 +105,9 @@ provide("bg", "bg-sf-primary");
         <h2 class="text-sm font-semibold text-sf-text">角色模型</h2>
         <span class="text-xs text-sf-text-2">已配置 {{ boundCount }}/{{ agentCards.length }}</span>
       </header>
+      <!-- 三个业务角色独立配置模型，不再保留重复的面试官入口。 -->
       <div
-        class="grid grid-cols-[repeat(4,minmax(228px,1fr))] gap-3 overflow-x-auto pb-[3px] sm:grid-cols-2 sm:overflow-visible xl:grid-cols-4"
+        class="grid grid-cols-[repeat(3,minmax(228px,1fr))] gap-3 overflow-x-auto pb-[3px] sm:grid-cols-2 sm:overflow-visible xl:grid-cols-3"
       >
         <article
           v-for="agent in agentViews"

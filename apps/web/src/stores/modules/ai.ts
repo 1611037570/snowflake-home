@@ -135,7 +135,7 @@ export type ModelItem = {
   // 是否为内置服务
   builtin?: boolean;
 };
-export type AiAgentKey = "xiaoZhou" | "xiaoYang" | "resumeParser" | "interviewer";
+export type AiAgentKey = "xiaoZhou" | "xiaoYang" | "resumeParser";
 export type AiAgentModels = Record<AiAgentKey, string>;
 // 添加模型时提交的配置（表单或内置模板，不含 id）
 type ModelDraft = Omit<ModelItem, "id">;
@@ -157,12 +157,11 @@ export const useAiStore = defineStore(
     const modelList = ref<ModelItem[]>([]);
     // 服务商凭据单独持久化，尚未添加模型也能保存密钥。
     const providerCredentials = ref<Record<string, ProviderCredential>>({});
-    // 各业务角色分别绑定模型，面试官不继承简历助手配置。
+    // 小舟负责简历、小羊负责面试，各自独立绑定模型。
     const agentModels = ref<AiAgentModels>({
-      xiaoZhou: "",
-      xiaoYang: "",
-      resumeParser: "",
-      interviewer: "", // 面试官独立绑定的模型编号。
+      xiaoZhou: "", // 简历助手小舟绑定的模型编号。
+      xiaoYang: "", // 面试官小羊绑定的模型编号。
+      resumeParser: "", // 简历解析绑定的模型编号。
     });
 
     const sidebarCollapsed = ref(true);

@@ -21,18 +21,15 @@ const getAgentLLM = (agent: AiAgentKey) => {
   });
 };
 
-// 小舟用于普通 AI 对话
+// 简历助手小舟负责简历业务。
 const getXiaoZhouLLM = () => getAgentLLM("xiaoZhou");
 
-// 小羊用于简历助手及相关交互
+// 面试官小羊独立绑定面试模型。
 const getXiaoYangLLM = () => getAgentLLM("xiaoYang");
 
 // 简历解析模型供后续解析流程调用
 const getResumeParseLLM = () => getAgentLLM("resumeParser");
 
-// 面试独立选择模型，复用服务商配置而不共用其他业务角色绑定。
-const getInterviewerLLM = () => getAgentLLM("interviewer");
-
-export { getInterviewerLLM, getResumeParseLLM, getXiaoYangLLM, getXiaoZhouLLM, LLM };
+export { getResumeParseLLM, getXiaoYangLLM, getXiaoZhouLLM, LLM };
 // 错误类型统一出口：供调用方区分主动中止与真实请求失败
 export { ApiError, AbortError, ToolNotFoundError, isAbortError } from "./errors";
