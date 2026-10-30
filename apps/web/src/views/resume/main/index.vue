@@ -51,9 +51,9 @@
               {{ point }}
             </li>
           </ul>
-          <!-- 首屏指标：数字在上、标签在下，内容水平垂直居中 -->
+          <!-- 首屏指标：数字在上、标签在下；各指标按自身内容宽度排布，间距交给 gap，避免位数不同时等分列宽失衡 -->
           <dl
-            class="animate-rise animate-rise--delay-three mt-9 grid grid-cols-3 gap-3 border-t border-sf-b pt-6 sm:grid-cols-5"
+            class="animate-rise animate-rise--delay-three mt-9 flex flex-wrap gap-x-6 gap-y-3 border-t border-sf-b pt-6"
           >
             <div
               v-for="(stat, index) in headlineStats"
@@ -61,8 +61,8 @@
               class="flex flex-col items-center justify-center text-center"
             >
               <dt class="flex flex-col items-center gap-1">
-                <!-- 数字始终交给动画处理，加号独立渲染，避免固定文案覆盖滚动效果。 -->
-                <span class="text-2xl font-black tabular-nums text-sf-theme">{{ stat.count === null ? '—' : Math.round(animatedHeadlineStats[index] ?? 0).toLocaleString() }}<span v-if="stat.suffix && stat.count !== null">{{ stat.suffix }}</span></span>
+                <!-- 数字始终交给动画处理，避免固定文案覆盖滚动效果。 -->
+                <span class="text-2xl font-black tabular-nums text-sf-theme">{{ stat.count === null ? '—' : Math.round(animatedHeadlineStats[index] ?? 0).toLocaleString() }}</span>
                 <span class="text-xs font-medium text-sf-text-2">{{ stat.label }}</span>
               </dt>
             </div>
@@ -182,6 +182,59 @@
         </div>
       </section>
 
+      <!-- 产品能力：按能力维度展开细节，与上方「求职路径」的阶段视角互补，不重复同一批卡片内容 -->
+      <section
+        id="capabilities"
+        :ref="registerRevealSection"
+        class="resume-home__reveal relative mx-auto flex max-w-[1440px] flex-col justify-center px-6 py-12 lg:px-12 lg:py-18"
+      >
+        <div class="max-w-2xl">
+          <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">
+            {{ $t("resumeHomeCapabilityEyebrow") }}
+          </p>
+          <h2 class="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+            {{ $t("resumeHomeCapabilityTitle") }}
+          </h2>
+        </div>
+        <!-- 能力卡片不放图标，用标题加一句说明讲清用途，避免图标语义含糊 -->
+        <div class="mt-12 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <article
+            v-for="item in capabilityItems"
+            :key="item.title"
+            class="flex h-full flex-col rounded-[21px] border border-sf-b bg-sf-primary p-3 transition-colors duration-300 hover:border-sf-theme"
+          >
+            <h3 class="text-base font-bold tracking-[-0.02em]">{{ item.title }}</h3>
+            <p class="mt-3 text-sm leading-6 text-sf-text-2">{{ item.description }}</p>
+          </article>
+        </div>
+      </section>
+
+      <!-- 适用人群：按求职阶段说明各自侧重点，让访客对号入座 -->
+      <section
+        id="audience"
+        :ref="registerRevealSection"
+        class="resume-home__reveal relative mx-auto flex max-w-[1440px] flex-col justify-center px-6 py-12 lg:px-12 lg:py-18"
+      >
+        <div class="max-w-2xl">
+          <p class="text-sm font-semibold tracking-[0.18em] text-sf-theme">
+            {{ $t("resumeHomeAudienceEyebrow") }}
+          </p>
+          <h2 class="mt-3 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
+            {{ $t("resumeHomeAudienceTitle") }}
+          </h2>
+        </div>
+        <div class="mt-12 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <article
+            v-for="item in audienceItems"
+            :key="item.title"
+            class="flex h-full flex-col rounded-[21px] border border-sf-b bg-sf-primary p-3 transition-colors duration-300 hover:border-sf-theme"
+          >
+            <h3 class="text-base font-bold tracking-[-0.02em]">{{ item.title }}</h3>
+            <p class="mt-3 text-sm leading-6 text-sf-text-2">{{ item.description }}</p>
+          </article>
+        </div>
+      </section>
+
       <!-- 各内容区使用一致的纵向留白，保持页面节奏 -->
       <ResumeHomeFaq :ref="registerRevealSection" class="resume-home__reveal" />
 
@@ -280,19 +333,16 @@ const headlineStats = computed(() => {
     },
     {
       count: aiServiceCount.value, // AI 固定服务次数读入后参与数字动画，未读取时保留空值。
-      suffix: "+", // 加号独立显示，不干扰数值插值。
       label: $t("resumeHomeAiServiceCount"), // 首页 AI 服务指标名称。
     },
     {
       // count: overview.value?.visitors?.totalUsers ?? 0,
       count: 108429, // 固定访客数量。
-      suffix: "+", // 固定累计数量也使用数字动画，加号单独显示。
       label: $t("resumeSiteStatsTotalVisitors"),
     },
     {
       // count: resumeActions,
       count: 63751, // 固定简历数量。
-      suffix: "+", // 固定累计数量也使用数字动画，加号单独显示。
       label: $t("resumeSiteStatsResumeActions"),
     },
   ];
@@ -409,6 +459,62 @@ const featureGroups = computed(() => [
       $t("resumeHomeStatisticsFeature2"),
       $t("resumeHomeStatisticsFeature3"),
     ],
+  },
+]);
+
+// 产品能力清单：按能力维度列出具体做法，补齐「求职路径」四张卡没说到的细节
+const capabilityItems = computed(() => [
+  {
+    title: $t("resumeHomeCapability1Title"),
+    description: $t("resumeHomeCapability1Description"),
+  },
+  {
+    title: $t("resumeHomeCapability2Title"),
+    description: $t("resumeHomeCapability2Description"),
+  },
+  {
+    title: $t("resumeHomeCapability3Title"),
+    description: $t("resumeHomeCapability3Description"),
+  },
+  {
+    title: $t("resumeHomeCapability4Title"),
+    description: $t("resumeHomeCapability4Description"),
+  },
+  {
+    title: $t("resumeHomeCapability5Title"),
+    description: $t("resumeHomeCapability5Description"),
+  },
+  {
+    title: $t("resumeHomeCapability6Title"),
+    description: $t("resumeHomeCapability6Description"),
+  },
+  {
+    title: $t("resumeHomeCapability7Title"),
+    description: $t("resumeHomeCapability7Description"),
+  },
+  {
+    title: $t("resumeHomeCapability8Title"),
+    description: $t("resumeHomeCapability8Description"),
+  },
+]);
+
+// 适用人群：按求职阶段说明各自的重点，访客据此判断是否适合自己
+const audienceItems = computed(() => [
+  {
+    title: $t("resumeHomeAudience1Title"),
+    description: $t("resumeHomeAudience1Description"),
+  },
+  {
+    title: $t("resumeHomeAudience2Title"),
+    description: $t("resumeHomeAudience2Description"),
+  },
+  {
+    title: $t("resumeHomeAudience3Title"),
+    description: $t("resumeHomeAudience3Description"),
+  },
+  {
+    title: $t("resumeHomeAudience4Title"),
+    description: $t("resumeHomeAudience4Description"),
   },
 ]);
 </script>
