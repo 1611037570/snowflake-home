@@ -34,6 +34,8 @@ const resumeChildren: RouteRecordRaw[] = [
   { path: "ai", component: () => import("@/views/resume/settings/ai/index.vue") },
   // AI 生成简历使用独立页面，复用弹窗入口的同一套生成流程。
   { path: "generate", component: () => import("@/views/resume/generate/index.vue") },
+  // 优化页选择简历，执行与报告由工作台和编辑器共用的弹窗承接。
+  { path: "optimize", component: () => import("@/views/resume/optimize/index.vue"), meta: { localeFiles: ["resume", "resume-editor"] } },
   // 面试独立于简历编辑器，使用自己的流程与持久化记录。
   { path: "interview", component: () => import("@/views/resume/interview/index.vue") },
   { path: "statistics", component: () => import("@/views/resume/statistics/index.vue") },

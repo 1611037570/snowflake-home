@@ -5,7 +5,8 @@ import {
   normalizeDesensitizeFields,
   type DesensitizeField,
 } from "@snowflake/resume-core/privacy";
-import { findResumeModuleSchema } from "@snowflake/resume-core";
+import { findResumeModuleSchema, type ResumeSnapshotSource } from "@snowflake/resume-core";
+import { DEFAULT_MODULE_NAMES } from "@/stores/modules/resume/config/defaultConfig";
 import { type ResumeDataContext } from "@snowflake/resume-agent";
 import { isContentEmpty } from "@/views/resume/shared/validData";
 
@@ -14,7 +15,7 @@ const getValueByPath = (source: any, path: string[]) =>
   path.reduce((value, key) => value?.[key], source);
 
 // 简历数据上下文：统一提供读取范围、媒体裁剪与隐私脱敏
-export const useResumeContext = (): ResumeDataContext => {
+export const useResumeContext = (source?: () => ResumeSnapshotSource): ResumeDataContext => {
   const resumeStore = useResumeStore();
   const { selectedModule, desensitizeMode } = storeToRefs(resumeStore);
   const PHONE_PATTERN = /1[3-9]\d{9}/g;
@@ -97,7 +98,9 @@ export const useResumeContext = (): ResumeDataContext => {
   let requestModuleKeys: string[] | null = null;
   let requestDesensitizeFields: DesensitizeField[] | null = null;
   const getResumeData = () => {
-    const data = resumeStore.currentData;
+    // 独立优化绑定自己的副本，普通助手继续读取当前编辑对象。
+    const item = source?.();
+    const data = source ? item?.data : resumeStore.currentData;
     if (!data) return {};
     const result: Record<string, any> = {};
     const selectedFields = requestDesensitizeFields ?? normalizeDesensitizeFields(desensitizeMode.value);
@@ -130,7 +133,7 @@ export const useResumeContext = (): ResumeDataContext => {
       if (!module || typeof module !== "object" || !("data" in module || "list" in module)) return;
       // 媒体字段只从模块副本移除，保留原简历中的头像与作品图片
       const moduleClone = omitMediaFromData({ [key]: JSON.parse(JSON.stringify(module)) })[key];
-      const layout = (resumeStore.currentUI as any)?.[key]?.layout;
+      const layout = (source ? item?.ui : resumeStore.currentUI)?.[key]?.layout;
       const moduleSchema = findResumeModuleSchema(key, undefined, layout);
       const activeData = moduleSchema
         ? getValueByPath(moduleClone, moduleSchema.dataPath)
@@ -141,7 +144,9 @@ export const useResumeContext = (): ResumeDataContext => {
         : activeData;
       // 按当前数据形态解析字段填写口径，供可选字段裁剪使用
       const activeSchema = findResumeModuleSchema(key, clone, layout);
-      const title = module.ui?.title || resumeStore.getModel(key)?.name || key;
+      const title = module.ui?.title || (source
+        ? DEFAULT_MODULE_NAMES.find((definition) => definition.key === key)?.name
+        : resumeStore.getModel(key)?.name) || key;
       const removeOrganizationName =
         (key === "work" && selectedFieldSet.has("workOrganization")) ||
         (key === "education" && selectedFieldSet.has("educationOrganization"));

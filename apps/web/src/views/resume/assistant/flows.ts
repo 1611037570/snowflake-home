@@ -182,41 +182,6 @@ export const flows: Record<string, Flow> = {
       };
     },
   },
-  // 一键优化：已有求职岗位直接执行，缺失时只收集岗位。
-  oneKeyOptimize: {
-    userContent: "帮我进行一键优化",
-    steps: [
-      {
-        question: "一键优化需要读取整份简历，当前只选择了部分模块，是否授权本次读取整份简历？",
-        options: ["授权读取并继续", "拒绝并取消"],
-        // 仅局部模块模式需要额外授权，整个简历模式直接进入优化信息收集
-        when: () => useResumeStore().selectedModule.length > 0,
-        cancelAnswers: ["拒绝并取消"],
-        cancelMessage: "已取消一键优化，未发起 AI 请求。",
-        collectAnswer: false,
-      },
-      {
-        question: "请填写你的求职岗位（例如：金融分析师、后端开发）",
-        options: [],
-        input: true,
-        // 简历已有岗位时直接用于本轮优化，避免重复询问。
-        when: () => !useResumeStore().currentData?.user?.data?.position?.trim(),
-      },
-    ],
-    build: (answers) => {
-      // 优先采用本次输入的岗位；已有岗位由简历直接提供。
-      const direction = answers[0] || useResumeStore().currentData?.user?.data?.position?.trim() || "";
-      // 按钮任务身份由 requestContext 记录，运行时据此装配专用任务配置。
-      return {
-        // 用户消息只携带本次岗位事实，执行与报告规则由按钮任务配置提供。
-        userContent: `请执行一键优化。求职岗位为「${direction}」。`,
-        // 用户已处于整个简历模式或在流程中明确授权，本次请求固定读取整份简历
-        requestContext: {
-          resumeScope: "all",
-        },
-      };
-    },
-  },
 };
 
 // 建议操作卡片：点击后进入对应引导流程，由调用方传给 Chat

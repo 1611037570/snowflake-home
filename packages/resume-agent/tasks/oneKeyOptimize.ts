@@ -1,37 +1,37 @@
 import type { ResumeAgentTaskProfile } from "../runtime/taskTypes";
-import { validateResumeReportChanges } from "../reports/resumeReport";
 
-// 一键优化只由按钮入口装配，不注册为通用对话技能。
+// 入口只声明目标和必要事实边界，写作方法与候选规则由通用技能负责。
 export const ONE_KEY_OPTIMIZE_TASK: ResumeAgentTaskProfile = {
-  id: "oneKeyOptimize", // 按钮任务稳定标识。
-  preferredCapabilityId: "resume_optimization", // 优先加载通用简历优化方法。
-  allowModuleTitleEdit: false, // 岗位优化只修改实际简历内容。
-  objective: "结合入口提供的求职岗位优化整份简历并输出评分报告", // 按钮已经明确的任务目标。
-  // 检查后确认没有安全改动也是正常结果，因此不强制本轮产生写入。
-  requiredEffects: [],
-  // 用户可核对的完成条件。
-  successCondition: "当前简历已完成有事实依据的岗位优化并生成评分报告；没有安全改动时说明无需修改的原因",
+  id: "oneKeyOptimize", // 独立优化入口。
+  preferredCapabilityId: "resume_optimization", // 优先采用通用优化方法，其他技能由 Agent 按需选择。
+  allowModuleTitleEdit: false, // 本入口处理简历内容，不修改展示标题。
+  allowRequestInput: false, // 一次完成草稿，不进入聊天追问。
+  objective: "根据目标岗位与用户要求，尽可能完善简历草稿，突出个人贡献与岗位价值", // 由 Agent 判断改写重点和执行顺序。
+  requiredEffects: [], // 优质内容允许保留，不为达到改动数量而强行写入。
+  successCondition: "完成有依据的简历内容优化并核对最终草稿；无需修改时说明具体原因", // 不将评分和报告包装作为内容完成条件。
   completionPolicy: {
-    requiredEvidence: ["read"], // 必须基于真实读取的简历给出结论。
-    readAfterEvidence: ["resume_change"], // 只有真的写入后才要求基于写入后的数据重新读取。
+    requiredEvidence: ["read"], // 内容判断必须先读取真实简历。
+    readAfterEvidence: ["resume_change"], // 最终判断仍须基于修改后的数据。
   },
-  validateFinal: validateResumeReportChanges, // 报告改动条目必须与实际写入证据一致。
-  instructions: `# 任务范围
-- 结合入口提供的目标岗位优化整份简历，行业知识库仅在确有帮助时读取，不能把通用词汇当成岗位要求。
-- 求职岗位已由入口提供，职业阶段根据简历判断；不再追问已明确的岗位或身份，缺少关键事实时列入 todo。
-- 必要经历若已有可确认的主体、角色与时间，可补充现有模块记录；缺少主体或模块不存在时列入 todo，不写纯占位经历。候选内容列入 todo 供用户按实际情况确认。
-- 可压缩或删除重复、空洞表达；真实但弱相关的经历优先精简、后置，不删除唯一的真实工作、项目或教育记录，也不删除身份与联系方式。
-- 姓名、公司、项目名称、任职时间、学校、学历和证书没有资料时不创建。职责、技术、成果及量化候选按共用规则补全，不得覆盖与用户资料冲突的事实；未核实内容不能写成用户已确认的成果。
-- 保持模块展示标题不变；岗位匹配应体现在实际经历、技能和项目内容中，不把岗位说明写进模块标题。
-- 确无可操作内容时在报告中说明。评分只依据最终简历中已确认的事实，带 XX 占位的候选不作为已达成成果计分，未成功的改动不能记入报告。
+  validateFinal: (_answer, evidence) => {
+    // 只拦截尚未解决的真实写入失败，不再校验报告包装或强迫所有模块改写。
+    const writes = evidence.filter((item) => item.kind === "resume_change" && !item.replayed);
+    const lastWrite = writes[writes.length - 1];
+    return lastWrite && lastWrite.status !== "success" ? {
+      code: "unresolved", // 最新写入仍有失败项，不能标为全部完成。
+      text: "最近一次修改尚未成功，请根据工具结果修正并重新提交，再读取最终草稿复核。", // 仅修复实际操作问题。
+    } : null;
+  },
+  instructions: `# 目标
+根据目标岗位、可选 JD 和优化重点，交出可以直接预览的完整简历草稿。先理解经历的价值，再决定结构、取舍和表达，不把优化局限于换几个词。按需要选择写作、岗位匹配、评估或参考知识，不必为走流程而加载无关内容。
 
-# 评分与报告
-固定六维顺序：信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性。各维只依据适用证据给 0～100 整数分；学生或缺少任职证据时，职业稳定性为 null；其他维度缺少判断基础时也用 null。totalScore 为非 null 分数的平均值并四舍五入，均不可评分时为 null；敏感属性不计分。
-最终只输出一个以 \`\`\`resume-report 标记的 Markdown 代码块，块内为合法 JSON；没有安全改动时 changes 为空，并在 suggestions 中说明原因。字段如下：
-- totalScore：总分或 null。
-- dimensions：按上述固定顺序列出六个 { name, score }，名称不得变更。
-- checks：优化后仍存在的问题，每项 { level, message }；level 只能是 error 或 warning，message 写明对应维度与简历依据。
-- changes：本轮真实写入的改动，按模块汇总，每个模块只列一条 { module, summary }；summary 概括该模块的改动范围，不逐条罗列字段；未成功写入时为空数组，跳过失败与复用结果。
-- suggestions：尚未解决的问题与具体行动，字符串数组，没有内容时返回空数组。不需要输出 todo 与 highlights。
-输出前核对 JSON 可解析、六维顺序和名称固定、changes 覆盖了实际写入的全部模块且没有多列；不得把计划、失败操作或纯占位内容写进 changes。分数与结论必须对应最终简历，不能照搬示例。`, // 该按钮任务独有的执行、评分与输出规则。
+# 内容边界
+- 资料不完整不代表无法优化，处理已有内容，不要求所有模块齐全。综合优化可重组、合并重复表达、突出贡献与交付、调整记录顺序，并在现有模块内补充有依据的内容。
+- 保留已经确认的身份、公司、学校、时间与具体成果，不虚构已获得的成绩。稀疏内容按共用写作规则起草与已有线索相容的职责、方法和成果候选，未知细节用 XX，并在 todo 中指出需要核实的内容；候选不计作已确认的成果。
+- 精简模式只压缩已有内容；岗位匹配模式突出已有证据，不把 JD 要求复制成用户具备的能力。不删除唯一的真实工作、项目、教育记录或身份与联系方式，弱相关内容可精简和后置。
+- 需要实际修改时调用写入工具，不以建议代替行动。工具指出失败项时只修复未完成部分，按实际需要批量或分步处理；最终核对事实、重复和遗漏，避免反复重写已经合适的内容。
+
+# 最终说明
+完成后返回简洁 JSON，包含 summary（本次结论）、changes（按模块说明具体问题、处理和改善）、todo（待补充或核实的事实）与 suggestions（剩余行动）。changes 每项可写 module、summary、problem、benefit；实际改动清单和前后摘录由程序根据真实数据生成，无需重复抄写。
+评分仅在有依据时提供 dimensions，每项包含 name 与 score，维度可为信息完整度、阅读效率、职业契合度、职业成就、发展潜力、职业稳定性；不适用时为 null。不为凑评分或包装报告重复调用工具，优先完成实际内容。`, // 一次性入口只补充任务目标、事实边界与简洁报告约定。
 };

@@ -4,6 +4,7 @@ import { useMediaQuery } from "@vueuse/core";
 import { useRoute } from "vue-router";
 import ProjectTitle from "./projectTitle.vue";
 import GithubStars from "./githubStars.vue";
+import ResumeClosing from "./resumeClosing.vue";
 
 const route = useRoute();
 const drawerVisible = ref(false);
@@ -34,6 +35,11 @@ const navGroups = [
         key: "resumeNavAiGenerate", // AI 生成入口文案标识。
         path: "/resume/generate", // 独立生成页面，与新建入口共用同一套流程。
         icon: "lucide:wand-sparkles", // AI 生成导航图标。
+      },
+      {
+        key: "resumeNavAiOptimize", // 独立优化入口文案。
+        path: "/resume/optimize", // 选择简历后打开共用优化弹窗。
+        icon: "lucide:scan-text", // 简历优化图标。
       },
       {
         key: "resumeNavInterview", // 面试栏目文案标识。
@@ -128,6 +134,8 @@ watch([() => route.path, isMobile], () => {
       <SfLocale size="5" :box-size="9" class="flex h-9 w-9 items-center justify-center" />
       <SfDonation size="5" :box-size="9" class="h-9 w-9 cursor-pointer justify-center" />
     </footer>
+    <!-- 寄语置于侧栏最底部，与编辑器模块栏共用组件。 -->
+    <ResumeClosing class="shrink-0 px-3 pb-3" />
   </aside>
 
   <!-- 移动端仅保留导航入口和品牌，功能按钮随抽屉移至底部。 -->
@@ -185,6 +193,7 @@ watch([() => route.path, isMobile], () => {
         <SfLocale size="5" :box-size="9" class="flex h-9 w-9 items-center justify-center" />
         <SfDonation size="5" :box-size="9" class="h-9 w-9 cursor-pointer justify-center" />
       </div>
+      <ResumeClosing class="pt-3" />
     </template>
   </el-drawer>
 </template>

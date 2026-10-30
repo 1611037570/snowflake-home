@@ -7,6 +7,22 @@ import HomeNavigation from "./main/homeNavigation.vue";
 import IssueFeedback from "./components/issueFeedback.vue";
 import Share from "./components/share.vue";
 import { $t } from "@/locales";
+import { defineAsyncComponent, onBeforeUnmount, onMounted } from "vue";
+import eventBus from "@/utils/modules/eventBus";
+
+// 工作台、编辑器共用一个按需加载的优化弹窗，入口不再依赖聊天面板。
+const AiResumeOptimizer = defineAsyncComponent(() => import("./components/aiResumeOptimizer.vue"));
+const optimizerVisible = ref(false);
+const optimizationResumeId = ref("");
+const openOptimizer = (resumeId) => {
+  if (optimizerVisible.value || resumeStore.isGenerating) return;
+  const id = typeof resumeId === "string" && resumeId ? resumeId : resumeStore.currentItem?.id;
+  if (!id) return;
+  optimizationResumeId.value = id;
+  optimizerVisible.value = true;
+};
+onMounted(() => eventBus.on("resume-open-optimize", openOptimizer));
+onBeforeUnmount(() => eventBus.off("resume-open-optimize", openOptimizer));
 
 const route = useRoute();
 // 忽略地址末尾斜杠，首页导航与内容占位使用同一判断。
@@ -38,6 +54,8 @@ const loadRouteResumes = async () => {
   }
 };
 watch(() => [route.path, route.query.id], loadRouteResumes, { immediate: true });
+// 离开当前页面时卸载任务，停止旧请求并丢弃尚未写入的副本。
+watch(() => [route.path, route.query.id], () => { optimizerVisible.value = false; });
 
 // 首次进入自动初始化开始投递日期
 const statisticsStore = useResumeStatisticsStore();
@@ -87,6 +105,11 @@ if (!route.meta.hideResumeLayout) statisticsStore.initStartDate();
       route.name !== 'resume-print' &&
       route.name !== 'editor'
     "
+  />
+  <AiResumeOptimizer
+    v-if="optimizerVisible"
+    v-model="optimizerVisible"
+    :resume-id="optimizationResumeId"
   />
 </template>
 

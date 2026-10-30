@@ -47,7 +47,7 @@ const agentCards: Array<{
   {
     key: "xiaoYang",
     name: "面试官小羊",
-    description: "AI 面试 · 追问评分与复盘",
+    description: "AI 简历面试 · 追问评分与复盘",
     icon: "lucide:sparkles",
   },
 ];

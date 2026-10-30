@@ -31,6 +31,9 @@
 
 vue文件 创建使用小驼峰，导入和使用使用大驼峰； js使用setup语法糖 优先使用 vueuse库；template 避免多重 div 嵌套，使用 Tailwind CSS 写法。
 间距类 Tailwind 类统一使用 3 的倍数（如 p-3、m-3、gap-3），避免零散的非 3 倍间距。
+页面、弹窗与业务卡片默认使用 p-3、gap-3，内外边距与区块间距默认不超过 3；禁止自行放大为 p-6、p-9、p-12、gap-6 或响应式大留白，也不得通过多层容器重复叠加 p-3。只有用户明确指定更大间距或简历纸张本身的排版参数时才按指定值处理。工作台内容默认撑满可用区域，不擅自增加 max-w 居中容器形成大块两侧空白。
+滚动区域统一使用项目的 SfScrollbar，包括页面、弹窗、侧栏、列表与预览区域；禁止用 overflow-auto、overflow-y-auto、overflow-x-auto、overflow-scroll 等原生滚动容器或直接使用 ElScrollbar 替代。overflow-hidden 仅用于裁剪或布局约束，不视为滚动区域。
+SfScrollbar 的滚动内容默认内置 px-3（左右各 12px），设计时必须计入这层横向留白，不得在同一内容边界的父容器、滚动内容或额外包装层重复叠加 px-3 / p-3。默认保留组件内置横向间距，调用方按需补充纵向间距；确需由外层统一控制横向留白时使用 flush 关闭内置 px-3，并由一个明确的容器负责，不能两边同时留白或叠套多个滚动容器制造双重滚动。
 卡片悬停只做边框或背景反馈，不要用原生 title 属性。
 组件 优先使用apps\web\src\components目录下的组件，没有再使用element-plus组件库。
 执行web项目时候，样式和图标相关内容，按需读取 knowledges 目录下的 Markdown 文档进行学习

@@ -268,6 +268,15 @@ export const useResumeStore = defineStore(
       return true;
     };
 
+    // 独立任务按编号一次写回；原内容变化或被删除时拒绝覆盖，非当前简历也正常保存。
+    const replaceResumeData = (id: string, expectedData: string, data: Record<string, any>) => {
+      const item = resumeList.value.find((record) => record.id === id);
+      if (!item || JSON.stringify(item.data) !== expectedData) return false;
+      item.data = deepClone(data);
+      schedulePersistResume(item);
+      return true;
+    };
+
     // 内容变更脉冲：整份简历任一嵌套字段变化后自增，供派生逻辑在编辑停顿后统一刷新
     const contentVersion = ref(0);
     // 是否处于编辑中：内容变化后置真，停顿 EDIT_IDLE_DELAY 后置否
@@ -308,6 +317,7 @@ export const useResumeStore = defineStore(
       savePendingResumes, // 可等待并向调用方报告失败的保存入口
       resumeList,
       renameResume, // 按编号重命名并保存简历
+      replaceResumeData, // 根据任务开始时的内容校验后按编号写回业务数据。
       trashList,
       maxCount,
       currentIndex,

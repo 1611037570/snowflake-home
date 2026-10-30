@@ -29,8 +29,8 @@ const commonSuggestions = computed(() =>
   visibleSuggestions.value.filter((card) => !isOneKeyFlow(card.flow)),
 );
 
-// 一键优化与一键调整先展示共用功能说明，确认后再启动对应通用流程
-const { introVisible, introFlow, openOneKeyIntro, confirmOneKeyIntro } = useOneKeyActions(
+// 优化打开独立弹窗，调整确认说明后继续原有助手流程。
+const { introVisible, openOneKeyIntro, confirmOneKeyIntro } = useOneKeyActions(
   (flow) => emit("suggest", { flow }),
 );
 // 带功能介绍的建议先展示详情，确认后再进入对应引导流程
@@ -127,7 +127,7 @@ const startFeature = () => {
       一键操作
     </div>
 
-    <OneKeyIntro v-model="introVisible" :flow="introFlow" @confirm="confirmOneKeyIntro" />
+    <OneKeyIntro v-model="introVisible" @confirm="confirmOneKeyIntro" />
 
     <SfModal
       v-model="featureIntroVisible"

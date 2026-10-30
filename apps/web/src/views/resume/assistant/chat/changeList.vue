@@ -66,7 +66,9 @@ const comparedFields = computed(() => {
     <p v-if="state.unavailable" class="mt-3 text-xs text-sf-text-2">部分改动详情未能记录，请查看当前简历确认内容。</p>
   </section>
   <SfModal v-if="visible && selected" v-model="visible" title="查看更改" width="540px">
-    <div class="flex max-h-[66vh] flex-col gap-3 overflow-y-auto">
+    <!-- 复用弹窗外壳的留白，改动详情统一由项目滚动条承接。 -->
+    <SfScrollbar flush max-height="66vh">
+    <div class="flex shrink-0 flex-col gap-3">
       <header class="flex flex-col gap-3 border-b border-sf-b pb-3">
         <span class="text-xs text-sf-text-3">改动位置</span>
         <div class="text-sm font-semibold break-words text-sf-text">{{ selected.location }}</div>
@@ -109,5 +111,6 @@ const comparedFields = computed(() => {
         <p v-if="!comparedFields.length" class="text-sm text-sf-text-2">记录已{{ selected.type === 'delete' ? '删除' : '新增' }}，没有可展示的文字内容。</p>
       </template>
     </div>
+    </SfScrollbar>
   </SfModal>
 </template>

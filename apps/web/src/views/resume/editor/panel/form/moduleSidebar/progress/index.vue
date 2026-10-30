@@ -15,8 +15,8 @@ import { useOneKeyActions } from "../../../../hooks/useOneKeyActions";
 const resumeStore = useResumeStore();
 const { currentData, runtimeFields, currentUI, isGenerating } = storeToRefs(resumeStore);
 
-// 一键入口共用说明弹窗与流程启动，优化和调整都沿用同一套通用流程
-const { introVisible, introFlow, openOneKeyIntro, confirmOneKeyIntro } = useOneKeyActions(
+// 优化交给独立弹窗，调整仍在确认说明后启动助手流程。
+const { introVisible, openOneKeyIntro, confirmOneKeyIntro } = useOneKeyActions(
   (flow) => eventBus.emit("resume-start-assistant-flow", flow),
 );
 
@@ -78,7 +78,7 @@ const aiActionClass = computed(() =>
     : "bg-sf-success-2 text-sf-success hover:bg-sf-success hover:text-white",
 );
 
-// 从检查入口切换到 AI 标签，并交由对应流程处理整份简历。
+// 优化直接打开独立弹窗；检查问题仍由原有一键调整入口处理。
 const startAiAction = () => {
   if (isGenerating.value) return;
   // 存在检查问题时先调整，全部通过后再进入内容优化
@@ -248,5 +248,5 @@ const getTodoList = (item) => [
     </div>
   </SfModal>
 
-  <OneKeyIntro v-model="introVisible" :flow="introFlow" @confirm="confirmOneKeyIntro" />
+  <OneKeyIntro v-model="introVisible" @confirm="confirmOneKeyIntro" />
 </template>

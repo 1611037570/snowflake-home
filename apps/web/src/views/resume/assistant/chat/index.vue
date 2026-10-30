@@ -17,6 +17,7 @@ import { useResumeAiAvailability } from "@/views/resume/hooks/useResumeAiAvailab
 import { flows, suggestions } from "../flows";
 import type { Flow, FlowStep, SuggestCard } from "../types";
 import { useResumeAssistant } from "../useResumeAssistant";
+import eventBus from "@/utils/modules/eventBus";
 
 import AiMessage from "./aiMessage.vue";
 import ChatInput from "./chatInput/index.vue";
@@ -442,6 +443,11 @@ watch(
  */
 const handleSuggest = (payload: Pick<SuggestCard, "flow">) => {
   if (generating.value || isChatLoading.value) return;
+  // 旧外部流程入口同样转到独立弹窗，不向聊天追加优化消息。
+  if (payload?.flow === "oneKeyOptimize") {
+    eventBus.emit("resume-open-optimize");
+    return;
+  }
   // 选择工作流一键操作前先判断是否已绑定 AI 模型，未绑定则不启动流程
   if (!ensureAiAvailable()) return;
   const flow = flows[payload?.flow];

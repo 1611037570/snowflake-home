@@ -19,10 +19,16 @@ export interface ReportChange {
   module: string;
   // 实际成功改动的简要说明
   summary: string;
+  problem?: string; // 本次改写针对的具体问题，兼容历史报告缺失。
+  before?: string; // 原简历中的真实代表性片段。
+  after?: string; // 优化草稿中的真实代表性片段。
+  benefit?: string; // 实际解决的阅读或岗位表达问题。
 }
 
 // 一键优化产出的结构化报告，字段与按钮任务配置的输出约定保持一致
 export interface ResumeReport {
+  // 本次优化的整体结论，兼容旧报告时为空。
+  summary: string;
   // 有效维度得分均值，无可评分维度时为空
   totalScore: number | null;
   // 六个固定维度及其评分
@@ -62,13 +68,16 @@ const normalizeReport = (value: unknown): ResumeReport | null => {
   const todo = value.todo ?? [];
   const highlights = value.highlights ?? [];
   const suggestions = value.suggestions ?? [];
+  if (value.summary != null && typeof value.summary !== "string") return null;
   if (!Array.isArray(checks) || !checks.every((item) => isObject(item) &&
     ["error", "warning"].includes(String(item.level)) && typeof item.message === "string")) return null;
   if (!Array.isArray(changes) || !changes.every((item) => isObject(item) &&
-    typeof item.module === "string" && typeof item.summary === "string")) return null;
+    typeof item.module === "string" && typeof item.summary === "string" &&
+    ["problem", "before", "after", "benefit"].every((key) => item[key] == null || typeof item[key] === "string"))) return null;
   if (![todo, highlights, suggestions].every(isStringList)) return null;
   const scores = dimensions.map((item) => item.score).filter(isScore);
   return {
+    summary: typeof value.summary === "string" ? value.summary : "", // 兼容历史报告缺少整体结论。
     // 根据校验后的有效分数计算，避免模型总分与维度不一致
     totalScore: scores.length ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length) : null,
     // 校验后保留固定顺序的维度
