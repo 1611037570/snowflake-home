@@ -10,13 +10,18 @@ import { $t } from "@/locales";
 import { defineAsyncComponent, onBeforeUnmount, onMounted } from "vue";
 import eventBus from "@/utils/modules/eventBus";
 
-// 工作台、编辑器共用一个按需加载的优化弹窗，入口不再依赖聊天面板。
+// 只有编辑器内的一键优化使用弹窗，其余入口统一到优化页内嵌展开。
 const AiResumeOptimizer = defineAsyncComponent(() => import("./components/aiResumeOptimizer.vue"));
 const optimizerVisible = ref(false);
 const optimizationResumeId = ref("");
 const openOptimizer = (resumeId) => {
   if (optimizerVisible.value || resumeStore.isGenerating) return;
   const id = typeof resumeId === "string" && resumeId ? resumeId : resumeStore.currentItem?.id;
+  // 非编辑器页面没有可覆盖的编辑区，直接跳到优化页，避开弹窗形态。
+  if (route.name !== "editor") {
+    router.push({ path: "/resume/optimize", query: id ? { id } : {} });
+    return;
+  }
   if (!id) return;
   optimizationResumeId.value = id;
   optimizerVisible.value = true;
