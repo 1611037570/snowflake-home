@@ -24,6 +24,9 @@ const contentRef = ref(null);
 const loadingRef = ref(null);
 const loadingMore = ref(false);
 const paused = ref(false);
+// 底部提示的最小停留时长：追加批次后新卡片会把提示顶到可视区之外，
+// 因此提示必须先单独停留这段时间，再让调用方追加内容。
+const MIN_LOADING_DURATION = 300;
 
 // 距离底部二百像素时加载下一批，并在内容不足一屏时继续补足。
 const checkBottom = async () => {
@@ -31,8 +34,12 @@ const checkBottom = async () => {
   if (!wrap || props.loading || loadingMore.value || paused.value || !props.hasMore) return;
   if (wrap.scrollHeight - wrap.scrollTop - wrap.clientHeight > 200) return;
   const key = props.resetKey;
+  // 先只渲染提示并停留一小段时间，让提示被滚入可视区并停留；随后才追加下一批。
   loadingMore.value = true;
+  await new Promise((resolve) => setTimeout(resolve, MIN_LOADING_DURATION));
   try {
+    // 停留期间切换了列表就放弃这一批，交给新列表重新判断。
+    if (key !== props.resetKey) return;
     if ((await props.loadMore()) === false && key === props.resetKey) paused.value = true;
   } catch {
     if (key === props.resetKey) paused.value = true;
@@ -41,6 +48,12 @@ const checkBottom = async () => {
     loadingMore.value = false;
     if (!paused.value) checkBottom();
   }
+};
+
+// 用户再次滚动时解除暂停：一次加载被判失败或判为结束，不能让列表永久失去触底能力。
+const handleScroll = () => {
+  paused.value = false;
+  checkBottom();
 };
 
 // 筛选切换后回到首批，内容和滚动区域变化时重新判断是否需要加载。
@@ -79,7 +92,7 @@ useResizeObserver(contentRef, checkBottom);
 </script>
 
 <template>
-  <SfScrollbar ref="scrollbarRef" :flush="flush" @scroll="checkBottom">
+  <SfScrollbar ref="scrollbarRef" :flush="flush" @scroll="handleScroll">
     <div ref="contentRef" class="flex min-h-full shrink-0 flex-col" :class="contentClass">
       <slot />
       <!-- 各列表共用加载中与结束状态，避免不同入口出现不同提示。 -->

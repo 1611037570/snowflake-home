@@ -21,8 +21,8 @@ import { computed, nextTick, ref, watch } from "vue";
 
 // 范本每批卡片数量：触底追加一批，避免整份范本列表一次性进入页面。
 const TEMPLATE_BATCH_SIZE = 20;
-// 样式缩略图需要各自测量分页，首批及触底批次减少同时挂载的数量。
-const STYLE_BATCH_SIZE = 8;
+// 样式缩略图需要各自测量分页，但批次与范本保持一致：批太小会让「没有更多了」迟迟不出现
+const STYLE_BATCH_SIZE = 20;
 // 样式卡片统一使用的通用范本：进入模板页即加载，保证任一分类都有内容。
 const PREVIEW_BASE_FILE = "xiaoZhou.ts";
 // 推荐分类前四张卡片的固定顺序，其余推荐模板沿用主题清单顺序。
@@ -35,7 +35,9 @@ const templateItems = ref({});
 const templateLoading = ref(true);
 // 加载失败后停止自动触底重试，分类或筛选变化时重新尝试。
 const templateLoadFailed = ref(false);
-const visibleCount = ref(TEMPLATE_BATCH_SIZE);
+// 首批数量跟随默认分类（简历模板）的批大小，与编辑器模板面板的首屏量保持一致；
+// 若沿用范本批大小，首屏会一次性挂载二十张缩略图，排队渲染明显变慢。
+const visibleCount = ref(STYLE_BATCH_SIZE);
 
 // 按文件名补齐正文缓存：已加载的跳过，未加载的并发读取后写入缓存。
 // 范本正文只用于展示，标记非响应式以免整份简历被深层代理包装。
@@ -181,7 +183,9 @@ const setCurrentTopCategory = (value) => {
 
 // 下一批正文就绪后再追加卡片，触底判断和状态提示由共用列表组件维护。
 const loadNextTemplates = async () => {
-  if (templateLoading.value || templateLoadFailed.value || !hasMore.value) return false;
+  // 正文仍在加载时不判为「没有更多」，等加载完成后的再次判断，避免误置暂停让触底失效。
+  if (templateLoading.value) return true;
+  if (templateLoadFailed.value || !hasMore.value) return false;
   const listKey = templateGridKey.value;
   const nextCount = Math.min(visibleCount.value + currentBatchSize.value, currentTotal.value);
   const files =
@@ -281,17 +285,18 @@ const setPreviewSize = (size) => {
 };
 const gridClass = ref("default");
 // 卡片整体保持纸张比例，名称、说明和标签放回卡片底部。
+// 宽度与网格列宽最小值对齐（240 / 384），让卡片铺满所在列而不留侧向空隙。
 const cardSizeClass = computed(() =>
   gridClass.value === "small"
-    ? "w-full max-w-[378px] aspect-[794/1123]"
-    : "w-full max-w-[236px] aspect-[794/1123]",
+    ? "w-full max-w-[384px] aspect-[794/1123]"
+    : "w-full max-w-[240px] aspect-[794/1123]",
 );
 // 缩略图只消费简历内容与配置，不把卡片上的筛选信息传进渲染链路
 const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: item?.ui });
 </script>
 
 <template>
-  <div class="relative mx-auto flex h-full w-full max-w-7xl flex-col gap-3">
+  <div class="relative flex h-full w-full flex-col gap-3">
     <ListScroll
       class="flex-1"
       flush
@@ -322,7 +327,7 @@ const getThumbItem = (item) => ({ data: item?.data, config: item?.config, ui: it
       <!-- 首批范本未就绪时按真实卡片尺寸占位，避免筛选栏下方整片空白。 -->
       <div
         v-if="templateLoading && (!displayedTemplates.length || !previewBase)"
-        class="grid grid-cols-1 gap-x-3 gap-y-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+        class="grid gap-x-3 gap-y-3 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]"
         role="status"
         aria-busy="true"
         :aria-label="$t('resumeTemplateLoading')"
