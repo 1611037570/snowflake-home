@@ -349,8 +349,10 @@ class LLM {
             });
           }
           if (aborted) throw new AbortError();
+          // 宿主可在任务明确不需要工具时收敛工具集，减少无意义的读取轮次。
+          const roundTools = config.resolveTools?.(step) ?? config.tools;
           const result = await think(this, history, {
-            tools: config.tools,
+            tools: roundTools,
             // 仅首轮强制调用宿主指定的起始工具，后续交由 ReAct 决定。
             toolChoice: step === 0 ? config.initialTool : undefined,
             model: config.model,

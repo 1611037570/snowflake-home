@@ -53,6 +53,8 @@ export interface ReactConfig {
   tools: ReactTool[];
   // 明确操作任务首轮必须调用的工具；后续轮次仍由模型自行选择。
   initialTool?: string;
+  // 每轮按宿主状态裁剪可用工具；返回 undefined 表示沿用完整工具集。
+  resolveTools?: (step: number) => ReactTool[] | undefined;
   // 最大循环步数，防止死循环
   maxSteps?: number;
   // 可选的上下文预算与摘要策略，每轮请求前处理待发送历史。

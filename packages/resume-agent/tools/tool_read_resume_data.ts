@@ -10,11 +10,20 @@ export const createReadResumeDataTool = (ctx: Pick<ResumeToolContext, "getResume
     "读取当前简历数据：跟随用户在 AI 助手里的模块选择，未选择模块时读取整份简历；返回模块 title 与 data，不含 collapsed/hidden 等其他 UI 状态，模块操作仍使用稳定 key。",
   parameters: {
     type: "object",
-    properties: {},
+    properties: {
+      module: {
+        type: "string",
+        description:
+          "只返回该模块（模块 key，如 work、education、user）。仅在本轮确定只处理该模块时使用；需要整份简历、跨模块判断或不确定模块 key 时省略。",
+      },
+    },
   },
-  execute: () => {
-    const data = ctx.getResumeData();
-    return { data };
+  execute: (args?: { module?: string }) => {
+    const data = ctx.getResumeData() as Record<string, unknown> | null | undefined;
+    const moduleKey = typeof args?.module === "string" ? args.module.trim() : "";
+    // 未指定模块或模块不存在时按授权范围整体返回，避免猜错 key 后拿不到数据
+    if (!moduleKey || !data || typeof data !== "object" || !(moduleKey in data)) return { data };
+    return { data: { [moduleKey]: data[moduleKey] } };
   },
   // 该工具只读取当前资料。
   effect: "read",

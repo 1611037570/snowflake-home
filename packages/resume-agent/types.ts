@@ -21,6 +21,8 @@ export interface SkillRegistration {
   name: string; // 技能展示名称。
   description: string; // 提供给任务规划器或参考工具的用途摘要。
   load: SkillLoader; // 被选中后加载完整技能正文的方法。
+  // 按分片键加载局部正文，供读取工具只注入目标范围的内容。
+  loadVariant?: (key: string) => Promise<Skill>;
 }
 
 // 运行时可直接使用完整技能，也可使用尚未加载正文的轻量注册项。

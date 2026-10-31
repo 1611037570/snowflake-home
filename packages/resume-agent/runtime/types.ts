@@ -105,3 +105,14 @@ export type ResumeAgentCompletionPolicy = {
   // 读取范围覆盖要求：read_scope 表示本轮读取涉及的模块必须全部出现在真实改动中。
   scopeCoverage?: "read_scope";
 };
+
+// 单轮可用工具范围：由运行时按任务阶段与契约决定，具体工具集由会话映射。
+export type ResumeAgentToolScope =
+  // 首轮只提供任务规划工具。
+  | "plan"
+  // 无业务效果的任务只提供只读工具，回答需要时自行读取。
+  | "readOnly"
+  // 不提供任何工具，按普通对话直接回答。
+  | "none"
+  // 提供本轮全部已授权工具。
+  | "all";
