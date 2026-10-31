@@ -1,36 +1,103 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 import { useI18n } from "vue-i18n";
-import { useAiUsage, type AiUsageRecord } from "@/apis/llm/usage";
+import { AI_USAGE_AGENTS, pruneAiUsageModels, useAiUsage, type AiUsageStats } from "@/apis/llm/usage";
+import { useAiStore } from "@/stores";
+import type { AiAgentKey } from "@/stores/modules/ai";
+import UsageShareBar from "./usageShareBar.vue";
 
 const { t, locale } = useI18n();
-const { records, completedCount, totalTokens, tokenUsagePartial, loading, ready, loadError, saveError, load, retry } = useAiUsage();
-const visibleCount = ref(20);
-const visibleRecords = computed(() => records.value.slice(0, visibleCount.value));
-const roleLabels: Record<AiUsageRecord["agent"], string> = {
+const route = useRoute();
+const { stats, loading, ready, loadError, saveError, load, retry } = useAiUsage();
+const aiStore = useAiStore();
+
+const roleLabels: Record<AiAgentKey, string> = {
   xiaoZhou: "resumeAiUsageRoleResume", // 简历助手角色名称。
   xiaoYang: "resumeAiUsageRoleInterview", // 面试官角色名称。
   resumeParser: "resumeAiUsageRoleParser", // 简历解析角色名称。
 };
-const statusLabels: Record<AiUsageRecord["status"], string> = {
-  success: "resumeAiUsageSuccess", // 正常完成调用。
-  error: "resumeAiUsageFailed", // 调用失败。
-  aborted: "resumeAiUsageStopped", // 用户主动停止。
-  timeout: "resumeAiUsageTimeout", // 请求超时。
+
+// 排查用示例数据：三个角色、多个模型、失败次数与跨天时间都有，用来确认展示是否完整。
+const PREVIEW_STATS: AiUsageStats = {
+  xiaoZhou: {
+    count: 18,
+    failed: 2,
+    totalTokens: 128400,
+    updatedAt: Date.now() - 12 * 60 * 1000,
+    models: {
+      "deepseek-v4-flash": { count: 11, totalTokens: 86200 },
+      "gpt-4o-mini": { count: 7, totalTokens: 42200 },
+    },
+  },
+  xiaoYang: {
+    count: 6,
+    failed: 1,
+    totalTokens: 41300,
+    updatedAt: Date.now() - 3 * 60 * 60 * 1000,
+    models: {
+      "claude-sonnet-4": { count: 6, totalTokens: 41300 },
+    },
+  },
+  resumeParser: {
+    count: 9,
+    failed: 0,
+    totalTokens: 22700,
+    updatedAt: Date.now() - 26 * 60 * 60 * 1000,
+    models: {
+      "deepseek-v4-flash": { count: 8, totalTokens: 20100 },
+      "qwen-max": { count: 1, totalTokens: 2600 },
+    },
+  },
 };
-const formatTime = (time: number) => new Intl.DateTimeFormat(locale.value, {
-  month: "2-digit", // 展示月份。
-  day: "2-digit", // 展示日期。
-  hour: "2-digit", // 展示小时。
-  minute: "2-digit", // 展示分钟。
-}).format(time);
-const formatDuration = (record: AiUsageRecord) => t("resumeAiUsageDuration", {
-  seconds: (Math.max(0, record.endedAt - record.startedAt) / 1000).toFixed(1), // 按实际开始结束时间展示秒数。
+
+// 带 ?preview 时展示示例数据，用于确认展示是否完整，不影响真实记录。
+const preview = computed(() => route.query.preview !== undefined);
+const source = computed(() => preview.value ? PREVIEW_STATS : stats.value);
+const showNumbers = computed(() => preview.value || ready.value);
+const totalCount = computed(() => AI_USAGE_AGENTS.reduce((total, agent) => total + source.value[agent].count, 0));
+const totalTokens = computed(() => AI_USAGE_AGENTS.reduce((total, agent) => total + source.value[agent].totalTokens, 0));
+
+const formatNumber = (value: number) => value.toLocaleString(locale.value);
+
+// 顶部按角色分布，只用有点数的角色，避免图例出现 0%。
+const roleShares = computed(() => AI_USAGE_AGENTS
+  .map((agent) => ({ key: agent, label: t(roleLabels[agent]), value: source.value[agent].totalTokens }))
+  .filter((item) => item.value > 0));
+
+// 每个角色一行，模型按用量降序，图例附带各自的调用次数。
+const rows = computed(() => AI_USAGE_AGENTS.map((agent) => {
+  const stat = source.value[agent];
+  return {
+    agent, // 当前行的业务角色
+    stat, // 该角色的累计数据
+    models: Object.entries(stat.models)
+      .map(([model, usage]) => ({
+        key: model,
+        label: model,
+        value: usage.totalTokens,
+        detail: `${formatNumber(usage.count)} ${t("resumeAiUsageTimes")}`,
+      }))
+      .filter((item) => item.value > 0)
+      .sort((left, right) => right.value - left.value),
+  };
+}));
+
+const formatTime = (time: number) => time
+  ? new Intl.DateTimeFormat(locale.value, { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" }).format(time)
+  : t("resumeAiUsageNeverUsed");
+
+// 失效模型：统计里还留着、但当前模型配置已经删掉的条目。
+const staleCount = computed(() => {
+  const valid = new Set(aiStore.modelList.map((item) => item.model));
+  return AI_USAGE_AGENTS.reduce((total, agent) =>
+    total + Object.keys(stats.value[agent].models).filter((model) => !valid.has(model)).length, 0);
 });
-// 不完整用量只展示已知下限，服务商未提供的值不能渲染成零。
-const formatTokens = (value: number | null | undefined, partial = false) => value == null ? t("resumeAiUsageTokensUnavailable") : `${partial ? '≥ ' : ''}${value.toLocaleString(locale.value)}`;
-const hasTokenDetails = (record: AiUsageRecord) => !!record.tokens && [record.tokens.inputTokens, record.tokens.outputTokens, record.tokens.cachedTokens].some((value) => value !== null);
-// 只读取个人历史，不在页面访问时发起模型调用或上报。
+// 清理失效模型，角色合计同步扣除这些模型的次数与 Token。
+const pruneModels = () => {
+  pruneAiUsageModels(aiStore.modelList.map((item) => item.model));
+};
+// 只读取本地累计值，不在页面访问时发起模型调用或上报。
 void load();
 </script>
 
@@ -40,56 +107,46 @@ void load();
       <header>
         <h1 class="text-lg font-semibold text-sf-text">{{ t("resumeNavAiUsage") }}</h1>
         <p class="mt-[6px] text-xs leading-6 text-sf-text-2">{{ t("resumeAiUsageDescription") }}</p>
+        <p v-if="preview" class="mt-[6px] text-xs leading-6 text-sf-warning">{{ t("resumeAiUsagePreviewHint") }}</p>
       </header>
-      <section class="flex flex-wrap items-center gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3">
+      <section class="flex flex-col gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3">
         <div class="flex flex-wrap items-center gap-3">
           <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-sf-bg text-sf-theme"><SfIcon icon="lucide:sparkles" size="5" /></span>
           <span class="text-sm text-sf-text-2">{{ t("resumeAiUsageCompleted") }}</span>
-          <strong class="text-2xl font-semibold tabular-nums text-sf-theme">{{ ready ? completedCount.toLocaleString(locale) : '—' }}</strong>
+          <strong class="text-2xl font-semibold tabular-nums text-sf-theme">{{ showNumbers ? formatNumber(totalCount) : '—' }}</strong>
           <span class="text-sm text-sf-text-2">{{ t("resumeAiUsageTimes") }}</span>
-        </div>
-        <div class="flex flex-wrap items-center gap-3">
           <span class="text-sm text-sf-text-2">{{ t("resumeAiUsageTotalTokens") }}</span>
-          <strong class="text-2xl font-semibold tabular-nums text-sf-theme">{{ ready ? formatTokens(totalTokens, tokenUsagePartial) : '—' }}</strong>
-          <SfTooltip v-if="ready && tokenUsagePartial" :content="t('resumeAiUsagePartialTokens')"><SfIcon icon="ph:info-duotone" size="4" class="text-sf-text-2" /></SfTooltip>
+          <strong class="text-2xl font-semibold tabular-nums text-sf-theme">{{ showNumbers ? formatNumber(totalTokens) : '—' }}</strong>
         </div>
+        <UsageShareBar v-if="roleShares.length" :items="roleShares" />
       </section>
-      <p v-if="loadError || saveError" class="flex flex-wrap items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3 text-sm text-sf-error" role="alert">
+      <p v-if="!preview && (loadError || saveError)" class="flex flex-wrap items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3 text-sm text-sf-error" role="alert">
         {{ t(loadError ? "resumeAiUsageLoadError" : "resumeAiUsageSaveError") }}
         <SfButton type="bg" :disabled="loading" @click="retry">{{ t("resumeAiUsageRetry") }}</SfButton>
       </p>
-      <section class="min-w-0 rounded-2xl border border-sf-b bg-sf-primary p-3">
-        <h2 class="text-sm font-semibold">{{ t("resumeAiUsageRecent") }}</h2>
-        <p v-if="loading" class="mt-3 flex items-center gap-3 text-sm text-sf-text-2" role="status"><SfIcon icon="eos-icons:loading" size="5" />{{ t("resumeAiUsageLoading") }}</p>
-        <div v-else-if="ready && !records.length" class="flex min-h-36 flex-col items-center justify-center gap-3 text-center">
-          <p class="text-sm text-sf-text-2">{{ t("resumeAiUsageEmpty") }}</p>
-          <RouterLink to="/resume/generate" class="text-sm text-sf-theme hover:underline">{{ t("resumeAiUsageStart") }}</RouterLink>
-        </div>
-        <ol v-else class="mt-3 divide-y divide-sf-b">
-          <li v-for="record in visibleRecords" :key="record.id" class="flex flex-col gap-3 py-3">
-            <div class="flex flex-wrap items-center justify-between gap-3">
-              <div class="min-w-0 flex-1">
-                <p class="break-words text-sm font-medium">{{ record.model }}</p>
-                <p class="mt-3 text-xs text-sf-text-2">{{ t(roleLabels[record.agent]) }}</p>
-              </div>
-              <div class="flex flex-wrap items-center gap-3 text-xs text-sf-text-2">
-                <span class="font-medium tabular-nums text-sf-text">{{ formatTokens(record.tokens?.totalTokens, record.tokens?.partial.includes('totalTokens')) }} Token</span>
-                <span :class="record.status === 'success' ? 'text-sf-success' : record.status === 'aborted' ? 'text-sf-text-2' : 'text-sf-error'">{{ t(statusLabels[record.status]) }}</span>
-                <span>{{ formatDuration(record) }}</span>
-                <time :datetime="new Date(record.endedAt).toISOString()">{{ formatTime(record.endedAt) }}</time>
-              </div>
-            </div>
-            <details v-if="hasTokenDetails(record)" class="text-xs text-sf-text-2">
-              <summary class="cursor-pointer">{{ t("resumeAiUsageTokenDetails") }}</summary>
-              <dl class="mt-3 flex flex-wrap gap-3">
-                <div class="flex gap-3"><dt>{{ t("resumeAiUsageInputTokens") }}</dt><dd class="tabular-nums">{{ formatTokens(record.tokens?.inputTokens, record.tokens?.partial.includes('inputTokens')) }}</dd></div>
-                <div class="flex gap-3"><dt>{{ t("resumeAiUsageOutputTokens") }}</dt><dd class="tabular-nums">{{ formatTokens(record.tokens?.outputTokens, record.tokens?.partial.includes('outputTokens')) }}</dd></div>
-                <div v-if="record.tokens?.cachedTokens != null" class="flex gap-3"><dt>{{ t("resumeAiUsageCachedTokens") }}</dt><dd class="tabular-nums">{{ formatTokens(record.tokens?.cachedTokens, record.tokens?.partial.includes('cachedTokens')) }}</dd></div>
-              </dl>
-            </details>
-          </li>
-        </ol>
-        <SfButton v-if="visibleRecords.length < records.length" type="bg" class="mt-3" @click="visibleCount += 20">{{ t("resumeAiUsageMore") }}</SfButton>
+      <p v-if="!preview && loading" class="flex items-center gap-3 rounded-xl border border-sf-b bg-sf-primary p-3 text-sm text-sf-text-2" role="status">
+        <SfIcon icon="eos-icons:loading" size="5" />{{ t("resumeAiUsageLoading") }}
+      </p>
+      <div v-else-if="showNumbers && !totalCount && !totalTokens" class="flex min-h-36 flex-col items-center justify-center gap-3 rounded-xl border border-sf-b bg-sf-primary text-center">
+        <p class="text-sm text-sf-text-2">{{ t("resumeAiUsageEmpty") }}</p>
+        <RouterLink to="/resume/generate" class="text-sm text-sf-theme hover:underline">{{ t("resumeAiUsageStart") }}</RouterLink>
+      </div>
+      <section v-else class="flex flex-col gap-3">
+        <article v-for="row in rows" :key="row.agent" class="flex flex-col gap-3 rounded-2xl border border-sf-b bg-sf-primary p-3">
+          <header class="flex flex-wrap items-center justify-between gap-3">
+            <span class="text-sm font-medium">{{ t(roleLabels[row.agent]) }}</span>
+            <span class="text-xs text-sf-text-2">{{ t("resumeAiUsageLastUsed") }} {{ formatTime(row.stat.updatedAt) }}</span>
+          </header>
+          <dl class="flex flex-wrap gap-3 text-xs text-sf-text-2">
+            <div class="flex gap-[3px]"><dt>{{ t("resumeAiUsageCount") }}</dt><dd class="tabular-nums text-sf-text">{{ formatNumber(row.stat.count) }}</dd></div>
+            <div class="flex gap-[3px]"><dt>{{ t("resumeAiUsageFailedCount") }}</dt><dd class="tabular-nums text-sf-text">{{ formatNumber(row.stat.failed) }}</dd></div>
+            <div class="flex gap-[3px]"><dt>{{ t("resumeAiUsageTokens") }}</dt><dd class="tabular-nums text-sf-text">{{ formatNumber(row.stat.totalTokens) }}</dd></div>
+          </dl>
+          <UsageShareBar v-if="row.models.length" :items="row.models" />
+        </article>
+        <SfButton v-if="!preview && staleCount" type="bg" border class="self-start" @click="pruneModels">
+          {{ t("resumeAiUsagePruneModels", { count: staleCount }) }}
+        </SfButton>
       </section>
     </main>
   </SfScrollbar>

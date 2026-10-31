@@ -190,6 +190,23 @@ export const SITE_CONFIGS: SiteConfig[] = [
     },
   },
   {
+    route: "/resume/ai-usage", // 用户个人 AI 使用记录页面。
+    noindex: true, // 展示用户私有调用记录，不进入公开收录。
+    parentRoute: "/resume", // 所属产品首页。
+    locales: { // 两种界面语言的页面信息。
+      zh: { // 中文页面信息。
+        title: "AI 使用情况 - 模型与 Token 用量 | 轻舟简历", // 浏览器标题。
+        description: "按角色查看 AI 完成的调用次数、失败次数、累计 Token 用量与使用的模型。", // 页面功能说明。
+        keywords: "AI使用情况,Token用量,模型调用记录", // 页面关键词。
+      },
+      en: { // 英文页面信息。
+        title: "AI Usage - Models and Token Usage | Skiff Resume", // 浏览器标题。
+        description: "Review completed calls, failed calls, total token usage and models for each AI role.", // 页面功能说明。
+        keywords: "AI usage,token usage,model calls", // 页面关键词。
+      },
+    },
+  },
+  {
     route: "/resume/statistics",
     prerender: true, // 构建时预渲染原有公开页面。
     parentRoute: "/resume", // 所属产品首页。

@@ -7,6 +7,7 @@ import {
   type LlmTraceEventType,
   type LlmTraceStatus,
 } from "@/apis/llm/monitor";
+import { readAiTokenUsage } from "@/apis/llm/usage/tokens";
 
 const selectedId = ref("");
 
@@ -88,19 +89,11 @@ function formatFirstToken(trace: LlmTrace) {
   return `${trace.firstTokenTime - trace.startTime} 毫秒`;
 }
 
+// 用量统一交给 usage 模块归一化，避免各页面各自解析服务商字段。
 function getToken(trace: LlmTrace, type: "input" | "output" | "total") {
-  if (typeof trace.usage === "number") {
-    return type === "total" ? trace.usage.toLocaleString() : "—";
-  }
-  if (!trace.usage || typeof trace.usage !== "object") return "—";
-  const usage = trace.usage as Record<string, unknown>;
-  const keys = {
-    input: ["input_tokens", "prompt_tokens"],
-    output: ["output_tokens", "completion_tokens"],
-    total: ["total_tokens"],
-  }[type];
-  const value = keys.map((key) => usage[key]).find((item) => typeof item === "number");
-  return typeof value === "number" ? value.toLocaleString() : "—";
+  const usage = readAiTokenUsage(trace.usage);
+  const value = { input: usage.inputTokens, output: usage.outputTokens, total: usage.totalTokens }[type];
+  return value === null ? "—" : value.toLocaleString();
 }
 
 function formatData(value: unknown) {
