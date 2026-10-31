@@ -1,10 +1,8 @@
 import type { ChatMessage, ContextCompactionOptions } from "@snowflake/ai";
 import { runResumeAiTask, type ResumeAiTask } from "@snowflake/resume-agent";
 
-// 输入预算：按单轮实际上下文控制，历史增长到该值即压缩，避免长对话每轮重复付费
-const INPUT_TOKEN_BUDGET = 16000;
-// 工具定义与常驻规则每轮固定占用，计入预算避免统计口径偏小
-const FIXED_OVERHEAD_TOKENS = 4000;
+// 输入预算：保守取值，只在历史明显增长时压缩；预算内请求与未启用压缩时行为一致
+const INPUT_TOKEN_BUDGET = 60000;
 // 单条历史进入摘要的最大字符数，避免摘要请求本身溢出
 const TRANSCRIPT_MESSAGE_LIMIT = 1500;
 // 摘要失败时的退化说明，保证上下文仍能缩减
@@ -21,8 +19,7 @@ const countMessagesTokens = (messages: readonly ChatMessage[]) =>
     const contentTokens = countTextTokens(message.content ?? "");
     const callTokens = message.tool_calls ? countTextTokens(JSON.stringify(message.tool_calls)) : 0;
     return total + contentTokens + callTokens;
-    // 固定开销先计入，历史可用预算与实际请求一致
-  }, FIXED_OVERHEAD_TOKENS);
+  }, 0);
 
 const toTranscript = (messages: readonly ChatMessage[]) =>
   messages

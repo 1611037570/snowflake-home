@@ -122,19 +122,13 @@ export async function think(
   // 协议来自模型实例，工具循环与单次请求共用同一套协议判断。
   const protocol: ReactProtocol = llm.protocol === "responses" ? "responses" : "chatCompletions";
 
-  // 工具集被宿主收敛为空时按普通对话请求，不发送空的工具声明
-  const toolDefinitions = toToolDefinitions(options.tools, protocol);
   const requestOptions: any = {
     ...(protocol === "responses"
       ? { input: toResponsesInput(messages) }
       : { messages }),
-    ...(toolDefinitions.length
-      ? {
-          tools: toolDefinitions,
-          // 明确操作任务可指定首轮工具，其余轮次保持模型自主选择。
-          tool_choice: toToolChoice(options.toolChoice, protocol),
-        }
-      : {}),
+    tools: toToolDefinitions(options.tools, protocol),
+    // 明确操作任务可指定首轮工具，其余轮次保持模型自主选择。
+    tool_choice: toToolChoice(options.toolChoice, protocol),
     thinking: options.thinking ?? { type: "disabled" },
     ...(options.model ? { model: options.model } : {}),
   };

@@ -6,8 +6,7 @@ import { getResumeAiMessage } from "../request/messages";
 import type { ResumeAiAgent } from "../request";
 import { resolveResumeAgentTaskProfile } from "../tasks/registry";
 import { createResumeAgentTaskRuntime } from "./resumeAgentTask";
-import { fallbackContextCompaction } from "./contextBudget";
-import type { ResumeAgentRequiredEffect, ResumeAgentTool } from "./types";
+import type { ResumeAgentRequiredEffect } from "./types";
 import type {
   ResumeAgentTaskEvidence,
   ResumeAgentTaskProfile,
@@ -41,7 +40,7 @@ export type CreateResumeAgentSessionOptions = {
   // 使用的模型角色，省略时使用简历助手模型。
   agent?: ResumeAiAgent;
   // 宿主提供的 ReAct 展示和流式回调，工具与任务验收由会话统一注入。
-  reactConfig: Omit<ReactConfig, "tools" | "initialTool" | "resolveTools" | "beforeFinal" | "onIncomplete" | "onFinal">;
+  reactConfig: Omit<ReactConfig, "tools" | "initialTool" | "beforeFinal" | "onIncomplete" | "onFinal">;
   // 每次业务工具形成证据后通知宿主。
   onEvidence?: (evidence: ResumeAgentTaskEvidence) => void;
   // 任务建立、降级与完成校验时通知宿主，用于运行观测。
@@ -90,14 +89,6 @@ export const createResumeAgentSession = async (
     ...taskRuntime.controlTools,
     ...taskRuntime.wrapTools(businessTools),
   ];
-  // 只读工具按业务工具声明的效果推导，供无业务效果的轮次收敛使用。
-  const readToolNames = new Set(
-    businessTools
-      .filter((tool) => (tool as ResumeAgentTool).taskMeta?.effect === "read")
-      .map((tool) => tool.name),
-  );
-  const planTool = tools.find((tool) => tool.name === "plan_resume_task");
-  const readOnlyTools = tools.filter((tool) => readToolNames.has(tool.name));
   const model = getResumeAiModel(options.agent ?? "xiaoZhou");
   if (!model?.apiKey || !model.url || !model.model) throw new Error(getResumeAiMessage("modelUnset"));
   // 通用层只负责运行，简历专用的上下文、规划与完成证据仍由本包提供。
@@ -109,16 +100,6 @@ export const createResumeAgentSession = async (
     reactConfig: {
       ...options.reactConfig,
       initialTool: "plan_resume_task", // 保留原有简历任务规划入口。
-      // 入口未提供压缩策略时使用规则化兜底，保证长任务不会无限重发历史。
-      context: options.reactConfig.context ?? fallbackContextCompaction,
-      // 运行时只给工具范围，具体工具集在此映射，避免业务包装被绕过。
-      resolveTools: (step) => {
-        const scope = taskRuntime.resolveToolScope(step);
-        if (scope === "plan") return planTool ? [planTool] : undefined;
-        if (scope === "readOnly") return readOnlyTools;
-        if (scope === "none") return [];
-        return undefined;
-      },
       beforeFinal: taskRuntime.beforeFinal, // 保留简历业务完成证据校验。
       onIncomplete: taskRuntime.onIncomplete, // 保留简历未完成结果处理。
       onFinal: (answer) => options.onFinal?.(answer, taskRuntime.getTask()), // 保留任务快照回调。

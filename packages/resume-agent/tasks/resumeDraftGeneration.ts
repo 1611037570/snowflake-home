@@ -222,8 +222,7 @@ export const runResumeDraftGeneration = async (
   const writingSkill = resumeWriting();
   let submittedResume: Record<string, unknown> | null = null;
   const businessTools: ReactTool[] = [
-    // 一次性生成整份草稿会写入多个模块，需要全部字段的完整说明
-    createSkillReferenceTool([resumeDataContract({ full: true })]),
+    createSkillReferenceTool([resumeDataContract()]),
     createInputTool(input),
     createSubmitTool((resume) => {
       submittedResume = resume;

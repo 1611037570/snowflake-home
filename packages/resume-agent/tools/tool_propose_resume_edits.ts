@@ -22,7 +22,7 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
   const appliedSignatures = new Set<string>();
   return defineTool({
   name: "propose_resume_edits",
-  description: `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，调用后立即写入简历数据（用户可撤回）。operations 按下列操作类型描述写操作，提交前会做结构与格式校验；validationIssues 与 executionIssues 通过 operationIndex 标明失败操作，只修正对应项后重新提交。`,
+  description: `${TOOL_ARGUMENT_RULE}\n\n${PROPOSE_RESUME_EDITS_RULE}\n\n根据分析结果生成简历修改，调用后立即写入简历数据（用户可撤回）。通过 operations 语义化描述写操作：updateModule 修改模块级 data 字段；updateModuleTitle 仅在用户明确要求重命名模块或翻译展示标题时使用，普通内容优化保持标题不变；updateRecord 修改记录字段；addRecord 新增记录；deleteRecord 删除记录；moveRecord 调整记录顺序。提交前会做结构与格式校验；validationIssues 与 executionIssues 通过 operationIndex 标明失败操作，只修正对应项后重新提交。`,
   parameters: {
     type: "object",
     properties: {
@@ -36,7 +36,7 @@ export const createProposeResumeEditsTool = (ctx: ResumeToolContext): ResumeAgen
             op: {
               type: "string",
               description:
-                "操作类型：updateModule 改模块字段；updateModuleTitle 改模块标题，仅在明确要求重命名或翻译标题时使用，内容优化保持标题不变；updateRecord 改记录；addRecord 新增；deleteRecord 删除；moveRecord 排序",
+                "操作类型：updateModule 改模块字段；updateModuleTitle 改模块标题；updateRecord 改记录；addRecord 新增；deleteRecord 删除；moveRecord 排序",
             },
             module: {
               type: "string",
