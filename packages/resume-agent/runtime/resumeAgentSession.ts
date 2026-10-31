@@ -40,7 +40,7 @@ export type CreateResumeAgentSessionOptions = {
   // 使用的模型角色，省略时使用简历助手模型。
   agent?: ResumeAiAgent;
   // 宿主提供的 ReAct 展示和流式回调，工具与任务验收由会话统一注入。
-  reactConfig: Omit<ReactConfig, "tools" | "initialTool" | "beforeFinal" | "onIncomplete" | "onFinal">;
+  reactConfig: Omit<ReactConfig, "tools" | "initialTool" | "resolveTools" | "beforeFinal" | "onIncomplete" | "onFinal">;
   // 每次业务工具形成证据后通知宿主。
   onEvidence?: (evidence: ResumeAgentTaskEvidence) => void;
   // 任务建立、降级与完成校验时通知宿主，用于运行观测。
@@ -89,6 +89,8 @@ export const createResumeAgentSession = async (
     ...taskRuntime.controlTools,
     ...taskRuntime.wrapTools(businessTools),
   ];
+  // 首轮由 tool_choice 锁定规划工具，其余工具声明无需随首轮请求发送。
+  const planTool = tools.find((tool) => tool.name === "plan_resume_task");
   const model = getResumeAiModel(options.agent ?? "xiaoZhou");
   if (!model?.apiKey || !model.url || !model.model) throw new Error(getResumeAiMessage("modelUnset"));
   // 通用层只负责运行，简历专用的上下文、规划与完成证据仍由本包提供。
@@ -100,6 +102,8 @@ export const createResumeAgentSession = async (
     reactConfig: {
       ...options.reactConfig,
       initialTool: "plan_resume_task", // 保留原有简历任务规划入口。
+      // 首轮只发规划工具，后续轮次恢复完整工具集。
+      resolveTools: (step) => (step === 0 && planTool ? [planTool] : undefined),
       beforeFinal: taskRuntime.beforeFinal, // 保留简历业务完成证据校验。
       onIncomplete: taskRuntime.onIncomplete, // 保留简历未完成结果处理。
       onFinal: (answer) => options.onFinal?.(answer, taskRuntime.getTask()), // 保留任务快照回调。

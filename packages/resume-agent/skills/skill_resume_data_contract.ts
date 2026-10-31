@@ -52,10 +52,11 @@ const renderVariant = (
   heading: string,
   headingLevel = "###",
 ) => {
+  // 逐字段用列表行表达，省去每张表重复的表头与管道符，信息量不变
   const rows = variant.fields
     .map(
       (field) =>
-        `| \`${field.key}\` | ${field.label} | ${field.valueType} | ${getFieldNotes(field, module.key)} |`,
+        `- \`${field.key}\`（${field.label}）${field.valueType}：${getFieldNotes(field, module.key)}`,
     )
     .join("\n");
   const customNote =
@@ -65,9 +66,7 @@ const renderVariant = (
   const layoutNote = variant.layout ? `；界面布局为 \`${variant.layout}\` 时生效` : "";
   return `${headingLevel} ${heading}（\`${getModuleDataLabel(module, variant)}\`${layoutNote}）
 
-${customNote}| 字段 | 中文标签 | 类型 | 格式/备注 |
-| :--- | :--- | :--- | :--- |
-${rows}`;
+${customNote}${rows}`;
 };
 
 const renderModule = (module: ResumeModuleSchema, index: number) => {
@@ -87,8 +86,24 @@ const renderModule = (module: ResumeModuleSchema, index: number) => {
   return `## ${index + 1}. ${module.title}\n\n${content}`;
 };
 
-// 数据规范直接由表单领域结构生成，字段调整后无需维护第二份静态表格
-const buildInstructions = () => {
+// 总体结构与写入方式在完整版与单模块版中共用
+const STRUCTURE_NOTES = `- 对象模块通过 \`updateModule\` 修改字段。
+- 数组模块通过 \`updateRecord\`、\`addRecord\`、\`deleteRecord\`、\`moveRecord\` 修改记录。
+- 同一模块存在多种数据形态时，\`read_resume_data\` 只返回当前界面布局生效的形态；必须按本次返回的对象或数组选择写操作，不得读取或修改未生效形态。
+- 字段标记为“可添加字段”时，即使当前数据缺失，也允许 \`updateModule\` 首次写入。
+- 修改现有简历时，当前数据可能只包含模块清单的一部分，不得写入当前数据中不存在的模块；生成新草稿时按入口目标创建相关模块，未提供的具体经历信息使用 XX 占位，不得写成已核实事实。`;
+
+const FORMAT_RULES = `# 强制格式
+
+1. 月份使用 \`YYYY.MM\`；经历仍在持续时，只有结束时间可填 \`至今\`；未知日期留空，不得填写待补充占位。
+2. 富文本字段必须是 HTML 字符串；段落使用 \`<p>\`，列表使用 \`<ul>/<ol>\` 与 \`<li>\`，不得提交 Markdown 或未包裹的纯文本。
+3. 只能使用以上字段与枚举值，不得根据自然语言自行创建字段名。`;
+
+const STRUCTURE_INTRO =
+  "\`read_resume_data\` 返回以稳定模块 key 为键的对象，每个模块均为 \`{ title, data }\`。\`title\`只用于展示，写操作必须使用模块 key。";
+
+// 完整契约：列出全部模块与字段，供需要跨模块判断或一次性生成草稿的场景使用
+const buildFullInstructions = () => {
   const moduleRows = RESUME_SCHEMA.map(
     (module) => {
       const variants = module.variants?.length ? module.variants : [module];
@@ -100,33 +115,59 @@ const buildInstructions = () => {
 
   return `# 简历数据总体结构
 
-\`read_resume_data\` 返回以稳定模块 key 为键的对象，每个模块均为 \`{ title, data }\`。\`title\`只用于展示，写操作必须使用模块 key。
+${STRUCTURE_INTRO}
 
 | 模块 key | 默认标题 | data 结构 |
 | :--- | :--- | :--- |
 ${moduleRows}
 
-- 对象模块通过 \`updateModule\` 修改字段。
-- 数组模块通过 \`updateRecord\`、\`addRecord\`、\`deleteRecord\`、\`moveRecord\` 修改记录。
-- 同一模块存在多种数据形态时，\`read_resume_data\` 只返回当前界面布局生效的形态；必须按本次返回的对象或数组选择写操作，不得读取或修改未生效形态。
-- 字段表标记为“可添加字段”时，即使当前数据缺失，也允许 \`updateModule\` 首次写入。
-- 修改现有简历时，当前数据可能只包含模块清单的一部分，不得写入当前数据中不存在的模块；生成新草稿时按入口目标创建相关模块，未提供的具体经历信息使用 XX 占位，不得写成已核实事实。
+${STRUCTURE_NOTES}
 
 # 字段契约
 
 ${modules}
 
-# 强制格式
-
-1. 月份使用 \`YYYY.MM\`；经历仍在持续时，只有结束时间可填 \`至今\`；未知日期留空，不得填写待补充占位。
-2. 富文本字段必须是 HTML 字符串；段落使用 \`<p>\`，列表使用 \`<ul>/<ol>\` 与 \`<li>\`，不得提交 Markdown 或未包裹的纯文本。
-3. 只能使用以上字段与枚举值，不得根据自然语言自行创建字段名。`;
+${FORMAT_RULES}`;
 };
 
-export const resumeDataContract = () => ({
+// 单模块契约：只渲染目标模块的字段，公开写入单模块时按需读取
+const buildModuleInstructions = (module: ResumeModuleSchema) => {
+  const index = RESUME_SCHEMA.indexOf(module);
+  return `# 简历数据总体结构
+
+${STRUCTURE_INTRO}
+
+${STRUCTURE_NOTES}
+
+# 目标模块字段契约
+
+${renderModule(module, index < 0 ? 0 : index)}
+
+${FORMAT_RULES}`;
+};
+
+export type ResumeDataContractOptions = {
+  // 只返回该模块的字段契约；省略时返回全部模块。
+  module?: string;
+};
+
+// 数据规范直接由表单领域结构生成，字段调整后无需维护第二份静态表格
+const buildInstructions = (options: ResumeDataContractOptions = {}) => {
+  const moduleKey = options.module?.trim();
+  if (moduleKey) {
+    // 自定义模块的实际 key 以 custom_ 开头，统一按注册的 custom 模块解析
+    const target = moduleKey.startsWith("custom_")
+      ? RESUME_SCHEMA.find((module) => module.key === "custom")
+      : RESUME_SCHEMA.find((module) => module.key === moduleKey);
+    if (target) return buildModuleInstructions(target);
+  }
+  return buildFullInstructions();
+};
+
+export const resumeDataContract = (options?: ResumeDataContractOptions) => ({
   id: "resume_data_contract",
   role: "reference" as const, // 执行过程中按需读取的参考知识。
   name: "简历数据规范",
   description: DESCRIPTION,
-  instructions: buildInstructions(),
+  instructions: buildInstructions(options),
 });

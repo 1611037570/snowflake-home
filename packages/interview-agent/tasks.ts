@@ -52,6 +52,7 @@ export const runInterviewTask = async (action: InterviewAction, input: Interview
     name: "read_interview_guidance", // 面试专属的资料读取入口。
     description: "按当前面试题型读取一项行业参考资料。", // 资料仅用于考察角度，不替代真实经历。
     resources: resumeIndustryKnowledge, // 公共资料不经过简历智能体注册表。
+    compactCatalog: true, // 目录只列标识与名称，摘要留在正文里。
   }));
   const agent = createAgent({
     model: getInterviewModel(), // 面试官角色独立绑定模型，不回退到简历助手。

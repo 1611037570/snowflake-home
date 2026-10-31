@@ -66,6 +66,8 @@ export interface ReferenceToolOptions {
   name: string; // 当前业务的参考资料工具名。
   description: string; // 工具用途说明。
   resources: (AgentSkill | AgentSkillRegistration)[]; // 当前业务允许读取的参考资料。
+  // 目录只列标识与名称，用途摘要留在正文里，减少工具声明的固定开销。
+  compactCatalog?: boolean;
 }
 
 // 只抽取参考资料加载与去重机制，资料目录和工具身份由各业务独立传入。
@@ -73,10 +75,16 @@ export const createReferenceTool = (options: ReferenceToolOptions): ReactTool =>
   const references = options.resources.filter((resource) => resource.role === "reference");
   if (!references.length) throw new Error("参考资料不能为空");
   const resourceMap = new Map(references.map((resource) => [resource.id, resource]));
+  // 紧凑目录省去逐条摘要，行业与资料名称已能表达适用范围
+  const catalog = references
+    .map((resource) => options.compactCatalog
+      ? `${resource.id}：${resource.name}`
+      : `${resource.id}：${resource.name}，${resource.description}`)
+    .join("\n");
   const loaded = new Set<string>();
   return {
     name: options.name, // 不使用固定的领域工具名。
-    description: `${options.description}\n可选资料：\n${references.map((resource) => `${resource.id}：${resource.name}，${resource.description}`).join("\n")}`, // 按需提供资料目录。
+    description: `${options.description}\n可选资料：\n${catalog}`, // 按需提供资料目录。
     parameters: {
       type: "object", // 工具参数为对象。
       properties: {
